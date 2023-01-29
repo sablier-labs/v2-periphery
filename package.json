@@ -1,0 +1,31 @@
+{
+  "name": "@sablier/v2-periphery",
+  "description": "Peripheral smart contracts for interacting with Sablier V2 Core",
+  "version": "1.0.0",
+  "author": {
+    "name": "Andrei Vlad Birgaoanu",
+    "url": "https://github.com/andreivladbrg"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.1",
+    "prettier-plugin-solidity": "^1.0.0",
+    "rimraf": "^3.0.2",
+    "solhint": "^3.3.7",
+    "solhint-plugin-prettier": "^0.0.5"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "forge",
+    "foundry",
+    "smart-contracts",
+    "solidity"
+  ],
+  "scripts": {
+    "clean": "rimraf cache out",
+    "lint": "yarn lint:sol && yarn prettier:check",
+    "lint:sol": "solhint \"{src,test}/**/*.sol\"",
+    "prettier:check": "prettier --check \"**/*.{json,md,sol,yml}\"",
+    "prettier:write": "prettier --write \"**/*.{json,md,sol,yml}\""
+  }
+}

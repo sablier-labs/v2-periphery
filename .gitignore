@@ -1,0 +1,11 @@
+# MacOS
+.DS_Store
+
+# Foundry
+/cache
+
+# Node
+/node_modules
+
+# Dapptools
+/out

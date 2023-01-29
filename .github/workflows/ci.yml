@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  run-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install dependencies
+        run: forge install
+
+      - name: Run tests
+        run: forge test
+
+      - name: Build the contracts
+        run: |
+          forge --version
+          forge build --sizes
+
+      - name: Add test summary
+        run: |
+          echo ## Tests >> $GITHUB_STEP_SUMMARY
+          echo ✅ Passed >> $GITHUB_STEP_SUMMARY
