@@ -19,7 +19,7 @@ library CreateLinear {
 }
 
 library CreatePro {
-    struct MilestoneParams {
+    struct MilestonesParams {
         address sender;
         address recipient;
         uint128 grossDepositAmount;

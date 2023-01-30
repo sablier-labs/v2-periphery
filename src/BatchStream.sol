@@ -75,7 +75,7 @@ contract BatchStream is IBatchStream {
     }
 
     function createWithMilestonesMultiple(
-        CreatePro.MilestoneParams[] calldata params,
+        CreatePro.MilestonesParams[] calldata params,
         IERC20 asset,
         uint128 totalDepositAmount
     ) external override returns (uint256[] memory streamIds) {

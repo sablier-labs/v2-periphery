@@ -16,10 +16,10 @@ library Helpers {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function that perform an external call on {ISablierV2LockupPro-createWithMilestones}
+    /// @dev Helper function that performs an external call on {ISablierV2LockupPro-createWithMilestones}
     /// with a try/catch statement so that it will never fail if it reverts.
     function tryCreateWithMilestones(
-        CreatePro.MilestoneParams calldata params,
+        CreatePro.MilestonesParams calldata params,
         IERC20 asset,
         ISablierV2LockupPro pro
     ) external returns (uint256 streamId) {
@@ -39,7 +39,7 @@ library Helpers {
         } catch {}
     }
 
-    /// @dev Helper function that perform an external call on {ISablierV2LockupLinear-createWithRange}
+    /// @dev Helper function that performs an external call on {ISablierV2LockupLinear-createWithRange}
     /// with a try/catch statement so that it will never fail if it reverts.
     function tryCreateWithRange(
         CreateLinear.RangeParams calldata params,
@@ -61,6 +61,8 @@ library Helpers {
         } catch {}
     }
 
+    /// @dev Helper function that transfers `value` funds from `msg.sender` to `address(this)`
+    /// and approves `value` to `spender`.
     function transferAndApprove(address spender, IERC20 asset, uint256 value) external {
         asset.safeTransferFrom({ from: msg.sender, to: address(this), value: value });
         asset.safeApprove(spender, value);

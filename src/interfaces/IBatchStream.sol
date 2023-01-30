@@ -42,7 +42,7 @@ interface IBatchStream {
 
     /// @notice Creates multiple pro streams with milestones funded by `msg.sender`.
     function createWithMilestonesMultiple(
-        CreatePro.MilestoneParams[] calldata params,
+        CreatePro.MilestonesParams[] calldata params,
         IERC20 asset,
         uint128 totalDepositAmount
     ) external returns (uint256[] memory streamIds);
