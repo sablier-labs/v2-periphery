@@ -5,8 +5,7 @@ import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
 
-import { CreateLinear } from "../types/DataTypes.sol";
-import { CreatePro } from "../types/DataTypes.sol";
+import { CreateLinear, CreatePro } from "../types/DataTypes.sol";
 
 interface IBatchStream {
     /*//////////////////////////////////////////////////////////////////////////
@@ -40,9 +39,23 @@ interface IBatchStream {
         uint128 totalDepositAmount
     ) external returns (uint256[] memory streamIds);
 
+    /// @notice Creates multiple linear streams with range funded by `msg.sender`.
+    function createWithDurationsMultiple(
+        CreateLinear.DurationsParams[] calldata params,
+        IERC20 asset,
+        uint128 totalDepositAmount
+    ) external returns (uint256[] memory streamIds);
+
     /// @notice Creates multiple pro streams with milestones funded by `msg.sender`.
     function createWithMilestonesMultiple(
         CreatePro.MilestonesParams[] calldata params,
+        IERC20 asset,
+        uint128 totalDepositAmount
+    ) external returns (uint256[] memory streamIds);
+
+    /// @notice Creates multiple pro streams with milestones funded by `msg.sender`.
+    function createWithDeltasMultiple(
+        CreatePro.DeltasParams[] calldata params,
         IERC20 asset,
         uint128 totalDepositAmount
     ) external returns (uint256[] memory streamIds);

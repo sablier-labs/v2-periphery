@@ -3,9 +3,7 @@ pragma solidity >=0.8.13;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 
-import { Broker } from "@sablier/v2-core/types/DataTypes.sol";
-import { LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
-import { LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
+import { Broker, LockupPro, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
 library CreateLinear {
     struct RangeParams {
@@ -14,6 +12,15 @@ library CreateLinear {
         uint128 grossDepositAmount;
         bool cancelable;
         LockupLinear.Range range;
+        Broker broker;
+    }
+
+    struct DurationsParams {
+        address sender;
+        address recipient;
+        uint128 grossDepositAmount;
+        bool cancelable;
+        LockupLinear.Durations durations;
         Broker broker;
     }
 }
@@ -26,6 +33,16 @@ library CreatePro {
         LockupPro.Segment[] segments;
         bool cancelable;
         uint40 startTime;
+        Broker broker;
+    }
+
+    struct DeltasParams {
+        address sender;
+        address recipient;
+        uint128 grossDepositAmount;
+        LockupPro.Segment[] segments;
+        bool cancelable;
+        uint40[] deltas;
         Broker broker;
     }
 }

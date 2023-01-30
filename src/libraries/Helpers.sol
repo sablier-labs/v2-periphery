@@ -16,6 +16,51 @@ library Helpers {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev Helper function that performs an external call on {ISablierV2LockupPro-createWithDeltas}
+    /// with a try/catch statement so that it will never fail if it reverts.
+    function tryCreateWithDeltas(
+        CreatePro.DeltasParams calldata params,
+        IERC20 asset,
+        ISablierV2LockupPro pro
+    ) external returns (uint256 streamId) {
+        try
+            pro.createWithDeltas(
+                params.sender,
+                params.recipient,
+                params.grossDepositAmount,
+                params.segments,
+                asset,
+                params.cancelable,
+                params.deltas,
+                params.broker
+            )
+        returns (uint256 _streamId) {
+            streamId = _streamId;
+        } catch {}
+    }
+
+    /// @dev Helper function that performs an external call on {ISablierV2LockupLinear-createWithDurations}
+    /// with a try/catch statement so that it will never fail if it reverts.
+    function tryCreateWithDurations(
+        CreateLinear.DurationsParams calldata params,
+        IERC20 asset,
+        ISablierV2LockupLinear linear
+    ) external returns (uint256 streamId) {
+        try
+            linear.createWithDurations(
+                params.sender,
+                params.recipient,
+                params.grossDepositAmount,
+                asset,
+                params.cancelable,
+                params.durations,
+                params.broker
+            )
+        returns (uint256 _streamId) {
+            streamId = _streamId;
+        } catch {}
+    }
+
     /// @dev Helper function that performs an external call on {ISablierV2LockupPro-createWithMilestones}
     /// with a try/catch statement so that it will never fail if it reverts.
     function tryCreateWithMilestones(
