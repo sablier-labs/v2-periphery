@@ -83,7 +83,9 @@ abstract contract BatchStream is IBatchStream {
                     params[i].range,
                     params[i].broker
                 )
-            {} catch {}
+            returns (uint256 streamId) {
+                streamIds[i] = streamId;
+            } catch {}
 
             // Increment the for loop iterator.
             unchecked {
