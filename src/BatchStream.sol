@@ -48,7 +48,8 @@ abstract contract BatchStream is IBatchStream {
 
         uint256 count = params.length;
         uint128 grossDepositAmountsSum;
-        for (uint256 i = 0; i < count; ) {
+        uint256 i;
+        for (i = 0; i < count; ) {
             grossDepositAmountsSum += params[i].grossDepositAmount;
             unchecked {
                 i += 1;
@@ -70,17 +71,19 @@ abstract contract BatchStream is IBatchStream {
 
         // uint256 count = params.length;
 
-        for (uint256 i = 0; i < count; ) {
-            // Interactions: make the external call.
-            linear.createWithRange(
-                params[i].sender,
-                params[i].recipient,
-                params[i].grossDepositAmount,
-                asset,
-                params[i].cancelable,
-                params[i].range,
-                params[i].broker
-            );
+        for (i = 0; i < count; ) {
+            // Interactions: make the external call without reverting if it fails at a certain index.
+            try
+                linear.createWithRange(
+                    params[i].sender,
+                    params[i].recipient,
+                    params[i].grossDepositAmount,
+                    asset,
+                    params[i].cancelable,
+                    params[i].range,
+                    params[i].broker
+                )
+            {} catch {}
 
             // Increment the for loop iterator.
             unchecked {
