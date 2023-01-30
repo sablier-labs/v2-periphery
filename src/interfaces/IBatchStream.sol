@@ -9,6 +9,9 @@ import { CreateLinear } from "../types/DataTypes.sol";
 import { CreatePro } from "../types/DataTypes.sol";
 
 interface IBatchStream {
+    /*//////////////////////////////////////////////////////////////////////////
+                                   CUSTOM ERRORS
+    //////////////////////////////////////////////////////////////////////////*/
     error BatchStream_TotalDepositAmountNotEqualToGrossDepositAmountsSum(
         uint128 totalDeposit,
         uint128 grossDepositAmountsSum
@@ -32,7 +35,7 @@ interface IBatchStream {
 
     /// @notice Creates multiple linear streams with range funded by `msg.sender`.
     function createWithRangeMultiple(
-        CreateLinear.RangeParams[] memory params,
+        CreateLinear.RangeParams[] calldata params,
         IERC20 asset,
         uint128 totalDepositAmount
     ) external returns (uint256[] memory streamIds);

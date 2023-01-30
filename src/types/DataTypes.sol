@@ -24,7 +24,6 @@ library CreatePro {
         address recipient;
         uint128 grossDepositAmount;
         LockupPro.Segment[] segments;
-        IERC20 asset;
         bool cancelable;
         uint40 startTime;
         Broker broker;
