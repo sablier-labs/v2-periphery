@@ -16,6 +16,13 @@ library Helpers {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev Helper function that transfers `value` funds from `msg.sender` to `address(this)`
+    /// and approves `value` to `spender`.
+    function transferAndApprove(address spender, IERC20 asset, uint256 value) external {
+        asset.safeTransferFrom({ from: msg.sender, to: address(this), value: value });
+        asset.safeApprove(spender, value);
+    }
+
     /// @dev Helper function that performs an external call on {ISablierV2LockupPro-createWithDeltas}
     /// with a try/catch statement so that it will never fail if it reverts.
     function tryCreateWithDeltas(
@@ -104,12 +111,5 @@ library Helpers {
         returns (uint256 _streamId) {
             streamId = _streamId;
         } catch {}
-    }
-
-    /// @dev Helper function that transfers `value` funds from `msg.sender` to `address(this)`
-    /// and approves `value` to `spender`.
-    function transferAndApprove(address spender, IERC20 asset, uint256 value) external {
-        asset.safeTransferFrom({ from: msg.sender, to: address(this), value: value });
-        asset.safeApprove(spender, value);
     }
 }

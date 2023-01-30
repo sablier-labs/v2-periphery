@@ -32,14 +32,14 @@ interface IBatchStream {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Creates multiple linear streams with range funded by `msg.sender`.
-    function createWithRangeMultiple(
-        CreateLinear.RangeParams[] calldata params,
+    /// @notice Creates multiple pro streams with deltas funded by `msg.sender`.
+    function createWithDeltasMultiple(
+        CreatePro.DeltasParams[] calldata params,
         IERC20 asset,
         uint128 totalDepositAmount
     ) external returns (uint256[] memory streamIds);
 
-    /// @notice Creates multiple linear streams with range funded by `msg.sender`.
+    /// @notice Creates multiple linear streams with durations funded by `msg.sender`.
     function createWithDurationsMultiple(
         CreateLinear.DurationsParams[] calldata params,
         IERC20 asset,
@@ -53,9 +53,9 @@ interface IBatchStream {
         uint128 totalDepositAmount
     ) external returns (uint256[] memory streamIds);
 
-    /// @notice Creates multiple pro streams with milestones funded by `msg.sender`.
-    function createWithDeltasMultiple(
-        CreatePro.DeltasParams[] calldata params,
+    /// @notice Creates multiple linear streams with range funded by `msg.sender`.
+    function createWithRangeMultiple(
+        CreateLinear.RangeParams[] calldata params,
         IERC20 asset,
         uint128 totalDepositAmount
     ) external returns (uint256[] memory streamIds);
