@@ -8,12 +8,12 @@ on:
   workflow_dispatch:
     inputs:
       linear:
-        default: "0x18E1f9acD6DE6b6C36b787D51Dd05B1499c0449b"
-        description: "Contract linear. Defaults to 0x0E10...d591"
+        default: "0x61522D95Ef97a98Faccd53b7f67C7132C0cbCBBd"
+        description: "Contract linear. Defaults to 0x6152...CBBd"
         required: false
       pro:
-        default: "0x18E1f9acD6DE6b6C36b787D51Dd05B1499c0449b"
-        description: "Contract pro. Defaults to 0x0E10...d591"
+        default: "0x80caf75e37D52Cae1ac19A7487dd2904EF77c3ef"
+        description: "Contract pro. Defaults to 0x80ca...c3ef"
         required: false
       chain:
         default: "goerli"
