@@ -3,7 +3,7 @@ pragma solidity ^0.8.17;
 
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
-import { Common } from "@sablier/v2-core/../script/Helpers/Common.s.sol";
+import { Common } from "core-scripts/Helpers/Common.s.sol";
 import { Script } from "forge-std/Script.sol";
 
 import { BatchStream } from "src/BatchStream.sol";

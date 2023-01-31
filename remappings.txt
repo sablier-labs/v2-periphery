@@ -1,4 +1,5 @@
 @openzeppelin/=lib/openzeppelin-contracts/contracts/
 @sablier/v2-core/=lib/v2-core/src/
 forge-std/=lib/forge-std/src/
+core-scripts=lib/v2-core/script/
 src/=src/
