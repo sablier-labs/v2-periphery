@@ -28,9 +28,3 @@ Then, add the following line to your `remappings.txt` file:
 ```text
 @sablier/v2-periphery/=lib/v2-periphery/src/
 ```
-
-### Hardhat
-
-```sh
-yarn add @sablier/v2-periphery
-```
