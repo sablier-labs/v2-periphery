@@ -37,6 +37,7 @@ interface IBatchStream {
     /// @param params The {SablierV2LockupPro-createWithDeltas} parameters packed in a struct.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
+    /// @return streamIds The ids of the newly created streams.
     function createWithDeltasMultiple(
         CreatePro.DeltasParams[] calldata params,
         IERC20 asset,
@@ -58,6 +59,7 @@ interface IBatchStream {
     /// @param params The {SablierV2LockupLinear-createWithDurations} parameters packed in a struct.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
+    /// @return streamIds The ids of the newly created streams.
     function createWithDurationsMultiple(
         CreateLinear.DurationsParams[] calldata params,
         IERC20 asset,
@@ -79,6 +81,7 @@ interface IBatchStream {
     /// @param params The {SablierV2LockupPro-createWithMilestones} parameters packed in a struct.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
+    /// @return streamIds The ids of the newly created streams.
     function createWithMilestonesMultiple(
         CreatePro.MilestonesParams[] calldata params,
         IERC20 asset,
@@ -100,6 +103,7 @@ interface IBatchStream {
     /// @param params The {SablierV2LockupLinear-createWithRange} parameters packed in a struct.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
+    /// @return streamIds The ids of the newly created streams.
     function createWithRangeMultiple(
         CreateLinear.RangeParams[] calldata params,
         IERC20 asset,
