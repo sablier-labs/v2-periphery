@@ -1,0 +1,48 @@
+name: "Deploy Batch"
+
+env:
+  ETHERSCAN_API_KEY: ${{ secrets.ETHERSCAN_API_KEY }}
+  INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
+  MNEMONIC: ${{ secrets.MNEMONIC }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      linear:
+        default: "0x18E1f9acD6DE6b6C36b787D51Dd05B1499c0449b"
+        description: "Contract linear. Defaults to 0x0E10...d591"
+        required: false
+      pro:
+        default: "0x18E1f9acD6DE6b6C36b787D51Dd05B1499c0449b"
+        description: "Contract pro. Defaults to 0x0E10...d591"
+        required: false
+      chain:
+        default: "goerli"
+        description: 'Chain name. Defaults to "goerli" if unspecified'
+        required: false
+
+jobs:
+  deploy-batch:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v3"
+        with:
+          submodules: "recursive"
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Deploy the BatchStream contract"
+        run: >-
+          forge script script/DeployBatchStream.s.sol
+          --broadcast
+          --rpc-url "${{ github.event.inputs.chain }}"
+          --sig "run(address,address)"
+          -vvvv
+          "${{ github.event.inputs.linear }}"
+          "${{ github.event.inputs.pro }}"
+      - name: "Add summary"
+        run: |
+          echo "## Deployment result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY

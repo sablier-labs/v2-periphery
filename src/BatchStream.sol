@@ -115,9 +115,6 @@ contract BatchStream is IBatchStream {
         IERC20 asset,
         uint128 totalDepositAmount
     ) external override returns (uint256[] memory streamIds) {
-        /* uint128[] memory grossDepositAmount = params[].grossDepositAmount;
-        // Checks: the total deposit amount is equal to the gross amounts summed up.
-        _checkTotalDepositAmount(grossDepositAmount, totalDepositAmount); */
         uint128 grossDepositAmountsSum;
         uint256 count = params.length;
         uint256 i;

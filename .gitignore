@@ -2,10 +2,14 @@
 .DS_Store
 
 # Foundry
-/cache
+**/broadcast
+**/cache
+**/out
 
 # Node
 /node_modules
 
-# Dapptools
-/out
+# files
+*.env
+*.html
+*.log
