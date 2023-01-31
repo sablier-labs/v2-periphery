@@ -9,7 +9,7 @@ library CreateLinear {
     struct DurationsParams {
         address sender;
         address recipient;
-        uint128 grossDepositAmount;
+        uint128 amount;
         bool cancelable;
         LockupLinear.Durations durations;
         Broker broker;
@@ -17,7 +17,7 @@ library CreateLinear {
     struct RangeParams {
         address sender;
         address recipient;
-        uint128 grossDepositAmount;
+        uint128 amount;
         bool cancelable;
         LockupLinear.Range range;
         Broker broker;
@@ -28,7 +28,7 @@ library CreatePro {
     struct DeltasParams {
         address sender;
         address recipient;
-        uint128 grossDepositAmount;
+        uint128 amount;
         LockupPro.Segment[] segments;
         bool cancelable;
         uint40[] deltas;
@@ -37,7 +37,7 @@ library CreatePro {
     struct MilestonesParams {
         address sender;
         address recipient;
-        uint128 grossDepositAmount;
+        uint128 amount;
         LockupPro.Segment[] segments;
         bool cancelable;
         uint40 startTime;

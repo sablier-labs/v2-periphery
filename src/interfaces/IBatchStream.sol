@@ -9,23 +9,13 @@ import { CreateLinear, CreatePro } from "../types/DataTypes.sol";
 
 interface IBatchStream {
     /*//////////////////////////////////////////////////////////////////////////
-                                   CUSTOM ERRORS
-    //////////////////////////////////////////////////////////////////////////*/
-    error BatchStream_TotalDepositAmountNotEqualToGrossDepositAmountsSum(
-        uint128 totalDeposit,
-        uint128 grossDepositAmountsSum
-    );
-
-    /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice The Sablier V2 Lockup Linear core contract.
-    /// @return The contract address.
+    /// @notice The address of the {SablierV2LockupLinear} core contract.
     function linear() external view returns (ISablierV2LockupLinear);
 
-    /// @notice The Sablier V2 Lockup Pro core contract.
-    /// @return The contract address.
+    /// @notice The address of the {SablierV2LockupPro} core contract.
     function pro() external view returns (ISablierV2LockupPro);
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -33,30 +23,86 @@ interface IBatchStream {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Creates multiple pro streams with deltas funded by `msg.sender`.
+    ///
+    /// @dev The function perform the {SablierV2LockupPro-createWithDeltas} external calls with a
+    /// with a try/catch statement so that it will never fail.
+    ///
+    /// Notes: We use an array of structs for the parameters to avoid the "Stack Too Deep" error.
+    ///
+    /// Requirements:
+    /// - `totalAmount` must not be zero.
+    /// - `params` must be non-empty.
+    /// - The params amounts summed up must be equal to the `totalAmount`.
+    ///
+    /// @param params The {SablierV2LockupPro-createWithDeltas} parameters packed in a struct.
+    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
     function createWithDeltasMultiple(
         CreatePro.DeltasParams[] calldata params,
         IERC20 asset,
-        uint128 totalDepositAmount
+        uint128 totalAmount
     ) external returns (uint256[] memory streamIds);
 
     /// @notice Creates multiple linear streams with durations funded by `msg.sender`.
+    ///
+    /// @dev The function perform the {SablierV2LockupLinear-createWithDurations} external calls with a
+    /// with a try/catch statement so that it will never fail.
+    ///
+    /// Notes: We use an array of structs for the parameters to avoid the "Stack Too Deep" error.
+    ///
+    /// Requirements:
+    /// - `totalAmount` must not be zero.
+    /// - `params` must be non-empty.
+    /// - The params amounts summed up must be equal to the `totalAmount`.
+    ///
+    /// @param params The {SablierV2LockupLinear-createWithDurations} parameters packed in a struct.
+    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
     function createWithDurationsMultiple(
         CreateLinear.DurationsParams[] calldata params,
         IERC20 asset,
-        uint128 totalDepositAmount
+        uint128 totalAmount
     ) external returns (uint256[] memory streamIds);
 
     /// @notice Creates multiple pro streams with milestones funded by `msg.sender`.
+    ///
+    /// @dev The function perform the {SablierV2LockupPro-createWithMilestones} external calls with a
+    /// with a try/catch statement so that it will never fail.
+    ///
+    /// Notes: We use an array of structs for the parameters to avoid the "Stack Too Deep" error.
+    ///
+    /// Requirements:
+    /// - `totalAmount` must not be zero.
+    /// - `params` must be non-empty.
+    /// - The params amounts summed up must be equal to the `totalAmount`.
+    ///
+    /// @param params The {SablierV2LockupPro-createWithMilestones} parameters packed in a struct.
+    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
     function createWithMilestonesMultiple(
         CreatePro.MilestonesParams[] calldata params,
         IERC20 asset,
-        uint128 totalDepositAmount
+        uint128 totalAmount
     ) external returns (uint256[] memory streamIds);
 
     /// @notice Creates multiple linear streams with range funded by `msg.sender`.
+    ///
+    /// @dev The function perform the {SablierV2LockupLinear-createWithRange} external calls with a
+    /// with a try/catch statement so that it will never fail.
+    ///
+    /// Notes: We use an array of structs for the parameters to avoid the "Stack Too Deep" error.
+    ///
+    /// Requirements:
+    /// - `totalAmount` must not be zero.
+    /// - `params` must be non-empty.
+    /// - The params amounts summed up must be equal to the `totalAmount`.
+    ///
+    /// @param params The {SablierV2LockupLinear-createWithRange} parameters packed in a struct.
+    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
     function createWithRangeMultiple(
         CreateLinear.RangeParams[] calldata params,
         IERC20 asset,
-        uint128 totalDepositAmount
+        uint128 totalAmount
     ) external returns (uint256[] memory streamIds);
 }

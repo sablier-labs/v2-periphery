@@ -24,6 +24,8 @@ contract BatchStream is IBatchStream {
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @param _linear The address of the Sablier v2 linear core contract.
+    /// @param _pro The address of the Sablier v2 pro core contract.
     constructor(ISablierV2LockupLinear _linear, ISablierV2LockupPro _pro) {
         linear = _linear;
         pro = _pro;
@@ -37,28 +39,25 @@ contract BatchStream is IBatchStream {
     function createWithDeltasMultiple(
         CreatePro.DeltasParams[] calldata params,
         IERC20 asset,
-        uint128 totalDepositAmount
+        uint128 totalAmount
     ) external override returns (uint256[] memory streamIds) {
-        uint128 grossDepositAmountsSum;
+        uint128 amountsSum;
         uint256 count = params.length;
         uint256 i;
 
+        // Calculate the params amounts summed up.
         for (i = 0; i < count; ) {
-            grossDepositAmountsSum += params[i].grossDepositAmount;
+            amountsSum += params[i].amount;
             unchecked {
                 i += 1;
             }
         }
 
-        if (grossDepositAmountsSum != totalDepositAmount) {
-            revert BatchStream_TotalDepositAmountNotEqualToGrossDepositAmountsSum(
-                totalDepositAmount,
-                grossDepositAmountsSum
-            );
-        }
+        // Checks: validate the arguments.
+        Helpers.checkCreateMultipleParams(count, totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
-        Helpers.transferAndApprove(address(pro), asset, totalDepositAmount);
+        Helpers.transferAndApprove(address(pro), asset, totalAmount);
 
         for (i = 0; i < count; ) {
             // Interactions: make the external call without reverting if it fails at a certain index.
@@ -75,28 +74,25 @@ contract BatchStream is IBatchStream {
     function createWithDurationsMultiple(
         CreateLinear.DurationsParams[] calldata params,
         IERC20 asset,
-        uint128 totalDepositAmount
-    ) external returns (uint256[] memory streamIds) {
-        uint128 grossDepositAmountsSum;
+        uint128 totalAmount
+    ) external override returns (uint256[] memory streamIds) {
+        uint128 amountsSum;
         uint256 count = params.length;
         uint256 i;
 
+        // Calculate the params amounts summed up.
         for (i = 0; i < count; ) {
-            grossDepositAmountsSum += params[i].grossDepositAmount;
+            amountsSum += params[i].amount;
             unchecked {
                 i += 1;
             }
         }
 
-        if (grossDepositAmountsSum != totalDepositAmount) {
-            revert BatchStream_TotalDepositAmountNotEqualToGrossDepositAmountsSum(
-                totalDepositAmount,
-                grossDepositAmountsSum
-            );
-        }
+        // Checks: validate the arguments.
+        Helpers.checkCreateMultipleParams(count, totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
-        Helpers.transferAndApprove(address(linear), asset, totalDepositAmount);
+        Helpers.transferAndApprove(address(linear), asset, totalAmount);
 
         for (i = 0; i < count; ) {
             // Interactions: make the external call without reverting if it fails at a certain index.
@@ -113,28 +109,25 @@ contract BatchStream is IBatchStream {
     function createWithMilestonesMultiple(
         CreatePro.MilestonesParams[] calldata params,
         IERC20 asset,
-        uint128 totalDepositAmount
+        uint128 totalAmount
     ) external override returns (uint256[] memory streamIds) {
-        uint128 grossDepositAmountsSum;
+        uint128 amountsSum;
         uint256 count = params.length;
         uint256 i;
 
+        // Calculate the params amounts summed up.
         for (i = 0; i < count; ) {
-            grossDepositAmountsSum += params[i].grossDepositAmount;
+            amountsSum += params[i].amount;
             unchecked {
                 i += 1;
             }
         }
 
-        if (grossDepositAmountsSum != totalDepositAmount) {
-            revert BatchStream_TotalDepositAmountNotEqualToGrossDepositAmountsSum(
-                totalDepositAmount,
-                grossDepositAmountsSum
-            );
-        }
+        // Checks: validate the arguments.
+        Helpers.checkCreateMultipleParams(count, totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
-        Helpers.transferAndApprove(address(pro), asset, totalDepositAmount);
+        Helpers.transferAndApprove(address(pro), asset, totalAmount);
 
         for (i = 0; i < count; ) {
             // Interactions: make the external call without reverting if it fails at a certain index.
@@ -151,30 +144,25 @@ contract BatchStream is IBatchStream {
     function createWithRangeMultiple(
         CreateLinear.RangeParams[] calldata params,
         IERC20 asset,
-        uint128 totalDepositAmount
+        uint128 totalAmount
     ) external override returns (uint256[] memory streamIds) {
-        uint128 grossDepositAmountsSum;
+        uint128 amountsSum;
         uint256 count = params.length;
         uint256 i;
 
+        // Calculate the params amounts summed up.
         for (i = 0; i < count; ) {
-            grossDepositAmountsSum += params[i].grossDepositAmount;
+            amountsSum += params[i].amount;
             unchecked {
                 i += 1;
             }
         }
 
-        if (grossDepositAmountsSum != totalDepositAmount) {
-            revert BatchStream_TotalDepositAmountNotEqualToGrossDepositAmountsSum(
-                totalDepositAmount,
-                grossDepositAmountsSum
-            );
-        }
+        // Checks: validate the arguments.
+        Helpers.checkCreateMultipleParams(count, totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
-        Helpers.transferAndApprove(address(linear), asset, totalDepositAmount);
-
-        // uint256 count = params.length;
+        Helpers.transferAndApprove(address(linear), asset, totalAmount);
 
         for (i = 0; i < count; ) {
             // Interactions: make the external call without reverting if it fails at a certain index.
@@ -184,29 +172,6 @@ contract BatchStream is IBatchStream {
             unchecked {
                 i += 1;
             }
-        }
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                            INTERNAL CONSTANT FUNCTIONS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @dev Checks that the total deposit amount is equal to the gross deposit amounts summed up.
-    function _checkTotalDepositAmount(uint128[] memory grossDepositAmount, uint128 totalDepositAmount) internal pure {
-        uint256 count = grossDepositAmount.length;
-        uint128 grossDepositAmountsSum;
-        for (uint256 i = 0; i < count; ) {
-            grossDepositAmountsSum += grossDepositAmount[i];
-            unchecked {
-                i += 1;
-            }
-        }
-
-        if (grossDepositAmountsSum != totalDepositAmount) {
-            revert BatchStream_TotalDepositAmountNotEqualToGrossDepositAmountsSum(
-                totalDepositAmount,
-                grossDepositAmountsSum
-            );
         }
     }
 }

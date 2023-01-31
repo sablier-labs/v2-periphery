@@ -6,6 +6,7 @@ import { SafeERC20 } from "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
 
+import { Errors } from "./Errors.sol";
 import { CreateLinear } from "../types/DataTypes.sol";
 import { CreatePro } from "../types/DataTypes.sol";
 
@@ -23,7 +24,7 @@ library Helpers {
         asset.safeApprove(spender, value);
     }
 
-    /// @dev Helper function that performs an external call on {ISablierV2LockupPro-createWithDeltas}
+    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}
     /// with a try/catch statement so that it will never fail if it reverts.
     function tryCreateWithDeltas(
         CreatePro.DeltasParams calldata params,
@@ -34,7 +35,7 @@ library Helpers {
             pro.createWithDeltas(
                 params.sender,
                 params.recipient,
-                params.grossDepositAmount,
+                params.amount,
                 params.segments,
                 asset,
                 params.cancelable,
@@ -46,7 +47,7 @@ library Helpers {
         } catch {}
     }
 
-    /// @dev Helper function that performs an external call on {ISablierV2LockupLinear-createWithDurations}
+    /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithDurations}
     /// with a try/catch statement so that it will never fail if it reverts.
     function tryCreateWithDurations(
         CreateLinear.DurationsParams calldata params,
@@ -57,7 +58,7 @@ library Helpers {
             linear.createWithDurations(
                 params.sender,
                 params.recipient,
-                params.grossDepositAmount,
+                params.amount,
                 asset,
                 params.cancelable,
                 params.durations,
@@ -68,7 +69,7 @@ library Helpers {
         } catch {}
     }
 
-    /// @dev Helper function that performs an external call on {ISablierV2LockupPro-createWithMilestones}
+    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithMilestones}
     /// with a try/catch statement so that it will never fail if it reverts.
     function tryCreateWithMilestones(
         CreatePro.MilestonesParams calldata params,
@@ -79,7 +80,7 @@ library Helpers {
             pro.createWithMilestones(
                 params.sender,
                 params.recipient,
-                params.grossDepositAmount,
+                params.amount,
                 params.segments,
                 asset,
                 params.cancelable,
@@ -91,7 +92,7 @@ library Helpers {
         } catch {}
     }
 
-    /// @dev Helper function that performs an external call on {ISablierV2LockupLinear-createWithRange}
+    /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithRange}
     /// with a try/catch statement so that it will never fail if it reverts.
     function tryCreateWithRange(
         CreateLinear.RangeParams calldata params,
@@ -102,7 +103,7 @@ library Helpers {
             linear.createWithRange(
                 params.sender,
                 params.recipient,
-                params.grossDepositAmount,
+                params.amount,
                 asset,
                 params.cancelable,
                 params.range,
@@ -111,5 +112,27 @@ library Helpers {
         returns (uint256 _streamId) {
             streamId = _streamId;
         } catch {}
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                            INTERNAL CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Checks the arguments of the {SablierV2LockupPro-_createWithRange} function.
+    function checkCreateMultipleParams(uint256 paramsCount, uint128 totalAmount, uint128 amountsSum) internal pure {
+        // Checks: the total amount is not zero.
+        if (totalAmount == 0) {
+            revert Errors.BatchStream_TotalAmountZero();
+        }
+
+        // Checks: the parameters count is not zero.
+        if (paramsCount == 0) {
+            revert Errors.BatchStream_ParamsCountZero();
+        }
+
+        /// Checks: the total amount is equal to the parameters amounts summed up.
+        if (amountsSum != totalAmount) {
+            revert Errors.BatchStream_TotalAmountNotEqualToAmountsSum(totalAmount, amountsSum);
+        }
     }
 }
