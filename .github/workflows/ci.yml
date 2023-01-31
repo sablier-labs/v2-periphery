@@ -1,15 +1,8 @@
 name: CI
 
 on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
-
-env:
-  FOUNDRY_PROFILE: ci
+  - push
+  - pull_request
 
 jobs:
   run-ci:
