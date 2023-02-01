@@ -10,10 +10,7 @@ import { BatchStream } from "src/BatchStream.sol";
 import { Common } from "./helpers/Common.s.sol";
 
 contract DeployBatchStream is Script, Common {
-    function run(
-        ISablierV2LockupLinear linear,
-        ISablierV2LockupPro pro
-    ) public broadcaster returns (BatchStream batch) {
-        batch = new BatchStream(linear, pro);
+    function run() public broadcaster returns (BatchStream batch) {
+        batch = new BatchStream();
     }
 }

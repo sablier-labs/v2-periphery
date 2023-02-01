@@ -11,32 +11,12 @@ import { CreateLinear, CreatePro } from "./types/DataTypes.sol";
 
 contract BatchStream is IBatchStream {
     /*//////////////////////////////////////////////////////////////////////////
-                                   PUBLIC STORAGE
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @inheritdoc IBatchStream
-    ISablierV2LockupLinear public immutable override linear;
-
-    /// @inheritdoc IBatchStream
-    ISablierV2LockupPro public immutable override pro;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                    CONSTRUCTOR
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @param _linear The address of the Sablier v2 linear core contract.
-    /// @param _pro The address of the Sablier v2 pro core contract.
-    constructor(ISablierV2LockupLinear _linear, ISablierV2LockupPro _pro) {
-        linear = _linear;
-        pro = _pro;
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc IBatchStream
     function createWithDeltasMultiple(
+        ISablierV2LockupPro pro,
         CreatePro.DeltasParams[] calldata params,
         IERC20 asset,
         uint128 totalAmount
@@ -61,7 +41,7 @@ contract BatchStream is IBatchStream {
 
         for (i = 0; i < count; ) {
             // Interactions: make the external call without reverting if it fails at a certain index.
-            streamIds[i] = Helpers.tryCreateWithDeltas(params[i], asset, pro);
+            streamIds[i] = Helpers.callCreateWithDeltas(params[i], asset, pro);
 
             // Increment the for loop iterator.
             unchecked {
@@ -72,6 +52,7 @@ contract BatchStream is IBatchStream {
 
     /// @inheritdoc IBatchStream
     function createWithDurationsMultiple(
+        ISablierV2LockupLinear linear,
         CreateLinear.DurationsParams[] calldata params,
         IERC20 asset,
         uint128 totalAmount
@@ -96,7 +77,7 @@ contract BatchStream is IBatchStream {
 
         for (i = 0; i < count; ) {
             // Interactions: make the external call without reverting if it fails at a certain index.
-            streamIds[i] = Helpers.tryCreateWithDurations(params[i], asset, linear);
+            streamIds[i] = Helpers.callCreateWithDurations(params[i], asset, linear);
 
             // Increment the for loop iterator.
             unchecked {
@@ -107,6 +88,7 @@ contract BatchStream is IBatchStream {
 
     /// @inheritdoc IBatchStream
     function createWithMilestonesMultiple(
+        ISablierV2LockupPro pro,
         CreatePro.MilestonesParams[] calldata params,
         IERC20 asset,
         uint128 totalAmount
@@ -131,7 +113,7 @@ contract BatchStream is IBatchStream {
 
         for (i = 0; i < count; ) {
             // Interactions: make the external call without reverting if it fails at a certain index.
-            streamIds[i] = Helpers.tryCreateWithMilestones(params[i], asset, pro);
+            streamIds[i] = Helpers.callCreateWithMilestones(params[i], asset, pro);
 
             // Increment the for loop iterator.
             unchecked {
@@ -142,6 +124,7 @@ contract BatchStream is IBatchStream {
 
     /// @inheritdoc IBatchStream
     function createWithRangeMultiple(
+        ISablierV2LockupLinear linear,
         CreateLinear.RangeParams[] calldata params,
         IERC20 asset,
         uint128 totalAmount
@@ -166,7 +149,7 @@ contract BatchStream is IBatchStream {
 
         for (i = 0; i < count; ) {
             // Interactions: make the external call without reverting if it fails at a certain index.
-            streamIds[i] = Helpers.tryCreateWithRange(params[i], asset, linear);
+            streamIds[i] = Helpers.callCreateWithRange(params[i], asset, linear);
 
             // Increment the for loop iterator.
             unchecked {

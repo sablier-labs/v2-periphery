@@ -24,94 +24,74 @@ library Helpers {
         asset.safeApprove(spender, value);
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}
-    /// with a try/catch statement so that it will never fail if it reverts.
-    function tryCreateWithDeltas(
+    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}.
+    function callCreateWithDeltas(
         CreatePro.DeltasParams calldata params,
         IERC20 asset,
         ISablierV2LockupPro pro
     ) external returns (uint256 streamId) {
-        try
-            pro.createWithDeltas(
-                params.sender,
-                params.recipient,
-                params.amount,
-                params.segments,
-                asset,
-                params.cancelable,
-                params.deltas,
-                params.broker
-            )
-        returns (uint256 _streamId) {
-            streamId = _streamId;
-        } catch {}
+        streamId = pro.createWithDeltas(
+            params.sender,
+            params.recipient,
+            params.amount,
+            params.segments,
+            asset,
+            params.cancelable,
+            params.deltas,
+            params.broker
+        );
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithDurations}
-    /// with a try/catch statement so that it will never fail if it reverts.
-    function tryCreateWithDurations(
+    /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithDurations}.
+    function callCreateWithDurations(
         CreateLinear.DurationsParams calldata params,
         IERC20 asset,
         ISablierV2LockupLinear linear
     ) external returns (uint256 streamId) {
-        try
-            linear.createWithDurations(
-                params.sender,
-                params.recipient,
-                params.amount,
-                asset,
-                params.cancelable,
-                params.durations,
-                params.broker
-            )
-        returns (uint256 _streamId) {
-            streamId = _streamId;
-        } catch {}
+        streamId = linear.createWithDurations(
+            params.sender,
+            params.recipient,
+            params.amount,
+            asset,
+            params.cancelable,
+            params.durations,
+            params.broker
+        );
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithMilestones}
-    /// with a try/catch statement so that it will never fail if it reverts.
-    function tryCreateWithMilestones(
+    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithMilestones}.
+    function callCreateWithMilestones(
         CreatePro.MilestonesParams calldata params,
         IERC20 asset,
         ISablierV2LockupPro pro
     ) external returns (uint256 streamId) {
-        try
-            pro.createWithMilestones(
-                params.sender,
-                params.recipient,
-                params.amount,
-                params.segments,
-                asset,
-                params.cancelable,
-                params.startTime,
-                params.broker
-            )
-        returns (uint256 _streamId) {
-            streamId = _streamId;
-        } catch {}
+        streamId = pro.createWithMilestones(
+            params.sender,
+            params.recipient,
+            params.amount,
+            params.segments,
+            asset,
+            params.cancelable,
+            params.startTime,
+            params.broker
+        );
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithRange}
-    /// with a try/catch statement so that it will never fail if it reverts.
-    function tryCreateWithRange(
+    /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithRange}.
+    function callCreateWithRange(
         CreateLinear.RangeParams calldata params,
         IERC20 asset,
         ISablierV2LockupLinear linear
     ) external returns (uint256 streamId) {
-        try
-            linear.createWithRange(
-                params.sender,
-                params.recipient,
-                params.amount,
-                asset,
-                params.cancelable,
-                params.range,
-                params.broker
-            )
-        returns (uint256 _streamId) {
-            streamId = _streamId;
-        } catch {}
+        streamId = linear.createWithRange(
+            params.sender,
+            params.recipient,
+            params.amount,
+            asset,
+            params.cancelable,
+            params.range,
+            params.broker
+        );
     }
 
     /*//////////////////////////////////////////////////////////////////////////
