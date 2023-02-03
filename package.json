@@ -3,8 +3,8 @@
   "description": "Peripheral smart contracts for interacting with Sablier V2 Core",
   "version": "1.0.0",
   "author": {
-    "name": "Andrei Vlad Birgaoanu",
-    "url": "https://github.com/andreivladbrg"
+    "name": "Sablier Labs Ltd.",
+    "url": "https://sablier.com"
   },
   "devDependencies": {
     "prettier": "^2.8.1",
