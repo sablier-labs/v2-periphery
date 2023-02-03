@@ -7,8 +7,7 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
 
 import { Errors } from "./Errors.sol";
-import { CreateLinear } from "../types/DataTypes.sol";
-import { CreatePro } from "../types/DataTypes.sol";
+import { CreateLinear, CreatePro } from "../types/DataTypes.sol";
 
 library Helpers {
     using SafeERC20 for IERC20;
