@@ -7,40 +7,42 @@ import { Broker, LockupPro, LockupLinear } from "@sablier/v2-core/types/DataType
 
 library CreateLinear {
     struct DurationsParams {
-        address sender;
-        address recipient;
         uint128 amount;
+        Broker broker;
         bool cancelable;
         LockupLinear.Durations durations;
-        Broker broker;
-    }
-    struct RangeParams {
-        address sender;
         address recipient;
+        address sender;
+    }
+
+    struct RangeParams {
         uint128 amount;
+        Broker broker;
         bool cancelable;
         LockupLinear.Range range;
-        Broker broker;
+        address recipient;
+        address sender;
     }
 }
 
 library CreatePro {
     struct DeltasParams {
-        address sender;
-        address recipient;
         uint128 amount;
-        LockupPro.Segment[] segments;
+        Broker broker;
         bool cancelable;
         uint40[] deltas;
-        Broker broker;
-    }
-    struct MilestonesParams {
-        address sender;
         address recipient;
-        uint128 amount;
         LockupPro.Segment[] segments;
-        bool cancelable;
-        uint40 startTime;
+        address sender;
+    }
+
+    struct MilestonesParams {
+        uint128 amount;
         Broker broker;
+        bool cancelable;
+        address recipient;
+        LockupPro.Segment[] segments;
+        address sender;
+        uint40 startTime;
     }
 }
