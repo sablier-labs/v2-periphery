@@ -97,7 +97,7 @@ library Helpers {
                             INTERNAL CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Checks the arguments of the {SablierV2LockupPro-_createWithRange} function.
+    /// @dev Checks the arguments of the create multiple functions.
     function checkCreateMultipleParams(uint256 paramsCount, uint128 totalAmount, uint128 amountsSum) internal pure {
         // Checks: the total amount is not zero.
         if (totalAmount == 0) {
