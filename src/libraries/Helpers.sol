@@ -18,7 +18,7 @@ library Helpers {
 
     /// @dev Helper function that transfers `value` funds from `msg.sender` to `address(this)`
     /// and approves `value` to `spender`.
-    function transferAndApprove(address spender, IERC20 asset, uint256 value) external {
+    function transferAndApprove(address spender, IERC20 asset, uint256 value) internal {
         asset.safeTransferFrom({ from: msg.sender, to: address(this), value: value });
         asset.safeApprove(spender, value);
     }
