@@ -40,7 +40,7 @@ contract BatchStream is IBatchStream {
         Helpers.transferAndApprove(address(pro), asset, totalAmount);
 
         for (i = 0; i < count; ) {
-            // Interactions: make the external call without reverting if it fails at a certain index.
+            // Interactions: make the external call.
             streamIds[i] = Helpers.callCreateWithDeltas(params[i], asset, pro);
 
             // Increment the for loop iterator.
@@ -76,7 +76,7 @@ contract BatchStream is IBatchStream {
         Helpers.transferAndApprove(address(linear), asset, totalAmount);
 
         for (i = 0; i < count; ) {
-            // Interactions: make the external call without reverting if it fails at a certain index.
+            // Interactions: make the external call.
             streamIds[i] = Helpers.callCreateWithDurations(params[i], asset, linear);
 
             // Increment the for loop iterator.
@@ -112,7 +112,7 @@ contract BatchStream is IBatchStream {
         Helpers.transferAndApprove(address(pro), asset, totalAmount);
 
         for (i = 0; i < count; ) {
-            // Interactions: make the external call without reverting if it fails at a certain index.
+            // Interactions: make the external call.
             streamIds[i] = Helpers.callCreateWithMilestones(params[i], asset, pro);
 
             // Increment the for loop iterator.
@@ -148,7 +148,7 @@ contract BatchStream is IBatchStream {
         Helpers.transferAndApprove(address(linear), asset, totalAmount);
 
         for (i = 0; i < count; ) {
-            // Interactions: make the external call without reverting if it fails at a certain index.
+            // Interactions: make the external call.
             streamIds[i] = Helpers.callCreateWithRange(params[i], asset, linear);
 
             // Increment the for loop iterator.
