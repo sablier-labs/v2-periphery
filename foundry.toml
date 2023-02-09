@@ -6,7 +6,7 @@ bytecode_hash = "none"
 gas_reports = ["*"]
 optimizer = true
 optimizer_runs = 10_000
-solc = "0.8.17"
+solc = "0.8.18"
 
 [profile.ci]
 fuzz_runs = 10_000
