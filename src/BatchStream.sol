@@ -39,15 +39,19 @@ contract BatchStream is IBatchStream {
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
         Helpers.transferAndApprove(address(pro), asset, totalAmount);
 
+        // To avoid "Index out of bounds error"
+        uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            streamIds[i] = Helpers.callCreateWithDeltas(params[i], asset, pro);
+            _streamIds[i] = Helpers.callCreateWithDeltas(params[i], asset, pro);
 
             // Increment the for loop iterator.
             unchecked {
                 i += 1;
             }
         }
+
+        streamIds = _streamIds;
     }
 
     /// @inheritdoc IBatchStream
@@ -75,15 +79,19 @@ contract BatchStream is IBatchStream {
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
         Helpers.transferAndApprove(address(linear), asset, totalAmount);
 
+        // To avoid "Index out of bounds error"
+        uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            streamIds[i] = Helpers.callCreateWithDurations(params[i], asset, linear);
+            _streamIds[i] = Helpers.callCreateWithDurations(params[i], asset, linear);
 
             // Increment the for loop iterator.
             unchecked {
                 i += 1;
             }
         }
+
+        streamIds = _streamIds;
     }
 
     /// @inheritdoc IBatchStream
@@ -111,15 +119,19 @@ contract BatchStream is IBatchStream {
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
         Helpers.transferAndApprove(address(pro), asset, totalAmount);
 
+        // To avoid "Index out of bounds error"
+        uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            streamIds[i] = Helpers.callCreateWithMilestones(params[i], asset, pro);
+            _streamIds[i] = Helpers.callCreateWithMilestones(params[i], asset, pro);
 
             // Increment the for loop iterator.
             unchecked {
                 i += 1;
             }
         }
+
+        streamIds = _streamIds;
     }
 
     /// @inheritdoc IBatchStream
@@ -147,14 +159,18 @@ contract BatchStream is IBatchStream {
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
         Helpers.transferAndApprove(address(linear), asset, totalAmount);
 
+        // To avoid "Index out of bounds error"
+        uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            streamIds[i] = Helpers.callCreateWithRange(params[i], asset, linear);
+            _streamIds[i] = Helpers.callCreateWithRange(params[i], asset, linear);
 
             // Increment the for loop iterator.
             unchecked {
                 i += 1;
             }
         }
+
+        streamIds = _streamIds;
     }
 }
