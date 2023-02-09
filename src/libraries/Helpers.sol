@@ -13,7 +13,7 @@ library Helpers {
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
-                               NON-CONSTANT FUNCTIONS
+                          INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Helper function that transfers `value` funds from `msg.sender` to `address(this)`
@@ -28,7 +28,7 @@ library Helpers {
         CreatePro.DeltasParams calldata params,
         IERC20 asset,
         ISablierV2LockupPro pro
-    ) external returns (uint256 streamId) {
+    ) internal returns (uint256 streamId) {
         streamId = pro.createWithDeltas(
             params.sender,
             params.recipient,
@@ -46,7 +46,7 @@ library Helpers {
         CreateLinear.DurationsParams calldata params,
         IERC20 asset,
         ISablierV2LockupLinear linear
-    ) external returns (uint256 streamId) {
+    ) internal returns (uint256 streamId) {
         streamId = linear.createWithDurations(
             params.sender,
             params.recipient,
@@ -63,7 +63,7 @@ library Helpers {
         CreatePro.MilestonesParams calldata params,
         IERC20 asset,
         ISablierV2LockupPro pro
-    ) external returns (uint256 streamId) {
+    ) internal returns (uint256 streamId) {
         streamId = pro.createWithMilestones(
             params.sender,
             params.recipient,
@@ -81,7 +81,7 @@ library Helpers {
         CreateLinear.RangeParams calldata params,
         IERC20 asset,
         ISablierV2LockupLinear linear
-    ) external returns (uint256 streamId) {
+    ) internal returns (uint256 streamId) {
         streamId = linear.createWithRange(
             params.sender,
             params.recipient,
