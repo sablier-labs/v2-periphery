@@ -28,6 +28,24 @@ jobs:
           forge --version
           forge build --sizes
 
+      - name: "Cache the build so that it can be re-used by the other jobs"
+        uses: "actions/cache/save@v3"
+        with:
+          path: "out"
+          key: "foundry-build-${{ github.sha }}"
+
+      - name: "Store contract ABIs as artifacts in GitHub Actions"
+        uses: "actions/upload-artifact@v3"
+        with:
+          name: contract-abis
+          path: |
+            out/BatchStream.sol/BatchStream.json
+            out/IBatchStream.sol/IBatchStream.json
+            out/DataTypes.sol/CreateLinear.json
+            out/DataTypes.sol/CreatePro.json
+            out/Errors.sol/Errors.json
+            out/Helpers.sol/Helpers.json
+
       - name: Run tests
         run: forge test
 
