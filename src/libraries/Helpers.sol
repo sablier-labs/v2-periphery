@@ -20,7 +20,7 @@ library Helpers {
     /// and approves `value` to `spender`.
     function transferAndApprove(address spender, IERC20 asset, uint256 value) internal {
         asset.safeTransferFrom({ from: msg.sender, to: address(this), value: value });
-        asset.safeApprove(spender, value);
+        asset.approve(spender, value);
     }
 
     /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}.
