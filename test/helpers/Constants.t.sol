@@ -9,27 +9,6 @@ import { CreateLinear, CreatePro } from "src/types/DataTypes.sol";
 
 abstract contract Constants {
     /*//////////////////////////////////////////////////////////////////////////
-                                  INTERNAL STORAGE
-    //////////////////////////////////////////////////////////////////////////*/
-
-    struct Users {
-        // Default admin of all Sablier V2 contracts.
-        address payable admin;
-        // Neutral user.
-        address payable alice;
-        // Default stream broker.
-        address payable broker;
-        // Malicious user.
-        address payable eve;
-        // Default stream recipient.
-        address payable recipient;
-        // Default stream sender.
-        address payable sender;
-    }
-
-    Users internal users;
-
-    /*//////////////////////////////////////////////////////////////////////////
                                   SIMPLE CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
