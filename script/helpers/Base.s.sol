@@ -3,7 +3,7 @@ pragma solidity >=0.8.18 <0.9.0;
 
 import { Script } from "forge-std/Script.sol";
 
-abstract contract Common is Script {
+abstract contract Base_Script is Script {
     bytes32 internal constant ZERO_SALT = bytes32(0);
     address internal deployer;
 
