@@ -69,19 +69,22 @@ abstract contract Base_Test is PRBTest, StdCheats, Utils {
                           NON-CONSTANT INTERNAL FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /*     function createWithDeltasMultipleDefault() internal returns (uint256[] memory streamIds) {
+    /// @dev Creates default streams.
+    function createWithDeltasMultipleDefault() internal returns (uint256[] memory streamIds) {
         streamIds = batch.createWithDeltasMultiple(pro, defaultDeltasParams(), asset, DEFAULT_TOTAL_AMOUNT);
     }
-    */
 
+    /// @dev Creates default streams.
     function createWithDurationsMultipleDefault() internal returns (uint256[] memory streamIds) {
         streamIds = batch.createWithDurationsMultiple(linear, defaultDurationsParams(), asset, DEFAULT_TOTAL_AMOUNT);
     }
 
+    /// @dev Creates default streams.
     function createWithMilestonesMultipleDefault() internal returns (uint256[] memory streamIds) {
         streamIds = batch.createWithMilestonesMultiple(pro, defaultMilestonesParams(), asset, DEFAULT_TOTAL_AMOUNT);
     }
 
+    /// @dev Creates default streams.
     function createWithRangeMultipleDefault() internal returns (uint256[] memory streamIds) {
         streamIds = batch.createWithRangeMultiple(linear, defaultRangeParams(), asset, DEFAULT_TOTAL_AMOUNT);
     }

@@ -56,7 +56,6 @@ abstract contract Constants {
                                  COMPLEX CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    Lockup.Amounts internal DEFAULT_LOCKUP_AMOUNTS = Lockup.Amounts({ deposit: DEFAULT_AMOUNT, withdrawn: 0 });
     LockupLinear.Durations internal DEFAULT_DURATIONS =
         LockupLinear.Durations({ cliff: DEFAULT_CLIFF_DURATION, total: DEFAULT_TOTAL_DURATION });
     LockupLinear.Range internal DEFAULT_LINEAR_RANGE;
