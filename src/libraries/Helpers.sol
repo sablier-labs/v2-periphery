@@ -13,6 +13,28 @@ library Helpers {
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
+                            INTERNAL CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Checks the arguments of the create multiple functions.
+    function checkCreateMultipleParams(uint256 paramsCount, uint128 totalAmount, uint128 amountsSum) internal pure {
+        // Checks: the total amount is not zero.
+        if (totalAmount == 0) {
+            revert Errors.BatchStream_TotalAmountZero();
+        }
+
+        // Checks: the parameters count is not zero.
+        if (paramsCount == 0) {
+            revert Errors.BatchStream_ParamsCountZero();
+        }
+
+        /// Checks: the total amount is equal to the parameters amounts summed up.
+        if (amountsSum != totalAmount) {
+            revert Errors.BatchStream_TotalAmountNotEqualToAmountsSum(totalAmount, amountsSum);
+        }
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -91,27 +113,5 @@ library Helpers {
             params.range,
             params.broker
         );
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                            INTERNAL CONSTANT FUNCTIONS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @dev Checks the arguments of the create multiple functions.
-    function checkCreateMultipleParams(uint256 paramsCount, uint128 totalAmount, uint128 amountsSum) internal pure {
-        // Checks: the total amount is not zero.
-        if (totalAmount == 0) {
-            revert Errors.BatchStream_TotalAmountZero();
-        }
-
-        // Checks: the parameters count is not zero.
-        if (paramsCount == 0) {
-            revert Errors.BatchStream_ParamsCountZero();
-        }
-
-        /// Checks: the total amount is equal to the parameters amounts summed up.
-        if (amountsSum != totalAmount) {
-            revert Errors.BatchStream_TotalAmountNotEqualToAmountsSum(totalAmount, amountsSum);
-        }
     }
 }
