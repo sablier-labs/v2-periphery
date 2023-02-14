@@ -14,38 +14,48 @@ import { SablierV2LockupPro } from "@sablier/v2-core/SablierV2LockupPro.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { BatchStream } from "src/BatchStream.sol";
-import { IBatchStream } from "src/interfaces/IBatchStream.sol";
 
-import { Utils } from "./helpers/Utils.t.sol";
+import { Constants } from "./helpers/Constants.t.sol";
 
 /// @title Base_Test
 /// @notice Base test contract with common logic needed by all test contracts.
-abstract contract Base_Test is PRBTest, StdCheats, Utils {
+abstract contract Base_Test is Constants, PRBTest, StdCheats {
     /*//////////////////////////////////////////////////////////////////////////
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
     IERC20 internal asset;
-    IBatchStream internal batch;
+    BatchStream internal batch;
     ISablierV2Comptroller internal comptroller;
     ISablierV2LockupLinear internal linear;
     ISablierV2LockupPro internal pro;
 
     /*//////////////////////////////////////////////////////////////////////////
-                                  SET-UP FUNCTION
+                                  INTERNAL STORAGE
     //////////////////////////////////////////////////////////////////////////*/
 
-    function setUp() public virtual {
-        // Create users for testing.
-        users = Users({
-            admin: createUser("Admin"),
-            alice: createUser("Alice"),
-            broker: createUser("Broker"),
-            eve: createUser("Eve"),
-            recipient: createUser("Recipient"),
-            sender: createUser("Sender")
-        });
+    struct Users {
+        // Default admin of all Sablier V2 contracts.
+        address payable admin;
+        // Neutral user.
+        address payable alice;
+        // Default stream broker.
+        address payable broker;
+        // Malicious user.
+        address payable eve;
+        // Default stream recipient.
+        address payable recipient;
+        // Default stream sender.
+        address payable sender;
+    }
 
+    Users internal users;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    constructor() {
         // Deploy the asset to use for testing.
         asset = new ERC20("Asset Coin", "Asset");
 
@@ -66,27 +76,37 @@ abstract contract Base_Test is PRBTest, StdCheats, Utils {
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                          NON-CONSTANT INTERNAL FUNCTIONS
+                                  SET-UP FUNCTION
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Creates default streams.
-    function createWithDeltasMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = batch.createWithDeltasMultiple(pro, defaultDeltasParams(), asset, DEFAULT_TOTAL_AMOUNT);
+    function setUp() public virtual {
+        // Create users for testing.
+        users = Users({
+            admin: createUser("Admin"),
+            alice: createUser("Alice"),
+            broker: createUser("Broker"),
+            eve: createUser("Eve"),
+            recipient: createUser("Recipient"),
+            sender: createUser("Sender")
+        });
     }
 
-    /// @dev Creates default streams.
-    function createWithDurationsMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = batch.createWithDurationsMultiple(linear, defaultDurationsParams(), asset, DEFAULT_TOTAL_AMOUNT);
-    }
+    /*//////////////////////////////////////////////////////////////////////////
+                          INTERNAL NON-CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Creates default streams.
-    function createWithMilestonesMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = batch.createWithMilestonesMultiple(pro, defaultMilestonesParams(), asset, DEFAULT_TOTAL_AMOUNT);
-    }
+    function approveBatch() internal {
+        changePrank({ msgSender: users.alice });
+        asset.approve({ spender: address(batch), amount: UINT256_MAX });
 
-    /// @dev Creates default streams.
-    function createWithRangeMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = batch.createWithRangeMultiple(linear, defaultRangeParams(), asset, DEFAULT_TOTAL_AMOUNT);
+        changePrank({ msgSender: users.eve });
+        asset.approve({ spender: address(batch), amount: UINT256_MAX });
+
+        changePrank({ msgSender: users.recipient });
+        asset.approve({ spender: address(batch), amount: UINT256_MAX });
+
+        changePrank({ msgSender: users.sender });
+        asset.approve({ spender: address(batch), amount: UINT256_MAX });
     }
 
     /// @dev Generates an address by hashing the name, labels the address and funds it with 100 ETH, 1 million assets,
