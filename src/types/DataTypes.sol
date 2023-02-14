@@ -28,9 +28,8 @@ library CreatePro {
         uint128 amount;
         Broker broker;
         bool cancelable;
-        uint40[] deltas;
         address recipient;
-        LockupPro.Segment[] segments;
+        LockupPro.SegmentWithDelta[] segments;
         address sender;
     }
 

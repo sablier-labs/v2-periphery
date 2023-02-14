@@ -28,7 +28,7 @@ contract Utils is Constants {
         for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
             params[i] = CreateLinear.DurationsParams({
                 amount: DEFAULT_AMOUNT,
-                broker: Broker({ addr: users.broker, fee: DEFAULT_BROKER_FEE }),
+                broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),
                 cancelable: true,
                 durations: DEFAULT_DURATIONS,
                 recipient: users.recipient,
@@ -45,7 +45,7 @@ contract Utils is Constants {
         for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
             params[i] = CreatePro.MilestonesParams({
                 amount: DEFAULT_AMOUNT,
-                broker: Broker({ addr: users.broker, fee: DEFAULT_BROKER_FEE }),
+                broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),
                 cancelable: true,
                 recipient: users.recipient,
                 segments: defaultSegments(),
@@ -64,7 +64,7 @@ contract Utils is Constants {
         for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
             params[i] = CreateLinear.RangeParams({
                 amount: DEFAULT_AMOUNT,
-                broker: Broker({ addr: users.broker, fee: DEFAULT_BROKER_FEE }),
+                broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),
                 cancelable: true,
                 range: DEFAULT_LINEAR_RANGE,
                 recipient: users.recipient,

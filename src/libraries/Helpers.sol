@@ -55,10 +55,9 @@ library Helpers {
             params.sender,
             params.recipient,
             params.amount,
-            params.segments,
             asset,
             params.cancelable,
-            params.deltas,
+            params.segments,
             params.broker
         );
     }
@@ -90,9 +89,9 @@ library Helpers {
             params.sender,
             params.recipient,
             params.amount,
-            params.segments,
             asset,
             params.cancelable,
+            params.segments,
             params.startTime,
             params.broker
         );
