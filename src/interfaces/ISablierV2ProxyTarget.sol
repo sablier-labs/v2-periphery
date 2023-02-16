@@ -31,6 +31,15 @@ interface ISablierV2ProxyTarget {
     /// @param lockup The sablier v2 contract.
     function cancelMultiple(ISablierV2Lockup lockup, uint256[] calldata streamIds) external;
 
+    /// @notice Target function to renounce a stream.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-renounce} for documentation.
+    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    ///
+    /// @param lockup The sablier v2 contract.
+    function renounce(ISablierV2Lockup lockup, uint256 streamId) external;
+
     /// @notice Target function to withdraw assets.
     ///
     /// Notes:
@@ -48,15 +57,6 @@ interface ISablierV2ProxyTarget {
     ///
     /// @param lockup The sablier v2 contract.
     function withdrawMax(ISablierV2Lockup lockup, uint256 streamId, address to) external;
-
-    /// @notice Target function to renounce a stream.
-    ///
-    /// Notes:
-    /// - See {ISablierV2Lockup-renounce} for documentation.
-    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
-    ///
-    /// @param lockup The sablier v2 contract.
-    function renounce(ISablierV2Lockup lockup, uint256 streamId) external;
 
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
