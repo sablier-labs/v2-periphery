@@ -39,7 +39,7 @@ abstract contract Constants {
         LockupLinear.Durations({ cliff: DEFAULT_CLIFF_DURATION, total: DEFAULT_TOTAL_DURATION });
     LockupLinear.Range internal DEFAULT_LINEAR_RANGE;
     LockupPro.Range internal DEFAULT_PRO_RANGE;
-    uint40[] internal DEFAULT_SEGMENT_DELTAS = [2_500 seconds, 7_500 seconds];
+    uint256[] internal DEFAULT_STREAM_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
