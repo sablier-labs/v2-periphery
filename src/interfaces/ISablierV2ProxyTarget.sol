@@ -2,12 +2,62 @@
 pragma solidity >=0.8.18;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
+import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
 
 import { CreateLinear, CreatePro } from "../types/DataTypes.sol";
 
 interface ISablierV2ProxyTarget {
+    /*//////////////////////////////////////////////////////////////////////////
+                                 SABLIER-V2-LOCKUP
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Target function to cancel a stream.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-cancel} for documentation.
+    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    ///
+    /// @param lockup The sablier v2 contract.
+    function cancel(ISablierV2Lockup lockup, uint256 streamId) external;
+
+    /// @notice Target function to cancel multiple streams.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-cancelMultiple} for documentation.
+    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    ///
+    /// @param lockup The sablier v2 contract.
+    function cancelMultiple(ISablierV2Lockup lockup, uint256[] calldata streamIds) external;
+
+    /// @notice Target function to withdraw assets.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-withdraw} for documentation.
+    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    ///
+    /// @param lockup The sablier v2 contract.
+    function withdraw(ISablierV2Lockup lockup, uint256 streamId, address to, uint128 amount) external;
+
+    /// @notice Target function to withdraw the maximum withdrawable amount.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-withdrawMax} for documentation.
+    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    ///
+    /// @param lockup The sablier v2 contract.
+    function withdrawMax(ISablierV2Lockup lockup, uint256 streamId, address to) external;
+
+    /// @notice Target function to renounce a stream.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-renounce} for documentation.
+    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    ///
+    /// @param lockup The sablier v2 contract.
+    function renounce(ISablierV2Lockup lockup, uint256 streamId) external;
+
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
