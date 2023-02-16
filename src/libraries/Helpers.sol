@@ -20,17 +20,17 @@ library Helpers {
     function checkCreateMultipleParams(uint256 paramsCount, uint128 totalAmount, uint128 amountsSum) internal pure {
         // Checks: the total amount is not zero.
         if (totalAmount == 0) {
-            revert Errors.BatchStream_TotalAmountZero();
+            revert Errors.SablierV2ProxyTarget_TotalAmountZero();
         }
 
         // Checks: the parameters count is not zero.
         if (paramsCount == 0) {
-            revert Errors.BatchStream_ParamsCountZero();
+            revert Errors.SablierV2ProxyTarget_ParamsCountZero();
         }
 
         /// Checks: the total amount is equal to the parameters amounts summed up.
         if (amountsSum != totalAmount) {
-            revert Errors.BatchStream_TotalAmountNotEqualToAmountsSum(totalAmount, amountsSum);
+            revert Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum(totalAmount, amountsSum);
         }
     }
 

@@ -1,4 +1,4 @@
-name: "Deploy Batch"
+name: "Deploy Sablier V2 Target"
 
 env:
   INFURA_API_KEY: ${{ secrets.INFURA_API_KEY }}
@@ -13,7 +13,7 @@ on:
         required: false
 
 jobs:
-  deploy-batch:
+  deploy-target:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
@@ -25,9 +25,9 @@ jobs:
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Deploy the BatchStream contract"
+      - name: "Deploy the SablierV2ProxyTarget contract"
         run: >-
-          forge script script/DeployBatchStream.s.sol
+          forge script script/DeploySablierV2ProxyTarget.s.sol
           --broadcast
           --rpc-url "${{ github.event.inputs.chain }}"
           --sig "run()"
