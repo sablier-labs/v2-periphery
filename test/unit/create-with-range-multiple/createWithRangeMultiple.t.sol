@@ -16,9 +16,9 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
     /// @dev it should revert.
     function test_RevertWhen_TotalAmountZero() external {
         uint128 totalAmountZero = 0;
-        // Expect a {BatchStream_TotalAmountZero} error.
-        vm.expectRevert(abi.encodeWithSelector(Errors.BatchStream_TotalAmountZero.selector));
-        batch.createWithRangeMultiple(linear, defaultRangeParams(), asset, totalAmountZero);
+        // Expect a {SablierV2ProxyTarget_TotalAmountZero} error.
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
+        target.createWithRangeMultiple(linear, defaultRangeParams(), asset, totalAmountZero);
     }
 
     modifier totalAmountNotZero() {
@@ -28,9 +28,9 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
     /// @dev it should revert.
     function test_RevertWhen_ParamsCountZero() external totalAmountNotZero {
         CreateLinear.RangeParams[] memory params;
-        // Expect a {BatchStream_ParamsCountZero} error.
-        vm.expectRevert(abi.encodeWithSelector(Errors.BatchStream_ParamsCountZero.selector));
-        batch.createWithRangeMultiple(linear, params, asset, DEFAULT_TOTAL_AMOUNT);
+        // Expect a {SablierV2ProxyTarget_ParamsCountZero} error.
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_ParamsCountZero.selector));
+        target.createWithRangeMultiple(linear, params, asset, DEFAULT_TOTAL_AMOUNT);
     }
 
     modifier paramsCountNotZero() {
@@ -40,15 +40,15 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
     /// @dev it should revert.
     function test_RevertWhen_TotalAmountNotEqualToAmountsSum() external totalAmountNotZero paramsCountNotZero {
         uint128 totalAmount = DEFAULT_TOTAL_AMOUNT - 1;
-        // Expect a {BatchStream_TotalAmountNotEqualToAmountsSum} error.
+        // Expect a {SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum} error.
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.BatchStream_TotalAmountNotEqualToAmountsSum.selector,
+                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector,
                 totalAmount,
                 DEFAULT_TOTAL_AMOUNT
             )
         );
-        batch.createWithRangeMultiple(linear, defaultRangeParams(), asset, totalAmount);
+        target.createWithRangeMultiple(linear, defaultRangeParams(), asset, totalAmount);
     }
 
     modifier totalAmountEqualToAmountsSum() {
@@ -58,10 +58,10 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
     function test_CreateWithRange() external totalAmountNotZero paramsCountNotZero totalAmountEqualToAmountsSum {
         uint256[] memory streamIds;
 
-        expectTransferFromCall(users.sender, address(batch), DEFAULT_TOTAL_AMOUNT);
-        expectTransferFromCallMutiple(address(batch), address(linear), DEFAULT_AMOUNT);
+        expectTransferFromCall(users.sender, address(target), DEFAULT_TOTAL_AMOUNT);
+        expectTransferFromCallMutiple(address(target), address(linear), DEFAULT_AMOUNT);
 
-        streamIds = batch.createWithRangeMultiple(linear, defaultRangeParams(), asset, DEFAULT_TOTAL_AMOUNT);
+        streamIds = target.createWithRangeMultiple(linear, defaultRangeParams(), asset, DEFAULT_TOTAL_AMOUNT);
 
         uint256 actualStreamIdsCount = streamIds.length;
         uint256 expectedStreamIdsCount = streamIds.length;

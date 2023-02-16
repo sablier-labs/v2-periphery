@@ -13,7 +13,7 @@ import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.so
 import { SablierV2LockupPro } from "@sablier/v2-core/SablierV2LockupPro.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
-import { BatchStream } from "src/BatchStream.sol";
+import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
 
 import { Constants } from "./helpers/Constants.t.sol";
 
@@ -25,10 +25,10 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     IERC20 internal asset;
-    BatchStream internal batch;
     ISablierV2Comptroller internal comptroller;
     ISablierV2LockupLinear internal linear;
     ISablierV2LockupPro internal pro;
+    SablierV2ProxyTarget internal target;
 
     /*//////////////////////////////////////////////////////////////////////////
                                   INTERNAL STORAGE
@@ -65,14 +65,14 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         pro = new SablierV2LockupPro(users.admin, comptroller, DEFAULT_MAX_FEE, DEFAULT_MAX_SEGMENT_COUNT);
 
         // Deploy the periphery contract.
-        batch = new BatchStream();
+        target = new SablierV2ProxyTarget();
 
         // Label all the contracts just deployed.
         vm.label({ account: address(asset), newLabel: "Asset" });
-        vm.label({ account: address(batch), newLabel: "Batch" });
         vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(linear), newLabel: "LockupLinear" });
         vm.label({ account: address(pro), newLabel: "LockupPro" });
+        vm.label({ account: address(target), newLabel: "target" });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -95,18 +95,20 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function approveBatch() internal {
+    /// @dev Helper function to approve the `SablierV2ProxyTarget` contract to spend ERC-20 assets from
+    /// the sender, recipient, Alice and Eve.
+    function approveTarget() internal {
         changePrank({ msgSender: users.alice });
-        asset.approve({ spender: address(batch), amount: UINT256_MAX });
+        asset.approve({ spender: address(target), amount: UINT256_MAX });
 
         changePrank({ msgSender: users.eve });
-        asset.approve({ spender: address(batch), amount: UINT256_MAX });
+        asset.approve({ spender: address(target), amount: UINT256_MAX });
 
         changePrank({ msgSender: users.recipient });
-        asset.approve({ spender: address(batch), amount: UINT256_MAX });
+        asset.approve({ spender: address(target), amount: UINT256_MAX });
 
         changePrank({ msgSender: users.sender });
-        asset.approve({ spender: address(batch), amount: UINT256_MAX });
+        asset.approve({ spender: address(target), amount: UINT256_MAX });
     }
 
     /// @dev Generates an address by hashing the name, labels the address and funds it with 100 ETH, 1 million assets,
@@ -123,6 +125,7 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         vm.expectCall(address(asset), abi.encodeCall(IERC20.transferFrom, (from, to, amount)));
     }
 
+    /// @dev Expects multiple calls to the `transfer` function of the default ERC-20 asset.
     function expectTransferFromCallMutiple(address from, address to, uint256 amount) internal {
         for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
             expectTransferFromCall(from, to, amount);

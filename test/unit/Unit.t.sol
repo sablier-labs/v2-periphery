@@ -16,7 +16,7 @@ contract Unit_Test is Base_Test {
     function setUp() public virtual override {
         Base_Test.setUp();
 
-        approveBatch();
+        approveTarget();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -130,21 +130,21 @@ contract Unit_Test is Base_Test {
 
     /// @dev Creates default deltas streams.
     function createWithDeltasMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = batch.createWithDeltasMultiple(pro, defaultDeltasParams(), asset, DEFAULT_TOTAL_AMOUNT);
+        streamIds = target.createWithDeltasMultiple(pro, defaultDeltasParams(), asset, DEFAULT_TOTAL_AMOUNT);
     }
 
     /// @dev Creates default durations streams.
     function createWithDurationsMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = batch.createWithDurationsMultiple(linear, defaultDurationsParams(), asset, DEFAULT_TOTAL_AMOUNT);
+        streamIds = target.createWithDurationsMultiple(linear, defaultDurationsParams(), asset, DEFAULT_TOTAL_AMOUNT);
     }
 
     /// @dev Creates default milestones streams.
     function createWithMilestonesMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = batch.createWithMilestonesMultiple(pro, defaultMilestonesParams(), asset, DEFAULT_TOTAL_AMOUNT);
+        streamIds = target.createWithMilestonesMultiple(pro, defaultMilestonesParams(), asset, DEFAULT_TOTAL_AMOUNT);
     }
 
     /// @dev Creates default range streams.
     function createWithRangeMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = batch.createWithRangeMultiple(linear, defaultRangeParams(), asset, DEFAULT_TOTAL_AMOUNT);
+        streamIds = target.createWithRangeMultiple(linear, defaultRangeParams(), asset, DEFAULT_TOTAL_AMOUNT);
     }
 }

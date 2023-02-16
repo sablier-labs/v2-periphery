@@ -39,8 +39,8 @@ jobs:
         with:
           name: contract-abis
           path: |
-            out/BatchStream.sol/BatchStream.json
-            out/IBatchStream.sol/IBatchStream.json
+            out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json
+            out/ISablierV2ProxyTarget.sol/ISablierV2ProxyTarget.json
             out/DataTypes.sol/CreateLinear.json
             out/DataTypes.sol/CreatePro.json
             out/Errors.sol/Errors.json
