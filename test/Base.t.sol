@@ -117,4 +117,15 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         vm.deal({ account: addr, newBalance: 100 ether });
         deal({ token: address(asset), to: addr, give: 1_000_000e18 });
     }
+
+    /// @dev Expects a call to the `transfer` function of the default ERC-20 asset.
+    function expectTransferFromCall(address from, address to, uint256 amount) internal {
+        vm.expectCall(address(asset), abi.encodeCall(IERC20.transferFrom, (from, to, amount)));
+    }
+
+    function expectTransferFromCallMutiple(address from, address to, uint256 amount) internal {
+        for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
+            expectTransferFromCall(from, to, amount);
+        }
+    }
 }
