@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-3.0
 pragma solidity >=0.8.18;
 
-import { Broker, LockupPro, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+import { Broker, LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
 library CreateLinear {
     /// @notice Struct that partially encapsulates the {SablierV2LockupLinear-createWithDurations} function parameters.
