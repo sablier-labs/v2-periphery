@@ -5,6 +5,7 @@ import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
+import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
 import { Helpers } from "./libraries/Helpers.sol";
@@ -43,6 +44,22 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function createWithDurations(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithDurations calldata params
+    ) external override returns (uint256 streamId) {
+        streamId = linear.createWithDurations(params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function createWithRange(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithRange calldata params
+    ) external override returns (uint256 streamId) {
+        streamId = linear.createWithRange(params);
+    }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithDurationsMultiple(
@@ -127,6 +144,22 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
                                SABLIER-V2-LOCKUP-PRO
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function createWithDelta(
+        ISablierV2LockupPro pro,
+        LockupPro.CreateWithDeltas calldata params
+    ) external override returns (uint256 streamId) {
+        streamId = pro.createWithDeltas(params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function createWithMilestones(
+        ISablierV2LockupPro pro,
+        LockupPro.CreateWithMilestones calldata params
+    ) external override returns (uint256 streamId) {
+        streamId = pro.createWithMilestones(params);
+    }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithDeltasMultiple(
