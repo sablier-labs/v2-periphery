@@ -5,6 +5,7 @@ import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
+import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Errors } from "./Errors.sol";
 import { CreateLinear, CreatePro } from "../types/DataTypes.sol";
@@ -52,13 +53,15 @@ library Helpers {
         ISablierV2LockupPro pro
     ) internal returns (uint256 streamId) {
         streamId = pro.createWithDeltas(
-            params.sender,
-            params.recipient,
-            params.amount,
-            asset,
-            params.cancelable,
-            params.segments,
-            params.broker
+            LockupPro.CreateWithDeltas({
+                asset: asset,
+                broker: params.broker,
+                cancelable: params.cancelable,
+                recipient: params.recipient,
+                segments: params.segments,
+                sender: params.sender,
+                totalAmount: params.amount
+            })
         );
     }
 
@@ -69,13 +72,15 @@ library Helpers {
         ISablierV2LockupLinear linear
     ) internal returns (uint256 streamId) {
         streamId = linear.createWithDurations(
-            params.sender,
-            params.recipient,
-            params.amount,
-            asset,
-            params.cancelable,
-            params.durations,
-            params.broker
+            LockupLinear.CreateWithDurations({
+                asset: asset,
+                broker: params.broker,
+                cancelable: params.cancelable,
+                durations: params.durations,
+                recipient: params.recipient,
+                sender: params.sender,
+                totalAmount: params.amount
+            })
         );
     }
 
@@ -86,14 +91,16 @@ library Helpers {
         ISablierV2LockupPro pro
     ) internal returns (uint256 streamId) {
         streamId = pro.createWithMilestones(
-            params.sender,
-            params.recipient,
-            params.amount,
-            asset,
-            params.cancelable,
-            params.segments,
-            params.startTime,
-            params.broker
+            LockupPro.CreateWithMilestones({
+                asset: asset,
+                broker: params.broker,
+                cancelable: params.cancelable,
+                recipient: params.recipient,
+                segments: params.segments,
+                sender: params.sender,
+                startTime: params.startTime,
+                totalAmount: params.amount
+            })
         );
     }
 
@@ -104,13 +111,15 @@ library Helpers {
         ISablierV2LockupLinear linear
     ) internal returns (uint256 streamId) {
         streamId = linear.createWithRange(
-            params.sender,
-            params.recipient,
-            params.amount,
-            asset,
-            params.cancelable,
-            params.range,
-            params.broker
+            LockupLinear.CreateWithRange({
+                asset: asset,
+                broker: params.broker,
+                cancelable: params.cancelable,
+                range: params.range,
+                recipient: params.recipient,
+                sender: params.sender,
+                totalAmount: params.amount
+            })
         );
     }
 }
