@@ -63,6 +63,36 @@ interface ISablierV2ProxyTarget {
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @notice Cancels a stream and creates a new one with durations.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupLinear-createWithDurations} for documentation.
+    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    ///
+    /// @param lockup The Sablier V2 contract.
+    /// @param linear The Sablier V2 linear contract.
+    function cancelAndCreateWithDurations(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupLinear linear,
+        uint256 streamId,
+        LockupLinear.CreateWithDurations calldata params
+    ) external returns (uint256 newStreamId);
+
+    /// @notice Cancels a stream and creates a new one with range.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupLinear-createWithRange} for documentation.
+    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    ///
+    /// @param lockup The Sablier V2 contract.
+    /// @param linear The Sablier V2 linear contract.
+    function cancelAndCreateWithRange(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupLinear linear,
+        uint256 streamId,
+        LockupLinear.CreateWithRange calldata params
+    ) external returns (uint256 newStreamId);
+
     /// @notice Target function to create a linear stream with durations.
     ///
     /// Notes
@@ -132,6 +162,34 @@ interface ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
                                SABLIER-V2-LOCKUP-PRO
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Cancels a stream and creates a new one with deltas.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupPro-createWithDeltas} for documentation.
+    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    ///
+    /// @param lockup The Sablier V2 contract.
+    function cancelAndCreateWithDeltas(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupPro pro,
+        uint256 streamId,
+        LockupPro.CreateWithDeltas calldata params
+    ) external returns (uint256 newStreamId);
+
+    /// @notice Cancels a stream and creates a new one with milestones.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupPro-createWithMilestones} for documentation.
+    /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    ///
+    /// @param lockup The Sablier V2 contract.
+    function cancelAndCreateWithMilestones(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupPro pro,
+        uint256 streamId,
+        LockupPro.CreateWithMilestones calldata params
+    ) external returns (uint256 newStreamId);
 
     /// @notice Target function to create a pro stream with deltas.
     ///
