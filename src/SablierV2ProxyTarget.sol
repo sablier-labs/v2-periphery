@@ -46,6 +46,28 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2ProxyTarget
+    function cancelAndCreateWithDurations(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupLinear linear,
+        uint256 streamId,
+        LockupLinear.CreateWithDurations calldata params
+    ) external override returns (uint256 newStreamId) {
+        lockup.cancel(streamId);
+        newStreamId = linear.createWithDurations(params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function cancelAndCreateWithRange(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupLinear linear,
+        uint256 streamId,
+        LockupLinear.CreateWithRange calldata params
+    ) external override returns (uint256 newStreamId) {
+        lockup.cancel(streamId);
+        newStreamId = linear.createWithRange(params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
     function createWithDurations(
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithDurations calldata params
@@ -144,6 +166,27 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
                                SABLIER-V2-LOCKUP-PRO
     //////////////////////////////////////////////////////////////////////////*/
+    /// @inheritdoc ISablierV2ProxyTarget
+    function cancelAndCreateWithDeltas(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupPro pro,
+        uint256 streamId,
+        LockupPro.CreateWithDeltas calldata params
+    ) external override returns (uint256 newStreamId) {
+        lockup.cancel(streamId);
+        newStreamId = pro.createWithDeltas(params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function cancelAndCreateWithMilestones(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupPro pro,
+        uint256 streamId,
+        LockupPro.CreateWithMilestones calldata params
+    ) external override returns (uint256 newStreamId) {
+        lockup.cancel(streamId);
+        newStreamId = pro.createWithMilestones(params);
+    }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithDelta(
