@@ -7,6 +7,7 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
 import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
+import { IWETH9 } from "./IWETH9.sol";
 import { CreateLinear, CreatePro } from "../types/DataTypes.sol";
 
 interface ISablierV2ProxyTarget {
@@ -159,6 +160,40 @@ interface ISablierV2ProxyTarget {
         uint128 totalAmount
     ) external returns (uint256[] memory streamIds);
 
+    /// @notice Wraps ETH into WETH9 and creates a linear stream with durations.
+    ///
+    /// Notes:
+    /// - See {ISablierV2LockupLinear-createWithDurations} for documentation.
+    ///
+    /// Requirements:
+    /// - `params.asset` must be the WETH9 contract address.
+    /// - `msg.value` must be equal to `params.totalAmount`.
+    ///
+    /// @param weth9 The WETH9 contract.
+    /// @param linear The Sablier V2 linear contract.
+    function wrapEtherAndCreateWithDurations(
+        IWETH9 weth9,
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithDurations calldata params
+    ) external payable returns (uint256 streamId);
+
+    /// @notice Wraps ETH into WETH9 and creates a linear stream with range.
+    ///
+    /// Notes:
+    /// - See {ISablierV2LockupLinear-createWithRange} for documentation.
+    ///
+    /// Requirements:
+    /// - `params.asset` must be the WETH9 contract address.
+    /// - `msg.value` must be equal to `params.totalAmount`.
+    ///
+    /// @param weth9 The WETH9 contract.
+    /// @param linear The Sablier V2 linear contract.
+    function wrapEtherAndCreateWithRange(
+        IWETH9 weth9,
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithRange calldata params
+    ) external payable returns (uint256 streamId);
+
     /*//////////////////////////////////////////////////////////////////////////
                                SABLIER-V2-LOCKUP-PRO
     //////////////////////////////////////////////////////////////////////////*/
@@ -256,4 +291,38 @@ interface ISablierV2ProxyTarget {
         IERC20 asset,
         uint128 totalAmount
     ) external returns (uint256[] memory streamIds);
+
+    /// @notice Wraps ETH into WETH9 and creates a pro stream with deltas.
+    ///
+    /// Notes:
+    /// - See {ISablierV2LockupPro-createWithDeltas} for documentation.
+    ///
+    /// Requirements:
+    /// - `params.asset` must be the WETH9 contract address.
+    /// - `msg.value` must be equal to `params.totalAmount`.
+    ///
+    /// @param weth9 The WETH9 contract.
+    /// @param pro The Sablier V2 pro contract.
+    function wrapEtherAndCreateWithDeltas(
+        IWETH9 weth9,
+        ISablierV2LockupPro pro,
+        LockupPro.CreateWithDeltas calldata params
+    ) external payable returns (uint256 streamId);
+
+    /// @notice Wraps ETH into WETH9 and creates a pro stream with milestones.
+    ///
+    /// Notes:
+    /// - See {ISablierV2LockupPro-createWithMilestones} for documentation.
+    ///
+    /// Requirements:
+    /// - `params.asset` must be the WETH9 contract address.
+    /// - `msg.value` must be equal to `params.totalAmount`.
+    ///
+    /// @param weth9 The WETH9 contract.
+    /// @param pro The Sablier V2 pro contract.
+    function wrapEtherAndCreateWithMilestones(
+        IWETH9 weth9,
+        ISablierV2LockupPro pro,
+        LockupPro.CreateWithMilestones calldata params
+    ) external payable returns (uint256 streamId);
 }
