@@ -8,6 +8,7 @@ import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2Locku
 import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Errors } from "./Errors.sol";
+import { IWETH9 } from "../interfaces/IWETH9.sol";
 import { CreateLinear, CreatePro } from "../types/DataTypes.sol";
 
 library Helpers {
@@ -39,11 +40,20 @@ library Helpers {
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function that transfers `value` funds from `msg.sender` to `address(this)`
-    /// and approves `value` to `spender`.
-    function transferAndApprove(address spender, IERC20 asset, uint256 value) internal {
-        asset.safeTransferFrom({ from: msg.sender, to: address(this), value: value });
-        asset.approve(spender, value);
+    /// @dev Checks the parameters and deposits the Ether into the WETH9 contract.
+    function checkParamsAndDepositEther(IWETH9 weth9, IERC20 asset, uint256 amount) internal {
+        // Checks: the asset is the actual WETH9 contract.
+        if (asset != weth9) {
+            revert Errors.SablierV2ProxyTarget_AssetNotWETH9(asset, weth9);
+        }
+
+        // Checks: the amount of WETH9 is the same as the amount of Ether sent.
+        if (amount != msg.value) {
+            revert Errors.SablierV2ProxyTarget_WrongEtherAmount(msg.value, amount);
+        }
+
+        // Interactions: deposit the Ether into the WETH9 contract.
+        weth9.deposit{ value: amount }();
     }
 
     /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}.
@@ -121,5 +131,12 @@ library Helpers {
                 totalAmount: params.amount
             })
         );
+    }
+
+    /// @dev Helper function that transfers `value` funds from `msg.sender` to `address(this)`
+    /// and approves `value` to `spender`.
+    function transferAndApprove(address spender, IERC20 asset, uint256 value) internal {
+        asset.safeTransferFrom({ from: msg.sender, to: address(this), value: value });
+        asset.approve(spender, value);
     }
 }
