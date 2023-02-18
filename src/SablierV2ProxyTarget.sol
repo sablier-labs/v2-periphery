@@ -54,8 +54,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         LockupLinear.CreateWithDurations calldata params
     ) external override returns (uint256 newStreamId) {
         lockup.cancel(streamId);
-        Helpers.transferAndApprove(address(linear), params.asset, params.totalAmount);
-        newStreamId = linear.createWithDurations(params);
+        newStreamId = Helpers.createWithDurations(linear, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -66,8 +65,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         LockupLinear.CreateWithRange calldata params
     ) external override returns (uint256 newStreamId) {
         lockup.cancel(streamId);
-        Helpers.transferAndApprove(address(linear), params.asset, params.totalAmount);
-        newStreamId = linear.createWithRange(params);
+        newStreamId = Helpers.createWithRange(linear, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -75,8 +73,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithDurations calldata params
     ) external override returns (uint256 streamId) {
-        Helpers.transferAndApprove(address(linear), params.asset, params.totalAmount);
-        streamId = linear.createWithDurations(params);
+        streamId = Helpers.createWithDurations(linear, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -84,8 +81,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithRange calldata params
     ) external override returns (uint256 streamId) {
-        Helpers.transferAndApprove(address(linear), params.asset, params.totalAmount);
-        streamId = linear.createWithRange(params);
+        streamId = Helpers.createWithRange(linear, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -117,7 +113,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            _streamIds[i] = Helpers.callCreateWithDurations(params[i], asset, linear);
+            _streamIds[i] = Helpers.createWithDurations(params[i], asset, linear);
 
             // Increment the for loop iterator.
             unchecked {
@@ -157,7 +153,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            _streamIds[i] = Helpers.callCreateWithRange(params[i], asset, linear);
+            _streamIds[i] = Helpers.createWithRange(params[i], asset, linear);
 
             // Increment the for loop iterator.
             unchecked {
@@ -176,11 +172,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     ) external payable override returns (uint256 streamId) {
         // Checks and interactions: check the params and deposit the ether.
         Helpers.checkParamsAndDepositEther(weth9, params.asset, params.totalAmount);
-
-        // Interactions: transfer the assets to the proxy and approve the sablier contract
-        // to spend the amount of assets.
-        Helpers.transferAndApprove(address(linear), params.asset, params.totalAmount);
-        streamId = linear.createWithDurations(params);
+        streamId = Helpers.createWithDurations(linear, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -191,11 +183,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     ) external payable override returns (uint256 streamId) {
         // Checks and interactions: check the params and deposit the ether.
         Helpers.checkParamsAndDepositEther(weth9, params.asset, params.totalAmount);
-
-        // Interactions: transfer the assets to the proxy and approve the sablier contract
-        // to spend the amount of assets.
-        Helpers.transferAndApprove(address(linear), params.asset, params.totalAmount);
-        streamId = linear.createWithRange(params);
+        streamId = Helpers.createWithRange(linear, params);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -210,8 +198,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         LockupPro.CreateWithDeltas calldata params
     ) external override returns (uint256 newStreamId) {
         lockup.cancel(streamId);
-        Helpers.transferAndApprove(address(pro), params.asset, params.totalAmount);
-        newStreamId = pro.createWithDeltas(params);
+        newStreamId = Helpers.createWithDeltas(pro, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -222,8 +209,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         LockupPro.CreateWithMilestones calldata params
     ) external override returns (uint256 newStreamId) {
         lockup.cancel(streamId);
-        Helpers.transferAndApprove(address(pro), params.asset, params.totalAmount);
-        newStreamId = pro.createWithMilestones(params);
+        newStreamId = Helpers.createWithMilestones(pro, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -231,8 +217,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2LockupPro pro,
         LockupPro.CreateWithDeltas calldata params
     ) external override returns (uint256 streamId) {
-        Helpers.transferAndApprove(address(pro), params.asset, params.totalAmount);
-        streamId = pro.createWithDeltas(params);
+        streamId = Helpers.createWithDeltas(pro, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -240,8 +225,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2LockupPro pro,
         LockupPro.CreateWithMilestones calldata params
     ) external override returns (uint256 streamId) {
-        Helpers.transferAndApprove(address(pro), params.asset, params.totalAmount);
-        streamId = pro.createWithMilestones(params);
+        streamId = Helpers.createWithMilestones(pro, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -273,7 +257,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            _streamIds[i] = Helpers.callCreateWithDeltas(params[i], asset, pro);
+            _streamIds[i] = Helpers.createWithDeltas(params[i], asset, pro);
 
             // Increment the for loop iterator.
             unchecked {
@@ -313,7 +297,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            _streamIds[i] = Helpers.callCreateWithMilestones(params[i], asset, pro);
+            _streamIds[i] = Helpers.createWithMilestones(params[i], asset, pro);
 
             // Increment the for loop iterator.
             unchecked {
@@ -332,11 +316,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     ) external payable override returns (uint256 streamId) {
         // Checks and interactions: check the params and deposit the ether.
         Helpers.checkParamsAndDepositEther(weth9, params.asset, params.totalAmount);
-
-        // Interactions: transfer the assets to the proxy and approve the sablier contract
-        // to spend the amount of assets.
-        Helpers.transferAndApprove(address(pro), params.asset, params.totalAmount);
-        streamId = pro.createWithDeltas(params);
+        streamId = Helpers.createWithDeltas(pro, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -347,10 +327,6 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     ) external payable override returns (uint256 streamId) {
         // Checks and interactions: check the params and deposit the ether.
         Helpers.checkParamsAndDepositEther(weth9, params.asset, params.totalAmount);
-
-        // Interactions: transfer the assets to the proxy and approve the sablier contract
-        // to spend the amount of assets.
-        Helpers.transferAndApprove(address(pro), params.asset, params.totalAmount);
-        streamId = pro.createWithMilestones(params);
+        streamId = Helpers.createWithMilestones(pro, params);
     }
 }
