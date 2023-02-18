@@ -28,8 +28,14 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
     /// @dev it should revert.
     function test_RevertWhen_ParamsCountZero() external totalAmountNotZero {
         CreateLinear.RangeParams[] memory params;
-        // Expect a {SablierV2ProxyTarget_ParamsCountZero} error.
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_ParamsCountZero.selector));
+        // Expect a {SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum} error.
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector,
+                DEFAULT_TOTAL_AMOUNT,
+                0
+            )
+        );
         target.createWithRangeMultiple(linear, params, asset, DEFAULT_TOTAL_AMOUNT);
     }
 

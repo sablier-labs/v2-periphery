@@ -19,15 +19,10 @@ library Helpers {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Checks the arguments of the create multiple functions.
-    function checkCreateMultipleParams(uint256 paramsCount, uint128 totalAmount, uint128 amountsSum) internal pure {
+    function checkCreateMultipleParams(uint128 totalAmount, uint128 amountsSum) internal pure {
         // Checks: the total amount is not zero.
         if (totalAmount == 0) {
             revert Errors.SablierV2ProxyTarget_TotalAmountZero();
-        }
-
-        // Checks: the parameters count is not zero.
-        if (paramsCount == 0) {
-            revert Errors.SablierV2ProxyTarget_ParamsCountZero();
         }
 
         /// Checks: the total amount is equal to the parameters amounts summed up.
