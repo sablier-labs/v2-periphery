@@ -67,9 +67,9 @@ library Helpers {
 
     /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}.
     function createWithDeltas(
+        ISablierV2LockupPro pro,
         CreatePro.DeltasParams calldata params,
-        IERC20 asset,
-        ISablierV2LockupPro pro
+        IERC20 asset
     ) internal returns (uint256 streamId) {
         streamId = pro.createWithDeltas(
             LockupPro.CreateWithDeltas({
@@ -95,9 +95,9 @@ library Helpers {
 
     /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithDurations}.
     function createWithDurations(
+        ISablierV2LockupLinear linear,
         CreateLinear.DurationsParams calldata params,
-        IERC20 asset,
-        ISablierV2LockupLinear linear
+        IERC20 asset
     ) internal returns (uint256 streamId) {
         streamId = linear.createWithDurations(
             LockupLinear.CreateWithDurations({
@@ -123,9 +123,9 @@ library Helpers {
 
     /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithMilestones}.
     function createWithMilestones(
+        ISablierV2LockupPro pro,
         CreatePro.MilestonesParams calldata params,
-        IERC20 asset,
-        ISablierV2LockupPro pro
+        IERC20 asset
     ) internal returns (uint256 streamId) {
         streamId = pro.createWithMilestones(
             LockupPro.CreateWithMilestones({
@@ -152,9 +152,9 @@ library Helpers {
 
     /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithRange}.
     function createWithRange(
+        ISablierV2LockupLinear linear,
         CreateLinear.RangeParams calldata params,
-        IERC20 asset,
-        ISablierV2LockupLinear linear
+        IERC20 asset
     ) internal returns (uint256 streamId) {
         streamId = linear.createWithRange(
             LockupLinear.CreateWithRange({
