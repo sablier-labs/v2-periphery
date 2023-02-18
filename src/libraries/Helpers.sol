@@ -40,7 +40,7 @@ library Helpers {
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Checks the parameters and deposits the Ether into the WETH9 contract.
+    /// @dev Checks the wrap function parameters and deposits the Ether into the WETH9 contract.
     function checkParamsAndDepositEther(IWETH9 weth9, IERC20 asset, uint256 amount) internal {
         // Checks: the asset is the actual WETH9 contract.
         if (asset != weth9) {
@@ -57,7 +57,16 @@ library Helpers {
     }
 
     /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}.
-    function callCreateWithDeltas(
+    function createWithDeltas(
+        ISablierV2LockupPro pro,
+        LockupPro.CreateWithDeltas calldata params
+    ) internal returns (uint256 streamId) {
+        transferAndApprove(address(pro), params.asset, params.totalAmount);
+        streamId = pro.createWithDeltas(params);
+    }
+
+    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}.
+    function createWithDeltas(
         CreatePro.DeltasParams calldata params,
         IERC20 asset,
         ISablierV2LockupPro pro
@@ -75,8 +84,17 @@ library Helpers {
         );
     }
 
+    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDurations}.
+    function createWithDurations(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithDurations calldata params
+    ) internal returns (uint256 streamId) {
+        transferAndApprove(address(linear), params.asset, params.totalAmount);
+        streamId = linear.createWithDurations(params);
+    }
+
     /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithDurations}.
-    function callCreateWithDurations(
+    function createWithDurations(
         CreateLinear.DurationsParams calldata params,
         IERC20 asset,
         ISablierV2LockupLinear linear
@@ -95,7 +113,16 @@ library Helpers {
     }
 
     /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithMilestones}.
-    function callCreateWithMilestones(
+    function createWithMilestones(
+        ISablierV2LockupPro pro,
+        LockupPro.CreateWithMilestones calldata params
+    ) internal returns (uint256 streamId) {
+        transferAndApprove(address(pro), params.asset, params.totalAmount);
+        streamId = pro.createWithMilestones(params);
+    }
+
+    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithMilestones}.
+    function createWithMilestones(
         CreatePro.MilestonesParams calldata params,
         IERC20 asset,
         ISablierV2LockupPro pro
@@ -115,7 +142,16 @@ library Helpers {
     }
 
     /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithRange}.
-    function callCreateWithRange(
+    function createWithRange(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithRange calldata params
+    ) internal returns (uint256 streamId) {
+        transferAndApprove(address(linear), params.asset, params.totalAmount);
+        streamId = linear.createWithRange(params);
+    }
+
+    /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithRange}.
+    function createWithRange(
         CreateLinear.RangeParams calldata params,
         IERC20 asset,
         ISablierV2LockupLinear linear
