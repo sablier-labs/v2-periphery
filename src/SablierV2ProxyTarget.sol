@@ -104,7 +104,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: validate the arguments.
-        Helpers.checkCreateMultipleParams(count, totalAmount, amountsSum);
+        Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
         Helpers.transferAndApprove(address(linear), asset, totalAmount);
@@ -154,7 +154,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: validate the arguments.
-        Helpers.checkCreateMultipleParams(count, totalAmount, amountsSum);
+        Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
         Helpers.transferAndApprove(address(linear), asset, totalAmount);
@@ -268,7 +268,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: validate the arguments.
-        Helpers.checkCreateMultipleParams(count, totalAmount, amountsSum);
+        Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
         Helpers.transferAndApprove(address(pro), asset, totalAmount);
@@ -318,7 +318,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: validate the arguments.
-        Helpers.checkCreateMultipleParams(count, totalAmount, amountsSum);
+        Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
         Helpers.transferAndApprove(address(pro), asset, totalAmount);
