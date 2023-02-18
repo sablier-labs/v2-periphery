@@ -113,7 +113,17 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            _streamIds[i] = Helpers.createWithDurations(linear, params[i], asset);
+            _streamIds[i] = linear.createWithDurations(
+                LockupLinear.CreateWithDurations({
+                    asset: asset,
+                    broker: params[i].broker,
+                    cancelable: params[i].cancelable,
+                    durations: params[i].durations,
+                    recipient: params[i].recipient,
+                    sender: params[i].sender,
+                    totalAmount: params[i].amount
+                })
+            );
 
             // Increment the for loop iterator.
             unchecked {
@@ -153,7 +163,17 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            _streamIds[i] = Helpers.createWithRange(linear, params[i], asset);
+            _streamIds[i] = linear.createWithRange(
+                LockupLinear.CreateWithRange({
+                    asset: asset,
+                    broker: params[i].broker,
+                    cancelable: params[i].cancelable,
+                    range: params[i].range,
+                    recipient: params[i].recipient,
+                    sender: params[i].sender,
+                    totalAmount: params[i].amount
+                })
+            );
 
             // Increment the for loop iterator.
             unchecked {
@@ -257,7 +277,17 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            _streamIds[i] = Helpers.createWithDeltas(pro, params[i], asset);
+            _streamIds[i] = pro.createWithDeltas(
+                LockupPro.CreateWithDeltas({
+                    asset: asset,
+                    broker: params[i].broker,
+                    cancelable: params[i].cancelable,
+                    recipient: params[i].recipient,
+                    segments: params[i].segments,
+                    sender: params[i].sender,
+                    totalAmount: params[i].amount
+                })
+            );
 
             // Increment the for loop iterator.
             unchecked {
@@ -297,7 +327,18 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
             // Interactions: make the external call.
-            _streamIds[i] = Helpers.createWithMilestones(pro, params[i], asset);
+            _streamIds[i] = pro.createWithMilestones(
+                LockupPro.CreateWithMilestones({
+                    asset: asset,
+                    broker: params[i].broker,
+                    cancelable: params[i].cancelable,
+                    recipient: params[i].recipient,
+                    segments: params[i].segments,
+                    sender: params[i].sender,
+                    startTime: params[i].startTime,
+                    totalAmount: params[i].amount
+                })
+            );
 
             // Increment the for loop iterator.
             unchecked {

@@ -65,25 +65,6 @@ library Helpers {
         streamId = pro.createWithDeltas(params);
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}.
-    function createWithDeltas(
-        ISablierV2LockupPro pro,
-        CreatePro.DeltasParams calldata params,
-        IERC20 asset
-    ) internal returns (uint256 streamId) {
-        streamId = pro.createWithDeltas(
-            LockupPro.CreateWithDeltas({
-                asset: asset,
-                broker: params.broker,
-                cancelable: params.cancelable,
-                recipient: params.recipient,
-                segments: params.segments,
-                sender: params.sender,
-                totalAmount: params.amount
-            })
-        );
-    }
-
     /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDurations}.
     function createWithDurations(
         ISablierV2LockupLinear linear,
@@ -91,25 +72,6 @@ library Helpers {
     ) internal returns (uint256 streamId) {
         transferAndApprove(address(linear), params.asset, params.totalAmount);
         streamId = linear.createWithDurations(params);
-    }
-
-    /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithDurations}.
-    function createWithDurations(
-        ISablierV2LockupLinear linear,
-        CreateLinear.DurationsParams calldata params,
-        IERC20 asset
-    ) internal returns (uint256 streamId) {
-        streamId = linear.createWithDurations(
-            LockupLinear.CreateWithDurations({
-                asset: asset,
-                broker: params.broker,
-                cancelable: params.cancelable,
-                durations: params.durations,
-                recipient: params.recipient,
-                sender: params.sender,
-                totalAmount: params.amount
-            })
-        );
     }
 
     /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithMilestones}.
@@ -121,26 +83,6 @@ library Helpers {
         streamId = pro.createWithMilestones(params);
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithMilestones}.
-    function createWithMilestones(
-        ISablierV2LockupPro pro,
-        CreatePro.MilestonesParams calldata params,
-        IERC20 asset
-    ) internal returns (uint256 streamId) {
-        streamId = pro.createWithMilestones(
-            LockupPro.CreateWithMilestones({
-                asset: asset,
-                broker: params.broker,
-                cancelable: params.cancelable,
-                recipient: params.recipient,
-                segments: params.segments,
-                sender: params.sender,
-                startTime: params.startTime,
-                totalAmount: params.amount
-            })
-        );
-    }
-
     /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithRange}.
     function createWithRange(
         ISablierV2LockupLinear linear,
@@ -148,25 +90,6 @@ library Helpers {
     ) internal returns (uint256 streamId) {
         transferAndApprove(address(linear), params.asset, params.totalAmount);
         streamId = linear.createWithRange(params);
-    }
-
-    /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithRange}.
-    function createWithRange(
-        ISablierV2LockupLinear linear,
-        CreateLinear.RangeParams calldata params,
-        IERC20 asset
-    ) internal returns (uint256 streamId) {
-        streamId = linear.createWithRange(
-            LockupLinear.CreateWithRange({
-                asset: asset,
-                broker: params.broker,
-                cancelable: params.cancelable,
-                range: params.range,
-                recipient: params.recipient,
-                sender: params.sender,
-                totalAmount: params.amount
-            })
-        );
     }
 
     /// @dev Helper function that transfers `value` funds from `msg.sender` to `address(this)`
