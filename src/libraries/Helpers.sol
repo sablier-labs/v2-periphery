@@ -42,13 +42,15 @@ library Helpers {
             revert Errors.SablierV2ProxyTarget_AssetNotWETH9(asset, weth9);
         }
 
+        uint256 value = msg.value;
+
         // Checks: the amount of WETH9 is the same as the amount of Ether sent.
-        if (amount != msg.value) {
-            revert Errors.SablierV2ProxyTarget_WrongEtherAmount(msg.value, amount);
+        if (amount != value) {
+            revert Errors.SablierV2ProxyTarget_WrongEtherAmount(value, amount);
         }
 
         // Interactions: deposit the Ether into the WETH9 contract.
-        weth9.deposit{ value: amount }();
+        weth9.deposit{ value: value }();
     }
 
     /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}.
