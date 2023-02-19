@@ -2,6 +2,7 @@
 pragma solidity >=0.8.18;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
+import { IPermit2 } from "./IPermit2.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
@@ -67,16 +68,21 @@ interface ISablierV2ProxyTarget {
     /// @notice Cancels a stream and creates a new one with durations.
     ///
     /// Notes:
-    /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupLinear-createWithDurations} for documentation.
+    /// - See {ISablierV2Lockup-cancel}, {ISablierV2LockupLinear-createWithDurations}
+    /// and {ISignatureTransfer-permitTransferFrom} for documentation.
     /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
     ///
     /// @param lockup The Sablier V2 contract.
     /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The Permit2 contract.
     function cancelAndCreateWithDurations(
         ISablierV2Lockup lockup,
         ISablierV2LockupLinear linear,
         uint256 streamId,
-        LockupLinear.CreateWithDurations calldata params
+        LockupLinear.CreateWithDurations calldata params,
+        IPermit2 permit2,
+        IPermit2.PermitTransferFrom calldata permit,
+        bytes calldata signature
     ) external returns (uint256 newStreamId);
 
     /// @notice Cancels a stream and creates a new one with range.

@@ -7,6 +7,7 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
 import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
+import { IPermit2 } from "./interfaces/IPermit2.sol";
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
 import { IWETH9 } from "./interfaces/IWETH9.sol";
 import { Helpers } from "./libraries/Helpers.sol";
@@ -51,10 +52,26 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2Lockup lockup,
         ISablierV2LockupLinear linear,
         uint256 streamId,
-        LockupLinear.CreateWithDurations calldata params
+        LockupLinear.CreateWithDurations calldata params,
+        IPermit2 permit2,
+        IPermit2.PermitTransferFrom calldata permit,
+        bytes calldata signature
     ) external override returns (uint256 newStreamId) {
         lockup.cancel(streamId);
-        newStreamId = Helpers.createWithDurations(linear, params);
+
+        permit2.permitTransferFrom(
+            permit,
+            IPermit2.SignatureTransferDetails({ to: address(this), requestedAmount: params.totalAmount }),
+            msg.sender,
+            signature
+        );
+
+        uint256 allowanceProxyToSablierV2 = params.asset.allowance(address(this), address(linear));
+        if (params.totalAmount > allowanceProxyToSablierV2) {
+            params.asset.approve(address(linear), type(uint256).max);
+        }
+
+        newStreamId = linear.createWithDurations(params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -158,6 +175,18 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
         Helpers.transferAndApprove(address(linear), asset, totalAmount);
+
+        /* permit2.permitTransferFrom(
+            permit,
+            IPermit2.SignatureTransferDetails({ to: address(this), requestedAmount: params.totalAmount }),
+            msg.sender,
+            signature
+        );
+
+        uint256 allowanceProxyToSablierV2 = params.asset.allowance(address(this), address(linear));
+        if (params.totalAmount > allowanceProxyToSablierV2) {
+            params.asset.approve(address(linear), type(uint256).max);
+        } */
 
         // Declare an array of `count` length to avoid "Index out of bounds error".
         uint256[] memory _streamIds = new uint256[](count);
