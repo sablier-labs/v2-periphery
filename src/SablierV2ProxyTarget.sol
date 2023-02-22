@@ -7,7 +7,6 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
 import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { IPermit2 } from "./interfaces/IPermit2.sol";
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
 import { IWETH9 } from "./interfaces/IWETH9.sol";
 import { Helpers } from "./libraries/Helpers.sol";
@@ -52,26 +51,10 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2Lockup lockup,
         ISablierV2LockupLinear linear,
         uint256 streamId,
-        LockupLinear.CreateWithDurations calldata params,
-        IPermit2 permit2,
-        IPermit2.PermitTransferFrom calldata permit,
-        bytes calldata signature
+        LockupLinear.CreateWithDurations calldata params
     ) external override returns (uint256 newStreamId) {
         lockup.cancel(streamId);
-
-        permit2.permitTransferFrom(
-            permit,
-            IPermit2.SignatureTransferDetails({ to: address(this), requestedAmount: params.totalAmount }),
-            msg.sender,
-            signature
-        );
-
-        uint256 allowanceProxyToSablierV2 = params.asset.allowance(address(this), address(linear));
-        if (params.totalAmount > allowanceProxyToSablierV2) {
-            params.asset.approve(address(linear), type(uint256).max);
-        }
-
-        newStreamId = linear.createWithDurations(params);
+        newStreamId = Helpers.createWithDurations(linear, params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
