@@ -159,18 +159,6 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
         Helpers.transferAndApprove(address(linear), asset, totalAmount);
 
-        /* permit2.permitTransferFrom(
-            permit,
-            IPermit2.SignatureTransferDetails({ to: address(this), requestedAmount: params.totalAmount }),
-            msg.sender,
-            signature
-        );
-
-        uint256 allowanceProxyToSablierV2 = params.asset.allowance(address(this), address(linear));
-        if (params.totalAmount > allowanceProxyToSablierV2) {
-            params.asset.approve(address(linear), type(uint256).max);
-        } */
-
         // Declare an array of `count` length to avoid "Index out of bounds error".
         uint256[] memory _streamIds = new uint256[](count);
         for (i = 0; i < count; ) {
