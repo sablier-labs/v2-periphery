@@ -1,4 +1,5 @@
 @openzeppelin/=lib/openzeppelin-contracts/contracts/
+@permit2/=lib/permit2/src/
 @prb/math/=lib/prb-math/src/
 @prb/test/=lib/prb-test/src/
 @sablier/v2-core/=lib/v2-core/src/
