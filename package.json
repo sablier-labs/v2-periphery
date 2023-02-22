@@ -7,7 +7,7 @@
     "url": "https://sablier.com"
   },
   "devDependencies": {
-    "prettier": "^2.8.1",
+    "prettier": "^2.8.4",
     "prettier-plugin-solidity": "^1.1.2",
     "rimraf": "^3.0.2",
     "solhint": "^3.3.7",
