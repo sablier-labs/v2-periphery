@@ -2,6 +2,7 @@
 pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
+import { ISignatureTransfer } from "@permit2/interfaces/ISignatureTransfer.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
@@ -182,6 +183,52 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         streamIds = _streamIds;
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function permit2CreateWithDurations(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithDurations calldata params,
+        ISignatureTransfer permit2,
+        ISignatureTransfer.PermitTransferFrom calldata permit,
+        bytes calldata signature
+    ) external override returns (uint256 streamId) {
+        permit2.permitTransferFrom(
+            permit,
+            ISignatureTransfer.SignatureTransferDetails({ to: address(this), requestedAmount: params.totalAmount }),
+            msg.sender,
+            signature
+        );
+
+        uint256 allowance = params.asset.allowance(address(this), address(linear));
+        if (allowance < params.totalAmount) {
+            params.asset.approve(address(linear), type(uint256).max);
+        }
+
+        streamId = linear.createWithDurations(params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function permit2CreateWithRange(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithRange calldata params,
+        ISignatureTransfer permit2,
+        ISignatureTransfer.PermitTransferFrom calldata permit,
+        bytes calldata signature
+    ) external override returns (uint256 streamId) {
+        permit2.permitTransferFrom(
+            permit,
+            ISignatureTransfer.SignatureTransferDetails({ to: address(this), requestedAmount: params.totalAmount }),
+            msg.sender,
+            signature
+        );
+
+        uint256 allowance = params.asset.allowance(address(this), address(linear));
+        if (allowance < params.totalAmount) {
+            params.asset.approve(address(linear), type(uint256).max);
+        }
+
+        streamId = linear.createWithRange(params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
