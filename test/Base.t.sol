@@ -3,14 +3,11 @@ pragma solidity >=0.8.18 <0.9.0;
 
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
-import { UD60x18 } from "@prb/math/UD60x18.sol";
 import { PRBTest } from "@prb/test/PRBTest.sol";
-import { ISablierV2Comptroller } from "@sablier/v2-core/interfaces/ISablierV2Comptroller.sol";
-import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
-import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
 import { SablierV2Comptroller } from "@sablier/v2-core/SablierV2Comptroller.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.sol";
 import { SablierV2LockupPro } from "@sablier/v2-core/SablierV2LockupPro.sol";
+import { ISablierV2Comptroller } from "@sablier/v2-core/interfaces/ISablierV2Comptroller.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
@@ -26,8 +23,8 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
 
     IERC20 internal asset;
     ISablierV2Comptroller internal comptroller;
-    ISablierV2LockupLinear internal linear;
-    ISablierV2LockupPro internal pro;
+    SablierV2LockupLinear internal linear;
+    SablierV2LockupPro internal pro;
     SablierV2ProxyTarget internal target;
 
     /*//////////////////////////////////////////////////////////////////////////
