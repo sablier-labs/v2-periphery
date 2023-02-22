@@ -2,6 +2,7 @@
 pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
+import { ISignatureTransfer } from "@permit2/interfaces/ISignatureTransfer.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
@@ -99,7 +100,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to create a linear stream with durations.
     ///
-    /// Notes
+    /// Notes:
     /// - See {ISablierV2LockupLinear-createWithDurations} for documentation.
     ///
     /// @param linear The Sablier V2 linear contract.
@@ -110,7 +111,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to create a linear stream with range.
     ///
-    /// Notes
+    /// Notes:
     /// - See {ISablierV2LockupLinear-createWithRange} for documentation.
     ///
     /// @param linear The Sablier V2 linear contract.
@@ -162,6 +163,39 @@ interface ISablierV2ProxyTarget {
         IERC20 asset,
         uint128 totalAmount
     ) external returns (uint256[] memory streamIds);
+
+    /// @notice Target function to create a linear stream with durations.
+    ///
+    /// Notes:
+    /// - See {ISablierV2LockupLinear-createWithDurations} and {ISignatureTransfer-permitTransferFrom}
+    /// for documentation.
+    /// - Transfers assets from user to proxy target via permit2 allowance.
+    ///
+    /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The permit2 contract.
+    function permit2CreateWithDurations(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithDurations calldata params,
+        ISignatureTransfer permit2,
+        ISignatureTransfer.PermitTransferFrom calldata permit,
+        bytes calldata signature
+    ) external returns (uint256 streamId);
+
+    /// @notice Target function to create a linear stream with range.
+    ///
+    /// Notes:
+    /// - See {ISablierV2LockupLinear-createWithRange} and {ISignatureTransfer-permitTransferFrom} for documentation.
+    /// - Transfers assets from user to proxy target via permit2 allowance.
+    ///
+    /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The permit2 contract.
+    function permit2CreateWithRange(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithRange calldata params,
+        ISignatureTransfer permit2,
+        ISignatureTransfer.PermitTransferFrom calldata permit,
+        bytes calldata signature
+    ) external returns (uint256 streamId);
 
     /// @notice Wraps ETH into WETH9 and creates a linear stream with durations.
     ///
