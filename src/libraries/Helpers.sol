@@ -37,20 +37,38 @@ library Helpers {
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function that performs an external call on {SablierV2Lockup-cancel}.
+    /// @dev Helper function that:
+    /// 1. Gets the asset of the stream.
+    /// 2. Gets the return amount of the stream.
+    /// 3. Performs an external call on {SablierV2Lockup-cancel}.
+    /// 4. Transfers the return amount to proxy owner, if greater than zero.
     function cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
+        // Interactions: get the asset.
         IERC20 asset = lockup.getAsset(streamId);
+
+        // Interactions: get the return amount.
         uint256 returnAmount = lockup.returnableAmountOf(streamId);
+
+        // Interactions: cancel the stream.
         lockup.cancel(streamId);
+        // After the stream is cancelled, the return amount is in the proxy contract.
+
+        // Interactions: transfer the return amount to proxy owner, if greater than zero.
         if (returnAmount > 0) {
             asset.safeTransfer(msg.sender, returnAmount);
         }
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2Lockup-cancelMultiple}.
+    /// @dev Helper function that:
+    /// 1. Checks the asset and calculates the return amounts sum.
+    /// 2. Performs an external call on {SablierV2Lockup-cancelMultiple}.
+    /// 3. Transfers the return amounts sum to proxy owner, if greater than zero.
     function cancelMultiple(ISablierV2Lockup lockup, IERC20 asset, uint256[] calldata streamIds) internal {
+        // Checks and calculations: check the asset and calculate the return amounts sum.
         uint256 returnAmountsSum = checkAssetAndCalculateReturnAmountsSum(lockup, asset, streamIds);
         lockup.cancelMultiple(streamIds);
+
+        // Interactions: transfer the return amounts sum to proxy owner, if greater than zero.
         if (returnAmountsSum > 0) {
             asset.safeTransfer(msg.sender, returnAmountsSum);
         }
@@ -68,6 +86,7 @@ library Helpers {
         for (uint256 i = 0; i < count; ) {
             returnAmountsSum += lockup.returnableAmountOf(streamIds[i]);
 
+            // Checks: the asset is the same for all streams.s
             streamAsset = lockup.getAsset(streamIds[i]);
             if (asset != streamAsset) {
                 revert Errors.SablierV2ProxyTarget_CancelMultipleDifferentAsset(asset, streamAsset);
@@ -79,7 +98,7 @@ library Helpers {
         }
     }
 
-    /// @dev Checks the wrap function parameters and deposits the Ether into the WETH9 contract.
+    /// @dev Checks the wrap function parameters and deposits the Ether in the WETH9 contract.
     function checkParamsAndDepositEther(IWETH9 weth9, IERC20 asset, uint256 amount) internal {
         // Checks: the asset is the actual WETH9 contract.
         if (asset != weth9) {
@@ -97,7 +116,10 @@ library Helpers {
         weth9.deposit{ value: value }();
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDeltas}.
+    /// @dev Helper function that:
+    /// 1. Transfers funds from the proxy owner to the proxy contract.
+    /// 2. Approves the {SablierV2LockupPro} contract to spend funds from proxy.
+    /// 3. Performs an external call on {SablierV2LockupPro-createWithDeltas}.
     function createWithDeltas(
         ISablierV2LockupPro pro,
         LockupPro.CreateWithDeltas calldata params
@@ -106,7 +128,10 @@ library Helpers {
         streamId = pro.createWithDeltas(params);
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithDurations}.
+    /// @dev Helper function that:
+    /// 1. Transfers funds from the proxy owner to the proxy contract.
+    /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy.
+    /// 3. Performs an external call on {SablierV2LockupLinear-createWithDeltas}.
     function createWithDurations(
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithDurations calldata params
@@ -115,7 +140,10 @@ library Helpers {
         streamId = linear.createWithDurations(params);
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2LockupPro-createWithMilestones}.
+    /// @dev Helper function that:
+    /// 1. Transfers funds from the proxy owner to the proxy contract.
+    /// 2. Approves the {SablierV2LockupPro} contract to spend funds from proxy.
+    /// 3. Performs an external call on {SablierV2LockupPro-createWithMilestones}.
     function createWithMilestones(
         ISablierV2LockupPro pro,
         LockupPro.CreateWithMilestones calldata params
@@ -124,7 +152,10 @@ library Helpers {
         streamId = pro.createWithMilestones(params);
     }
 
-    /// @dev Helper function that performs an external call on {SablierV2LockupLinear-createWithRange}.
+    /// @dev Helper function that:
+    /// 1. Transfers funds from the proxy owner to the proxy contract.
+    /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy.
+    /// 3. Performs an external call on {SablierV2LockupLinear-createWithRange}.
     function createWithRange(
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithRange calldata params
