@@ -13,6 +13,9 @@ library Errors {
     /// @notice Emitted when attempting to create a stream with wrong asset.
     error SablierV2ProxyTarget_AssetNotWETH9(IERC20 asset, IWETH9 weth9);
 
+    /// @notice Emitted when attempting to cancel multiple streams with different assets.
+    error SablierV2ProxyTarget_CancelMultipleDifferentAsset(IERC20 asset, IERC20 streamAsset);
+
     /// @notice Emitted when attempting to wrap ether with a wrong amount.
     error SablierV2ProxyTarget_WrongEtherAmount(uint256 etherAmount, uint256 paramsAmount);
 

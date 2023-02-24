@@ -3,6 +3,7 @@ pragma solidity >=0.8.18;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
+import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
 import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
@@ -34,6 +35,48 @@ library Helpers {
     /*//////////////////////////////////////////////////////////////////////////
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Helper function that performs an external call on {SablierV2Lockup-cancel}.
+    function cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
+        IERC20 asset = lockup.getAsset(streamId);
+        uint256 returnAmount = lockup.returnableAmountOf(streamId);
+        lockup.cancel(streamId);
+        if (returnAmount > 0) {
+            asset.safeTransfer(msg.sender, returnAmount);
+        }
+    }
+
+    /// @dev Helper function that performs an external call on {SablierV2Lockup-cancelMultiple}.
+    function cancelMultiple(ISablierV2Lockup lockup, IERC20 asset, uint256[] calldata streamIds) internal {
+        uint256 returnAmountsSum = checkAssetAndCalculateReturnAmountsSum(lockup, asset, streamIds);
+        lockup.cancelMultiple(streamIds);
+        if (returnAmountsSum > 0) {
+            asset.safeTransfer(msg.sender, returnAmountsSum);
+        }
+    }
+
+    /// @dev Helper function to check the asset and calculate the return amounts sum.
+    function checkAssetAndCalculateReturnAmountsSum(
+        ISablierV2Lockup lockup,
+        IERC20 asset,
+        uint256[] calldata streamIds
+    ) internal view returns (uint256 returnAmountsSum) {
+        uint256 count = streamIds.length;
+        IERC20 streamAsset;
+
+        for (uint256 i = 0; i < count; ) {
+            returnAmountsSum += lockup.returnableAmountOf(streamIds[i]);
+
+            streamAsset = lockup.getAsset(streamIds[i]);
+            if (asset != streamAsset) {
+                revert Errors.SablierV2ProxyTarget_CancelMultipleDifferentAsset(asset, streamAsset);
+            }
+
+            unchecked {
+                i += 1;
+            }
+        }
+    }
 
     /// @dev Checks the wrap function parameters and deposits the Ether into the WETH9 contract.
     function checkParamsAndDepositEther(IWETH9 weth9, IERC20 asset, uint256 amount) internal {
