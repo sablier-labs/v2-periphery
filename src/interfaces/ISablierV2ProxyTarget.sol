@@ -30,8 +30,11 @@ interface ISablierV2ProxyTarget {
     /// - See {ISablierV2Lockup-cancelMultiple} for documentation.
     /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
     ///
+    /// Requirements:
+    /// - All streams must have the same asset.
+    ///
     /// @param lockup The Sablier V2 contract.
-    function cancelMultiple(ISablierV2Lockup lockup, uint256[] calldata streamIds) external;
+    function cancelMultiple(ISablierV2Lockup lockup, IERC20 asset, uint256[] calldata streamIds) external;
 
     /// @notice Target function to renounce a stream.
     ///
