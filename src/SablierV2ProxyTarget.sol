@@ -104,10 +104,10 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             }
         }
 
-        // Checks: validate the arguments.
+        // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
         Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
 
-        // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
+        // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupLinear} to spend the amount of assets.
         Helpers.transferAndApprove(address(linear), asset, totalAmount);
 
         // Declare an array of `count` length to avoid "Index out of bounds error".
@@ -154,10 +154,10 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             }
         }
 
-        // Checks: validate the arguments.
+        // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
         Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
 
-        // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
+        // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupLinear} to spend the amount of assets.
         Helpers.transferAndApprove(address(linear), asset, totalAmount);
 
         // Declare an array of `count` length to avoid "Index out of bounds error".
@@ -314,10 +314,10 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             }
         }
 
-        // Checks: validate the arguments.
+        // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
         Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
 
-        // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
+        // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupPro} to spend the amount of assets.
         Helpers.transferAndApprove(address(pro), asset, totalAmount);
 
         // Declare an array of `count` length to avoid "Index out of bounds error".
@@ -364,10 +364,10 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             }
         }
 
-        // Checks: validate the arguments.
+        // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
         Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
 
-        // Interactions: perform the ERC-20 transfer and approve the sablier contract to spend the amount of assets.
+        // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupPro} to spend the amount of assets.
         Helpers.transferAndApprove(address(pro), asset, totalAmount);
 
         // Declare an array of `count` length to avoid "Index out of bounds error".

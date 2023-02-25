@@ -33,6 +33,30 @@ library Helpers {
         }
     }
 
+    /// @dev Helper function to check the asset and calculate the return amounts sum.
+    function checkAssetAndCalculateReturnAmountsSum(
+        ISablierV2Lockup lockup,
+        IERC20 asset,
+        uint256[] calldata streamIds
+    ) internal view returns (uint256 returnAmountsSum) {
+        uint256 count = streamIds.length;
+        IERC20 streamAsset;
+
+        for (uint256 i = 0; i < count; ) {
+            returnAmountsSum += lockup.returnableAmountOf(streamIds[i]);
+
+            // Checks: the asset is the same for all streams.s
+            streamAsset = lockup.getAsset(streamIds[i]);
+            if (asset != streamAsset) {
+                revert Errors.SablierV2ProxyTarget_CancelMultipleDifferentAsset(asset, streamAsset);
+            }
+
+            unchecked {
+                i += 1;
+            }
+        }
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
@@ -71,30 +95,6 @@ library Helpers {
         // Interactions: transfer the return amounts sum to proxy owner, if greater than zero.
         if (returnAmountsSum > 0) {
             asset.safeTransfer(msg.sender, returnAmountsSum);
-        }
-    }
-
-    /// @dev Helper function to check the asset and calculate the return amounts sum.
-    function checkAssetAndCalculateReturnAmountsSum(
-        ISablierV2Lockup lockup,
-        IERC20 asset,
-        uint256[] calldata streamIds
-    ) internal view returns (uint256 returnAmountsSum) {
-        uint256 count = streamIds.length;
-        IERC20 streamAsset;
-
-        for (uint256 i = 0; i < count; ) {
-            returnAmountsSum += lockup.returnableAmountOf(streamIds[i]);
-
-            // Checks: the asset is the same for all streams.s
-            streamAsset = lockup.getAsset(streamIds[i]);
-            if (asset != streamAsset) {
-                revert Errors.SablierV2ProxyTarget_CancelMultipleDifferentAsset(asset, streamAsset);
-            }
-
-            unchecked {
-                i += 1;
-            }
         }
     }
 
