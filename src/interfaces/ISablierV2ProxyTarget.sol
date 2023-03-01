@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
-import { ISignatureTransfer } from "@permit2/interfaces/ISignatureTransfer.sol";
+import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
@@ -73,12 +73,16 @@ interface ISablierV2ProxyTarget {
     /// Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupLinear-createWithDurations} for documentation.
     /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param lockup The Sablier V2 contract.
     /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The permit2 contract.
+    /// @return newStreamId The stream id of the newly created stream.
     function cancelAndCreateWithDurations(
         ISablierV2Lockup lockup,
         ISablierV2LockupLinear linear,
+        IAllowanceTransfer permit2,
         uint256 streamId,
         LockupLinear.CreateWithDurations calldata params
     ) external returns (uint256 newStreamId);
@@ -88,12 +92,16 @@ interface ISablierV2ProxyTarget {
     /// Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupLinear-createWithRange} for documentation.
     /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param lockup The Sablier V2 contract.
     /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The permit2 contract.
+    /// @return newStreamId The stream id of the newly created stream.
     function cancelAndCreateWithRange(
         ISablierV2Lockup lockup,
         ISablierV2LockupLinear linear,
+        IAllowanceTransfer permit2,
         uint256 streamId,
         LockupLinear.CreateWithRange calldata params
     ) external returns (uint256 newStreamId);
@@ -102,10 +110,13 @@ interface ISablierV2ProxyTarget {
     ///
     /// Notes:
     /// - See {ISablierV2LockupLinear-createWithDurations} for documentation.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The permit2 contract.
     function createWithDurations(
         ISablierV2LockupLinear linear,
+        IAllowanceTransfer permit2,
         LockupLinear.CreateWithDurations calldata params
     ) external returns (uint256 streamId);
 
@@ -113,10 +124,13 @@ interface ISablierV2ProxyTarget {
     ///
     /// Notes:
     /// - See {ISablierV2LockupLinear-createWithRange} for documentation.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The permit2 contract.
     function createWithRange(
         ISablierV2LockupLinear linear,
+        IAllowanceTransfer permit2,
         LockupLinear.CreateWithRange calldata params
     ) external returns (uint256 streamId);
 
@@ -124,93 +138,73 @@ interface ISablierV2ProxyTarget {
     ///
     /// @dev We use an array of structs for the parameters to avoid the "Stack Too Deep" error.
     ///
+    /// Notes:
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
+    ///
     /// Requirements:
     /// - `totalAmount` must not be zero.
     /// - `params` must be non-empty.
     /// - The params amounts summed up must be equal to the `totalAmount`.
     ///
-    /// @param linear The address of the {SablierV2LockupLinear} core contract.
-    /// @param params The array of structs that partially encapsulates the
-    /// {SablierV2LockupLinear-createWithDurations} function parameters.
+    /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The permit2 contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
+    /// @param params The array of structs that partially encapsulates the
+    /// {SablierV2LockupLinear-createWithDurations} function parameters.
     /// @return streamIds The ids of the newly created streams.
     function createWithDurationsMultiple(
         ISablierV2LockupLinear linear,
-        CreateLinear.DurationsParams[] calldata params,
+        IAllowanceTransfer permit2,
         IERC20 asset,
-        uint128 totalAmount
+        uint128 totalAmount,
+        CreateLinear.DurationsParams[] calldata params
     ) external returns (uint256[] memory streamIds);
 
     /// @notice Creates multiple linear streams with range funded by `msg.sender`.
     ///
     /// @dev We use an array of structs for the parameters to avoid the "Stack Too Deep" error.
     ///
+    /// Notes:
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
+    ///
     /// Requirements:
     /// - `totalAmount` must not be zero.
     /// - `params` must be non-empty.
     /// - The params amounts summed up must be equal to the `totalAmount`.
     ///
-    /// @param linear The address of the {SablierV2LockupLinear} core contract.
-    /// @param params The array of structs that partially encapsulates the
-    /// {SablierV2LockupLinear-createWithRange} function parameters.
+    /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The permit2 contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
+    /// @param params The array of structs that partially encapsulates the
+    /// {SablierV2LockupLinear-createWithRange} function parameters.
     /// @return streamIds The ids of the newly created streams.
     function createWithRangeMultiple(
         ISablierV2LockupLinear linear,
-        CreateLinear.RangeParams[] calldata params,
+        IAllowanceTransfer permit2,
         IERC20 asset,
-        uint128 totalAmount
+        uint128 totalAmount,
+        CreateLinear.RangeParams[] calldata params
     ) external returns (uint256[] memory streamIds);
-
-    /// @notice Target function to create a linear stream with durations.
-    ///
-    /// Notes:
-    /// - See {ISablierV2LockupLinear-createWithDurations} and {ISignatureTransfer-permitTransferFrom}
-    /// for documentation.
-    /// - Transfers assets from user to proxy target via permit2 allowance.
-    ///
-    /// @param linear The Sablier V2 linear contract.
-    /// @param permit2 The permit2 contract.
-    function permit2CreateWithDurations(
-        ISablierV2LockupLinear linear,
-        LockupLinear.CreateWithDurations calldata params,
-        ISignatureTransfer permit2,
-        ISignatureTransfer.PermitTransferFrom calldata permit,
-        bytes calldata signature
-    ) external returns (uint256 streamId);
-
-    /// @notice Target function to create a linear stream with range.
-    ///
-    /// Notes:
-    /// - See {ISablierV2LockupLinear-createWithRange} and {ISignatureTransfer-permitTransferFrom} for documentation.
-    /// - Transfers assets from user to proxy target via permit2 allowance.
-    ///
-    /// @param linear The Sablier V2 linear contract.
-    /// @param permit2 The permit2 contract.
-    function permit2CreateWithRange(
-        ISablierV2LockupLinear linear,
-        LockupLinear.CreateWithRange calldata params,
-        ISignatureTransfer permit2,
-        ISignatureTransfer.PermitTransferFrom calldata permit,
-        bytes calldata signature
-    ) external returns (uint256 streamId);
 
     /// @notice Wraps ETH into WETH9 and creates a linear stream with durations.
     ///
     /// Notes:
-    /// - See {ISablierV2LockupLinear-createWithDurations} for documentation.
+    /// - See {ISablierV2LockupLinear-createWithDurations} for documentation.\
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// Requirements:
     /// - `params.asset` must be the WETH9 contract address.
     /// - `msg.value` must be equal to `params.totalAmount`.
     ///
-    /// @param weth9 The WETH9 contract.
     /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The permit2 contract.
+    /// @param weth9 The WETH9 contract.
     function wrapEtherAndCreateWithDurations(
-        IWETH9 weth9,
         ISablierV2LockupLinear linear,
+        IAllowanceTransfer permit2,
+        IWETH9 weth9,
         LockupLinear.CreateWithDurations calldata params
     ) external payable returns (uint256 streamId);
 
@@ -218,16 +212,19 @@ interface ISablierV2ProxyTarget {
     ///
     /// Notes:
     /// - See {ISablierV2LockupLinear-createWithRange} for documentation.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// Requirements:
     /// - `params.asset` must be the WETH9 contract address.
     /// - `msg.value` must be equal to `params.totalAmount`.
     ///
-    /// @param weth9 The WETH9 contract.
     /// @param linear The Sablier V2 linear contract.
+    /// @param permit2 The permit2 contract.
+    /// @param weth9 The WETH9 contract.
     function wrapEtherAndCreateWithRange(
-        IWETH9 weth9,
         ISablierV2LockupLinear linear,
+        IAllowanceTransfer permit2,
+        IWETH9 weth9,
         LockupLinear.CreateWithRange calldata params
     ) external payable returns (uint256 streamId);
 
@@ -240,11 +237,16 @@ interface ISablierV2ProxyTarget {
     /// Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupPro-createWithDeltas} for documentation.
     /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param lockup The Sablier V2 contract.
+    /// @param pro The Sablier V2 pro contract.
+    /// @param permit2 The permit2 contract.
+    /// @return newStreamId The stream id of the newly created stream.
     function cancelAndCreateWithDeltas(
         ISablierV2Lockup lockup,
         ISablierV2LockupPro pro,
+        IAllowanceTransfer permit2,
         uint256 streamId,
         LockupPro.CreateWithDeltas calldata params
     ) external returns (uint256 newStreamId);
@@ -254,11 +256,16 @@ interface ISablierV2ProxyTarget {
     /// Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupPro-createWithMilestones} for documentation.
     /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param lockup The Sablier V2 contract.
+    /// @param pro The Sablier V2 pro contract.
+    /// @param permit2 The permit2 contract.
+    /// @return newStreamId The stream id of the newly created stream.
     function cancelAndCreateWithMilestones(
         ISablierV2Lockup lockup,
         ISablierV2LockupPro pro,
+        IAllowanceTransfer permit2,
         uint256 streamId,
         LockupPro.CreateWithMilestones calldata params
     ) external returns (uint256 newStreamId);
@@ -267,10 +274,13 @@ interface ISablierV2ProxyTarget {
     ///
     /// Notes:
     /// - See {ISablierV2LockupPro-createWithDeltas} for documentation.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param pro The Sablier V2 pro contract.
+    /// @param permit2 The permit2 contract.
     function createWithDelta(
         ISablierV2LockupPro pro,
+        IAllowanceTransfer permit2,
         LockupPro.CreateWithDeltas calldata params
     ) external returns (uint256 streamId);
 
@@ -278,10 +288,13 @@ interface ISablierV2ProxyTarget {
     ///
     /// Notes:
     /// - See {ISablierV2LockupPro-createWithMilestones} for documentation.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param pro The Sablier V2 pro contract.
+    /// @param permit2 The permit2 contract.
     function createWithMilestones(
         ISablierV2LockupPro pro,
+        IAllowanceTransfer permit2,
         LockupPro.CreateWithMilestones calldata params
     ) external returns (uint256 streamId);
 
@@ -289,60 +302,73 @@ interface ISablierV2ProxyTarget {
     ///
     /// @dev We use an array of structs for the parameters to avoid the "Stack Too Deep" error.
     ///
+    /// Notes:
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
+    ///
     /// Requirements:
     /// - `totalAmount` must not be zero.
     /// - `params` must be non-empty.
     /// - The params amounts summed up must be equal to the `totalAmount`.
     ///
-    /// @param pro The address of the {SablierV2LockupPro} core contract.
-    /// @param params The array of structs that partially encapsulates the
-    /// {SablierV2LockupPro-createWithDelta} function parameters.
+    /// @param pro The Sablier V2 pro contract.
+    /// @param permit2 The permit2 contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
+    /// @param params The array of structs that partially encapsulates the
+    /// {SablierV2LockupPro-createWithDelta} function parameters.
     /// @return streamIds The ids of the newly created streams.
     function createWithDeltasMultiple(
         ISablierV2LockupPro pro,
-        CreatePro.DeltasParams[] calldata params,
+        IAllowanceTransfer permit2,
         IERC20 asset,
-        uint128 totalAmount
+        uint128 totalAmount,
+        CreatePro.DeltasParams[] calldata params
     ) external returns (uint256[] memory streamIds);
 
     /// @notice Creates multiple pro streams with milestones funded by `msg.sender`.
     ///
     /// @dev We use an array of structs for the parameters to avoid the "Stack Too Deep" error.
     ///
+    /// Notes:
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
+    ///
     /// Requirements:
     /// - `totalAmount` must not be zero.
     /// - `params` must be non-empty.
     /// - The params amounts summed up must be equal to the `totalAmount`.
     ///
-    /// @param pro The address of the {SablierV2LockupPro} core contract.
-    /// @param params The array of structs that partially encapsulates the
-    /// {SablierV2LockupPro-createWithMilestones} function parameters.
+    /// @param pro The Sablier V2 pro contract.
+    /// @param permit2 The permit2 contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
+    /// @param params The array of structs that partially encapsulates the
+    /// {SablierV2LockupPro-createWithMilestones} function parameters.
     /// @return streamIds The ids of the newly created streams.
     function createWithMilestonesMultiple(
         ISablierV2LockupPro pro,
-        CreatePro.MilestonesParams[] calldata params,
+        IAllowanceTransfer permit2,
         IERC20 asset,
-        uint128 totalAmount
+        uint128 totalAmount,
+        CreatePro.MilestonesParams[] calldata params
     ) external returns (uint256[] memory streamIds);
 
     /// @notice Wraps ETH into WETH9 and creates a pro stream with deltas.
     ///
     /// Notes:
     /// - See {ISablierV2LockupPro-createWithDeltas} for documentation.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// Requirements:
     /// - `params.asset` must be the WETH9 contract address.
     /// - `msg.value` must be equal to `params.totalAmount`.
     ///
-    /// @param weth9 The WETH9 contract.
     /// @param pro The Sablier V2 pro contract.
+    /// @param permit2 The permit2 contract.
+    /// @param weth9 The WETH9 contract.
     function wrapEtherAndCreateWithDeltas(
-        IWETH9 weth9,
         ISablierV2LockupPro pro,
+        IAllowanceTransfer permit2,
+        IWETH9 weth9,
         LockupPro.CreateWithDeltas calldata params
     ) external payable returns (uint256 streamId);
 
@@ -350,16 +376,19 @@ interface ISablierV2ProxyTarget {
     ///
     /// Notes:
     /// - See {ISablierV2LockupPro-createWithMilestones} for documentation.
+    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// Requirements:
     /// - `params.asset` must be the WETH9 contract address.
     /// - `msg.value` must be equal to `params.totalAmount`.
     ///
-    /// @param weth9 The WETH9 contract.
     /// @param pro The Sablier V2 pro contract.
+    /// @param permit2 The permit2 contract.
+    /// @param weth9 The WETH9 contract.
     function wrapEtherAndCreateWithMilestones(
-        IWETH9 weth9,
         ISablierV2LockupPro pro,
+        IAllowanceTransfer permit2,
+        IWETH9 weth9,
         LockupPro.CreateWithMilestones calldata params
     ) external payable returns (uint256 streamId);
 }
