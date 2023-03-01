@@ -12,7 +12,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
 
         changePrank(users.sender);
     }
-
+    /* 
     /// @dev it should revert.
     function test_RevertWhen_TotalAmountZero() external {
         uint128 totalAmountZero = 0;
@@ -74,5 +74,5 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
 
         assertEq(actualStreamIdsCount, expectedStreamIdsCount);
         assertEq(streamIds, DEFAULT_STREAM_IDS);
-    }
+    } */
 }

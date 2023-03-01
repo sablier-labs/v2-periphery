@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
-import { ISignatureTransfer } from "@permit2/interfaces/ISignatureTransfer.sol";
+import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
 import { SafeERC20 } from "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
@@ -75,7 +75,6 @@ library Helpers {
 
         // Interactions: cancel the stream.
         lockup.cancel(streamId);
-        // After the stream is cancelled, the return amount is in the proxy contract.
 
         // Interactions: transfer the return amount to proxy owner, if greater than zero.
         if (returnAmount > 0) {
@@ -117,60 +116,64 @@ library Helpers {
     }
 
     /// @dev Helper function that:
-    /// 1. Transfers funds from the proxy owner to the proxy contract.
+    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
     /// 2. Approves the {SablierV2LockupPro} contract to spend funds from proxy.
     /// 3. Performs an external call on {SablierV2LockupPro-createWithDeltas}.
     function createWithDeltas(
         ISablierV2LockupPro pro,
+        IAllowanceTransfer permit2,
         LockupPro.CreateWithDeltas calldata params
     ) internal returns (uint256 streamId) {
-        transferAndApprove(address(pro), params.asset, params.totalAmount);
+        transferAndApprove(permit2, address(pro), params.asset, params.totalAmount);
         streamId = pro.createWithDeltas(params);
     }
 
     /// @dev Helper function that:
-    /// 1. Transfers funds from the proxy owner to the proxy contract.
+    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
     /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy.
     /// 3. Performs an external call on {SablierV2LockupLinear-createWithDeltas}.
     function createWithDurations(
         ISablierV2LockupLinear linear,
+        IAllowanceTransfer permit2,
         LockupLinear.CreateWithDurations calldata params
     ) internal returns (uint256 streamId) {
-        transferAndApprove(address(linear), params.asset, params.totalAmount);
+        transferAndApprove(permit2, address(linear), params.asset, params.totalAmount);
         streamId = linear.createWithDurations(params);
     }
 
     /// @dev Helper function that:
-    /// 1. Transfers funds from the proxy owner to the proxy contract.
+    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
     /// 2. Approves the {SablierV2LockupPro} contract to spend funds from proxy.
     /// 3. Performs an external call on {SablierV2LockupPro-createWithMilestones}.
     function createWithMilestones(
         ISablierV2LockupPro pro,
+        IAllowanceTransfer permit2,
         LockupPro.CreateWithMilestones calldata params
     ) internal returns (uint256 streamId) {
-        transferAndApprove(address(pro), params.asset, params.totalAmount);
+        transferAndApprove(permit2, address(pro), params.asset, params.totalAmount);
         streamId = pro.createWithMilestones(params);
     }
 
     /// @dev Helper function that:
-    /// 1. Transfers funds from the proxy owner to the proxy contract.
+    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
     /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy.
     /// 3. Performs an external call on {SablierV2LockupLinear-createWithRange}.
     function createWithRange(
         ISablierV2LockupLinear linear,
+        IAllowanceTransfer permit2,
         LockupLinear.CreateWithRange calldata params
     ) internal returns (uint256 streamId) {
-        transferAndApprove(address(linear), params.asset, params.totalAmount);
+        transferAndApprove(permit2, address(linear), params.asset, params.totalAmount);
         streamId = linear.createWithRange(params);
     }
 
-    /// @dev Helper function that transfers `value` funds from `msg.sender` to `address(this)`
-    /// and approves `value` to `spender`.
-    function transferAndApprove(address spender, IERC20 asset, uint256 value) internal {
-        asset.safeTransferFrom({ from: msg.sender, to: address(this), value: value });
+    /// @dev Helper function that transfers `amount` funds from `msg.sender` to `address(this)` via Permit2
+    /// and approves `amount` to `spender`, if necessary.
+    function transferAndApprove(IAllowanceTransfer permit2, address spender, IERC20 asset, uint160 amount) internal {
+        permit2.transferFrom(msg.sender, address(this), amount, address(asset));
 
         uint256 allowance = asset.allowance(address(this), spender);
-        if (allowance < value) {
+        if (allowance < uint256(amount)) {
             asset.approve(spender, type(uint256).max);
         }
     }

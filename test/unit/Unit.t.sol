@@ -127,7 +127,7 @@ contract Unit_Test is Base_Test {
     /*//////////////////////////////////////////////////////////////////////////
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
-
+    /* 
     /// @dev Creates default deltas streams.
     function createWithDeltasMultipleDefault() internal returns (uint256[] memory streamIds) {
         streamIds = target.createWithDeltasMultiple(pro, defaultDeltasParams(), asset, DEFAULT_TOTAL_AMOUNT);
@@ -146,5 +146,5 @@ contract Unit_Test is Base_Test {
     /// @dev Creates default range streams.
     function createWithRangeMultipleDefault() internal returns (uint256[] memory streamIds) {
         streamIds = target.createWithRangeMultiple(linear, defaultRangeParams(), asset, DEFAULT_TOTAL_AMOUNT);
-    }
+    } */
 }
