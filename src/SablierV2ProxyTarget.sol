@@ -55,13 +55,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 streamId,
         LockupLinear.CreateWithDurations calldata params
     ) external override returns (uint256 newStreamId) {
-<<<<<<< HEAD
         Helpers.cancel(lockup, streamId);
-        newStreamId = Helpers.createWithDurations(linear, params);
-=======
-        lockup.cancel(streamId);
         newStreamId = Helpers.createWithDurations(linear, permit2, params);
->>>>>>> 857cd1e (feat: implement Permit2 transfer in all functions)
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -72,13 +67,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 streamId,
         LockupLinear.CreateWithRange calldata params
     ) external override returns (uint256 newStreamId) {
-<<<<<<< HEAD
         Helpers.cancel(lockup, streamId);
-        newStreamId = Helpers.createWithRange(linear, params);
-=======
-        lockup.cancel(streamId);
         newStreamId = Helpers.createWithRange(linear, permit2, params);
->>>>>>> 857cd1e (feat: implement Permit2 transfer in all functions)
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -237,13 +227,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 streamId,
         LockupPro.CreateWithDeltas calldata params
     ) external override returns (uint256 newStreamId) {
-<<<<<<< HEAD
         Helpers.cancel(lockup, streamId);
-        newStreamId = Helpers.createWithDeltas(pro, params);
-=======
-        lockup.cancel(streamId);
         newStreamId = Helpers.createWithDeltas(pro, permit2, params);
->>>>>>> 857cd1e (feat: implement Permit2 transfer in all functions)
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -254,13 +239,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 streamId,
         LockupPro.CreateWithMilestones calldata params
     ) external override returns (uint256 newStreamId) {
-<<<<<<< HEAD
         Helpers.cancel(lockup, streamId);
-        newStreamId = Helpers.createWithMilestones(pro, params);
-=======
-        lockup.cancel(streamId);
         newStreamId = Helpers.createWithMilestones(pro, permit2, params);
->>>>>>> 857cd1e (feat: implement Permit2 transfer in all functions)
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
