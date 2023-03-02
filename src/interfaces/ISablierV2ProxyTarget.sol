@@ -73,6 +73,7 @@ interface ISablierV2ProxyTarget {
     /// Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupLinear-createWithDurations} for documentation.
     /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    /// - The `streamId` can point to a linear or pro stream.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param lockup The Sablier V2 contract.
@@ -92,6 +93,7 @@ interface ISablierV2ProxyTarget {
     /// Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupLinear-createWithRange} for documentation.
     /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    /// - The `streamId` can point to a linear or pro stream.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param lockup The Sablier V2 contract.
@@ -237,6 +239,7 @@ interface ISablierV2ProxyTarget {
     /// Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupPro-createWithDeltas} for documentation.
     /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    /// - The `streamId` can point to a linear or pro stream.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param lockup The Sablier V2 contract.
@@ -256,6 +259,7 @@ interface ISablierV2ProxyTarget {
     /// Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupPro-createWithMilestones} for documentation.
     /// - The `lockup` address can be either {SablierV2LockupLinear} or {SablierV2LockupPro} address.
+    /// - The `streamId` can point to a linear or pro stream.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param lockup The Sablier V2 contract.
