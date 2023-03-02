@@ -16,6 +16,7 @@ test = "test"
 [profile.ci]
 fuzz_runs = 10_000
 verbosity = 4
+via_ir = true
 
 [rpc_endpoints]
   ethereum = "https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
