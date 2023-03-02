@@ -53,7 +53,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 streamId,
         LockupLinear.CreateWithDurations calldata params
     ) external override returns (uint256 newStreamId) {
-        lockup.cancel(streamId);
+        Helpers.cancel(lockup, streamId);
         newStreamId = Helpers.createWithDurations(linear, params);
     }
 
@@ -64,7 +64,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 streamId,
         LockupLinear.CreateWithRange calldata params
     ) external override returns (uint256 newStreamId) {
-        lockup.cancel(streamId);
+        Helpers.cancel(lockup, streamId);
         newStreamId = Helpers.createWithRange(linear, params);
     }
 
@@ -217,7 +217,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 streamId,
         LockupPro.CreateWithDeltas calldata params
     ) external override returns (uint256 newStreamId) {
-        lockup.cancel(streamId);
+        Helpers.cancel(lockup, streamId);
         newStreamId = Helpers.createWithDeltas(pro, params);
     }
 
@@ -228,7 +228,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 streamId,
         LockupPro.CreateWithMilestones calldata params
     ) external override returns (uint256 newStreamId) {
-        lockup.cancel(streamId);
+        Helpers.cancel(lockup, streamId);
         newStreamId = Helpers.createWithMilestones(pro, params);
     }
 
