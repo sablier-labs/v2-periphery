@@ -11,6 +11,8 @@ import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 import { IWETH9 } from "./IWETH9.sol";
 import { CreateLinear, CreatePro } from "../types/DataTypes.sol";
 
+/// @title ISablierV2ProxyTarget
+/// @notice Target logic for the proxy contract.
 interface ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP

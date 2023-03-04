@@ -13,6 +13,8 @@ import { IWETH9 } from "./interfaces/IWETH9.sol";
 import { Helpers } from "./libraries/Helpers.sol";
 import { CreateLinear, CreatePro } from "./types/DataTypes.sol";
 
+/// @title SablierV2ProxyTarget
+/// @notice Implements the {ISablierV2ProxyTarget} interface.
 contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
