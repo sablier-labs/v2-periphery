@@ -32,6 +32,15 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
                                   INTERNAL STORAGE
     //////////////////////////////////////////////////////////////////////////*/
 
+    struct PrivateKeys {
+        uint256 admin;
+        uint256 alice;
+        uint256 broker;
+        uint256 eve;
+        uint256 recipient;
+        uint256 sender;
+    }
+
     struct Users {
         // Default admin of all Sablier V2 contracts.
         address payable admin;
@@ -47,6 +56,7 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         address payable sender;
     }
 
+    PrivateKeys internal privateKeys;
     Users internal users;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -79,15 +89,12 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual {
-        // Create users for testing.
-        users = Users({
-            admin: createUser("Admin"),
-            alice: createUser("Alice"),
-            broker: createUser("Broker"),
-            eve: createUser("Eve"),
-            recipient: createUser("Recipient"),
-            sender: createUser("Sender")
-        });
+        (users.admin, privateKeys.admin) = createUser("Admin");
+        (users.alice, privateKeys.alice) = createUser("Alice");
+        (users.broker, privateKeys.broker) = createUser("Broker");
+        (users.eve, privateKeys.eve) = createUser("Eve");
+        (users.recipient, privateKeys.recipient) = createUser("Recipient");
+        (users.sender, privateKeys.sender) = createUser("Sender");
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -112,11 +119,11 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
 
     /// @dev Generates an address by hashing the name, labels the address and funds it with 100 ETH, 1 million assets,
     /// and 1 million non-compliant assets.
-    function createUser(string memory name) internal returns (address payable addr) {
-        addr = payable(address(uint160(uint256(keccak256(abi.encodePacked(name))))));
-        vm.label({ account: addr, newLabel: name });
+    function createUser(string memory name) internal returns (address payable, uint256) {
+        (address addr, uint256 privateKey) = makeAddrAndKey(name);
         vm.deal({ account: addr, newBalance: 100 ether });
         deal({ token: address(asset), to: addr, give: 1_000_000e18 });
+        return (payable(addr), privateKey);
     }
 
     /// @dev Expects a call to the `transfer` function of the default ERC-20 asset.
