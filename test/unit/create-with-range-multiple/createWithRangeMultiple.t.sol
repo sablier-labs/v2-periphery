@@ -12,13 +12,13 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
 
         changePrank(users.sender);
     }
-    /* 
+
     /// @dev it should revert.
     function test_RevertWhen_TotalAmountZero() external {
         uint128 totalAmountZero = 0;
         // Expect a {SablierV2ProxyTarget_TotalAmountZero} error.
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
-        target.createWithRangeMultiple(linear, defaultRangeParams(), asset, totalAmountZero);
+        target.createWithRangeMultiple(linear, permit2, asset, totalAmountZero, defaultRangeParams());
     }
 
     modifier totalAmountNotZero() {
@@ -36,7 +36,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
                 0
             )
         );
-        target.createWithRangeMultiple(linear, params, asset, DEFAULT_TOTAL_AMOUNT);
+        target.createWithRangeMultiple(linear, permit2, asset, DEFAULT_TOTAL_AMOUNT, params);
     }
 
     modifier paramsCountNotZero() {
@@ -54,7 +54,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
                 DEFAULT_TOTAL_AMOUNT
             )
         );
-        target.createWithRangeMultiple(linear, defaultRangeParams(), asset, totalAmount);
+        target.createWithRangeMultiple(linear, permit2, asset, totalAmount, defaultRangeParams());
     }
 
     modifier totalAmountEqualToAmountsSum() {
@@ -67,12 +67,12 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
         expectTransferFromCall(users.sender, address(target), DEFAULT_TOTAL_AMOUNT);
         expectTransferFromCallMutiple(address(target), address(linear), DEFAULT_AMOUNT);
 
-        streamIds = target.createWithRangeMultiple(linear, defaultRangeParams(), asset, DEFAULT_TOTAL_AMOUNT);
+        streamIds = target.createWithRangeMultiple(linear, permit2, asset, DEFAULT_TOTAL_AMOUNT, defaultRangeParams());
 
         uint256 actualStreamIdsCount = streamIds.length;
         uint256 expectedStreamIdsCount = streamIds.length;
 
         assertEq(actualStreamIdsCount, expectedStreamIdsCount);
         assertEq(streamIds, DEFAULT_STREAM_IDS);
-    } */
+    }
 }

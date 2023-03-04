@@ -16,7 +16,8 @@ contract Unit_Test is Base_Test {
     function setUp() public virtual override {
         Base_Test.setUp();
 
-        approveTarget();
+        approvePermit2();
+        permitTarget();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -127,24 +128,36 @@ contract Unit_Test is Base_Test {
     /*//////////////////////////////////////////////////////////////////////////
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
-    /* 
+
     /// @dev Creates default deltas streams.
     function createWithDeltasMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.createWithDeltasMultiple(pro, defaultDeltasParams(), asset, DEFAULT_TOTAL_AMOUNT);
+        streamIds = target.createWithDeltasMultiple(pro, permit2, asset, DEFAULT_TOTAL_AMOUNT, defaultDeltasParams());
     }
 
     /// @dev Creates default durations streams.
     function createWithDurationsMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.createWithDurationsMultiple(linear, defaultDurationsParams(), asset, DEFAULT_TOTAL_AMOUNT);
+        streamIds = target.createWithDurationsMultiple(
+            linear,
+            permit2,
+            asset,
+            DEFAULT_TOTAL_AMOUNT,
+            defaultDurationsParams()
+        );
     }
 
     /// @dev Creates default milestones streams.
     function createWithMilestonesMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.createWithMilestonesMultiple(pro, defaultMilestonesParams(), asset, DEFAULT_TOTAL_AMOUNT);
+        streamIds = target.createWithMilestonesMultiple(
+            pro,
+            permit2,
+            asset,
+            DEFAULT_TOTAL_AMOUNT,
+            defaultMilestonesParams()
+        );
     }
 
     /// @dev Creates default range streams.
     function createWithRangeMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.createWithRangeMultiple(linear, defaultRangeParams(), asset, DEFAULT_TOTAL_AMOUNT);
-    } */
+        streamIds = target.createWithRangeMultiple(linear, permit2, asset, DEFAULT_TOTAL_AMOUNT, defaultRangeParams());
+    }
 }

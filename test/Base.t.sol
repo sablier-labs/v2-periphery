@@ -2,7 +2,8 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
-import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
+import { AllowanceTransfer } from "@permit2/AllowanceTransfer.sol";
+import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
 import { PRBTest } from "@prb/test/PRBTest.sol";
 import { SablierV2Comptroller } from "@sablier/v2-core/SablierV2Comptroller.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.sol";
@@ -21,7 +22,9 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    IERC20 internal asset;
+    ERC20 internal asset;
+    AllowanceTransfer internal permit2;
+
     SablierV2Comptroller internal comptroller;
     SablierV2NftDescriptor internal descriptor;
     SablierV2LockupLinear internal linear;
@@ -56,6 +59,7 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         address payable sender;
     }
 
+    IAllowanceTransfer.PermitDetails internal defaultPermitDetails;
     PrivateKeys internal privateKeys;
     Users internal users;
 
@@ -66,6 +70,9 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
     constructor() {
         // Deploy the asset to use for testing.
         asset = new ERC20("Asset Coin", "Asset");
+
+        // Deploy the permit2 contract.
+        permit2 = new AllowanceTransfer();
 
         // Deploy the core contracts.
         comptroller = new SablierV2Comptroller(users.admin);
@@ -95,26 +102,84 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         (users.eve, privateKeys.eve) = createUser("Eve");
         (users.recipient, privateKeys.recipient) = createUser("Recipient");
         (users.sender, privateKeys.sender) = createUser("Sender");
+
+        defaultPermitDetails = IAllowanceTransfer.PermitDetails({
+            token: address(asset),
+            amount: UINT160_MAX,
+            expiration: DEFAULT_PERMIT2_EXPIRATION,
+            nonce: DEFAULT_PERMIT2_NONCE
+        });
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                            INTERNAL CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Helper function to get the `PermitSingle` struct given the `spender`.
+    function getPermitSingle(address spender) internal view returns (IAllowanceTransfer.PermitSingle memory permit) {
+        permit = IAllowanceTransfer.PermitSingle({
+            details: defaultPermitDetails,
+            spender: spender,
+            sigDeadline: DEFAULT_PERMIT2_SIG_DEADLINE
+        });
+    }
+
+    /// @dev Helper function to get the signature given the `spender` and the `privateKey`.
+    function getPermitSignature(address spender, uint256 privateKey) internal view returns (bytes memory sig) {
+        bytes32 permitHash = keccak256(abi.encode(PERMIT_DETAILS_TYPEHASH, defaultPermitDetails));
+        bytes32 msgHash = keccak256(
+            abi.encodePacked(
+                "\x19\x01",
+                permit2.DOMAIN_SEPARATOR(),
+                keccak256(abi.encode(PERMIT_SINGLE_TYPEHASH, permitHash, spender, DEFAULT_PERMIT2_SIG_DEADLINE))
+            )
+        );
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, msgHash);
+        sig = bytes.concat(r, s, bytes1(v));
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function to approve the `SablierV2ProxyTarget` contract to spend ERC-20 assets from
+    /// @dev Helper function to approve the `permit2` contract to spend ERC-20 assets from
     /// the sender, recipient, Alice and Eve.
-    function approveTarget() internal {
-        changePrank({ msgSender: users.alice });
-        asset.approve({ spender: address(target), amount: UINT256_MAX });
-
-        changePrank({ msgSender: users.eve });
-        asset.approve({ spender: address(target), amount: UINT256_MAX });
-
-        changePrank({ msgSender: users.recipient });
-        asset.approve({ spender: address(target), amount: UINT256_MAX });
-
+    function approvePermit2() internal {
         changePrank({ msgSender: users.sender });
-        asset.approve({ spender: address(target), amount: UINT256_MAX });
+        asset.approve({ spender: address(permit2), amount: UINT256_MAX });
+        changePrank({ msgSender: users.recipient });
+        asset.approve({ spender: address(permit2), amount: UINT256_MAX });
+        changePrank({ msgSender: users.alice });
+        asset.approve({ spender: address(permit2), amount: UINT256_MAX });
+        changePrank({ msgSender: users.eve });
+        asset.approve({ spender: address(permit2), amount: UINT256_MAX });
+    }
+
+    function permitTarget() internal {
+        changePrank({ msgSender: users.alice });
+        permit2.permit(
+            users.alice,
+            getPermitSingle(address(target)),
+            getPermitSignature(address(target), privateKeys.alice)
+        );
+        changePrank({ msgSender: users.eve });
+        permit2.permit(
+            users.eve,
+            getPermitSingle(address(target)),
+            getPermitSignature(address(target), privateKeys.eve)
+        );
+        changePrank({ msgSender: users.recipient });
+        permit2.permit(
+            users.recipient,
+            getPermitSingle(address(target)),
+            getPermitSignature(address(target), privateKeys.recipient)
+        );
+        changePrank({ msgSender: users.sender });
+        permit2.permit(
+            users.sender,
+            getPermitSingle(address(target)),
+            getPermitSignature(address(target), privateKeys.sender)
+        );
     }
 
     /// @dev Generates an address by hashing the name, labels the address and funds it with 100 ETH, 1 million assets,
@@ -128,7 +193,7 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
 
     /// @dev Expects a call to the `transfer` function of the default ERC-20 asset.
     function expectTransferFromCall(address from, address to, uint256 amount) internal {
-        vm.expectCall(address(asset), abi.encodeCall(IERC20.transferFrom, (from, to, amount)));
+        vm.expectCall(address(asset), abi.encodeCall(ERC20.transferFrom, (from, to, amount)));
     }
 
     /// @dev Expects multiple calls to the `transfer` function of the default ERC-20 asset.
