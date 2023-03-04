@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.18 <0.9.0;
+pragma solidity >=0.8.19 <0.9.0;
 
 import { UD2x18, ud2x18 } from "@prb/math/UD2x18.sol";
 import { Broker, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";

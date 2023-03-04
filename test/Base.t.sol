@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.18 <0.9.0;
+pragma solidity >=0.8.19 <0.9.0;
 
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
@@ -7,11 +7,11 @@ import { PRBTest } from "@prb/test/PRBTest.sol";
 import { SablierV2Comptroller } from "@sablier/v2-core/SablierV2Comptroller.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.sol";
 import { SablierV2LockupPro } from "@sablier/v2-core/SablierV2LockupPro.sol";
-import { ISablierV2Comptroller } from "@sablier/v2-core/interfaces/ISablierV2Comptroller.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
 
+import { SablierV2NftDescriptor } from "./mockups/SablierV2NftDescriptor.t.sol";
 import { Constants } from "./helpers/Constants.t.sol";
 
 /// @title Base_Test
@@ -22,7 +22,8 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     IERC20 internal asset;
-    ISablierV2Comptroller internal comptroller;
+    SablierV2Comptroller internal comptroller;
+    SablierV2NftDescriptor internal descriptor;
     SablierV2LockupLinear internal linear;
     SablierV2LockupPro internal pro;
     SablierV2ProxyTarget internal target;
@@ -58,8 +59,9 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
 
         // Deploy the core contracts.
         comptroller = new SablierV2Comptroller(users.admin);
-        linear = new SablierV2LockupLinear(users.admin, comptroller, DEFAULT_MAX_FEE);
-        pro = new SablierV2LockupPro(users.admin, comptroller, DEFAULT_MAX_FEE, DEFAULT_MAX_SEGMENT_COUNT);
+        descriptor = new SablierV2NftDescriptor();
+        linear = new SablierV2LockupLinear(users.admin, comptroller, descriptor, DEFAULT_MAX_FEE);
+        pro = new SablierV2LockupPro(users.admin, comptroller, descriptor, DEFAULT_MAX_FEE, DEFAULT_MAX_SEGMENT_COUNT);
 
         // Deploy the periphery contract.
         target = new SablierV2ProxyTarget();

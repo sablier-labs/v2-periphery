@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: LGPL-3.0
-pragma solidity >=0.8.18;
+pragma solidity >=0.8.19;
 
 import { Broker, LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
