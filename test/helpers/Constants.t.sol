@@ -20,6 +20,9 @@ abstract contract Constants {
     uint40 internal immutable DEFAULT_CLIFF_TIME;
     uint40 internal constant DEFAULT_CLIFF_DURATION = 2_500 seconds;
     uint40 internal immutable DEFAULT_END_TIME;
+    uint48 internal immutable DEFAULT_PERMIT2_EXPIRATION;
+    uint48 internal constant DEFAULT_PERMIT2_NONCE = 0;
+    uint256 internal immutable DEFAULT_PERMIT2_SIG_DEADLINE;
     uint40 internal immutable DEFAULT_START_TIME;
     uint40 internal constant DEFAULT_TIME_WARP = 2_600 seconds;
     uint128 internal constant DEFAULT_TOTAL_AMOUNT = 100_000e18;
@@ -28,8 +31,17 @@ abstract contract Constants {
 
     uint256 internal constant PARAMS_COUNT = 10;
     uint128 internal constant UINT128_MAX = type(uint128).max;
+    uint160 internal constant UINT160_MAX = type(uint160).max;
     uint256 internal constant UINT256_MAX = type(uint256).max;
     uint40 internal constant UINT40_MAX = type(uint40).max;
+
+    // prettier-ignore
+    bytes32 public constant PERMIT_DETAILS_TYPEHASH = keccak256("PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)");
+    // solhint-disable-previous-line max-line-length
+
+    // prettier-ignore
+    bytes32 internal constant PERMIT_SINGLE_TYPEHASH = keccak256("PermitSingle(PermitDetails details,address spender,uint256 sigDeadline)PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)");
+    // solhint-disable-previous-line max-line-length
 
     /*//////////////////////////////////////////////////////////////////////////
                                  COMPLEX CONSTANTS
@@ -49,6 +61,8 @@ abstract contract Constants {
         DEFAULT_START_TIME = uint40(block.timestamp);
         DEFAULT_CLIFF_TIME = DEFAULT_START_TIME + DEFAULT_CLIFF_DURATION;
         DEFAULT_END_TIME = DEFAULT_START_TIME + DEFAULT_TOTAL_DURATION;
+        DEFAULT_PERMIT2_EXPIRATION = uint48(DEFAULT_START_TIME + 10);
+        DEFAULT_PERMIT2_SIG_DEADLINE = uint256(DEFAULT_START_TIME + 100);
         DEFAULT_LINEAR_RANGE = LockupLinear.Range({
             start: DEFAULT_START_TIME,
             cliff: DEFAULT_CLIFF_TIME,
