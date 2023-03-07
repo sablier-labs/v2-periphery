@@ -4,6 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
 import { AllowanceTransfer } from "@permit2/AllowanceTransfer.sol";
 import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
+import { PermitHash } from "@permit2/libraries/PermitHash.sol";
 import { PRBTest } from "@prb/test/PRBTest.sol";
 import { SablierV2Comptroller } from "@sablier/v2-core/SablierV2Comptroller.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.sol";
@@ -48,19 +49,14 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
     struct Users {
         // Default admin of all Sablier V2 contracts.
         address payable admin;
-        // Neutral user.
         address payable alice;
-        // Default stream broker.
         address payable broker;
-        // Malicious user.
         address payable eve;
-        // Default stream recipient.
         address payable recipient;
-        // Default stream sender.
         address payable sender;
     }
 
-    IAllowanceTransfer.PermitSingle internal defaultPermitSingle;
+    IAllowanceTransfer.PermitDetails internal defaultPermitDetails;
     Permit2Params internal defaultPermit2Params;
     PrivateKeys internal privateKeys;
     Users internal users;
@@ -106,15 +102,11 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         (users.sender, privateKeys.sender) = createUser("Sender");
 
         DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();
-        defaultPermitSingle = IAllowanceTransfer.PermitSingle({
-            details: IAllowanceTransfer.PermitDetails({
-                token: address(asset),
-                amount: uint160(DEFAULT_TOTAL_AMOUNT),
-                expiration: UINT48_MAX,
-                nonce: DEFAULT_PERMIT2_NONCE
-            }),
-            spender: address(target),
-            sigDeadline: DEFAULT_PERMIT2_SIG_DEADLINE
+        defaultPermitDetails = IAllowanceTransfer.PermitDetails({
+            token: address(asset),
+            amount: uint160(DEFAULT_TOTAL_AMOUNT),
+            expiration: UINT48_MAX,
+            nonce: DEFAULT_PERMIT2_NONCE
         });
         defaultPermit2Params = Permit2Params({
             permit2: permit2,
@@ -130,15 +122,15 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
 
     /// @dev Helper function to get the signature given the `privateKey`.
     function getPermit2Signature(uint256 privateKey) internal view returns (bytes memory sig) {
-        bytes32 permitHash = keccak256(abi.encode(PERMIT_DETAILS_TYPEHASH, defaultPermitSingle.details));
-        bytes32 msgHash = keccak256(
+        bytes32 permitHash = keccak256(abi.encode(PERMIT_DETAILS_TYPEHASH, defaultPermitDetails));
+        bytes32 digest = keccak256(
             abi.encodePacked(
                 "\x19\x01",
                 DOMAIN_SEPARATOR,
                 keccak256(abi.encode(PERMIT_SINGLE_TYPEHASH, permitHash, address(target), DEFAULT_PERMIT2_SIG_DEADLINE))
             )
         );
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, msgHash);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, digest);
         sig = bytes.concat(r, s, bytes1(v));
     }
 
