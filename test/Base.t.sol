@@ -11,6 +11,7 @@ import { SablierV2LockupPro } from "@sablier/v2-core/SablierV2LockupPro.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
+import { Permit2Params } from "src/types/DataTypes.sol";
 
 import { SablierV2NftDescriptor } from "./mockups/SablierV2NftDescriptor.t.sol";
 import { Constants } from "./helpers/Constants.t.sol";
@@ -59,7 +60,8 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         address payable sender;
     }
 
-    IAllowanceTransfer.PermitDetails internal defaultPermitDetails;
+    IAllowanceTransfer.PermitSingle internal defaultPermitSingle;
+    Permit2Params internal defaultPermit2Params;
     PrivateKeys internal privateKeys;
     Users internal users;
 
@@ -103,11 +105,22 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         (users.recipient, privateKeys.recipient) = createUser("Recipient");
         (users.sender, privateKeys.sender) = createUser("Sender");
 
-        defaultPermitDetails = IAllowanceTransfer.PermitDetails({
-            token: address(asset),
-            amount: UINT160_MAX,
+        DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();
+        defaultPermitSingle = IAllowanceTransfer.PermitSingle({
+            details: IAllowanceTransfer.PermitDetails({
+                token: address(asset),
+                amount: uint160(DEFAULT_TOTAL_AMOUNT),
+                expiration: UINT48_MAX,
+                nonce: DEFAULT_PERMIT2_NONCE
+            }),
+            spender: address(target),
+            sigDeadline: DEFAULT_PERMIT2_SIG_DEADLINE
+        });
+        defaultPermit2Params = Permit2Params({
+            permit2: permit2,
             expiration: DEFAULT_PERMIT2_EXPIRATION,
-            nonce: DEFAULT_PERMIT2_NONCE
+            sigDeadline: DEFAULT_PERMIT2_SIG_DEADLINE,
+            signature: getPermit2Signature(privateKeys.sender)
         });
     }
 
@@ -115,23 +128,14 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
                             INTERNAL CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function to get the `PermitSingle` struct given the `spender`.
-    function getPermitSingle(address spender) internal view returns (IAllowanceTransfer.PermitSingle memory permit) {
-        permit = IAllowanceTransfer.PermitSingle({
-            details: defaultPermitDetails,
-            spender: spender,
-            sigDeadline: DEFAULT_PERMIT2_SIG_DEADLINE
-        });
-    }
-
-    /// @dev Helper function to get the signature given the `spender` and the `privateKey`.
-    function getPermitSignature(address spender, uint256 privateKey) internal view returns (bytes memory sig) {
-        bytes32 permitHash = keccak256(abi.encode(PERMIT_DETAILS_TYPEHASH, defaultPermitDetails));
+    /// @dev Helper function to get the signature given the `privateKey`.
+    function getPermit2Signature(uint256 privateKey) internal view returns (bytes memory sig) {
+        bytes32 permitHash = keccak256(abi.encode(PERMIT_DETAILS_TYPEHASH, defaultPermitSingle.details));
         bytes32 msgHash = keccak256(
             abi.encodePacked(
                 "\x19\x01",
-                permit2.DOMAIN_SEPARATOR(),
-                keccak256(abi.encode(PERMIT_SINGLE_TYPEHASH, permitHash, spender, DEFAULT_PERMIT2_SIG_DEADLINE))
+                DOMAIN_SEPARATOR,
+                keccak256(abi.encode(PERMIT_SINGLE_TYPEHASH, permitHash, address(target), DEFAULT_PERMIT2_SIG_DEADLINE))
             )
         );
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, msgHash);
@@ -153,33 +157,6 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         asset.approve({ spender: address(permit2), amount: UINT256_MAX });
         changePrank({ msgSender: users.eve });
         asset.approve({ spender: address(permit2), amount: UINT256_MAX });
-    }
-
-    function permitTarget() internal {
-        changePrank({ msgSender: users.alice });
-        permit2.permit(
-            users.alice,
-            getPermitSingle(address(target)),
-            getPermitSignature(address(target), privateKeys.alice)
-        );
-        changePrank({ msgSender: users.eve });
-        permit2.permit(
-            users.eve,
-            getPermitSingle(address(target)),
-            getPermitSignature(address(target), privateKeys.eve)
-        );
-        changePrank({ msgSender: users.recipient });
-        permit2.permit(
-            users.recipient,
-            getPermitSingle(address(target)),
-            getPermitSignature(address(target), privateKeys.recipient)
-        );
-        changePrank({ msgSender: users.sender });
-        permit2.permit(
-            users.sender,
-            getPermitSingle(address(target)),
-            getPermitSignature(address(target), privateKeys.sender)
-        );
     }
 
     /// @dev Generates an address by hashing the name, labels the address and funds it with 100 ETH, 1 million assets,

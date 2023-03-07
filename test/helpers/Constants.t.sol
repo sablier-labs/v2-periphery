@@ -5,8 +5,6 @@ import { UD2x18, ud2x18 } from "@prb/math/UD2x18.sol";
 import { UD60x18, ZERO } from "@prb/math/UD60x18.sol";
 import { Broker, Lockup, LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { CreateLinear, CreatePro } from "src/types/DataTypes.sol";
-
 abstract contract Constants {
     /*//////////////////////////////////////////////////////////////////////////
                                   SIMPLE CONSTANTS
@@ -34,9 +32,11 @@ abstract contract Constants {
     uint160 internal constant UINT160_MAX = type(uint160).max;
     uint256 internal constant UINT256_MAX = type(uint256).max;
     uint40 internal constant UINT40_MAX = type(uint40).max;
+    uint48 internal constant UINT48_MAX = type(uint48).max;
 
+    bytes32 internal DOMAIN_SEPARATOR;
     // prettier-ignore
-    bytes32 public constant PERMIT_DETAILS_TYPEHASH = keccak256("PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)");
+    bytes32 internal constant PERMIT_DETAILS_TYPEHASH = keccak256("PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)");
     // solhint-disable-previous-line max-line-length
 
     // prettier-ignore
@@ -61,7 +61,7 @@ abstract contract Constants {
         DEFAULT_START_TIME = uint40(block.timestamp);
         DEFAULT_CLIFF_TIME = DEFAULT_START_TIME + DEFAULT_CLIFF_DURATION;
         DEFAULT_END_TIME = DEFAULT_START_TIME + DEFAULT_TOTAL_DURATION;
-        DEFAULT_PERMIT2_EXPIRATION = uint48(DEFAULT_START_TIME + 10);
+        DEFAULT_PERMIT2_EXPIRATION = UINT48_MAX;
         DEFAULT_PERMIT2_SIG_DEADLINE = uint256(DEFAULT_START_TIME + 100);
         DEFAULT_LINEAR_RANGE = LockupLinear.Range({
             start: DEFAULT_START_TIME,

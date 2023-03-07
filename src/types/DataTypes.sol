@@ -2,6 +2,14 @@
 pragma solidity >=0.8.19;
 
 import { Broker, LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
+import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
+
+struct Permit2Params {
+    IAllowanceTransfer permit2;
+    uint48 expiration;
+    uint256 sigDeadline;
+    bytes signature;
+}
 
 library CreateLinear {
     /// @notice Struct that partially encapsulates the {SablierV2LockupLinear-createWithDurations} function parameters.

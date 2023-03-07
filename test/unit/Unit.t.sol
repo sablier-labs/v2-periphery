@@ -17,7 +17,6 @@ contract Unit_Test is Base_Test {
         Base_Test.setUp();
 
         approvePermit2();
-        permitTarget();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -131,17 +130,23 @@ contract Unit_Test is Base_Test {
 
     /// @dev Creates default deltas streams.
     function createWithDeltasMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.createWithDeltasMultiple(pro, permit2, asset, DEFAULT_TOTAL_AMOUNT, defaultDeltasParams());
+        streamIds = target.createWithDeltasMultiple(
+            pro,
+            asset,
+            DEFAULT_TOTAL_AMOUNT,
+            defaultDeltasParams(),
+            defaultPermit2Params
+        );
     }
 
     /// @dev Creates default durations streams.
     function createWithDurationsMultipleDefault() internal returns (uint256[] memory streamIds) {
         streamIds = target.createWithDurationsMultiple(
             linear,
-            permit2,
             asset,
             DEFAULT_TOTAL_AMOUNT,
-            defaultDurationsParams()
+            defaultDurationsParams(),
+            defaultPermit2Params
         );
     }
 
@@ -149,15 +154,21 @@ contract Unit_Test is Base_Test {
     function createWithMilestonesMultipleDefault() internal returns (uint256[] memory streamIds) {
         streamIds = target.createWithMilestonesMultiple(
             pro,
-            permit2,
             asset,
             DEFAULT_TOTAL_AMOUNT,
-            defaultMilestonesParams()
+            defaultMilestonesParams(),
+            defaultPermit2Params
         );
     }
 
     /// @dev Creates default range streams.
     function createWithRangeMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.createWithRangeMultiple(linear, permit2, asset, DEFAULT_TOTAL_AMOUNT, defaultRangeParams());
+        streamIds = target.createWithRangeMultiple(
+            linear,
+            asset,
+            DEFAULT_TOTAL_AMOUNT,
+            defaultRangeParams(),
+            defaultPermit2Params
+        );
     }
 }

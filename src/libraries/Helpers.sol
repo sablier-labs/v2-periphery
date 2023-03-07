@@ -11,7 +11,7 @@ import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Errors } from "./Errors.sol";
 import { IWETH9 } from "../interfaces/IWETH9.sol";
-import { CreateLinear, CreatePro } from "../types/DataTypes.sol";
+import { Permit2Params, CreateLinear, CreatePro } from "../types/DataTypes.sol";
 
 library Helpers {
     using SafeERC20 for IERC20;
@@ -121,10 +121,10 @@ library Helpers {
     /// 3. Performs an external call on {SablierV2LockupPro-createWithDeltas}.
     function createWithDeltas(
         ISablierV2LockupPro pro,
-        IAllowanceTransfer permit2,
-        LockupPro.CreateWithDeltas calldata params
+        LockupPro.CreateWithDeltas calldata params,
+        Permit2Params calldata permit2Params
     ) internal returns (uint256 streamId) {
-        transferAndApprove(permit2, address(pro), params.asset, params.totalAmount);
+        assetActions(address(pro), params.asset, params.totalAmount, permit2Params);
         streamId = pro.createWithDeltas(params);
     }
 
@@ -134,10 +134,10 @@ library Helpers {
     /// 3. Performs an external call on {SablierV2LockupLinear-createWithDeltas}.
     function createWithDurations(
         ISablierV2LockupLinear linear,
-        IAllowanceTransfer permit2,
-        LockupLinear.CreateWithDurations calldata params
+        LockupLinear.CreateWithDurations calldata params,
+        Permit2Params calldata permit2Params
     ) internal returns (uint256 streamId) {
-        transferAndApprove(permit2, address(linear), params.asset, params.totalAmount);
+        assetActions(address(linear), params.asset, params.totalAmount, permit2Params);
         streamId = linear.createWithDurations(params);
     }
 
@@ -147,10 +147,10 @@ library Helpers {
     /// 3. Performs an external call on {SablierV2LockupPro-createWithMilestones}.
     function createWithMilestones(
         ISablierV2LockupPro pro,
-        IAllowanceTransfer permit2,
-        LockupPro.CreateWithMilestones calldata params
+        LockupPro.CreateWithMilestones calldata params,
+        Permit2Params calldata permit2Params
     ) internal returns (uint256 streamId) {
-        transferAndApprove(permit2, address(pro), params.asset, params.totalAmount);
+        assetActions(address(pro), params.asset, params.totalAmount, permit2Params);
         streamId = pro.createWithMilestones(params);
     }
 
@@ -160,21 +160,34 @@ library Helpers {
     /// 3. Performs an external call on {SablierV2LockupLinear-createWithRange}.
     function createWithRange(
         ISablierV2LockupLinear linear,
-        IAllowanceTransfer permit2,
-        LockupLinear.CreateWithRange calldata params
+        LockupLinear.CreateWithRange calldata params,
+        Permit2Params calldata permit2Params
     ) internal returns (uint256 streamId) {
-        transferAndApprove(permit2, address(linear), params.asset, params.totalAmount);
+        assetActions(address(linear), params.asset, params.totalAmount, permit2Params);
         streamId = linear.createWithRange(params);
     }
 
     /// @dev Helper function that transfers `amount` funds from `msg.sender` to `address(this)` via Permit2
-    /// and approves `amount` to `spender`, if necessary.
-    function transferAndApprove(IAllowanceTransfer permit2, address spender, IERC20 asset, uint160 amount) internal {
-        permit2.transferFrom(msg.sender, address(this), amount, address(asset));
+    /// and approves `amount` to `lockup`, if necessary.
+    function assetActions(address lockup, IERC20 asset, uint160 amount, Permit2Params calldata permit2Params) internal {
+        (, , uint48 nonce) = permit2Params.permit2.allowance(msg.sender, address(asset), address(this));
+        IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
+            details: IAllowanceTransfer.PermitDetails({
+                token: address(asset),
+                amount: amount,
+                expiration: permit2Params.expiration,
+                nonce: nonce
+            }),
+            spender: address(this),
+            sigDeadline: permit2Params.sigDeadline
+        });
 
-        uint256 allowance = asset.allowance(address(this), spender);
+        permit2Params.permit2.permit(msg.sender, permitSingle, permit2Params.signature);
+        permit2Params.permit2.transferFrom(msg.sender, address(this), amount, address(asset));
+
+        uint256 allowance = asset.allowance(address(this), lockup);
         if (allowance < uint256(amount)) {
-            asset.approve(spender, type(uint256).max);
+            asset.approve(lockup, type(uint256).max);
         }
     }
 }
