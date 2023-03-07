@@ -18,7 +18,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
         uint128 totalAmountZero = 0;
         // Expect a {SablierV2ProxyTarget_TotalAmountZero} error.
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
-        target.createWithRangeMultiple(linear, permit2, asset, totalAmountZero, defaultRangeParams());
+        target.createWithRangeMultiple(linear, asset, totalAmountZero, defaultRangeParams(), defaultPermit2Params);
     }
 
     modifier totalAmountNotZero() {
@@ -36,7 +36,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
                 0
             )
         );
-        target.createWithRangeMultiple(linear, permit2, asset, DEFAULT_TOTAL_AMOUNT, params);
+        target.createWithRangeMultiple(linear, asset, DEFAULT_TOTAL_AMOUNT, params, defaultPermit2Params);
     }
 
     modifier paramsCountNotZero() {
@@ -54,7 +54,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
                 DEFAULT_TOTAL_AMOUNT
             )
         );
-        target.createWithRangeMultiple(linear, permit2, asset, totalAmount, defaultRangeParams());
+        target.createWithRangeMultiple(linear, asset, totalAmount, defaultRangeParams(), defaultPermit2Params);
     }
 
     modifier totalAmountEqualToAmountsSum() {
@@ -62,12 +62,10 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
     }
 
     function test_CreateWithRange() external totalAmountNotZero paramsCountNotZero totalAmountEqualToAmountsSum {
-        uint256[] memory streamIds;
-
         expectTransferFromCall(users.sender, address(target), DEFAULT_TOTAL_AMOUNT);
         expectTransferFromCallMutiple(address(target), address(linear), DEFAULT_AMOUNT);
 
-        streamIds = target.createWithRangeMultiple(linear, permit2, asset, DEFAULT_TOTAL_AMOUNT, defaultRangeParams());
+        uint256[] memory streamIds = createWithRangeMultipleDefault();
 
         uint256 actualStreamIdsCount = streamIds.length;
         uint256 expectedStreamIdsCount = streamIds.length;
