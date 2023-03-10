@@ -33,30 +33,6 @@ library Helpers {
         }
     }
 
-    /// @dev Helper function to check the asset and calculate the return amounts sum.
-    function checkAssetAndCalculateReturnAmountsSum(
-        ISablierV2Lockup lockup,
-        IERC20 asset,
-        uint256[] calldata streamIds
-    ) internal view returns (uint256 returnAmountsSum) {
-        uint256 count = streamIds.length;
-        IERC20 streamAsset;
-
-        for (uint256 i = 0; i < count; ) {
-            returnAmountsSum += lockup.returnableAmountOf(streamIds[i]);
-
-            // Checks: the asset is the same for all streams.s
-            streamAsset = lockup.getAsset(streamIds[i]);
-            if (asset != streamAsset) {
-                revert Errors.SablierV2ProxyTarget_CancelMultipleDifferentAsset(asset, streamAsset);
-            }
-
-            unchecked {
-                i += 1;
-            }
-        }
-    }
-
     /*//////////////////////////////////////////////////////////////////////////
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
@@ -83,17 +59,35 @@ library Helpers {
     }
 
     /// @dev Helper function that:
-    /// 1. Checks the asset and calculates the return amounts sum.
+    /// 1. Gets the proxy balances of each asset before the streams are canceled.
     /// 2. Performs an external call on {SablierV2Lockup-cancelMultiple}.
     /// 3. Transfers the return amounts sum to proxy owner, if greater than zero.
-    function cancelMultiple(ISablierV2Lockup lockup, IERC20 asset, uint256[] calldata streamIds) internal {
-        // Checks and calculations: check the asset and calculate the return amounts sum.
-        uint256 returnAmountsSum = checkAssetAndCalculateReturnAmountsSum(lockup, asset, streamIds);
+    function cancelMultiple(ISablierV2Lockup lockup, IERC20[] calldata assets, uint256[] calldata streamIds) internal {
+        uint256 i;
+        uint256 assetsCount = assets.length;
+        uint256[] memory balancesBefore = new uint256[](assetsCount);
+        for (i = 0; i < assetsCount; ) {
+            balancesBefore[i] = assets[i].balanceOf(address(this));
+            unchecked {
+                i += 1;
+            }
+        }
+
+        /// Interactions: cancel the streams.
         lockup.cancelMultiple(streamIds);
 
-        // Interactions: transfer the return amounts sum to proxy owner, if greater than zero.
-        if (returnAmountsSum > 0) {
-            asset.safeTransfer(msg.sender, returnAmountsSum);
+        uint256 balanceAfter;
+        uint256 balanceDelta;
+        for (i = 0; i < assetsCount; ) {
+            balanceAfter = assets[i].balanceOf(address(this));
+            balanceDelta = balanceAfter - balancesBefore[i];
+            if (balanceDelta > 0) {
+                assets[i].safeTransfer(msg.sender, balanceDelta);
+            }
+
+            unchecked {
+                i += 1;
+            }
         }
     }
 
