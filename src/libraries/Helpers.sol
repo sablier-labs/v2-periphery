@@ -170,7 +170,10 @@ library Helpers {
     /// @dev Helper function that transfers `amount` funds from `msg.sender` to `address(this)` via Permit2
     /// and approves `amount` to `lockup`, if necessary.
     function assetActions(address lockup, IERC20 asset, uint160 amount, Permit2Params calldata permit2Params) internal {
+        /// Interactions: get the nonce for `msg.sender`.
         (, , uint48 nonce) = permit2Params.permit2.allowance(msg.sender, address(asset), address(this));
+
+        /// Declare the `PermitSingle` struct used in `permit` function.
         IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
             details: IAllowanceTransfer.PermitDetails({
                 token: address(asset),
@@ -182,9 +185,14 @@ library Helpers {
             sigDeadline: permit2Params.sigDeadline
         });
 
+        /// Interactions: permit the proxy to spend funds from `msg.sender`.
         permit2Params.permit2.permit(msg.sender, permitSingle, permit2Params.signature);
+
+        /// Interactions: transfer funds from `msg.sender` to proxy.
         permit2Params.permit2.transferFrom(msg.sender, address(this), amount, address(asset));
 
+        /// Interactions: get the allownace of the proxy for `lockup`
+        /// and approve `lockup`, if necessary.
         uint256 allowance = asset.allowance(address(this), lockup);
         if (allowance < uint256(amount)) {
             asset.approve(lockup, type(uint256).max);
