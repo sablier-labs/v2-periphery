@@ -85,8 +85,9 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         vm.label({ account: address(asset), newLabel: "Asset" });
         vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(linear), newLabel: "LockupLinear" });
+        vm.label({ account: address(permit2), newLabel: "Permit2" });
         vm.label({ account: address(pro), newLabel: "LockupPro" });
-        vm.label({ account: address(target), newLabel: "target" });
+        vm.label({ account: address(target), newLabel: "Target" });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -165,7 +166,7 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         vm.expectCall(address(asset), abi.encodeCall(ERC20.transferFrom, (from, to, amount)));
     }
 
-    /// @dev Expects multiple calls to the `transfer` function of the default ERC-20 asset.
+    /// @dev Expects `PARAMS_COUNT` calls to the `transfer` function of the default ERC-20 asset.
     function expectTransferFromCallMutiple(address from, address to, uint256 amount) internal {
         for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
             expectTransferFromCall(from, to, amount);
