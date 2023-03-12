@@ -41,8 +41,7 @@ jobs:
           path: |
             out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json
             out/ISablierV2ProxyTarget.sol/ISablierV2ProxyTarget.json
-            out/DataTypes.sol/CreateLinear.json
-            out/DataTypes.sol/CreatePro.json
+            out/DataTypes.sol/Batch.json
             out/Errors.sol/Errors.json
             out/Helpers.sol/Helpers.json
 

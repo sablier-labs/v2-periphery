@@ -11,7 +11,7 @@ import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Errors } from "./Errors.sol";
 import { IWETH9 } from "../interfaces/IWETH9.sol";
-import { Permit2Params, CreateLinear, CreatePro } from "../types/DataTypes.sol";
+import { Batch, Permit2Params } from "../types/DataTypes.sol";
 
 library Helpers {
     using SafeERC20 for IERC20;
@@ -38,10 +38,49 @@ library Helpers {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Helper function that:
+    /// 1. Gets the proxy balances of each asset before the streams are canceled.
+    /// 2. Performs multiple external calls on {SablierV2Lockup-cancelMultiple}.
+    /// 3. Transfers the returned amounts of each asset to proxy owner, if greater than zero.
+    function batchCancelMultiple(Batch.CancelMultiple[] calldata params, IERC20[] calldata assets) internal {
+        uint256 i;
+        uint256 assetsCount = assets.length;
+        uint256[] memory balancesBefore = new uint256[](assetsCount);
+        for (i = 0; i < assetsCount; ) {
+            balancesBefore[i] = assets[i].balanceOf(address(this));
+
+            unchecked {
+                i += 1;
+            }
+        }
+
+        for (i = 0; i < params.length; ) {
+            params[i].lockup.cancelMultiple(params[i].streamIds);
+
+            unchecked {
+                i += 1;
+            }
+        }
+
+        uint256 balanceAfter;
+        uint256 balanceDelta;
+        for (i = 0; i < assetsCount; ) {
+            balanceAfter = assets[i].balanceOf(address(this));
+            balanceDelta = balanceAfter - balancesBefore[i];
+            if (balanceDelta > 0) {
+                assets[i].safeTransfer(msg.sender, balanceDelta);
+            }
+
+            unchecked {
+                i += 1;
+            }
+        }
+    }
+
+    /// @dev Helper function that:
     /// 1. Gets the asset of the stream.
     /// 2. Gets the return amount of the stream.
     /// 3. Performs an external call on {SablierV2Lockup-cancel}.
-    /// 4. Transfers the return amount to proxy owner, if greater than zero.
+    /// 4. Transfers the returned amounts of each asset to proxy owner, if greater than zero.
     function cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
         // Interactions: get the asset.
         IERC20 asset = lockup.getAsset(streamId);
@@ -90,24 +129,6 @@ library Helpers {
                 i += 1;
             }
         }
-    }
-
-    /// @dev Checks the wrap function parameters and deposits the Ether in the WETH9 contract.
-    function checkParamsAndDepositEther(IWETH9 weth9, IERC20 asset, uint256 amount) internal {
-        // Checks: the asset is the actual WETH9 contract.
-        if (asset != weth9) {
-            revert Errors.SablierV2ProxyTarget_AssetNotWETH9(asset, weth9);
-        }
-
-        uint256 value = msg.value;
-
-        // Checks: the amount of WETH9 is the same as the amount of Ether sent.
-        if (amount != value) {
-            revert Errors.SablierV2ProxyTarget_WrongEtherAmount(value, amount);
-        }
-
-        // Interactions: deposit the Ether into the WETH9 contract.
-        weth9.deposit{ value: value }();
     }
 
     /// @dev Helper function that:

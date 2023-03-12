@@ -8,7 +8,7 @@ import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2Locku
 import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { IWETH9 } from "./IWETH9.sol";
-import { Permit2Params, CreateLinear, CreatePro } from "../types/DataTypes.sol";
+import { Batch, Permit2Params } from "../types/DataTypes.sol";
 
 /// @title ISablierV2ProxyTarget
 /// @notice Target logic for the proxy contract.
@@ -16,6 +16,27 @@ interface ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Target function to cancel a stream on each `lockup` contract.
+    ///
+    /// Notes:
+    /// - See {ISablierV2Lockup-cancel} for documentation.
+    /// - `params.lockup` should include {SablierV2LockupLinear} and {SablierV2LockupPro} contracts.
+    ///
+    /// @param params Struct that encapsulates the lockup contract and the stream id.
+    function batchCancel(Batch.Cancel[] calldata params) external;
+
+    /// @notice Target function to cancel multiple streams on each `lockup` contract.
+    ///
+    /// Notes:
+    /// - The function assumes that the assets which are used for streaming in the `params.streamIds` are the same
+    /// as those in `assets` array. If any asset is missing, the returned amount will be left in the proxy contract.
+    /// - See {ISablierV2Lockup-cancelMultiple} for documentation.
+    /// - `params.lockup` should include {SablierV2LockupLinear} and {SablierV2LockupPro} contracts.
+    ///
+    /// @param params Struct that encapsulates the lockup contract and the stream ids.
+    /// @param assets The contracts of the ERC-20 assets used for streaming.
+    function batchCancelMultiple(Batch.CancelMultiple[] calldata params, IERC20[] calldata assets) external;
 
     /// @notice Target function to cancel a stream.
     ///
@@ -35,6 +56,7 @@ interface ISablierV2ProxyTarget {
     /// - `lockup` can be either {SablierV2LockupLinear} or {SablierV2LockupPro} contract.
     ///
     /// @param lockup The Sablier V2 contract.
+    /// @param assets The contracts of the ERC-20 assets used for streaming.
     function cancelMultiple(ISablierV2Lockup lockup, IERC20[] calldata assets, uint256[] calldata streamIds) external;
 
     /// @notice Target function to renounce a stream.
@@ -149,7 +171,7 @@ interface ISablierV2ProxyTarget {
     /// - The params amounts summed up must be equal to the `totalAmount`.
     ///
     /// @param linear The Sablier V2 linear contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param asset The contract of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
     /// @param params The array of structs that partially encapsulates the
     /// {SablierV2LockupLinear-createWithDurations} function parameters.
@@ -159,7 +181,7 @@ interface ISablierV2ProxyTarget {
         ISablierV2LockupLinear linear,
         IERC20 asset,
         uint128 totalAmount,
-        CreateLinear.DurationsParams[] calldata params,
+        Batch.CreateWithDurations[] calldata params,
         Permit2Params calldata permit2Params
     ) external returns (uint256[] memory streamIds);
 
@@ -176,7 +198,7 @@ interface ISablierV2ProxyTarget {
     /// - The params amounts summed up must be equal to the `totalAmount`.
     ///
     /// @param linear The Sablier V2 linear contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param asset The contract of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
     /// @param params The array of structs that partially encapsulates the
     /// {SablierV2LockupLinear-createWithRange} function parameters.
@@ -186,48 +208,40 @@ interface ISablierV2ProxyTarget {
         ISablierV2LockupLinear linear,
         IERC20 asset,
         uint128 totalAmount,
-        CreateLinear.RangeParams[] calldata params,
+        Batch.CreateWithRange[] calldata params,
         Permit2Params calldata permit2Params
     ) external returns (uint256[] memory streamIds);
 
     /// @notice Wraps ETH into WETH9 and creates a linear stream with durations.
     ///
     /// Notes:
-    /// - See {ISablierV2LockupLinear-createWithDurations} for documentation.\
+    /// - params.asset will be overwritten with the WETH9 contract.
+    /// - params.totalAmount will be overwritten with the `msg.value`.
+    /// - See {ISablierV2LockupLinear-createWithDurations} for documentation.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
-    ///
-    /// Requirements:
-    /// - `params.asset` must be the WETH9 contract address.
-    /// - `msg.value` must be equal to `params.totalAmount`.
     ///
     /// @param linear The Sablier V2 linear contract.
     /// @param weth9 The WETH9 contract.
-    /// @param permit2Params The struct that encapsulates the variables needed for Permit2.
     function wrapEtherAndCreateWithDurations(
         ISablierV2LockupLinear linear,
         IWETH9 weth9,
-        LockupLinear.CreateWithDurations calldata params,
-        Permit2Params calldata permit2Params
+        LockupLinear.CreateWithDurations memory params
     ) external payable returns (uint256 streamId);
 
     /// @notice Wraps ETH into WETH9 and creates a linear stream with range.
     ///
     /// Notes:
+    /// - params.asset will be overwritten with the WETH9 contract.
+    /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupLinear-createWithRange} for documentation.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
-    /// Requirements:
-    /// - `params.asset` must be the WETH9 contract address.
-    /// - `msg.value` must be equal to `params.totalAmount`.
-    ///
     /// @param linear The Sablier V2 linear contract.
     /// @param weth9 The WETH9 contract.
-    /// @param permit2Params The struct that encapsulates the variables needed for Permit2.
     function wrapEtherAndCreateWithRange(
         ISablierV2LockupLinear linear,
         IWETH9 weth9,
-        LockupLinear.CreateWithRange calldata params,
-        Permit2Params calldata permit2Params
+        LockupLinear.CreateWithRange memory params
     ) external payable returns (uint256 streamId);
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -315,7 +329,7 @@ interface ISablierV2ProxyTarget {
     /// - The params amounts summed up must be equal to the `totalAmount`.
     ///
     /// @param pro The Sablier V2 pro contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param asset The contract of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
     /// @param params The array of structs that partially encapsulates the
     /// {SablierV2LockupPro-createWithDelta} function parameters.
@@ -325,7 +339,7 @@ interface ISablierV2ProxyTarget {
         ISablierV2LockupPro pro,
         IERC20 asset,
         uint128 totalAmount,
-        CreatePro.DeltasParams[] calldata params,
+        Batch.CreateWithDeltas[] calldata params,
         Permit2Params calldata permit2Params
     ) external returns (uint256[] memory streamIds);
 
@@ -342,7 +356,7 @@ interface ISablierV2ProxyTarget {
     /// - The params amounts summed up must be equal to the `totalAmount`.
     ///
     /// @param pro The Sablier V2 pro contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param asset The contract of the ERC-20 asset used for streaming.
     /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
     /// @param params The array of structs that partially encapsulates the
     /// {SablierV2LockupPro-createWithMilestones} function parameters.
@@ -352,47 +366,39 @@ interface ISablierV2ProxyTarget {
         ISablierV2LockupPro pro,
         IERC20 asset,
         uint128 totalAmount,
-        CreatePro.MilestonesParams[] calldata params,
+        Batch.CreateWithMilestones[] calldata params,
         Permit2Params calldata permit2Params
     ) external returns (uint256[] memory streamIds);
 
     /// @notice Wraps ETH into WETH9 and creates a pro stream with deltas.
     ///
     /// Notes:
+    /// - params.asset will be overwritten with the WETH9 contract.
+    /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupPro-createWithDeltas} for documentation.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
-    /// Requirements:
-    /// - `params.asset` must be the WETH9 contract address.
-    /// - `msg.value` must be equal to `params.totalAmount`.
-    ///
     /// @param pro The Sablier V2 pro contract.
     /// @param weth9 The WETH9 contract.
-    /// @param permit2Params The struct that encapsulates the variables needed for Permit2.
     function wrapEtherAndCreateWithDeltas(
         ISablierV2LockupPro pro,
         IWETH9 weth9,
-        LockupPro.CreateWithDeltas calldata params,
-        Permit2Params calldata permit2Params
+        LockupPro.CreateWithDeltas memory params
     ) external payable returns (uint256 streamId);
 
     /// @notice Wraps ETH into WETH9 and creates a pro stream with milestones.
     ///
     /// Notes:
+    /// - params.asset will be overwritten with the WETH9 contract.
+    /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupPro-createWithMilestones} for documentation.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
-    /// Requirements:
-    /// - `params.asset` must be the WETH9 contract address.
-    /// - `msg.value` must be equal to `params.totalAmount`.
-    ///
     /// @param pro The Sablier V2 pro contract.
     /// @param weth9 The WETH9 contract.
-    /// @param permit2Params The struct that encapsulates the variables needed for Permit2.
     function wrapEtherAndCreateWithMilestones(
         ISablierV2LockupPro pro,
         IWETH9 weth9,
-        LockupPro.CreateWithMilestones calldata params,
-        Permit2Params calldata permit2Params
+        LockupPro.CreateWithMilestones memory params
     ) external payable returns (uint256 streamId);
 }
