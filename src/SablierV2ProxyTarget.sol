@@ -25,8 +25,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function cancelMultiple(ISablierV2Lockup lockup, IERC20 asset, uint256[] calldata streamIds) external {
-        Helpers.cancelMultiple(lockup, asset, streamIds);
+    function cancelMultiple(ISablierV2Lockup lockup, IERC20[] calldata assets, uint256[] calldata streamIds) external {
+        Helpers.cancelMultiple(lockup, assets, streamIds);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
