@@ -4,7 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import { UD2x18, ud2x18 } from "@prb/math/UD2x18.sol";
 import { Broker, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { CreateLinear, CreatePro } from "src/types/DataTypes.sol";
+import { Batch } from "src/types/DataTypes.sol";
 
 import { Base_Test } from "../Base.t.sol";
 
@@ -23,12 +23,12 @@ contract Unit_Test is Base_Test {
                             INTERNAL CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function to return an array of `CreatePro.DeltasParams` that is not "storage ref".
-    function defaultDeltasParams() internal view returns (CreatePro.DeltasParams[] memory) {
-        CreatePro.DeltasParams[] memory params = new CreatePro.DeltasParams[](PARAMS_COUNT);
+    /// @dev Helper function to return an array of `Batch.CreateWithDeltas` that is not "storage ref".
+    function defaultDeltasParams() internal view returns (Batch.CreateWithDeltas[] memory) {
+        Batch.CreateWithDeltas[] memory params = new Batch.CreateWithDeltas[](PARAMS_COUNT);
 
         for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
-            params[i] = CreatePro.DeltasParams({
+            params[i] = Batch.CreateWithDeltas({
                 amount: DEFAULT_AMOUNT,
                 broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),
                 cancelable: true,
@@ -41,12 +41,12 @@ contract Unit_Test is Base_Test {
         return params;
     }
 
-    /// @dev Helper function to return an array of `CreateLinear.DurationsParams` that is not "storage ref".
-    function defaultDurationsParams() internal view returns (CreateLinear.DurationsParams[] memory) {
-        CreateLinear.DurationsParams[] memory params = new CreateLinear.DurationsParams[](PARAMS_COUNT);
+    /// @dev Helper function to return an array of `Batch.CreateWithDurations` that is not "storage ref".
+    function defaultDurationsParams() internal view returns (Batch.CreateWithDurations[] memory) {
+        Batch.CreateWithDurations[] memory params = new Batch.CreateWithDurations[](PARAMS_COUNT);
 
         for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
-            params[i] = CreateLinear.DurationsParams({
+            params[i] = Batch.CreateWithDurations({
                 amount: DEFAULT_AMOUNT,
                 broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),
                 cancelable: true,
@@ -59,12 +59,12 @@ contract Unit_Test is Base_Test {
         return params;
     }
 
-    /// @dev Helper function to return an array of `CreatePro.MilestonesParams` that is not "storage ref".
-    function defaultMilestonesParams() internal view returns (CreatePro.MilestonesParams[] memory) {
-        CreatePro.MilestonesParams[] memory params = new CreatePro.MilestonesParams[](PARAMS_COUNT);
+    /// @dev Helper function to return an array of `Batch.CreateWithMilestones` that is not "storage ref".
+    function defaultMilestonesParams() internal view returns (Batch.CreateWithMilestones[] memory) {
+        Batch.CreateWithMilestones[] memory params = new Batch.CreateWithMilestones[](PARAMS_COUNT);
 
         for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
-            params[i] = CreatePro.MilestonesParams({
+            params[i] = Batch.CreateWithMilestones({
                 amount: DEFAULT_AMOUNT,
                 broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),
                 cancelable: true,
@@ -78,12 +78,12 @@ contract Unit_Test is Base_Test {
         return params;
     }
 
-    /// @dev Helper function to return an array of `CreateLinear.RangeParams` that is not "storage ref".
-    function defaultRangeParams() internal view returns (CreateLinear.RangeParams[] memory) {
-        CreateLinear.RangeParams[] memory params = new CreateLinear.RangeParams[](PARAMS_COUNT);
+    /// @dev Helper function to return an array of `Batch.CreateWithRange` that is not "storage ref".
+    function defaultRangeParams() internal view returns (Batch.CreateWithRange[] memory) {
+        Batch.CreateWithRange[] memory params = new Batch.CreateWithRange[](PARAMS_COUNT);
 
         for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
-            params[i] = CreateLinear.RangeParams({
+            params[i] = Batch.CreateWithRange({
                 amount: DEFAULT_AMOUNT,
                 broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),
                 cancelable: true,

@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { Errors } from "src/libraries/Errors.sol";
-import { CreateLinear } from "src/types/DataTypes.sol";
+import { Batch } from "src/types/DataTypes.sol";
 
 import { Unit_Test } from "../Unit.t.sol";
 
@@ -27,7 +27,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
 
     /// @dev it should revert.
     function test_RevertWhen_ParamsCountZero() external totalAmountNotZero {
-        CreateLinear.RangeParams[] memory params;
+        Batch.CreateWithRange[] memory params;
         // Expect a {SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum} error.
         vm.expectRevert(
             abi.encodeWithSelector(
