@@ -68,6 +68,7 @@ library Helpers {
         uint256[] memory balancesBefore = new uint256[](assetsCount);
         for (i = 0; i < assetsCount; ) {
             balancesBefore[i] = assets[i].balanceOf(address(this));
+
             unchecked {
                 i += 1;
             }
@@ -111,7 +112,7 @@ library Helpers {
 
     /// @dev Helper function that:
     /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves the {SablierV2LockupPro} contract to spend funds from proxy.
+    /// 2. Approves the {SablierV2LockupPro} contract to spend funds from proxy, if necessary.
     /// 3. Performs an external call on {SablierV2LockupPro-createWithDeltas}.
     function createWithDeltas(
         ISablierV2LockupPro pro,
@@ -124,7 +125,7 @@ library Helpers {
 
     /// @dev Helper function that:
     /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy.
+    /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy, if necessary.
     /// 3. Performs an external call on {SablierV2LockupLinear-createWithDeltas}.
     function createWithDurations(
         ISablierV2LockupLinear linear,
@@ -137,7 +138,7 @@ library Helpers {
 
     /// @dev Helper function that:
     /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves the {SablierV2LockupPro} contract to spend funds from proxy.
+    /// 2. Approves the {SablierV2LockupPro} contract to spend funds from proxy, if necessary.
     /// 3. Performs an external call on {SablierV2LockupPro-createWithMilestones}.
     function createWithMilestones(
         ISablierV2LockupPro pro,
@@ -150,7 +151,7 @@ library Helpers {
 
     /// @dev Helper function that:
     /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy.
+    /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy, if necessary.
     /// 3. Performs an external call on {SablierV2LockupLinear-createWithRange}.
     function createWithRange(
         ISablierV2LockupLinear linear,
