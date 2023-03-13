@@ -129,8 +129,8 @@ contract Unit_Test is Base_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Creates default deltas streams.
-    function createWithDeltasMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.createWithDeltasMultiple(
+    function batchCreateWithDeltasDefault() internal returns (uint256[] memory streamIds) {
+        streamIds = target.batchCreateWithDeltas(
             pro,
             asset,
             DEFAULT_TOTAL_AMOUNT,
@@ -140,8 +140,8 @@ contract Unit_Test is Base_Test {
     }
 
     /// @dev Creates default durations streams.
-    function createWithDurationsMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.createWithDurationsMultiple(
+    function batchCreateWithDurationsDefault() internal returns (uint256[] memory streamIds) {
+        streamIds = target.batchCreateWithDurations(
             linear,
             asset,
             DEFAULT_TOTAL_AMOUNT,
@@ -151,8 +151,8 @@ contract Unit_Test is Base_Test {
     }
 
     /// @dev Creates default milestones streams.
-    function createWithMilestonesMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.createWithMilestonesMultiple(
+    function batchCreateWithMilestonesDefault() internal returns (uint256[] memory streamIds) {
+        streamIds = target.batchCreateWithMilestones(
             pro,
             asset,
             DEFAULT_TOTAL_AMOUNT,
@@ -162,8 +162,8 @@ contract Unit_Test is Base_Test {
     }
 
     /// @dev Creates default range streams.
-    function createWithRangeMultipleDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.createWithRangeMultiple(
+    function batchCreateWithRangeDefault() internal returns (uint256[] memory streamIds) {
+        streamIds = target.batchCreateWithRange(
             linear,
             asset,
             DEFAULT_TOTAL_AMOUNT,
