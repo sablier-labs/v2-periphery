@@ -6,7 +6,7 @@ import { Batch } from "src/types/DataTypes.sol";
 
 import { Unit_Test } from "../Unit.t.sol";
 
-contract CreateWithRangeMultiple_Test is Unit_Test {
+contract batchCreateWithRange_Test is Unit_Test {
     function setUp() public virtual override {
         Unit_Test.setUp();
 
@@ -18,7 +18,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
         uint128 totalAmountZero = 0;
         // Expect a {SablierV2ProxyTarget_TotalAmountZero} error.
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
-        target.createWithRangeMultiple(linear, asset, totalAmountZero, defaultRangeParams(), defaultPermit2Params);
+        target.batchCreateWithRange(linear, asset, totalAmountZero, defaultRangeParams(), defaultPermit2Params);
     }
 
     modifier totalAmountNotZero() {
@@ -36,7 +36,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
                 0
             )
         );
-        target.createWithRangeMultiple(linear, asset, DEFAULT_TOTAL_AMOUNT, params, defaultPermit2Params);
+        target.batchCreateWithRange(linear, asset, DEFAULT_TOTAL_AMOUNT, params, defaultPermit2Params);
     }
 
     modifier paramsCountNotZero() {
@@ -54,7 +54,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
                 DEFAULT_TOTAL_AMOUNT
             )
         );
-        target.createWithRangeMultiple(linear, asset, totalAmount, defaultRangeParams(), defaultPermit2Params);
+        target.batchCreateWithRange(linear, asset, totalAmount, defaultRangeParams(), defaultPermit2Params);
     }
 
     modifier totalAmountEqualToAmountsSum() {
@@ -65,7 +65,7 @@ contract CreateWithRangeMultiple_Test is Unit_Test {
         expectTransferFromCall(users.sender, address(target), DEFAULT_TOTAL_AMOUNT);
         expectTransferFromCallMutiple(address(target), address(linear), DEFAULT_AMOUNT);
 
-        uint256[] memory streamIds = createWithRangeMultipleDefault();
+        uint256[] memory streamIds = batchCreateWithRangeDefault();
 
         uint256 actualStreamIdsCount = streamIds.length;
         uint256 expectedStreamIdsCount = streamIds.length;

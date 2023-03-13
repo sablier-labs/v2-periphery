@@ -17,7 +17,7 @@ interface ISablierV2ProxyTarget {
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Target function to cancel a stream on each `lockup` contract.
+    /// @notice Cancel a stream on each `lockup` contract.
     ///
     /// Notes:
     /// - See {ISablierV2Lockup-cancel} for documentation.
@@ -26,11 +26,11 @@ interface ISablierV2ProxyTarget {
     /// @param params Struct that encapsulates the lockup contract and the stream id.
     function batchCancel(Batch.Cancel[] calldata params) external;
 
-    /// @notice Target function to cancel multiple streams on each `lockup` contract.
+    /// @notice Cancel multiple streams on each `lockup` contract.
     ///
     /// Notes:
-    /// - The function assumes that the assets which are used for streaming in the `params.streamIds` are the same
-    /// as those in `assets` array. If any asset is missing, the returned amount will be left in the proxy contract.
+    /// - The function assumes that the assets of the `params.streamIds` are the same as those in `assets` array.
+    /// If any asset is missing, the returned amount will be left in the proxy contract.
     /// - See {ISablierV2Lockup-cancelMultiple} for documentation.
     /// - `params.lockup` should include {SablierV2LockupLinear} and {SablierV2LockupPro} contracts.
     ///
@@ -50,8 +50,8 @@ interface ISablierV2ProxyTarget {
     /// @notice Target function to cancel multiple streams.
     ///
     /// Notes:
-    /// - The function assumes that the assets which are used for streaming in the `streamIds` are the same as those
-    /// in `assets` array. If any asset is missing, the returned amount will be left in the proxy contract.
+    /// - The function assumes that the assets of the `params.streamIds` are the same as those in `assets` array.
+    /// If any asset is missing, the returned amount will be left in the proxy contract.
     /// - See {ISablierV2Lockup-cancelMultiple} for documentation.
     /// - `lockup` can be either {SablierV2LockupLinear} or {SablierV2LockupPro} contract.
     ///
@@ -177,7 +177,7 @@ interface ISablierV2ProxyTarget {
     /// {SablierV2LockupLinear-createWithDurations} function parameters.
     /// @param permit2Params The struct that encapsulates the variables needed for Permit2.
     /// @return streamIds The ids of the newly created streams.
-    function createWithDurationsMultiple(
+    function batchCreateWithDurations(
         ISablierV2LockupLinear linear,
         IERC20 asset,
         uint128 totalAmount,
@@ -204,7 +204,7 @@ interface ISablierV2ProxyTarget {
     /// {SablierV2LockupLinear-createWithRange} function parameters.
     /// @param permit2Params The struct that encapsulates the variables needed for Permit2.
     /// @return streamIds The ids of the newly created streams.
-    function createWithRangeMultiple(
+    function batchCreateWithRange(
         ISablierV2LockupLinear linear,
         IERC20 asset,
         uint128 totalAmount,
@@ -335,7 +335,7 @@ interface ISablierV2ProxyTarget {
     /// {SablierV2LockupPro-createWithDelta} function parameters.
     /// @param permit2Params The struct that encapsulates the variables needed for Permit2.
     /// @return streamIds The ids of the newly created streams.
-    function createWithDeltasMultiple(
+    function batchCreateWithDeltas(
         ISablierV2LockupPro pro,
         IERC20 asset,
         uint128 totalAmount,
@@ -362,7 +362,7 @@ interface ISablierV2ProxyTarget {
     /// {SablierV2LockupPro-createWithMilestones} function parameters.
     /// @param permit2Params The struct that encapsulates the variables needed for Permit2.
     /// @return streamIds The ids of the newly created streams.
-    function createWithMilestonesMultiple(
+    function batchCreateWithMilestones(
         ISablierV2LockupPro pro,
         IERC20 asset,
         uint128 totalAmount,
