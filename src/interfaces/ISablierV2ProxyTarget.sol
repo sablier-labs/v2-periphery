@@ -218,7 +218,6 @@ interface ISablierV2ProxyTarget {
     /// - params.asset will be overwritten with the WETH9 contract.
     /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupLinear-createWithDurations} for documentation.
-    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param linear The Sablier V2 linear contract.
     /// @param weth9 The WETH9 contract.
@@ -234,7 +233,6 @@ interface ISablierV2ProxyTarget {
     /// - params.asset will be overwritten with the WETH9 contract.
     /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupLinear-createWithRange} for documentation.
-    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param linear The Sablier V2 linear contract.
     /// @param weth9 The WETH9 contract.
@@ -376,7 +374,6 @@ interface ISablierV2ProxyTarget {
     /// - params.asset will be overwritten with the WETH9 contract.
     /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupPro-createWithDeltas} for documentation.
-    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param pro The Sablier V2 pro contract.
     /// @param weth9 The WETH9 contract.
@@ -392,7 +389,6 @@ interface ISablierV2ProxyTarget {
     /// - params.asset will be overwritten with the WETH9 contract.
     /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupPro-createWithMilestones} for documentation.
-    /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
     /// @param pro The Sablier V2 pro contract.
     /// @param weth9 The WETH9 contract.
