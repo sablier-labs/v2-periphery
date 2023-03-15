@@ -1,24 +1,24 @@
 # Full reference https://github.com/foundry-rs/foundry/tree/master/config
 
 [profile.default]
-auto_detect_solc = false
-bytecode_hash = "none"
-gas_reports = ["*"]
-libs = ["lib"]
-optimizer = true
-optimizer_runs = 10_000
-out = "out"
-solc = "0.8.19"
-script = "script"
-src = "src"
-test = "test"
+  auto_detect_solc = false
+  bytecode_hash = "none"
+  gas_reports = ["*"]
+  libs = ["lib"]
+  optimizer = true
+  optimizer_runs = 10_000
+  out = "out"
+  solc = "0.8.19"
+  script = "script"
+  src = "src"
+  test = "test"
 
 [profile.ci]
-fuzz_runs = 10_000
-verbosity = 4
-via_ir = true
+  fuzz_runs = 10_000
+  verbosity = 4
+  via_ir = true
 
 [rpc_endpoints]
-  ethereum = "https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
   localhost = "http://localhost:8545"
   goerli = "https://goerli.infura.io/v3/${INFURA_API_KEY}"
+  mainnet = "https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
