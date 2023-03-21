@@ -300,7 +300,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
-        _checkCreateBatchParams(totalAmount, amountsSum);
+        _checkBatchCreateParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupLinear} to spend the amount of assets.
         _assetActions(address(linear), asset, totalAmount, permit2Params);
@@ -355,7 +355,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
-        _checkCreateBatchParams(totalAmount, amountsSum);
+        _checkBatchCreateParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupLinear} to spend the amount of assets.
         _assetActions(address(linear), asset, totalAmount, permit2Params);
@@ -546,7 +546,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
-        _checkCreateBatchParams(totalAmount, amountsSum);
+        _checkBatchCreateParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
         _assetActions(address(dynamic), asset, totalAmount, permit2Params);
@@ -601,7 +601,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
-        _checkCreateBatchParams(totalAmount, amountsSum);
+        _checkBatchCreateParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
         _assetActions(address(dynamic), asset, totalAmount, permit2Params);
@@ -718,7 +718,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /// @dev Checks the arguments of the create multiple functions.
-    function _checkCreateBatchParams(uint128 totalAmount, uint128 amountsSum) internal pure {
+    function _checkBatchCreateParams(uint128 totalAmount, uint128 amountsSum) internal pure {
         // Checks: the total amount is not zero.
         if (totalAmount == 0) {
             revert Errors.SablierV2ProxyTarget_TotalAmountZero();
