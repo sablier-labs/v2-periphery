@@ -43,7 +43,6 @@ jobs:
             out/ISablierV2ProxyTarget.sol/ISablierV2ProxyTarget.json
             out/DataTypes.sol/Batch.json
             out/Errors.sol/Errors.json
-            out/Helpers.sol/Helpers.json
 
       - name: Run tests
         run: forge test
