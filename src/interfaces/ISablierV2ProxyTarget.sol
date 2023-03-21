@@ -19,7 +19,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Cancel a stream on each `lockup` contract.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2Lockup-cancel} for documentation.
     /// - `params.lockup` should include {SablierV2LockupLinear} and {SablierV2LockupDynamic} contracts.
     ///
@@ -28,7 +28,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Cancel multiple streams on each `lockup` contract.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - The function assumes that the assets of the `params.streamIds` are the same as those in `assets` array.
     /// If any asset is missing, the returned amount will be left in the proxy contract.
     /// - See {ISablierV2Lockup-cancelMultiple} for documentation.
@@ -40,7 +40,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to cancel a stream.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2Lockup-cancel} for documentation.
     /// - `lockup` can be either {SablierV2LockupLinear} or {SablierV2LockupDynamic} contract.
     ///
@@ -49,7 +49,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to cancel multiple streams.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - The function assumes that the assets of the `params.streamIds` are the same as those in `assets` array.
     /// If any asset is missing, the returned amount will be left in the proxy contract.
     /// - See {ISablierV2Lockup-cancelMultiple} for documentation.
@@ -61,7 +61,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to renounce a stream.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2Lockup-renounce} for documentation.
     /// - `lockup` can be either {SablierV2LockupLinear} or {SablierV2LockupDynamic} contract.
     ///
@@ -70,7 +70,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to withdraw assets.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2Lockup-withdraw} for documentation.
     /// - `lockup` can be either {SablierV2LockupLinear} or {SablierV2LockupDynamic} contract.
     ///
@@ -79,7 +79,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to withdraw the maximum withdrawable amount.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2Lockup-withdrawMax} for documentation.
     /// - `lockup` can be either {SablierV2LockupLinear} or {SablierV2LockupDynamic} contract.
     ///
@@ -92,7 +92,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Cancels a stream and creates a new one with durations.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupLinear-createWithDurations} for documentation.
     /// - `lockup` can be either {SablierV2LockupLinear} or {SablierV2LockupDynamic} contract.
     /// - The `streamId` can point to a linear or dynamic stream.
@@ -114,7 +114,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Cancels a stream and creates a new one with range.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupLinear-createWithRange} for documentation.
     /// - `lockup` can be either {SablierV2LockupLinear} or {SablierV2LockupDynamic} contract.
     /// - The `streamId` can point to a linear or dynamic stream.
@@ -136,7 +136,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to create a linear stream with durations.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2LockupLinear-createWithDurations} for documentation.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
@@ -152,7 +152,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to create a linear stream with range.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2LockupLinear-createWithRange} for documentation.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
@@ -226,7 +226,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Wraps ETH into WETH9 and creates a linear stream with durations.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - params.asset will be overwritten with the WETH9 contract.
     /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupLinear-createWithDurations} for documentation.
@@ -244,7 +244,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Wraps ETH into WETH9 and creates a linear stream with range.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - params.asset will be overwritten with the WETH9 contract.
     /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupLinear-createWithRange} for documentation.
@@ -266,7 +266,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Cancels a stream and creates a new one with deltas.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupDynamic-createWithDeltas} for documentation.
     /// - `lockup` can be either {SablierV2LockupLinear} or {SablierV2LockupDynamic} contract.
     /// - The `streamId` can point to a linear or dynamic stream.
@@ -288,7 +288,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Cancels a stream and creates a new one with milestones.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2Lockup-cancel} and {ISablierV2LockupDynamic-createWithMilestones} for documentation.
     /// - `lockup` can be either {SablierV2LockupLinear} or {SablierV2LockupDynamic} contract.
     /// - The `streamId` can point to a linear or dynamic stream.
@@ -310,7 +310,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to create a dynamic stream with deltas.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2LockupDynamic-createWithDeltas} for documentation.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
@@ -326,7 +326,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Target function to create a dynamic stream with milestones.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - See {ISablierV2LockupDynamic-createWithMilestones} for documentation.
     /// - Transfers assets from  `msg.sender` to proxy via Permit2.
     ///
@@ -400,7 +400,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Wraps ETH into WETH9 and creates a dynamic stream with deltas.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - params.asset will be overwritten with the WETH9 contract.
     /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupDynamic-createWithDeltas} for documentation.
@@ -418,7 +418,7 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Wraps ETH into WETH9 and creates a dynamic stream with milestones.
     ///
-    /// Notes:
+    /// @dev Notes:
     /// - params.asset will be overwritten with the WETH9 contract.
     /// - params.totalAmount will be overwritten with the `msg.value`.
     /// - See {ISablierV2LockupDynamic-createWithMilestones} for documentation.
