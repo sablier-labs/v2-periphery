@@ -6,8 +6,8 @@ import { SafeERC20 } from "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
 import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
-import { ISablierV2LockupPro } from "@sablier/v2-core/interfaces/ISablierV2LockupPro.sol";
-import { LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
+import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
+import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
 import { IWETH9 } from "./interfaces/IWETH9.sol";
@@ -25,7 +25,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @inheritdoc ISablierV2ProxyTarget
     function batchCancel(Batch.Cancel[] calldata params) external {
-        for (uint256 i = 0; i < params.length; ) {
+        for (uint256 i = 0; i < params.length;) {
             // Interactions: cancel the stream.
             _cancel(params[i].lockup, params[i].streamId);
 
@@ -49,7 +49,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 i;
         uint256 assetsCount = assets.length;
         uint256[] memory balancesBefore = new uint256[](assetsCount);
-        for (i = 0; i < assetsCount; ) {
+        for (i = 0; i < assetsCount;) {
             // Interactions: get the proxy balances.
             balancesBefore[i] = assets[i].balanceOf(address(this));
 
@@ -59,7 +59,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             }
         }
 
-        for (i = 0; i < params.length; ) {
+        for (i = 0; i < params.length;) {
             // Interactions: cancel the streams.
             params[i].lockup.cancelMultiple(params[i].streamIds);
 
@@ -71,7 +71,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
         uint256 balanceAfter;
         uint256 balanceDelta;
-        for (i = 0; i < assetsCount; ) {
+        for (i = 0; i < assetsCount;) {
             // Calculate the balance delta.
             balanceAfter = assets[i].balanceOf(address(this));
             balanceDelta = balanceAfter - balancesBefore[i];
@@ -123,11 +123,17 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /// 1. Gets the proxy balances of each asset before the streams are canceled.
     /// 2. Performs an external call on {SablierV2Lockup-cancelMultiple}.
     /// 3. Transfers the return amounts sum to proxy owner, if greater than zero.
-    function _cancelMultiple(ISablierV2Lockup lockup, IERC20[] calldata assets, uint256[] calldata streamIds) internal {
+    function _cancelMultiple(
+        ISablierV2Lockup lockup,
+        IERC20[] calldata assets,
+        uint256[] calldata streamIds
+    )
+        internal
+    {
         uint256 i;
         uint256 assetsCount = assets.length;
         uint256[] memory balancesBefore = new uint256[](assetsCount);
-        for (i = 0; i < assetsCount; ) {
+        for (i = 0; i < assetsCount;) {
             // Interactions: get the proxy balances.
             balancesBefore[i] = assets[i].balanceOf(address(this));
 
@@ -142,7 +148,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
         uint256 balanceAfter;
         uint256 balanceDelta;
-        for (i = 0; i < assetsCount; ) {
+        for (i = 0; i < assetsCount;) {
             // Calculate the balance delta.
             balanceAfter = assets[i].balanceOf(address(this));
             balanceDelta = balanceAfter - balancesBefore[i];
@@ -184,7 +190,11 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 streamId,
         LockupLinear.CreateWithDurations calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256 newStreamId) {
+    )
+        external
+        override
+        returns (uint256 newStreamId)
+    {
         _cancel(lockup, streamId);
         newStreamId = _createWithDurations(linear, params, permit2Params);
     }
@@ -196,7 +206,11 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 streamId,
         LockupLinear.CreateWithRange calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256 newStreamId) {
+    )
+        external
+        override
+        returns (uint256 newStreamId)
+    {
         _cancel(lockup, streamId);
         newStreamId = _createWithRange(linear, params, permit2Params);
     }
@@ -206,7 +220,11 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithDurations calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256 streamId) {
+    )
+        external
+        override
+        returns (uint256 streamId)
+    {
         streamId = _createWithDurations(linear, params, permit2Params);
     }
 
@@ -218,7 +236,10 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithDurations calldata params,
         Permit2Params calldata permit2Params
-    ) internal returns (uint256 streamId) {
+    )
+        internal
+        returns (uint256 streamId)
+    {
         _assetActions(address(linear), params.asset, params.totalAmount, permit2Params);
         streamId = linear.createWithDurations(params);
     }
@@ -228,7 +249,11 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithRange calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256 streamId) {
+    )
+        external
+        override
+        returns (uint256 streamId)
+    {
         streamId = _createWithRange(linear, params, permit2Params);
     }
 
@@ -240,7 +265,10 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithRange calldata params,
         Permit2Params calldata permit2Params
-    ) internal returns (uint256 streamId) {
+    )
+        internal
+        returns (uint256 streamId)
+    {
         _assetActions(address(linear), params.asset, params.totalAmount, permit2Params);
         streamId = linear.createWithRange(params);
     }
@@ -252,13 +280,17 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint128 totalAmount,
         Batch.CreateWithDurations[] calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256[] memory streamIds) {
+    )
+        external
+        override
+        returns (uint256[] memory streamIds)
+    {
         uint128 amountsSum;
         uint256 count = params.length;
         uint256 i;
 
         // Calculate the params amounts summed up.
-        for (i = 0; i < count; ) {
+        for (i = 0; i < count;) {
             amountsSum += params[i].amount;
 
             // Increment the for loop iterator.
@@ -275,7 +307,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
         // Declare an array of `count` length to avoid "Index out of bounds error".
         uint256[] memory _streamIds = new uint256[](count);
-        for (i = 0; i < count; ) {
+        for (i = 0; i < count;) {
             // Interactions: make the external call.
             _streamIds[i] = linear.createWithDurations(
                 LockupLinear.CreateWithDurations({
@@ -305,13 +337,17 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint128 totalAmount,
         Batch.CreateWithRange[] calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256[] memory streamIds) {
+    )
+        external
+        override
+        returns (uint256[] memory streamIds)
+    {
         uint128 amountsSum;
         uint256 count = params.length;
         uint256 i;
 
         // Calculate the params amounts summed up.
-        for (i = 0; i < count; ) {
+        for (i = 0; i < count;) {
             amountsSum += params[i].amount;
             unchecked {
                 i += 1;
@@ -326,7 +362,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
         // Declare an array of `count` length to avoid "Index out of bounds error".
         uint256[] memory _streamIds = new uint256[](count);
-        for (i = 0; i < count; ) {
+        for (i = 0; i < count;) {
             // Interactions: make the external call.
             _streamIds[i] = linear.createWithRange(
                 LockupLinear.CreateWithRange({
@@ -354,7 +390,12 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2LockupLinear linear,
         IWETH9 weth9,
         LockupLinear.CreateWithDurations memory params
-    ) external payable override returns (uint256 streamId) {
+    )
+        external
+        payable
+        override
+        returns (uint256 streamId)
+    {
         params.asset = weth9;
         // This cast is safe because realistically the total supply of ETH will not exceed 2^128.
         params.totalAmount = uint128(msg.value);
@@ -370,7 +411,12 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         ISablierV2LockupLinear linear,
         IWETH9 weth9,
         LockupLinear.CreateWithRange memory params
-    ) external payable override returns (uint256 streamId) {
+    )
+        external
+        payable
+        override
+        returns (uint256 streamId)
+    {
         params.asset = weth9;
         // This cast is safe because realistically the total supply of ETH will not exceed 2^128.
         params.totalAmount = uint128(msg.value);
@@ -388,85 +434,111 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /// @inheritdoc ISablierV2ProxyTarget
     function cancelAndCreateWithDeltas(
         ISablierV2Lockup lockup,
-        ISablierV2LockupPro pro,
+        ISablierV2LockupDynamic dynamic,
         uint256 streamId,
-        LockupPro.CreateWithDeltas calldata params,
+        LockupDynamic.CreateWithDeltas calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256 newStreamId) {
+    )
+        external
+        override
+        returns (uint256 newStreamId)
+    {
         _cancel(lockup, streamId);
-        newStreamId = _createWithDeltas(pro, params, permit2Params);
+        newStreamId = _createWithDeltas(dynamic, params, permit2Params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function cancelAndCreateWithMilestones(
         ISablierV2Lockup lockup,
-        ISablierV2LockupPro pro,
+        ISablierV2LockupDynamic dynamic,
         uint256 streamId,
-        LockupPro.CreateWithMilestones calldata params,
+        LockupDynamic.CreateWithMilestones calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256 newStreamId) {
+    )
+        external
+        override
+        returns (uint256 newStreamId)
+    {
         _cancel(lockup, streamId);
-        newStreamId = _createWithMilestones(pro, params, permit2Params);
+        newStreamId = _createWithMilestones(dynamic, params, permit2Params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithDelta(
-        ISablierV2LockupPro pro,
-        LockupPro.CreateWithDeltas calldata params,
+        ISablierV2LockupDynamic dynamic,
+        LockupDynamic.CreateWithDeltas calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256 streamId) {
-        streamId = _createWithDeltas(pro, params, permit2Params);
+    )
+        external
+        override
+        returns (uint256 streamId)
+    {
+        streamId = _createWithDeltas(dynamic, params, permit2Params);
     }
 
     /// @dev Internal function that:
     /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves the {SablierV2LockupPro} contract to spend funds from proxy, if necessary.
-    /// 3. Performs an external call on {SablierV2LockupPro-createWithDeltas}.
+    /// 2. Approves the {SablierV2LockupDynamic} contract to spend funds from proxy, if necessary.
+    /// 3. Performs an external call on {SablierV2LockupDynamic-createWithDeltas}.
     function _createWithDeltas(
-        ISablierV2LockupPro pro,
-        LockupPro.CreateWithDeltas calldata params,
+        ISablierV2LockupDynamic dynamic,
+        LockupDynamic.CreateWithDeltas calldata params,
         Permit2Params calldata permit2Params
-    ) internal returns (uint256 streamId) {
-        _assetActions(address(pro), params.asset, params.totalAmount, permit2Params);
-        streamId = pro.createWithDeltas(params);
+    )
+        internal
+        returns (uint256 streamId)
+    {
+        _assetActions(address(dynamic), params.asset, params.totalAmount, permit2Params);
+        streamId = dynamic.createWithDeltas(params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithMilestones(
-        ISablierV2LockupPro pro,
-        LockupPro.CreateWithMilestones calldata params,
+        ISablierV2LockupDynamic dynamic,
+        LockupDynamic.CreateWithMilestones calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256 streamId) {
-        streamId = _createWithMilestones(pro, params, permit2Params);
+    )
+        external
+        override
+        returns (uint256 streamId)
+    {
+        streamId = _createWithMilestones(dynamic, params, permit2Params);
     }
 
     /// @dev Internal function that:
     /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves the {SablierV2LockupPro} contract to spend funds from proxy, if necessary.
-    /// 3. Performs an external call on {SablierV2LockupPro-createWithMilestones}.
+    /// 2. Approves the {SablierV2LockupDynamic} contract to spend funds from proxy, if necessary.
+    /// 3. Performs an external call on {SablierV2LockupDynamic-createWithMilestones}.
     function _createWithMilestones(
-        ISablierV2LockupPro pro,
-        LockupPro.CreateWithMilestones calldata params,
+        ISablierV2LockupDynamic dynamic,
+        LockupDynamic.CreateWithMilestones calldata params,
         Permit2Params calldata permit2Params
-    ) internal returns (uint256 streamId) {
-        _assetActions(address(pro), params.asset, params.totalAmount, permit2Params);
-        streamId = pro.createWithMilestones(params);
+    )
+        internal
+        returns (uint256 streamId)
+    {
+        _assetActions(address(dynamic), params.asset, params.totalAmount, permit2Params);
+        streamId = dynamic.createWithMilestones(params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function batchCreateWithDeltas(
-        ISablierV2LockupPro pro,
+        ISablierV2LockupDynamic dynamic,
         IERC20 asset,
         uint128 totalAmount,
         Batch.CreateWithDeltas[] calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256[] memory streamIds) {
+    )
+        external
+        override
+        returns (uint256[] memory streamIds)
+    {
         uint128 amountsSum;
         uint256 count = params.length;
         uint256 i;
 
         // Calculate the params amounts summed up.
-        for (i = 0; i < count; ) {
+        for (i = 0; i < count;) {
             amountsSum += params[i].amount;
             unchecked {
                 i += 1;
@@ -476,15 +548,15 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
         Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
 
-        // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupPro} to spend the amount of assets.
-        _assetActions(address(pro), asset, totalAmount, permit2Params);
+        // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
+        _assetActions(address(dynamic), asset, totalAmount, permit2Params);
 
         // Declare an array of `count` length to avoid "Index out of bounds error".
         uint256[] memory _streamIds = new uint256[](count);
-        for (i = 0; i < count; ) {
+        for (i = 0; i < count;) {
             // Interactions: make the external call.
-            _streamIds[i] = pro.createWithDeltas(
-                LockupPro.CreateWithDeltas({
+            _streamIds[i] = dynamic.createWithDeltas(
+                LockupDynamic.CreateWithDeltas({
                     asset: asset,
                     broker: params[i].broker,
                     cancelable: params[i].cancelable,
@@ -506,18 +578,22 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @inheritdoc ISablierV2ProxyTarget
     function batchCreateWithMilestones(
-        ISablierV2LockupPro pro,
+        ISablierV2LockupDynamic dynamic,
         IERC20 asset,
         uint128 totalAmount,
         Batch.CreateWithMilestones[] calldata params,
         Permit2Params calldata permit2Params
-    ) external override returns (uint256[] memory streamIds) {
+    )
+        external
+        override
+        returns (uint256[] memory streamIds)
+    {
         uint128 amountsSum;
         uint256 count = params.length;
         uint256 i;
 
         // Calculate the params amounts summed up.
-        for (i = 0; i < count; ) {
+        for (i = 0; i < count;) {
             amountsSum += params[i].amount;
             unchecked {
                 i += 1;
@@ -527,15 +603,15 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
         Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
 
-        // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupPro} to spend the amount of assets.
-        _assetActions(address(pro), asset, totalAmount, permit2Params);
+        // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
+        _assetActions(address(dynamic), asset, totalAmount, permit2Params);
 
         // Declare an array of `count` length to avoid "Index out of bounds error".
         uint256[] memory _streamIds = new uint256[](count);
-        for (i = 0; i < count; ) {
+        for (i = 0; i < count;) {
             // Interactions: make the external call.
-            _streamIds[i] = pro.createWithMilestones(
-                LockupPro.CreateWithMilestones({
+            _streamIds[i] = dynamic.createWithMilestones(
+                LockupDynamic.CreateWithMilestones({
                     asset: asset,
                     broker: params[i].broker,
                     cancelable: params[i].cancelable,
@@ -558,10 +634,15 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @inheritdoc ISablierV2ProxyTarget
     function wrapEtherAndCreateWithDeltas(
-        ISablierV2LockupPro pro,
+        ISablierV2LockupDynamic dynamic,
         IWETH9 weth9,
-        LockupPro.CreateWithDeltas memory params
-    ) external payable override returns (uint256 streamId) {
+        LockupDynamic.CreateWithDeltas memory params
+    )
+        external
+        payable
+        override
+        returns (uint256 streamId)
+    {
         params.asset = weth9;
         // This cast is safe because realistically the total supply of ETH will not exceed 2^128.
         params.totalAmount = uint128(msg.value);
@@ -569,15 +650,20 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Interactions: deposit the Ether into the WETH9 contract.
         weth9.deposit{ value: msg.value }();
 
-        streamId = pro.createWithDeltas(params);
+        streamId = dynamic.createWithDeltas(params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function wrapEtherAndCreateWithMilestones(
-        ISablierV2LockupPro pro,
+        ISablierV2LockupDynamic dynamic,
         IWETH9 weth9,
-        LockupPro.CreateWithMilestones memory params
-    ) external payable override returns (uint256 streamId) {
+        LockupDynamic.CreateWithMilestones memory params
+    )
+        external
+        payable
+        override
+        returns (uint256 streamId)
+    {
         params.asset = weth9;
         // This cast is safe because realistically the total supply of ETH will not exceed 2^128.
         params.totalAmount = uint128(msg.value);
@@ -585,7 +671,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Interactions: deposit the Ether into the WETH9 contract.
         weth9.deposit{ value: msg.value }();
 
-        streamId = pro.createWithMilestones(params);
+        streamId = dynamic.createWithMilestones(params);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -599,9 +685,11 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         IERC20 asset,
         uint160 amount,
         Permit2Params calldata permit2Params
-    ) internal {
+    )
+        internal
+    {
         /// Interactions: get the nonce for `msg.sender`.
-        (, , uint48 nonce) = permit2Params.permit2.allowance(msg.sender, address(asset), address(this));
+        (,, uint48 nonce) = permit2Params.permit2.allowance(msg.sender, address(asset), address(this));
 
         /// Declare the `PermitSingle` struct used in `permit` function.
         IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({

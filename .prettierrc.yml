@@ -1,13 +1,7 @@
-arrowParens: "avoid"
 bracketSpacing: true
-endOfLine: "auto"
 printWidth: 120
+proseWrap: "always"
 singleQuote: false
 tabWidth: 2
 trailingComma: "all"
-
-overrides:
-  - files: ["*.sol"]
-    options:
-      compiler: "0.8.19"
-      tabWidth: 4
+useTabs: false

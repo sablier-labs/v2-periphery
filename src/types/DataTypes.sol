@@ -3,7 +3,7 @@ pragma solidity >=0.8.19;
 
 import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
-import { Broker, LockupLinear, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
+import { Broker, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
 struct Permit2Params {
     IAllowanceTransfer permit2;
@@ -25,13 +25,13 @@ library Batch {
         uint256[] streamIds;
     }
 
-    /// @notice Struct that partially encapsulates the {SablierV2LockupPro-createWithDelta} function parameters.
+    /// @notice Struct that partially encapsulates the {SablierV2LockupDynamic-createWithDelta} function parameters.
     struct CreateWithDeltas {
         uint128 amount;
         Broker broker;
         bool cancelable;
         address recipient;
-        LockupPro.SegmentWithDelta[] segments;
+        LockupDynamic.SegmentWithDelta[] segments;
         address sender;
     }
 
@@ -45,13 +45,14 @@ library Batch {
         address sender;
     }
 
-    /// @notice Struct that partially encapsulates the {SablierV2LockupPro-createWithMilestones} function parameters.
+    /// @notice Struct that partially encapsulates the {SablierV2LockupDynamic-createWithMilestones} function
+    /// parameters.
     struct CreateWithMilestones {
         uint128 amount;
         Broker broker;
         bool cancelable;
         address recipient;
-        LockupPro.Segment[] segments;
+        LockupDynamic.Segment[] segments;
         address sender;
         uint40 startTime;
     }

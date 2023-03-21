@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { UD2x18, ud2x18 } from "@prb/math/UD2x18.sol";
-import { Broker, LockupPro } from "@sablier/v2-core/types/DataTypes.sol";
+import { Broker, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
 
@@ -96,17 +96,17 @@ contract Unit_Test is Base_Test {
         return params;
     }
 
-    /// @dev Helper function to return an array of `LockupPro.Segment` that is not "storage ref".
-    function defaultSegments() internal view returns (LockupPro.Segment[] memory) {
-        LockupPro.Segment[] memory segments = new LockupPro.Segment[](2);
+    /// @dev Helper function to return an array of `LockupDynamic.Segment` that is not "storage ref".
+    function defaultSegments() internal view returns (LockupDynamic.Segment[] memory) {
+        LockupDynamic.Segment[] memory segments = new LockupDynamic.Segment[](2);
 
-        segments[0] = LockupPro.Segment({
-            amount: 2_500e18,
+        segments[0] = LockupDynamic.Segment({
+            amount: 2500e18,
             exponent: ud2x18(3.14e18),
             milestone: DEFAULT_START_TIME + DEFAULT_CLIFF_DURATION
         });
-        segments[1] = LockupPro.Segment({
-            amount: 2_500e18,
+        segments[1] = LockupDynamic.Segment({
+            amount: 2500e18,
             exponent: ud2x18(3.14e18),
             milestone: DEFAULT_START_TIME + DEFAULT_CLIFF_DURATION
         });
@@ -114,12 +114,14 @@ contract Unit_Test is Base_Test {
         return segments;
     }
 
-    /// @dev Helper function to return an array of `LockupPro.SegmentWithDelta` that is not "storage ref".
-    function defaultSegmentsWithDeltas() internal pure returns (LockupPro.SegmentWithDelta[] memory) {
-        LockupPro.SegmentWithDelta[] memory segments = new LockupPro.SegmentWithDelta[](2);
+    /// @dev Helper function to return an array of `LockupDynamic.SegmentWithDelta` that is not "storage ref".
+    function defaultSegmentsWithDeltas() internal pure returns (LockupDynamic.SegmentWithDelta[] memory) {
+        LockupDynamic.SegmentWithDelta[] memory segments = new LockupDynamic.SegmentWithDelta[](2);
 
-        segments[0] = LockupPro.SegmentWithDelta({ amount: 2_500e18, delta: 2_500 seconds, exponent: ud2x18(3.14e18) });
-        segments[1] = LockupPro.SegmentWithDelta({ amount: 2_500e18, delta: 2_500 seconds, exponent: ud2x18(3.14e18) });
+        segments[0] =
+            LockupDynamic.SegmentWithDelta({ amount: 2500e18, delta: 2500 seconds, exponent: ud2x18(3.14e18) });
+        segments[1] =
+            LockupDynamic.SegmentWithDelta({ amount: 2500e18, delta: 2500 seconds, exponent: ud2x18(3.14e18) });
 
         return segments;
     }
@@ -131,44 +133,27 @@ contract Unit_Test is Base_Test {
     /// @dev Creates default deltas streams.
     function batchCreateWithDeltasDefault() internal returns (uint256[] memory streamIds) {
         streamIds = target.batchCreateWithDeltas(
-            pro,
-            asset,
-            DEFAULT_TOTAL_AMOUNT,
-            defaultDeltasParams(),
-            defaultPermit2Params
+            dynamic, asset, DEFAULT_TOTAL_AMOUNT, defaultDeltasParams(), defaultPermit2Params
         );
     }
 
     /// @dev Creates default durations streams.
     function batchCreateWithDurationsDefault() internal returns (uint256[] memory streamIds) {
         streamIds = target.batchCreateWithDurations(
-            linear,
-            asset,
-            DEFAULT_TOTAL_AMOUNT,
-            defaultDurationsParams(),
-            defaultPermit2Params
+            linear, asset, DEFAULT_TOTAL_AMOUNT, defaultDurationsParams(), defaultPermit2Params
         );
     }
 
     /// @dev Creates default milestones streams.
     function batchCreateWithMilestonesDefault() internal returns (uint256[] memory streamIds) {
         streamIds = target.batchCreateWithMilestones(
-            pro,
-            asset,
-            DEFAULT_TOTAL_AMOUNT,
-            defaultMilestonesParams(),
-            defaultPermit2Params
+            dynamic, asset, DEFAULT_TOTAL_AMOUNT, defaultMilestonesParams(), defaultPermit2Params
         );
     }
 
     /// @dev Creates default range streams.
     function batchCreateWithRangeDefault() internal returns (uint256[] memory streamIds) {
-        streamIds = target.batchCreateWithRange(
-            linear,
-            asset,
-            DEFAULT_TOTAL_AMOUNT,
-            defaultRangeParams(),
-            defaultPermit2Params
-        );
+        streamIds =
+            target.batchCreateWithRange(linear, asset, DEFAULT_TOTAL_AMOUNT, defaultRangeParams(), defaultPermit2Params);
     }
 }
