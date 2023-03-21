@@ -11,7 +11,7 @@ import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.so
 
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
 import { IWETH9 } from "./interfaces/IWETH9.sol";
-import { Helpers } from "./libraries/Helpers.sol";
+import { Errors } from "./libraries/Errors.sol";
 import { Batch, Permit2Params } from "./types/DataTypes.sol";
 
 /// @title SablierV2ProxyTarget
@@ -300,7 +300,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
-        Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
+        _checkCreateBatchParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupLinear} to spend the amount of assets.
         _assetActions(address(linear), asset, totalAmount, permit2Params);
@@ -355,7 +355,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
-        Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
+        _checkCreateBatchParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupLinear} to spend the amount of assets.
         _assetActions(address(linear), asset, totalAmount, permit2Params);
@@ -546,7 +546,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
-        Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
+        _checkCreateBatchParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
         _assetActions(address(dynamic), asset, totalAmount, permit2Params);
@@ -601,7 +601,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         // Checks: the `totalAmount` is zero and if it's equal to the sum of the `params.amount`.
-        Helpers.checkCreateMultipleParams(totalAmount, amountsSum);
+        _checkCreateBatchParams(totalAmount, amountsSum);
 
         // Interactions: perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
         _assetActions(address(dynamic), asset, totalAmount, permit2Params);
@@ -675,7 +675,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                       ERC-20
+                                  HELPER FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Helper function that transfers `amount` funds from `msg.sender` to `address(this)` via Permit2
@@ -714,6 +714,19 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint256 allowance = asset.allowance(address(this), lockup);
         if (allowance < uint256(amount)) {
             asset.approve(lockup, type(uint256).max);
+        }
+    }
+
+    /// @dev Checks the arguments of the create multiple functions.
+    function _checkCreateBatchParams(uint128 totalAmount, uint128 amountsSum) internal pure {
+        // Checks: the total amount is not zero.
+        if (totalAmount == 0) {
+            revert Errors.SablierV2ProxyTarget_TotalAmountZero();
+        }
+
+        /// Checks: the total amount is equal to the parameters amounts summed up.
+        if (amountsSum != totalAmount) {
+            revert Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum(totalAmount, amountsSum);
         }
     }
 }
