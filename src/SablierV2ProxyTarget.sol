@@ -42,24 +42,13 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /// @dev Internal function that:
-    /// 1. Gets the proxy balances of each asset before the streams are canceled.
+    /// 1. Queries the proxy balances of each asset before the streams are canceled.
     /// 2. Performs multiple external calls on {SablierV2Lockup-cancelMultiple}.
     /// 3. Transfers the returned amounts of each asset to proxy owner, if greater than zero.
     function _batchCancelMultiple(Batch.CancelMultiple[] calldata params, IERC20[] calldata assets) internal {
-        uint256 i;
-        uint256 assetsCount = assets.length;
-        uint256[] memory balancesBefore = new uint256[](assetsCount);
-        for (i = 0; i < assetsCount;) {
-            // Interactions: get the proxy balances.
-            balancesBefore[i] = assets[i].balanceOf(address(this));
+        uint256[] memory balancesBefore = _beforeCancelMultiple(assets);
 
-            // Increment the for loop iterator.
-            unchecked {
-                i += 1;
-            }
-        }
-
-        for (i = 0; i < params.length;) {
+        for (uint256 i = 0; i < params.length;) {
             // Interactions: cancel the streams.
             params[i].lockup.cancelMultiple(params[i].streamIds);
 
@@ -69,23 +58,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             }
         }
 
-        uint256 balanceAfter;
-        uint256 balanceDelta;
-        for (i = 0; i < assetsCount;) {
-            // Calculate the balance delta.
-            balanceAfter = assets[i].balanceOf(address(this));
-            balanceDelta = balanceAfter - balancesBefore[i];
-
-            // Interactions: transfer the balance delta to proxy owner, if greater than zero.
-            if (balanceDelta > 0) {
-                assets[i].safeTransfer(msg.sender, balanceDelta);
-            }
-
-            // Increment the for loop iterator.
-            unchecked {
-                i += 1;
-            }
-        }
+        _afterCancelMultiple(balancesBefore, assets);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -94,15 +67,15 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /// @dev Internal function that:
-    /// 1. Gets the asset of the stream.
-    /// 2. Gets the return amount of the stream.
+    /// 1. Queries the asset of the stream.
+    /// 2. Queries the return amount of the stream.
     /// 3. Performs an external call on {SablierV2Lockup-cancel}.
     /// 4. Transfers the return amount to proxy owner, if greater than zero.
     function _cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
-        // Interactions: get the asset.
+        // Interactions: query the asset.
         IERC20 asset = lockup.getAsset(streamId);
 
-        // Interactions: get the return amount.
+        // Interactions: query the return amount.
         uint256 returnAmount = lockup.returnableAmountOf(streamId);
 
         // Interactions: cancel the stream.
@@ -120,7 +93,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /// @dev Internal function that:
-    /// 1. Gets the proxy balances of each asset before the streams are canceled.
+    /// 1. Queries the proxy balances of each asset before the streams are canceled.
     /// 2. Performs an external call on {SablierV2Lockup-cancelMultiple}.
     /// 3. Transfers the return amounts sum to proxy owner, if greater than zero.
     function _cancelMultiple(
@@ -130,38 +103,12 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     )
         internal
     {
-        uint256 i;
-        uint256 assetsCount = assets.length;
-        uint256[] memory balancesBefore = new uint256[](assetsCount);
-        for (i = 0; i < assetsCount;) {
-            // Interactions: get the proxy balances.
-            balancesBefore[i] = assets[i].balanceOf(address(this));
-
-            // Increment the for loop iterator.
-            unchecked {
-                i += 1;
-            }
-        }
+        uint256[] memory balancesBefore = _beforeCancelMultiple(assets);
 
         /// Interactions: cancel the streams.
         lockup.cancelMultiple(streamIds);
 
-        uint256 balanceAfter;
-        uint256 balanceDelta;
-        for (i = 0; i < assetsCount;) {
-            // Calculate the balance delta.
-            balanceAfter = assets[i].balanceOf(address(this));
-            balanceDelta = balanceAfter - balancesBefore[i];
-            // Interactions: transfer the balance delta to proxy owner, if greater than zero.
-            if (balanceDelta > 0) {
-                assets[i].safeTransfer(msg.sender, balanceDelta);
-            }
-
-            // Increment the for loop iterator.
-            unchecked {
-                i += 1;
-            }
-        }
+        _afterCancelMultiple(balancesBefore, assets);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -397,7 +344,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256 streamId)
     {
         params.asset = weth9;
-        // This cast is safe because realistically the total supply of ETH will not exceed 2^128.
+        // This cast is safe because realistically the total supply of ETH will not exceed 2^128-1.
         params.totalAmount = uint128(msg.value);
 
         // Interactions: deposit the Ether into the WETH9 contract.
@@ -418,7 +365,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256 streamId)
     {
         params.asset = weth9;
-        // This cast is safe because realistically the total supply of ETH will not exceed 2^128.
+        // This cast is safe because realistically the total supply of ETH will not exceed 2^128-1.
         params.totalAmount = uint128(msg.value);
 
         // Interactions: deposit the Ether into the WETH9 contract.
@@ -644,7 +591,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256 streamId)
     {
         params.asset = weth9;
-        // This cast is safe because realistically the total supply of ETH will not exceed 2^128.
+        // This cast is safe because realistically the total supply of ETH will not exceed 2^128-1.
         params.totalAmount = uint128(msg.value);
 
         // Interactions: deposit the Ether into the WETH9 contract.
@@ -665,7 +612,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256 streamId)
     {
         params.asset = weth9;
-        // This cast is safe because realistically the total supply of ETH will not exceed 2^128.
+        // This cast is safe because realistically the total supply of ETH will not exceed 2^128-1.
         params.totalAmount = uint128(msg.value);
 
         // Interactions: deposit the Ether into the WETH9 contract.
@@ -678,8 +625,29 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
                                   HELPER FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev Helper function to transfer funds after the cancel multiple call, if any.
+    function _afterCancelMultiple(uint256[] memory balancesBefore, IERC20[] calldata assets) internal {
+        uint256 balanceAfter;
+        uint256 balanceDelta;
+        for (uint256 i = 0; i < assets.length;) {
+            // Calculate the balance delta.
+            balanceAfter = assets[i].balanceOf(address(this));
+            balanceDelta = balanceAfter - balancesBefore[i];
+
+            // Interactions: transfer the balance delta to proxy owner, if greater than zero.
+            if (balanceDelta > 0) {
+                assets[i].safeTransfer(msg.sender, balanceDelta);
+            }
+
+            // Increment the for loop iterator.
+            unchecked {
+                i += 1;
+            }
+        }
+    }
     /// @dev Helper function that transfers `amount` funds from `msg.sender` to `address(this)` via Permit2
     /// and approves `amount` to `lockup`, if necessary.
+
     function _assetActions(
         address lockup,
         IERC20 asset,
@@ -688,7 +656,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     )
         internal
     {
-        /// Interactions: get the nonce for `msg.sender`.
+        /// Interactions: query the nonce for `msg.sender`.
         (,, uint48 nonce) = permit2Params.permit2.allowance(msg.sender, address(asset), address(this));
 
         /// Declare the `PermitSingle` struct used in `permit` function.
@@ -709,12 +677,29 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         /// Interactions: transfer funds from `msg.sender` to proxy.
         permit2Params.permit2.transferFrom(msg.sender, address(this), amount, address(asset));
 
-        /// Interactions: get the allownace of the proxy for `lockup`
+        /// Interactions: query the allownace of the proxy for `lockup`
         /// and approve `lockup`, if necessary.
         uint256 allowance = asset.allowance(address(this), lockup);
         if (allowance < uint256(amount)) {
             asset.approve(lockup, type(uint256).max);
         }
+    }
+
+    /// @dev Helper function to query the proxy balances for `assets` before the cancel multiple call.
+    function _beforeCancelMultiple(IERC20[] calldata assets) internal view returns (uint256[] memory balancesBefore) {
+        uint256 assetsCount = assets.length;
+        uint256[] memory _balancesBefore = new uint256[](assetsCount);
+        for (uint256 i = 0; i < assetsCount;) {
+            // Interactions: query the proxy balances.
+            _balancesBefore[i] = assets[i].balanceOf(address(this));
+
+            // Increment the for loop iterator.
+            unchecked {
+                i += 1;
+            }
+        }
+
+        balancesBefore = _balancesBefore;
     }
 
     /// @dev Checks the arguments of the create multiple functions.
