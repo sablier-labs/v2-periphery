@@ -18,6 +18,16 @@
   verbosity = 4
   via_ir = true
 
+[fmt]
+  bracket_spacing = true
+  int_types = "long"
+  line_length = 120
+  multiline_func_header = "all"
+  number_underscore = "thousands"
+  quote_style = "double"
+  tab_width = 4
+  wrap_comments = true
+  
 [rpc_endpoints]
   localhost = "http://localhost:8545"
   goerli = "https://goerli.infura.io/v3/${INFURA_API_KEY}"

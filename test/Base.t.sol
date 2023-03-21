@@ -8,13 +8,13 @@ import { PermitHash } from "@permit2/libraries/PermitHash.sol";
 import { PRBTest } from "@prb/test/PRBTest.sol";
 import { SablierV2Comptroller } from "@sablier/v2-core/SablierV2Comptroller.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.sol";
-import { SablierV2LockupPro } from "@sablier/v2-core/SablierV2LockupPro.sol";
+import { SablierV2LockupDynamic } from "@sablier/v2-core/SablierV2LockupDynamic.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
 import { Permit2Params } from "src/types/DataTypes.sol";
 
-import { SablierV2NftDescriptor } from "./mockups/SablierV2NftDescriptor.t.sol";
+import { SablierV2NFTDescriptor } from "./mockups/SablierV2NFTDescriptor.t.sol";
 import { Constants } from "./helpers/Constants.t.sol";
 
 /// @title Base_Test
@@ -28,9 +28,9 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
     AllowanceTransfer internal permit2;
 
     SablierV2Comptroller internal comptroller;
-    SablierV2NftDescriptor internal descriptor;
+    SablierV2NFTDescriptor internal descriptor;
     SablierV2LockupLinear internal linear;
-    SablierV2LockupPro internal pro;
+    SablierV2LockupDynamic internal dynamic;
     SablierV2ProxyTarget internal target;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -74,9 +74,10 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
 
         // Deploy the core contracts.
         comptroller = new SablierV2Comptroller(users.admin);
-        descriptor = new SablierV2NftDescriptor();
+        descriptor = new SablierV2NFTDescriptor();
         linear = new SablierV2LockupLinear(users.admin, comptroller, descriptor, DEFAULT_MAX_FEE);
-        pro = new SablierV2LockupPro(users.admin, comptroller, descriptor, DEFAULT_MAX_FEE, DEFAULT_MAX_SEGMENT_COUNT);
+        dynamic =
+            new SablierV2LockupDynamic(users.admin, comptroller, descriptor, DEFAULT_MAX_FEE, DEFAULT_MAX_SEGMENT_COUNT);
 
         // Deploy the periphery contract.
         target = new SablierV2ProxyTarget();
@@ -86,7 +87,7 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(linear), newLabel: "LockupLinear" });
         vm.label({ account: address(permit2), newLabel: "Permit2" });
-        vm.label({ account: address(pro), newLabel: "LockupPro" });
+        vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(target), newLabel: "Target" });
     }
 

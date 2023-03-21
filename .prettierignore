@@ -1,2 +1,22 @@
 # directories
-/lib
+.github/workflows
+broadcast
+cache
+coverage
+docs
+lib
+node_modules
+optimized-out
+out
+script
+src
+test
+
+# files
+*.env
+*.log
+.DS_Store
+.pnp.*
+lcov.info
+package-lock.json
+yarn.lock

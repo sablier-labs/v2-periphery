@@ -31,9 +31,7 @@ contract batchCreateWithRange_Test is Unit_Test {
         // Expect a {SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum} error.
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector,
-                DEFAULT_TOTAL_AMOUNT,
-                0
+                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector, DEFAULT_TOTAL_AMOUNT, 0
             )
         );
         target.batchCreateWithRange(linear, asset, DEFAULT_TOTAL_AMOUNT, params, defaultPermit2Params);
@@ -49,9 +47,7 @@ contract batchCreateWithRange_Test is Unit_Test {
         // Expect a {SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum} error.
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector,
-                totalAmount,
-                DEFAULT_TOTAL_AMOUNT
+                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector, totalAmount, DEFAULT_TOTAL_AMOUNT
             )
         );
         target.batchCreateWithRange(linear, asset, totalAmount, defaultRangeParams(), defaultPermit2Params);
