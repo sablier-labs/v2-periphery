@@ -25,9 +25,9 @@ contract Unit_Test is Base_Test {
 
     /// @dev Helper function to return an array of `Batch.CreateWithDeltas` that is not "storage ref".
     function defaultDeltasParams() internal view returns (Batch.CreateWithDeltas[] memory) {
-        Batch.CreateWithDeltas[] memory params = new Batch.CreateWithDeltas[](PARAMS_COUNT);
+        Batch.CreateWithDeltas[] memory params = new Batch.CreateWithDeltas[](BATCH_PARAMS_COUNT);
 
-        for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < BATCH_PARAMS_COUNT; ++i) {
             params[i] = Batch.CreateWithDeltas({
                 amount: DEFAULT_AMOUNT,
                 broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),
@@ -43,9 +43,9 @@ contract Unit_Test is Base_Test {
 
     /// @dev Helper function to return an array of `Batch.CreateWithDurations` that is not "storage ref".
     function defaultDurationsParams() internal view returns (Batch.CreateWithDurations[] memory) {
-        Batch.CreateWithDurations[] memory params = new Batch.CreateWithDurations[](PARAMS_COUNT);
+        Batch.CreateWithDurations[] memory params = new Batch.CreateWithDurations[](BATCH_PARAMS_COUNT);
 
-        for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < BATCH_PARAMS_COUNT; ++i) {
             params[i] = Batch.CreateWithDurations({
                 amount: DEFAULT_AMOUNT,
                 broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),
@@ -61,9 +61,9 @@ contract Unit_Test is Base_Test {
 
     /// @dev Helper function to return an array of `Batch.CreateWithMilestones` that is not "storage ref".
     function defaultMilestonesParams() internal view returns (Batch.CreateWithMilestones[] memory) {
-        Batch.CreateWithMilestones[] memory params = new Batch.CreateWithMilestones[](PARAMS_COUNT);
+        Batch.CreateWithMilestones[] memory params = new Batch.CreateWithMilestones[](BATCH_PARAMS_COUNT);
 
-        for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < BATCH_PARAMS_COUNT; ++i) {
             params[i] = Batch.CreateWithMilestones({
                 amount: DEFAULT_AMOUNT,
                 broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),
@@ -80,9 +80,9 @@ contract Unit_Test is Base_Test {
 
     /// @dev Helper function to return an array of `Batch.CreateWithRange` that is not "storage ref".
     function defaultRangeParams() internal view returns (Batch.CreateWithRange[] memory) {
-        Batch.CreateWithRange[] memory params = new Batch.CreateWithRange[](PARAMS_COUNT);
+        Batch.CreateWithRange[] memory params = new Batch.CreateWithRange[](BATCH_PARAMS_COUNT);
 
-        for (uint256 i = 0; i < PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < BATCH_PARAMS_COUNT; ++i) {
             params[i] = Batch.CreateWithRange({
                 amount: DEFAULT_AMOUNT,
                 broker: Broker({ account: users.broker, fee: DEFAULT_BROKER_FEE }),

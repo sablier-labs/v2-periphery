@@ -27,7 +27,7 @@ abstract contract Constants {
     uint40 internal constant DEFAULT_TOTAL_DURATION = 10_000 seconds;
     uint128 internal constant DEFAULT_WITHDRAW_AMOUNT = 2600e18;
 
-    uint256 internal constant PARAMS_COUNT = 10;
+    uint256 internal constant BATCH_PARAMS_COUNT = 10;
     uint128 internal constant UINT128_MAX = type(uint128).max;
     uint160 internal constant UINT160_MAX = type(uint160).max;
     uint256 internal constant UINT256_MAX = type(uint256).max;
