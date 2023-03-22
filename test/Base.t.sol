@@ -13,7 +13,6 @@ import { SablierV2LockupDynamic } from "@sablier/v2-core/SablierV2LockupDynamic.
 import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
-import { Permit2Params } from "src/types/DataTypes.sol";
 
 import { SablierV2NFTDescriptor } from "./mockups/SablierV2NFTDescriptor.t.sol";
 import { Constants } from "./helpers/Constants.t.sol";
@@ -25,14 +24,14 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    ERC20 internal asset;
-    AllowanceTransfer internal permit2;
+    ERC20 internal asset = new ERC20("Asset Coin", "Asset");
+    AllowanceTransfer internal permit2 = new AllowanceTransfer();
 
-    PRBProxyRegistry internal registry;
+    PRBProxyRegistry internal registry = new PRBProxyRegistry();
     IPRBProxy internal proxy;
 
     SablierV2Comptroller internal comptroller;
-    SablierV2NFTDescriptor internal descriptor;
+    SablierV2NFTDescriptor internal descriptor = new SablierV2NFTDescriptor();
     SablierV2LockupDynamic internal dynamic;
     SablierV2LockupLinear internal linear;
     SablierV2ProxyTarget internal target;
@@ -59,8 +58,12 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         address payable sender;
     }
 
-    IAllowanceTransfer.PermitDetails internal defaultPermitDetails;
-    Permit2Params internal defaultPermit2Params;
+    IAllowanceTransfer.PermitDetails internal defaultPermitDetails = IAllowanceTransfer.PermitDetails({
+        token: address(asset),
+        amount: uint160(DEFAULT_TOTAL_AMOUNT),
+        expiration: UINT48_MAX,
+        nonce: DEFAULT_PERMIT2_NONCE
+    });
     PrivateKeys internal privateKeys;
     Users internal users;
 
@@ -69,34 +72,13 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     constructor() {
-        // Deploy the asset to use for testing.
-        asset = new ERC20("Asset Coin", "Asset");
-
-        // Deploy the proxy contract.
-        registry = new PRBProxyRegistry();
-        proxy = registry.deployFor(users.sender);
-
-        // Deploy the permit2 contract.
-        permit2 = new AllowanceTransfer();
-
-        // Deploy the core contracts.
-        comptroller = new SablierV2Comptroller(users.admin);
-        descriptor = new SablierV2NFTDescriptor();
-        linear = new SablierV2LockupLinear(users.admin, comptroller, descriptor, DEFAULT_MAX_FEE);
-        dynamic =
-            new SablierV2LockupDynamic(users.admin, comptroller, descriptor, DEFAULT_MAX_FEE, DEFAULT_MAX_SEGMENT_COUNT);
-
-        // Deploy the periphery contract.
+        // Deploy the target contract.
         target = new SablierV2ProxyTarget();
 
         // Label all the contracts just deployed.
         vm.label({ account: address(asset), newLabel: "Asset" });
-        vm.label({ account: address(comptroller), newLabel: "Comptroller" });
-        vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
-        vm.label({ account: address(linear), newLabel: "LockupLinear" });
         vm.label({ account: address(registry), newLabel: "ProxyRegistry" });
         vm.label({ account: address(permit2), newLabel: "Permit2" });
-        vm.label({ account: address(proxy), newLabel: "Proxy" });
         vm.label({ account: address(target), newLabel: "Target" });
     }
 
@@ -113,18 +95,6 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         (users.sender, privateKeys.sender) = createUser("Sender");
 
         DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();
-        defaultPermitDetails = IAllowanceTransfer.PermitDetails({
-            token: address(asset),
-            amount: uint160(DEFAULT_TOTAL_AMOUNT),
-            expiration: UINT48_MAX,
-            nonce: DEFAULT_PERMIT2_NONCE
-        });
-        defaultPermit2Params = Permit2Params({
-            permit2: permit2,
-            expiration: DEFAULT_PERMIT2_EXPIRATION,
-            sigDeadline: DEFAULT_PERMIT2_SIG_DEADLINE,
-            signature: getPermit2Signature(privateKeys.sender)
-        });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -132,13 +102,13 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Helper function to get the signature given the `privateKey`.
-    function getPermit2Signature(uint256 privateKey) internal view returns (bytes memory sig) {
+    function getPermit2Signature(uint256 privateKey, address spender) internal view returns (bytes memory sig) {
         bytes32 permitHash = keccak256(abi.encode(PERMIT_DETAILS_TYPEHASH, defaultPermitDetails));
         bytes32 digest = keccak256(
             abi.encodePacked(
                 "\x19\x01",
                 DOMAIN_SEPARATOR,
-                keccak256(abi.encode(PERMIT_SINGLE_TYPEHASH, permitHash, address(target), DEFAULT_PERMIT2_SIG_DEADLINE))
+                keccak256(abi.encode(PERMIT_SINGLE_TYPEHASH, permitHash, spender, DEFAULT_PERMIT2_SIG_DEADLINE))
             )
         );
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, digest);
@@ -168,6 +138,16 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         vm.deal({ account: addr, newBalance: 100 ether });
         deal({ token: address(asset), to: addr, give: 1_000_000e18 });
         return (payable(addr), privateKey);
+    }
+
+    function deployCore() internal {
+        comptroller = new SablierV2Comptroller(users.admin);
+        linear = new SablierV2LockupLinear(users.admin, comptroller, descriptor, DEFAULT_MAX_FEE);
+        dynamic =
+            new SablierV2LockupDynamic(users.admin, comptroller, descriptor, DEFAULT_MAX_FEE, DEFAULT_MAX_SEGMENT_COUNT);
+        vm.label({ account: address(comptroller), newLabel: "Comptroller" });
+        vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
+        vm.label({ account: address(linear), newLabel: "LockupLinear" });
     }
 
     /// @dev Expects a call to the `transfer` function of the default ERC-20 asset.
