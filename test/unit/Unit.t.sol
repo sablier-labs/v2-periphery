@@ -124,9 +124,9 @@ contract Unit_Test is Base_Test {
             milestone: DEFAULT_START_TIME + DEFAULT_CLIFF_DURATION
         });
         segments[1] = LockupDynamic.Segment({
-            amount: 2500e18,
+            amount: 7500e18,
             exponent: ud2x18(3.14e18),
-            milestone: DEFAULT_START_TIME + DEFAULT_CLIFF_DURATION
+            milestone: DEFAULT_START_TIME + DEFAULT_TOTAL_DURATION
         });
 
         return segments;
@@ -139,7 +139,7 @@ contract Unit_Test is Base_Test {
         segments[0] =
             LockupDynamic.SegmentWithDelta({ amount: 2500e18, delta: 2500 seconds, exponent: ud2x18(3.14e18) });
         segments[1] =
-            LockupDynamic.SegmentWithDelta({ amount: 2500e18, delta: 2500 seconds, exponent: ud2x18(3.14e18) });
+            LockupDynamic.SegmentWithDelta({ amount: 7500e18, delta: 7500 seconds, exponent: ud2x18(3.14e18) });
 
         return segments;
     }
