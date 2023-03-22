@@ -5,6 +5,7 @@ import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
 import { Unit_Test } from "../Unit.t.sol";
+import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
 
 contract BatchCreateWithRange_Test is Unit_Test {
     function setUp() public virtual override {
@@ -17,7 +18,8 @@ contract BatchCreateWithRange_Test is Unit_Test {
     function test_RevertWhen_TotalAmountZero() external {
         uint128 totalAmountZero = 0;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithRange, (linear, asset, totalAmountZero, defaultRangeParams(), defaultPermit2Params)
+            target.batchCreateWithRange,
+            (linear, asset, totalAmountZero, DefaultParams.batchCreateWithRange(users), defaultPermit2Params)
         );
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
         proxy.execute(address(target), data);
@@ -31,11 +33,11 @@ contract BatchCreateWithRange_Test is Unit_Test {
     function test_RevertWhen_ParamsCountZero() external whenTotalAmountNotZero {
         Batch.CreateWithRange[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithRange, (linear, asset, DEFAULT_TOTAL_AMOUNT, params, defaultPermit2Params)
+            target.batchCreateWithRange, (linear, asset, DefaultParams.TOTAL_AMOUNT, params, defaultPermit2Params)
         );
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector, DEFAULT_TOTAL_AMOUNT, 0
+                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector, DefaultParams.TOTAL_AMOUNT, 0
             )
         );
         proxy.execute(address(target), data);
@@ -47,13 +49,16 @@ contract BatchCreateWithRange_Test is Unit_Test {
 
     /// @dev it should revert.
     function test_RevertWhen_TotalAmountNotEqualToAmountsSum() external whenTotalAmountNotZero whenParamsCountNotZero {
-        uint128 totalAmount = DEFAULT_TOTAL_AMOUNT - 1;
+        uint128 totalAmount = DefaultParams.TOTAL_AMOUNT - 1;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithRange, (linear, asset, totalAmount, defaultRangeParams(), defaultPermit2Params)
+            target.batchCreateWithRange,
+            (linear, asset, totalAmount, DefaultParams.batchCreateWithRange(users), defaultPermit2Params)
         );
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector, totalAmount, DEFAULT_TOTAL_AMOUNT
+                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector,
+                totalAmount,
+                DefaultParams.TOTAL_AMOUNT
             )
         );
         proxy.execute(address(target), data);
@@ -70,11 +75,11 @@ contract BatchCreateWithRange_Test is Unit_Test {
         whenParamsCountNotZero
         whenTotalAmountEqualToAmountsSum
     {
-        expectTransferFromCall(users.sender, address(proxy), DEFAULT_TOTAL_AMOUNT);
-        expectTransferFromCallMutiple(address(proxy), address(linear), DEFAULT_AMOUNT);
+        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
+        expectMutipleTransferFromCalls(address(proxy), address(linear), DefaultParams.AMOUNT);
 
         uint256[] memory streamIds = batchCreateWithRangeDefault();
 
-        assertEq(streamIds, DEFAULT_STREAM_IDS);
+        assertEq(streamIds, DefaultParams.streamIds());
     }
 }
