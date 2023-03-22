@@ -711,7 +711,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         balancesBefore = _balancesBefore;
     }
 
-    /// @dev Checks the arguments of the create multiple functions.
+    /// @dev Checks the arguments of the batch create functions.
     function _checkBatchCreateParams(uint128 totalAmount, uint128 amountsSum) internal pure {
         // Checks: the total amount is not zero.
         if (totalAmount == 0) {
