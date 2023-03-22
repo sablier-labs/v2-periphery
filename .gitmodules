@@ -14,6 +14,10 @@
 	branch = "v3"
 	path = "lib/prb-math"
 	url = "https://github.com/paulrberg/prb-math"
+[submodule "lib/prb-proxy"]
+	branch = "main"
+	path = "lib/prb-proxy"
+	url = "https://github.com/PaulRBerg/prb-proxy"
 [submodule "lib/prb-test"]
 	branch = "v0"
 	path = "lib/prb-test"
@@ -22,4 +26,3 @@
 	branch = "main"
 	path = "lib/v2-core"
 	url = "https://github.com/sablierhq/v2-core"
-
