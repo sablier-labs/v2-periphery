@@ -413,7 +413,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function createWithDelta(
+    function createWithDeltas(
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithDeltas calldata params,
         Permit2Params calldata permit2Params

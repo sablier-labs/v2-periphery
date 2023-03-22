@@ -316,7 +316,7 @@ interface ISablierV2ProxyTarget {
     ///
     /// @param dynamic The Sablier V2 dynamic contract.
     /// @param permit2Params The struct that encapsulates the variables needed for Permit2.
-    function createWithDelta(
+    function createWithDeltas(
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithDeltas calldata params,
         Permit2Params calldata permit2Params
