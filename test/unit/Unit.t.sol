@@ -9,6 +9,10 @@ import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 import { Base_Test } from "../Base.t.sol";
 
 contract Unit_Test is Base_Test {
+    /*//////////////////////////////////////////////////////////////////////////
+                                     VARIABLES
+    //////////////////////////////////////////////////////////////////////////*/
+
     Permit2Params internal defaultPermit2Params;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -144,7 +148,7 @@ contract Unit_Test is Base_Test {
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Creates default deltas streams.
+    /// @dev Creates default streams with deltas.
     function batchCreateWithDeltasDefault() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
@@ -154,7 +158,7 @@ contract Unit_Test is Base_Test {
         streamIds = abi.decode(response, (uint256[]));
     }
 
-    /// @dev Creates default durations streams.
+    /// @dev Creates default streams with durations.
     function batchCreateWithDurationsDefault() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDurations,
@@ -164,7 +168,7 @@ contract Unit_Test is Base_Test {
         streamIds = abi.decode(response, (uint256[]));
     }
 
-    /// @dev Creates default milestones streams.
+    /// @dev Creates default streams with milestones.
     function batchCreateWithMilestonesDefault() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
@@ -174,7 +178,7 @@ contract Unit_Test is Base_Test {
         streamIds = abi.decode(response, (uint256[]));
     }
 
-    /// @dev Creates default range streams.
+    /// @dev Creates default streams with range.
     function batchCreateWithRangeDefault() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,

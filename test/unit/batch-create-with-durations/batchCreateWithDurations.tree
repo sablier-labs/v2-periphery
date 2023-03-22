@@ -1,0 +1,11 @@
+batchCreateWithDurations.t.sol
+├── when the total amount is zero
+│  └── it should revert
+└── when the total amount is not zero
+   ├── when the parameters count is zero
+   │  └── it should revert
+   └── when the parameters count is not zero
+      ├── when the total amount is not equal to the parameters amounts summed up
+      │  └── it should revert
+      └── when the total amount is equal to the parameters amounts summed up
+         └── it should perform the ERC-20 transfers and create multiple streams

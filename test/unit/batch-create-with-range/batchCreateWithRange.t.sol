@@ -23,12 +23,12 @@ contract BatchCreateWithRange_Test is Unit_Test {
         proxy.execute(address(target), data);
     }
 
-    modifier totalAmountNotZero() {
+    modifier whenTotalAmountNotZero() {
         _;
     }
 
     /// @dev it should revert.
-    function test_RevertWhen_ParamsCountZero() external totalAmountNotZero {
+    function test_RevertWhen_ParamsCountZero() external whenTotalAmountNotZero {
         Batch.CreateWithRange[] memory params;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange, (linear, asset, DEFAULT_TOTAL_AMOUNT, params, defaultPermit2Params)
@@ -41,12 +41,12 @@ contract BatchCreateWithRange_Test is Unit_Test {
         proxy.execute(address(target), data);
     }
 
-    modifier paramsCountNotZero() {
+    modifier whenParamsCountNotZero() {
         _;
     }
 
     /// @dev it should revert.
-    function test_RevertWhen_TotalAmountNotEqualToAmountsSum() external totalAmountNotZero paramsCountNotZero {
+    function test_RevertWhen_TotalAmountNotEqualToAmountsSum() external whenTotalAmountNotZero whenParamsCountNotZero {
         uint128 totalAmount = DEFAULT_TOTAL_AMOUNT - 1;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange, (linear, asset, totalAmount, defaultRangeParams(), defaultPermit2Params)
@@ -59,11 +59,17 @@ contract BatchCreateWithRange_Test is Unit_Test {
         proxy.execute(address(target), data);
     }
 
-    modifier totalAmountEqualToAmountsSum() {
+    modifier whenTotalAmountEqualToAmountsSum() {
         _;
     }
 
-    function test_CreateWithRange() external totalAmountNotZero paramsCountNotZero totalAmountEqualToAmountsSum {
+    /// @dev it should create multiple streams.
+    function test_BatchCreateWithRange()
+        external
+        whenTotalAmountNotZero
+        whenParamsCountNotZero
+        whenTotalAmountEqualToAmountsSum
+    {
         expectTransferFromCall(users.sender, address(proxy), DEFAULT_TOTAL_AMOUNT);
         expectTransferFromCallMutiple(address(proxy), address(linear), DEFAULT_AMOUNT);
 
