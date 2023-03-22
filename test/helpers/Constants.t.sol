@@ -35,11 +35,10 @@ abstract contract Constants {
     uint48 internal constant UINT48_MAX = type(uint48).max;
 
     bytes32 internal DOMAIN_SEPARATOR;
-    bytes32 internal constant PERMIT_DETAILS_TYPEHASH =
-        keccak256("PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)");
-    bytes32 internal constant PERMIT_SINGLE_TYPEHASH = keccak256(
-        "PermitSingle(PermitDetails details,address spender,uint256 sigDeadline)PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)"
-    );
+    // forgefmt: disable-next-line
+    bytes32 internal constant PERMIT_DETAILS_TYPEHASH = keccak256("PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)");
+    // forgefmt: disable-next-line
+    bytes32 internal constant PERMIT_SINGLE_TYPEHASH = keccak256("PermitSingle(PermitDetails details,address spender,uint256 sigDeadline)PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)");
 
     /*//////////////////////////////////////////////////////////////////////////
                                  COMPLEX CONSTANTS

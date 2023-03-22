@@ -4,6 +4,8 @@ pragma solidity >=0.8.19 <0.9.0;
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
 import { AllowanceTransfer } from "@permit2/AllowanceTransfer.sol";
 import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
+import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
+import { PRBProxyRegistry } from "@prb/proxy/PRBProxyRegistry.sol";
 import { PRBTest } from "@prb/test/PRBTest.sol";
 import { SablierV2Comptroller } from "@sablier/v2-core/SablierV2Comptroller.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.sol";
@@ -26,10 +28,13 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
     ERC20 internal asset;
     AllowanceTransfer internal permit2;
 
+    PRBProxyRegistry internal registry;
+    IPRBProxy internal proxy;
+
     SablierV2Comptroller internal comptroller;
     SablierV2NFTDescriptor internal descriptor;
-    SablierV2LockupLinear internal linear;
     SablierV2LockupDynamic internal dynamic;
+    SablierV2LockupLinear internal linear;
     SablierV2ProxyTarget internal target;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -67,6 +72,10 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         // Deploy the asset to use for testing.
         asset = new ERC20("Asset Coin", "Asset");
 
+        // Deploy the proxy contract.
+        registry = new PRBProxyRegistry();
+        proxy = registry.deployFor(users.sender);
+
         // Deploy the permit2 contract.
         permit2 = new AllowanceTransfer();
 
@@ -83,9 +92,11 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         // Label all the contracts just deployed.
         vm.label({ account: address(asset), newLabel: "Asset" });
         vm.label({ account: address(comptroller), newLabel: "Comptroller" });
-        vm.label({ account: address(linear), newLabel: "LockupLinear" });
-        vm.label({ account: address(permit2), newLabel: "Permit2" });
         vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
+        vm.label({ account: address(linear), newLabel: "LockupLinear" });
+        vm.label({ account: address(registry), newLabel: "ProxyRegistry" });
+        vm.label({ account: address(permit2), newLabel: "Permit2" });
+        vm.label({ account: address(proxy), newLabel: "Proxy" });
         vm.label({ account: address(target), newLabel: "Target" });
     }
 
@@ -151,8 +162,7 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
         asset.approve({ spender: address(permit2), amount: UINT256_MAX });
     }
 
-    /// @dev Generates an address by hashing the name, labels the address and funds it with 100 ETH, 1 million assets,
-    /// and 1 million non-compliant assets.
+    /// @dev Generates an address by hashing the name, labels the address and funds it with 100 ETH, 1 million assets.
     function createUser(string memory name) internal returns (address payable, uint256) {
         (address addr, uint256 privateKey) = makeAddrAndKey(name);
         vm.deal({ account: addr, newBalance: 100 ether });
