@@ -47,7 +47,6 @@ abstract contract Base_Test is Constants, PRBTest, StdCheats {
     }
 
     struct Users {
-        // Default admin of all Sablier V2 contracts.
         address payable admin;
         address payable alice;
         address payable broker;

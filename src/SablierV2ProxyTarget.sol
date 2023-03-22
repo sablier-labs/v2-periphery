@@ -645,9 +645,9 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             }
         }
     }
+
     /// @dev Helper function that transfers `amount` funds from `msg.sender` to `address(this)` via Permit2
     /// and approves `amount` to `lockup`, if necessary.
-
     function _assetActions(
         address lockup,
         IERC20 asset,
