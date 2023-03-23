@@ -19,7 +19,13 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
         uint128 totalAmountZero = 0;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
-            (dynamic, asset, totalAmountZero, DefaultParams.batchCreateWithDeltas(users), defaultPermit2Params)
+            (
+                dynamic,
+                asset,
+                totalAmountZero,
+                DefaultParams.batchCreateWithDeltas(users, address(proxy)),
+                permit2Params()
+            )
         );
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
         proxy.execute(address(target), data);
@@ -33,7 +39,7 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
     function test_RevertWhen_ParamsCountZero() external whenTotalAmountNotZero {
         Batch.CreateWithDeltas[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithDeltas, (dynamic, asset, DefaultParams.TOTAL_AMOUNT, params, defaultPermit2Params)
+            target.batchCreateWithDeltas, (dynamic, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params())
         );
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -52,7 +58,7 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
         uint128 totalAmount = DefaultParams.TOTAL_AMOUNT - 1;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
-            (dynamic, asset, totalAmount, DefaultParams.batchCreateWithDeltas(users), defaultPermit2Params)
+            (dynamic, asset, totalAmount, DefaultParams.batchCreateWithDeltas(users, address(proxy)), permit2Params())
         );
         vm.expectRevert(
             abi.encodeWithSelector(

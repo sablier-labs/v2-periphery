@@ -7,7 +7,7 @@ import { UD2x18, ud2x18 } from "@prb/math/UD2x18.sol";
 import { UD60x18, ZERO } from "@prb/math/UD60x18.sol";
 import { Broker, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { Batch } from "src/types/DataTypes.sol";
+import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
 library DefaultParams {
     /*//////////////////////////////////////////////////////////////////////////
@@ -60,8 +60,8 @@ library DefaultParams {
                                       PERMIT2
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint48 internal constant PERMIT2_EXPIRATION = UINT48_MAX;
     uint48 internal constant PERMIT2_NONCE = 0;
+    uint48 internal constant PERMIT2_EXPIRATION = UINT48_MAX;
     uint256 internal constant PERMIT2_SIG_DEADLINE = 100;
 
     function permitDetails(address asset) internal pure returns (IAllowanceTransfer.PermitDetails memory) {
@@ -70,6 +70,38 @@ library DefaultParams {
             amount: uint160(TOTAL_AMOUNT),
             expiration: UINT48_MAX,
             nonce: PERMIT2_NONCE
+        });
+    }
+
+    function permitDetailsWithNonce(
+        address asset,
+        uint48 nonce
+    )
+        internal
+        pure
+        returns (IAllowanceTransfer.PermitDetails memory)
+    {
+        return IAllowanceTransfer.PermitDetails({
+            token: asset,
+            amount: uint160(TOTAL_AMOUNT),
+            expiration: UINT48_MAX,
+            nonce: nonce
+        });
+    }
+
+    function permit2Params(
+        IAllowanceTransfer permit2,
+        bytes memory signature
+    )
+        internal
+        pure
+        returns (Permit2Params memory)
+    {
+        return Permit2Params({
+            permit2: permit2,
+            expiration: PERMIT2_EXPIRATION,
+            sigDeadline: PERMIT2_SIG_DEADLINE,
+            signature: signature
         });
     }
 
@@ -91,6 +123,7 @@ library DefaultParams {
 
     function createWithDeltas(
         Users memory users,
+        address proxy,
         IERC20 asset
     )
         internal
@@ -98,7 +131,7 @@ library DefaultParams {
         returns (LockupDynamic.CreateWithDeltas memory)
     {
         return LockupDynamic.CreateWithDeltas({
-            sender: users.sender,
+            sender: proxy,
             recipient: users.recipient,
             totalAmount: TOTAL_AMOUNT,
             asset: asset,
@@ -110,6 +143,7 @@ library DefaultParams {
 
     function createWithMilestones(
         Users memory user,
+        address proxy,
         IERC20 asset
     )
         internal
@@ -117,7 +151,7 @@ library DefaultParams {
         returns (LockupDynamic.CreateWithMilestones memory)
     {
         return LockupDynamic.CreateWithMilestones({
-            sender: user.sender,
+            sender: proxy,
             recipient: user.recipient,
             totalAmount: TOTAL_AMOUNT,
             asset: asset,
@@ -179,6 +213,7 @@ library DefaultParams {
 
     function createWithDurations(
         Users memory users,
+        address proxy,
         IERC20 asset
     )
         internal
@@ -186,7 +221,7 @@ library DefaultParams {
         returns (LockupLinear.CreateWithDurations memory)
     {
         return LockupLinear.CreateWithDurations({
-            sender: users.sender,
+            sender: proxy,
             recipient: users.recipient,
             totalAmount: TOTAL_AMOUNT,
             asset: asset,
@@ -198,6 +233,7 @@ library DefaultParams {
 
     function createWithRange(
         Users memory users,
+        address proxy,
         IERC20 asset
     )
         internal
@@ -205,7 +241,7 @@ library DefaultParams {
         returns (LockupLinear.CreateWithRange memory)
     {
         return LockupLinear.CreateWithRange({
-            sender: users.sender,
+            sender: proxy,
             recipient: users.recipient,
             totalAmount: TOTAL_AMOUNT,
             asset: asset,
@@ -224,7 +260,14 @@ library DefaultParams {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Helper function to return an array of `Batch.CreateWithDeltas`.
-    function batchCreateWithDeltas(Users memory users) internal pure returns (Batch.CreateWithDeltas[] memory) {
+    function batchCreateWithDeltas(
+        Users memory users,
+        address proxy
+    )
+        internal
+        pure
+        returns (Batch.CreateWithDeltas[] memory)
+    {
         Batch.CreateWithDeltas[] memory params = new Batch.CreateWithDeltas[](BATCH_CREATE_PARAMS_COUNT);
 
         for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
@@ -234,7 +277,7 @@ library DefaultParams {
                 cancelable: true,
                 recipient: users.recipient,
                 segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
-                sender: users.sender
+                sender: proxy
             });
         }
 
@@ -242,7 +285,14 @@ library DefaultParams {
     }
 
     /// @dev Helper function to return an array of `Batch.CreateWithDurations`.
-    function batchCreateWithDurations(Users memory users) internal pure returns (Batch.CreateWithDurations[] memory) {
+    function batchCreateWithDurations(
+        Users memory users,
+        address proxy
+    )
+        internal
+        pure
+        returns (Batch.CreateWithDurations[] memory)
+    {
         Batch.CreateWithDurations[] memory params = new Batch.CreateWithDurations[](BATCH_CREATE_PARAMS_COUNT);
 
         for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
@@ -252,7 +302,7 @@ library DefaultParams {
                 cancelable: true,
                 durations: durations(),
                 recipient: users.recipient,
-                sender: users.sender
+                sender: proxy
             });
         }
 
@@ -260,7 +310,10 @@ library DefaultParams {
     }
 
     /// @dev Helper function to return an array of `Batch.CreateWithMilestones`.
-    function batchCreateWithMilestones(Users memory users)
+    function batchCreateWithMilestones(
+        Users memory users,
+        address proxy
+    )
         internal
         pure
         returns (Batch.CreateWithMilestones[] memory)
@@ -274,7 +327,7 @@ library DefaultParams {
                 cancelable: true,
                 recipient: users.recipient,
                 segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
-                sender: users.sender,
+                sender: proxy,
                 startTime: START_TIME
             });
         }
@@ -283,7 +336,14 @@ library DefaultParams {
     }
 
     /// @dev Helper function to return an array of `Batch.CreateWithRange`.
-    function batchCreateWithRange(Users memory users) internal pure returns (Batch.CreateWithRange[] memory) {
+    function batchCreateWithRange(
+        Users memory users,
+        address proxy
+    )
+        internal
+        pure
+        returns (Batch.CreateWithRange[] memory)
+    {
         Batch.CreateWithRange[] memory params = new Batch.CreateWithRange[](BATCH_CREATE_PARAMS_COUNT);
 
         for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
@@ -293,7 +353,7 @@ library DefaultParams {
                 cancelable: true,
                 range: linearRange(),
                 recipient: users.recipient,
-                sender: users.sender
+                sender: proxy
             });
         }
 

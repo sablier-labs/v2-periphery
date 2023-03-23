@@ -3,6 +3,7 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
 import { AllowanceTransfer } from "@permit2/AllowanceTransfer.sol";
+import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
 import { PermitHash } from "@permit2/libraries/PermitHash.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
 import { PRBProxyRegistry } from "@prb/proxy/PRBProxyRegistry.sol";
@@ -73,10 +74,17 @@ abstract contract Base_Test is Assertions, StdCheats {
                             INTERNAL CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function to get the signature given the `privateKey`.
-    function getPermit2Signature(uint256 privateKey, address spender) internal view returns (bytes memory sig) {
-        bytes32 permitHash =
-            keccak256(abi.encode(PermitHash._PERMIT_DETAILS_TYPEHASH, DefaultParams.permitDetails(address(asset))));
+    /// @dev Helper function to get the signature.
+    function getPermit2Signature(
+        IAllowanceTransfer.PermitDetails memory permitDetails,
+        uint256 privateKey,
+        address spender
+    )
+        internal
+        view
+        returns (bytes memory sig)
+    {
+        bytes32 permitHash = keccak256(abi.encode(PermitHash._PERMIT_DETAILS_TYPEHASH, permitDetails));
         bytes32 digest = keccak256(
             abi.encodePacked(
                 "\x19\x01",

@@ -19,7 +19,13 @@ contract BatchCreateWithDurations_Test is Unit_Test {
         uint128 totalAmountZero = 0;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDurations,
-            (linear, asset, totalAmountZero, DefaultParams.batchCreateWithDurations(users), defaultPermit2Params)
+            (
+                linear,
+                asset,
+                totalAmountZero,
+                DefaultParams.batchCreateWithDurations(users, address(proxy)),
+                permit2Params()
+            )
         );
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
         proxy.execute(address(target), data);
@@ -33,7 +39,7 @@ contract BatchCreateWithDurations_Test is Unit_Test {
     function test_RevertWhen_ParamsCountZero() external whenTotalAmountNotZero {
         Batch.CreateWithDurations[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithDurations, (linear, asset, DefaultParams.TOTAL_AMOUNT, params, defaultPermit2Params)
+            target.batchCreateWithDurations, (linear, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params())
         );
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -52,7 +58,7 @@ contract BatchCreateWithDurations_Test is Unit_Test {
         uint128 totalAmount = DefaultParams.TOTAL_AMOUNT - 1;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDurations,
-            (linear, asset, totalAmount, DefaultParams.batchCreateWithDurations(users), defaultPermit2Params)
+            (linear, asset, totalAmount, DefaultParams.batchCreateWithDurations(users, address(proxy)), permit2Params())
         );
         vm.expectRevert(
             abi.encodeWithSelector(

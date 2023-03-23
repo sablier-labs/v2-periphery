@@ -15,8 +15,8 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
     }
 
     function test_BatchCancel() external {
-        uint256 dynamicStreamId = createWithMilestonesDefault();
-        uint256 linearStreamId = createWithRangeDefault();
+        uint256 dynamicStreamId = createWithMilestonesWithNonce(0);
+        uint256 linearStreamId = createWithRangeWithNonce(1);
 
         Batch.Cancel[] memory params = new Batch.Cancel[](2);
         params[0] = Batch.Cancel(dynamic, dynamicStreamId);

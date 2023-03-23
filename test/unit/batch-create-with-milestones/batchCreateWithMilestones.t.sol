@@ -19,7 +19,13 @@ contract BatchCreateWithMilestones_Test is Unit_Test {
         uint128 totalAmountZero = 0;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (dynamic, asset, totalAmountZero, DefaultParams.batchCreateWithMilestones(users), defaultPermit2Params)
+            (
+                dynamic,
+                asset,
+                totalAmountZero,
+                DefaultParams.batchCreateWithMilestones(users, address(proxy)),
+                permit2Params()
+            )
         );
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
         proxy.execute(address(target), data);
@@ -33,7 +39,7 @@ contract BatchCreateWithMilestones_Test is Unit_Test {
     function test_RevertWhen_ParamsCountZero() external whenTotalAmountNotZero {
         Batch.CreateWithMilestones[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones, (dynamic, asset, DefaultParams.TOTAL_AMOUNT, params, defaultPermit2Params)
+            target.batchCreateWithMilestones, (dynamic, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params())
         );
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -52,7 +58,13 @@ contract BatchCreateWithMilestones_Test is Unit_Test {
         uint128 totalAmount = DefaultParams.TOTAL_AMOUNT - 1;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (dynamic, asset, totalAmount, DefaultParams.batchCreateWithMilestones(users), defaultPermit2Params)
+            (
+                dynamic,
+                asset,
+                totalAmount,
+                DefaultParams.batchCreateWithMilestones(users, address(proxy)),
+                permit2Params()
+            )
         );
         vm.expectRevert(
             abi.encodeWithSelector(
