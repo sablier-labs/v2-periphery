@@ -132,11 +132,23 @@ abstract contract Base_Test is Assertions, StdCheats {
     }
 
     /// @dev Expects a call to the `transfer` function of the default ERC-20 asset.
+    function expectTransferCall(address to, uint256 amount) internal {
+        vm.expectCall(address(asset), abi.encodeCall(ERC20.transfer, (to, amount)));
+    }
+
+    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `transfer` function of the default ERC-20 asset.
+    function expectMutipleTransferCalls(address to, uint256 amount) internal {
+        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+            expectTransferCall(to, amount);
+        }
+    }
+
+    /// @dev Expects a call to the `transferFrom` function of the default ERC-20 asset.
     function expectTransferFromCall(address from, address to, uint256 amount) internal {
         vm.expectCall(address(asset), abi.encodeCall(ERC20.transferFrom, (from, to, amount)));
     }
 
-    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `transfer` function of the default ERC-20 asset.
+    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `transferFrom` function of the default ERC-20 asset.
     function expectMutipleTransferFromCalls(address from, address to, uint256 amount) internal {
         for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
             expectTransferFromCall(from, to, amount);

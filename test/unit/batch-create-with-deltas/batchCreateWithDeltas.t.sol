@@ -81,6 +81,7 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
         whenParamsCountNotZero
         whenTotalAmountEqualToAmountsSum
     {
+        // Asset flow: sender -> proxy -> dynamic
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
         expectMutipleTransferFromCalls(address(proxy), address(dynamic), DefaultParams.AMOUNT);
 

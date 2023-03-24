@@ -88,6 +88,31 @@ contract Unit_Test is Base_Test {
         streamIds = abi.decode(response, (uint256[]));
     }
 
+    /// @dev Creates default streams with milestones given the `nonce`.
+    function batchCreateWithMilestonesDefaultWithNonce(uint48 nonce) internal returns (uint256[] memory streamIds) {
+        Permit2Params memory _permit2Params = Permit2Params({
+            permit2: permit2,
+            expiration: DefaultParams.PERMIT2_EXPIRATION,
+            sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
+            signature: getPermit2Signature(
+                DefaultParams.permitDetailsWithNonce(address(asset), nonce), privateKeys.sender, address(proxy)
+                )
+        });
+
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithMilestones,
+            (
+                dynamic,
+                asset,
+                DefaultParams.TOTAL_AMOUNT,
+                DefaultParams.batchCreateWithMilestones(users, address(proxy)),
+                _permit2Params
+            )
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamIds = abi.decode(response, (uint256[]));
+    }
+
     /// @dev Creates default streams with range.
     function batchCreateWithRangeDefault() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
@@ -98,6 +123,31 @@ contract Unit_Test is Base_Test {
                 DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithRange(users, address(proxy)),
                 permit2Params()
+            )
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamIds = abi.decode(response, (uint256[]));
+    }
+
+    /// @dev Creates default streams with range given the `nonce`.
+    function batchCreateWithRangeDefaultWithNonce(uint48 nonce) internal returns (uint256[] memory streamIds) {
+        Permit2Params memory _permit2Params = Permit2Params({
+            permit2: permit2,
+            expiration: DefaultParams.PERMIT2_EXPIRATION,
+            sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
+            signature: getPermit2Signature(
+                DefaultParams.permitDetailsWithNonce(address(asset), nonce), privateKeys.sender, address(proxy)
+                )
+        });
+
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithRange,
+            (
+                linear,
+                asset,
+                DefaultParams.TOTAL_AMOUNT,
+                DefaultParams.batchCreateWithRange(users, address(proxy)),
+                _permit2Params
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -135,7 +185,7 @@ contract Unit_Test is Base_Test {
     }
 
     /// @dev Creates a default stream with milestones given the `nonce`.
-    function createWithMilestonesWithNonce(uint48 nonce) internal returns (uint256 streamId) {
+    function createWithMilestonesDefaultWithNonce(uint48 nonce) internal returns (uint256 streamId) {
         Permit2Params memory _permit2Params = Permit2Params({
             permit2: permit2,
             expiration: DefaultParams.PERMIT2_EXPIRATION,
@@ -164,7 +214,7 @@ contract Unit_Test is Base_Test {
     }
 
     /// @dev Creates a default stream with range given the `nonce`.
-    function createWithRangeWithNonce(uint48 nonce) internal returns (uint256 streamId) {
+    function createWithRangeDefaultWithNonce(uint48 nonce) internal returns (uint256 streamId) {
         Permit2Params memory _permit2Params = Permit2Params({
             permit2: permit2,
             expiration: DefaultParams.PERMIT2_EXPIRATION,

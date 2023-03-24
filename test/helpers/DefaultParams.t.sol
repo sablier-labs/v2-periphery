@@ -5,7 +5,7 @@ import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
 import { UD2x18, ud2x18 } from "@prb/math/UD2x18.sol";
 import { UD60x18, ZERO } from "@prb/math/UD60x18.sol";
-import { Broker, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
+import { Broker, Lockup, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
@@ -108,6 +108,30 @@ library DefaultParams {
     /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
+
+    function statusAfterCancel() internal pure returns (Lockup.Status) {
+        return Lockup.Status.CANCELED;
+    }
+
+    function statusBeforeCancel() internal pure returns (Lockup.Status) {
+        return Lockup.Status.ACTIVE;
+    }
+
+    function statusesAfterCancelMultiple() internal pure returns (Lockup.Status[] memory) {
+        Lockup.Status[] memory _statuses = new Lockup.Status[](BATCH_CREATE_PARAMS_COUNT);
+        for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
+            _statuses[i] = Lockup.Status.CANCELED;
+        }
+        return _statuses;
+    }
+
+    function statusesBeforeCancelMultiple() internal pure returns (Lockup.Status[] memory) {
+        Lockup.Status[] memory _statuses = new Lockup.Status[](BATCH_CREATE_PARAMS_COUNT);
+        for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
+            _statuses[i] = Lockup.Status.ACTIVE;
+        }
+        return _statuses;
+    }
 
     function streamIds() internal pure returns (uint256[] memory) {
         uint256[] memory _streamIds = new uint256[](BATCH_CREATE_PARAMS_COUNT);

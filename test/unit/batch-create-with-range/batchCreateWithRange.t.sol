@@ -75,6 +75,7 @@ contract BatchCreateWithRange_Test is Unit_Test {
         whenParamsCountNotZero
         whenTotalAmountEqualToAmountsSum
     {
+        // Asset flow: sender -> proxy -> linear
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
         expectMutipleTransferFromCalls(address(proxy), address(linear), DefaultParams.AMOUNT);
 
