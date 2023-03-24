@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
@@ -24,9 +23,6 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
         params[0] = Batch.CancelMultiple(dynamic, dynamicStreamIds);
         params[1] = Batch.CancelMultiple(linear, linearStreamIds);
 
-        IERC20[] memory assets = new IERC20[](1);
-        assets[0] = asset;
-
         Lockup.Status[] memory beforeDynamicStatuses = new Lockup.Status[](DefaultParams.BATCH_CREATE_PARAMS_COUNT);
         Lockup.Status[] memory beforeLinearStatuses = new Lockup.Status[](DefaultParams.BATCH_CREATE_PARAMS_COUNT);
 
@@ -44,7 +40,7 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
         expectMutipleTransferCalls(address(proxy), DefaultParams.AMOUNT);
         expectTransferCall(users.sender, 2 * DefaultParams.TOTAL_AMOUNT);
 
-        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, assets));
+        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, DefaultParams.assets(asset)));
         proxy.execute(address(target), data);
 
         Lockup.Status[] memory afterDynamicStatuses = new Lockup.Status[](DefaultParams.BATCH_CREATE_PARAMS_COUNT);

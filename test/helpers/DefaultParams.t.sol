@@ -109,6 +109,12 @@ library DefaultParams {
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
+    function assets(IERC20 asset) internal pure returns (IERC20[] memory) {
+        IERC20[] memory _assets = new IERC20[](1);
+        _assets[0] = asset;
+        return _assets;
+    }
+
     function statusAfterCancel() internal pure returns (Lockup.Status) {
         return Lockup.Status.CANCELED;
     }
