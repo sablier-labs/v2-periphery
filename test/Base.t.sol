@@ -10,6 +10,7 @@ import { PRBProxyRegistry } from "@prb/proxy/PRBProxyRegistry.sol";
 import { SablierV2Comptroller } from "@sablier/v2-core/SablierV2Comptroller.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.sol";
 import { SablierV2LockupDynamic } from "@sablier/v2-core/SablierV2LockupDynamic.sol";
+import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
@@ -131,27 +132,75 @@ abstract contract Base_Test is Assertions, StdCheats {
         vm.label({ account: address(linear), newLabel: "LockupLinear" });
     }
 
-    /// @dev Expects a call to the `transfer` function of the default ERC-20 asset.
-    function expectTransferCall(address to, uint256 amount) internal {
-        vm.expectCall(address(asset), abi.encodeCall(ERC20.transfer, (to, amount)));
+    /// @dev Expects a call to the `createWithDeltas` function of the dynamic contract.
+    function expectCreateWithDeltasCall(LockupDynamic.CreateWithDeltas memory params) internal {
+        vm.expectCall(address(dynamic), abi.encodeCall(SablierV2LockupDynamic.createWithDeltas, (params)));
+    }
+
+    /// @dev Expects a call to the `createWithDurations` function of the linear contract.
+    function expectCreateWithDurationsCall(LockupLinear.CreateWithDurations memory params) internal {
+        vm.expectCall(address(linear), abi.encodeCall(SablierV2LockupLinear.createWithDurations, (params)));
+    }
+
+    /// @dev Expects a call to the `createWithMilestones` function of the dynamic contract.
+    function expectCreateWithMilestonesCall(LockupDynamic.CreateWithMilestones memory params) internal {
+        vm.expectCall(address(dynamic), abi.encodeCall(SablierV2LockupDynamic.createWithMilestones, (params)));
+    }
+
+    /// @dev Expects a call to the `createWithRange` function of the linear contract.
+    function expectCreateWithRangeCall(LockupLinear.CreateWithRange memory params) internal {
+        vm.expectCall(address(linear), abi.encodeCall(SablierV2LockupLinear.createWithRange, (params)));
+    }
+
+    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `createWithDeltas` function of the dynamic contract.
+    function expectMultipleCreateWithDeltasCalls(LockupDynamic.CreateWithDeltas memory params) internal {
+        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+            expectCreateWithDeltasCall(params);
+        }
+    }
+
+    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `createWithDurations` function of the linear contract.
+    function expectMultipleCreateWithDurationsCalls(LockupLinear.CreateWithDurations memory params) internal {
+        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+            expectCreateWithDurationsCall(params);
+        }
+    }
+
+    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `createWithMilestones` function of the dynamic contract.
+    function expectMultipleCreateWithMilestonesCalls(LockupDynamic.CreateWithMilestones memory params) internal {
+        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+            expectCreateWithMilestonesCall(params);
+        }
+    }
+
+    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `createWithRange` function of the linear contract.
+    function expectMultipleCreateWithRangeCalls(LockupLinear.CreateWithRange memory params) internal {
+        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+            expectCreateWithRangeCall(params);
+        }
     }
 
     /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `transfer` function of the default ERC-20 asset.
-    function expectMutipleTransferCalls(address to, uint256 amount) internal {
+    function expectMultipleTransferCalls(address to, uint256 amount) internal {
         for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
             expectTransferCall(to, amount);
         }
     }
 
-    /// @dev Expects a call to the `transferFrom` function of the default ERC-20 asset.
-    function expectTransferFromCall(address from, address to, uint256 amount) internal {
-        vm.expectCall(address(asset), abi.encodeCall(ERC20.transferFrom, (from, to, amount)));
-    }
-
     /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `transferFrom` function of the default ERC-20 asset.
-    function expectMutipleTransferFromCalls(address from, address to, uint256 amount) internal {
+    function expectMultipleTransferCalls(address from, address to, uint256 amount) internal {
         for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
             expectTransferFromCall(from, to, amount);
         }
+    }
+
+    /// @dev Expects a call to the `transfer` function of the default ERC-20 asset.
+    function expectTransferCall(address to, uint256 amount) internal {
+        vm.expectCall(address(asset), abi.encodeCall(ERC20.transfer, (to, amount)));
+    }
+
+    /// @dev Expects a call to the `transferFrom` function of the default ERC-20 asset.
+    function expectTransferFromCall(address from, address to, uint256 amount) internal {
+        vm.expectCall(address(asset), abi.encodeCall(ERC20.transferFrom, (from, to, amount)));
     }
 }
