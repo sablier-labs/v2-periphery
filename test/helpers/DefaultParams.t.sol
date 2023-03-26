@@ -89,22 +89,6 @@ library DefaultParams {
         });
     }
 
-    function permit2Params(
-        IAllowanceTransfer permit2,
-        bytes memory signature
-    )
-        internal
-        pure
-        returns (Permit2Params memory)
-    {
-        return Permit2Params({
-            permit2: permit2,
-            expiration: PERMIT2_EXPIRATION,
-            sigDeadline: PERMIT2_SIG_DEADLINE,
-            signature: signature
-        });
-    }
-
     /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/

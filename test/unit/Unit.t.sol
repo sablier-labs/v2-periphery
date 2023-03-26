@@ -27,10 +27,23 @@ contract Unit_Test is Base_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     function permit2Params() internal view returns (Permit2Params memory) {
-        return DefaultParams.permit2Params(
-            permit2,
-            getPermit2Signature(DefaultParams.permitDetails(address(asset)), privateKeys.sender, address(proxy))
-        );
+        return Permit2Params({
+            permit2: permit2,
+            expiration: DefaultParams.PERMIT2_EXPIRATION,
+            sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
+            signature: getPermit2Signature(DefaultParams.permitDetails(address(asset)), privateKeys.sender, address(proxy))
+        });
+    }
+
+    function permit2ParamsWithNonce(uint48 nonce) internal view returns (Permit2Params memory) {
+        return Permit2Params({
+            permit2: permit2,
+            expiration: DefaultParams.PERMIT2_EXPIRATION,
+            sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
+            signature: getPermit2Signature(
+                DefaultParams.permitDetailsWithNonce(address(asset), nonce), privateKeys.sender, address(proxy)
+                )
+        });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -46,10 +59,7 @@ contract Unit_Test is Base_Test {
                 asset,
                 DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithDeltas(users, address(proxy)),
-                DefaultParams.permit2Params(
-                    permit2,
-                    getPermit2Signature(DefaultParams.permitDetails(address(asset)), privateKeys.sender, address(proxy))
-                    )
+                permit2Params()
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -90,15 +100,6 @@ contract Unit_Test is Base_Test {
 
     /// @dev Creates default streams with milestones given the `nonce`.
     function batchCreateWithMilestonesDefaultWithNonce(uint48 nonce) internal returns (uint256[] memory streamIds) {
-        Permit2Params memory _permit2Params = Permit2Params({
-            permit2: permit2,
-            expiration: DefaultParams.PERMIT2_EXPIRATION,
-            sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
-            signature: getPermit2Signature(
-                DefaultParams.permitDetailsWithNonce(address(asset), nonce), privateKeys.sender, address(proxy)
-                )
-        });
-
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
             (
@@ -106,7 +107,7 @@ contract Unit_Test is Base_Test {
                 asset,
                 DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithMilestones(users, address(proxy)),
-                _permit2Params
+                permit2ParamsWithNonce(nonce)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -131,15 +132,6 @@ contract Unit_Test is Base_Test {
 
     /// @dev Creates default streams with range given the `nonce`.
     function batchCreateWithRangeDefaultWithNonce(uint48 nonce) internal returns (uint256[] memory streamIds) {
-        Permit2Params memory _permit2Params = Permit2Params({
-            permit2: permit2,
-            expiration: DefaultParams.PERMIT2_EXPIRATION,
-            sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
-            signature: getPermit2Signature(
-                DefaultParams.permitDetailsWithNonce(address(asset), nonce), privateKeys.sender, address(proxy)
-                )
-        });
-
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
             (
@@ -147,7 +139,7 @@ contract Unit_Test is Base_Test {
                 asset,
                 DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithRange(users, address(proxy)),
-                _permit2Params
+                permit2ParamsWithNonce(nonce)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -186,18 +178,9 @@ contract Unit_Test is Base_Test {
 
     /// @dev Creates a default stream with milestones given the `nonce`.
     function createWithMilestonesDefaultWithNonce(uint48 nonce) internal returns (uint256 streamId) {
-        Permit2Params memory _permit2Params = Permit2Params({
-            permit2: permit2,
-            expiration: DefaultParams.PERMIT2_EXPIRATION,
-            sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
-            signature: getPermit2Signature(
-                DefaultParams.permitDetailsWithNonce(address(asset), nonce), privateKeys.sender, address(proxy)
-                )
-        });
-
         bytes memory data = abi.encodeCall(
             target.createWithMilestones,
-            (dynamic, DefaultParams.createWithMilestones(users, address(proxy), asset), _permit2Params)
+            (dynamic, DefaultParams.createWithMilestones(users, address(proxy), asset), permit2ParamsWithNonce(nonce))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -215,18 +198,9 @@ contract Unit_Test is Base_Test {
 
     /// @dev Creates a default stream with range given the `nonce`.
     function createWithRangeDefaultWithNonce(uint48 nonce) internal returns (uint256 streamId) {
-        Permit2Params memory _permit2Params = Permit2Params({
-            permit2: permit2,
-            expiration: DefaultParams.PERMIT2_EXPIRATION,
-            sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
-            signature: getPermit2Signature(
-                DefaultParams.permitDetailsWithNonce(address(asset), nonce), privateKeys.sender, address(proxy)
-                )
-        });
-
         bytes memory data = abi.encodeCall(
             target.createWithRange,
-            (linear, DefaultParams.createWithRange(users, address(proxy), asset), _permit2Params)
+            (linear, DefaultParams.createWithRange(users, address(proxy), asset), permit2ParamsWithNonce(nonce))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
