@@ -147,7 +147,7 @@ contract Unit_Test is Base_Test {
     }
 
     /// @dev Creates a default stream with deltas.
-    function creteWithDeltasDefault() internal returns (uint256 streamId) {
+    function createWithDeltasDefault() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithDeltas,
             (dynamic, DefaultParams.createWithDeltas(users, address(proxy), asset), permit2Params())

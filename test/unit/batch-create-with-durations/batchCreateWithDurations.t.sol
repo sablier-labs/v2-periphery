@@ -83,7 +83,7 @@ contract BatchCreateWithDurations_Test is Unit_Test {
     {
         // Asset flow: sender -> proxy -> linear
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
-        expectMutipleTransferFromCalls(address(proxy), address(linear), DefaultParams.AMOUNT);
+        expectMultipleTransferCalls(address(proxy), address(linear), DefaultParams.AMOUNT);
 
         uint256[] memory streamIds = batchCreateWithDurationsDefault();
 

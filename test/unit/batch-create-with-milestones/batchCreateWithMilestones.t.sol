@@ -89,7 +89,7 @@ contract BatchCreateWithMilestones_Test is Unit_Test {
     {
         // Asset flow: sender -> proxy -> dynamic
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
-        expectMutipleTransferFromCalls(address(proxy), address(dynamic), DefaultParams.AMOUNT);
+        expectMultipleTransferCalls(address(proxy), address(dynamic), DefaultParams.AMOUNT);
 
         uint256[] memory streamIds = batchCreateWithMilestonesDefault();
 

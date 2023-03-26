@@ -4,27 +4,27 @@ pragma solidity >=0.8.19 <0.9.0;
 import { Unit_Test } from "../Unit.t.sol";
 import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
 
-contract CancelAndCreateWithRange_Test is Unit_Test {
+contract CancelAndCreateWithMilestones_Test is Unit_Test {
     function setUp() public virtual override {
         Unit_Test.setUp();
 
         changePrank(users.sender);
     }
 
-    function test_CancelAndCreateWithRange() external {
-        uint256 streamId = createWithRangeDefault();
+    function test_CancelAndCreateWithMilestones() external {
+        uint256 streamId = createWithMilestonesDefault();
 
         expectTransferCall(users.sender, DefaultParams.TOTAL_AMOUNT);
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
 
-        uint256 expectedNewStreamId = linear.nextStreamId();
+        uint256 expectedNewStreamId = dynamic.nextStreamId();
         bytes memory data = abi.encodeCall(
-            target.cancelAndCreateWithRange,
+            target.cancelAndCreateWithMilestones,
             (
-                linear,
-                linear,
+                dynamic,
+                dynamic,
                 streamId,
-                DefaultParams.createWithRange(users, address(proxy), asset),
+                DefaultParams.createWithMilestones(users, address(proxy), asset),
                 permit2ParamsWithNonce(1)
             )
         );
@@ -34,20 +34,20 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
         assertEq(actualNewStreamId, expectedNewStreamId);
     }
 
-    function test_CancelAndCreateWithRange_DifferentStreams() external {
-        uint256 streamId = createWithMilestonesDefault();
+    function test_CancelAndCreateWithMilestones_DifferentStreams() external {
+        uint256 streamId = createWithRangeDefault();
 
         expectTransferCall(users.sender, DefaultParams.TOTAL_AMOUNT);
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
 
-        uint256 expectedNewStreamId = linear.nextStreamId();
+        uint256 expectedNewStreamId = dynamic.nextStreamId();
         bytes memory data = abi.encodeCall(
-            target.cancelAndCreateWithRange,
+            target.cancelAndCreateWithMilestones,
             (
-                dynamic,
                 linear,
+                dynamic,
                 streamId,
-                DefaultParams.createWithRange(users, address(proxy), asset),
+                DefaultParams.createWithMilestones(users, address(proxy), asset),
                 permit2ParamsWithNonce(1)
             )
         );
