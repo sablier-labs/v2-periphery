@@ -30,9 +30,11 @@ contract BatchCancel_Test is Unit_Test {
         assertEq(beforeLinearStatus, DefaultParams.statusBeforeCancel());
 
         // Asset flow: dynamic -> proxy -> sender
+        expectCancelCall(address(dynamic), dynamicStreamId);
         expectTransferCall(address(proxy), DefaultParams.AMOUNT);
         expectTransferCall(users.sender, DefaultParams.AMOUNT);
         // Asset flow: linear -> proxy -> sender
+        expectCancelCall(address(linear), linearStreamId);
         expectTransferCall(address(proxy), DefaultParams.AMOUNT);
         expectTransferCall(users.sender, DefaultParams.AMOUNT);
 

@@ -138,6 +138,11 @@ abstract contract Base_Test is Assertions, StdCheats {
         vm.expectCall(lockup, abi.encodeCall(SablierV2Lockup.cancel, (streamId)));
     }
 
+    /// @dev Expects a call to the `cancelMultiple` function of the lockup contract.
+    function expectCancelMultipleCall(address lockup, uint256[] memory streamIds) internal {
+        vm.expectCall(lockup, abi.encodeCall(SablierV2Lockup.cancelMultiple, (streamIds)));
+    }
+
     /// @dev Expects a call to the `createWithDeltas` function of the dynamic contract.
     function expectCreateWithDeltasCall(LockupDynamic.CreateWithDeltas memory params) internal {
         vm.expectCall(address(dynamic), abi.encodeCall(SablierV2LockupDynamic.createWithDeltas, (params)));
@@ -156,13 +161,6 @@ abstract contract Base_Test is Assertions, StdCheats {
     /// @dev Expects a call to the `createWithRange` function of the linear contract.
     function expectCreateWithRangeCall(LockupLinear.CreateWithRange memory params) internal {
         vm.expectCall(address(linear), abi.encodeCall(SablierV2LockupLinear.createWithRange, (params)));
-    }
-
-    /// @dev Expect `BATCH_CREATE_PARAMS_COUNT` calls to the `cancel` function of the lockup contract.
-    function expectMultipleCancelCalls(address lockup, uint256 streamId) internal {
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
-            expectCancelCall(lockup, streamId + i);
-        }
     }
 
     /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `createWithDeltas` function of the dynamic contract.

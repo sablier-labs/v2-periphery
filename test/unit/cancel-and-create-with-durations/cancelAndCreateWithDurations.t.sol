@@ -14,8 +14,12 @@ contract CancelAndCreateWithDurations_Test is Unit_Test {
     function test_CancelAndCreateWithDurations() external {
         uint256 streamId = createWithDurationsDefault();
 
+        expectCancelCall(address(linear), streamId);
+        expectTransferCall(address(proxy), DefaultParams.AMOUNT);
         expectTransferCall(users.sender, DefaultParams.AMOUNT);
+        expectCreateWithDurationsCall(DefaultParams.createWithDurations(users, address(proxy), asset));
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.AMOUNT);
+        expectTransferFromCall(address(proxy), address(linear), DefaultParams.AMOUNT);
 
         uint256 expectedNewStreamId = linear.nextStreamId();
         bytes memory data = abi.encodeCall(
@@ -37,8 +41,12 @@ contract CancelAndCreateWithDurations_Test is Unit_Test {
     function test_CancelAndCreateWithDurations_DifferentStreams() external {
         uint256 streamId = createWithMilestonesDefault();
 
+        expectCancelCall(address(dynamic), streamId);
+        expectTransferCall(address(proxy), DefaultParams.AMOUNT);
         expectTransferCall(users.sender, DefaultParams.AMOUNT);
+        expectCreateWithDurationsCall(DefaultParams.createWithDurations(users, address(proxy), asset));
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.AMOUNT);
+        expectTransferFromCall(address(proxy), address(linear), DefaultParams.AMOUNT);
 
         uint256 expectedNewStreamId = linear.nextStreamId();
         bytes memory data = abi.encodeCall(

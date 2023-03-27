@@ -14,8 +14,12 @@ contract CancelAndCreateWithDeltas_Test is Unit_Test {
     function test_CancelAndCreateWithDeltas() external {
         uint256 streamId = createWithDeltasDefault();
 
+        expectCancelCall(address(dynamic), streamId);
+        expectTransferCall(address(proxy), DefaultParams.AMOUNT);
         expectTransferCall(users.sender, DefaultParams.AMOUNT);
+        expectCreateWithDeltasCall(DefaultParams.createWithDeltas(users, address(proxy), asset));
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.AMOUNT);
+        expectTransferFromCall(address(proxy), address(dynamic), DefaultParams.AMOUNT);
 
         uint256 expectedNewStreamId = dynamic.nextStreamId();
         bytes memory data = abi.encodeCall(
@@ -37,8 +41,12 @@ contract CancelAndCreateWithDeltas_Test is Unit_Test {
     function test_CancelAndCreateWithDeltas_DifferentStreams() external {
         uint256 streamId = createWithRangeDefault();
 
+        expectCancelCall(address(linear), streamId);
+        expectTransferCall(address(proxy), DefaultParams.AMOUNT);
         expectTransferCall(users.sender, DefaultParams.AMOUNT);
+        expectCreateWithDeltasCall(DefaultParams.createWithDeltas(users, address(proxy), asset));
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.AMOUNT);
+        expectTransferFromCall(address(proxy), address(dynamic), DefaultParams.AMOUNT);
 
         uint256 expectedNewStreamId = dynamic.nextStreamId();
         bytes memory data = abi.encodeCall(

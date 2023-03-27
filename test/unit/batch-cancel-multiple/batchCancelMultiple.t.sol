@@ -35,8 +35,10 @@ contract BatchCancelMultiple_Test is Unit_Test {
         assertEq(beforeLinearStatuses, DefaultParams.statusesBeforeCancelMultiple());
 
         // Asset flow: dynamic -> proxy -> sender
+        expectCancelMultipleCall(address(dynamic), dynamicStreamIds);
         expectMultipleTransferCalls(address(proxy), DefaultParams.AMOUNT);
         // Asset flow: linear -> proxy -> sender
+        expectCancelMultipleCall(address(linear), linearStreamIds);
         expectMultipleTransferCalls(address(proxy), DefaultParams.AMOUNT);
         expectTransferCall(users.sender, 2 * DefaultParams.TOTAL_AMOUNT);
 
