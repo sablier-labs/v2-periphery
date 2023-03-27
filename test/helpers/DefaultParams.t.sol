@@ -51,6 +51,7 @@ library DefaultParams {
     uint128 internal constant AMOUNT = 10_000e18;
     UD60x18 internal constant BROKER_FEE = ZERO;
     uint128 internal constant BROKER_FEE_AMOUNT = 0;
+    uint256 internal constant ETHER_AMOUNT = 10_000 ether;
     uint128 internal constant TOTAL_AMOUNT = 100_000e18;
     uint128 internal constant WITHDRAW_AMOUNT = 2600e18;
 

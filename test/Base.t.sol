@@ -19,6 +19,7 @@ import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
 import { Assertions } from "./helpers/Assertions.t.sol";
 import { DefaultParams } from "./helpers/DefaultParams.t.sol";
 import { SablierV2NFTDescriptor } from "./mockups/SablierV2NFTDescriptor.t.sol";
+import { WETH9 } from "./mockups/WETH9.t.sol";
 
 /// @title Base_Test
 /// @notice Base test contract with common logic needed by all test contracts.
@@ -29,6 +30,7 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     ERC20 internal asset = new ERC20("Asset Coin", "Asset");
     AllowanceTransfer internal permit2 = new AllowanceTransfer();
+    WETH9 internal weth9 = new WETH9();
 
     PRBProxyRegistry internal registry = new PRBProxyRegistry();
     IPRBProxy internal proxy;
@@ -117,7 +119,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     /// @dev Generates an address by hashing the name, labels the address and funds it with 100 ETH, 1 million assets.
     function createUser(string memory name) internal returns (address payable, uint256) {
         (address addr, uint256 privateKey) = makeAddrAndKey(name);
-        vm.deal({ account: addr, newBalance: 100 ether });
+        vm.deal({ account: addr, newBalance: 1_000_000 ether });
         deal({ token: address(asset), to: addr, give: 1_000_000e18 });
         return (payable(addr), privateKey);
     }
@@ -208,6 +210,11 @@ abstract contract Base_Test is Assertions, StdCheats {
     /// @dev Expects a call to the `transfer` function of the default ERC-20 asset.
     function expectTransferCall(address to, uint256 amount) internal {
         vm.expectCall(address(asset), abi.encodeCall(ERC20.transfer, (to, amount)));
+    }
+
+    /// @dev Expects a call to the `transferFrom` function of the `_asset`.
+    function expectTransferFromCall(address _asset, address from, address to, uint256 amount) internal {
+        vm.expectCall(_asset, abi.encodeCall(ERC20.transferFrom, (from, to, amount)));
     }
 
     /// @dev Expects a call to the `transferFrom` function of the default ERC-20 asset.
