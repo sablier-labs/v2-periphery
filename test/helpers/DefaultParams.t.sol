@@ -55,7 +55,7 @@ library DefaultParams {
     uint128 internal constant TOTAL_AMOUNT = 100_000e18;
     uint128 internal constant WITHDRAW_AMOUNT = 2600e18;
 
-    uint256 internal constant BATCH_CREATE_PARAMS_COUNT = 10;
+    uint256 internal constant BATCH_COUNT = 10;
 
     /*//////////////////////////////////////////////////////////////////////////
                                       PERMIT2
@@ -112,24 +112,24 @@ library DefaultParams {
     }
 
     function statusesAfterCancelMultiple() internal pure returns (Lockup.Status[] memory) {
-        Lockup.Status[] memory _statuses = new Lockup.Status[](BATCH_CREATE_PARAMS_COUNT);
-        for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
+        Lockup.Status[] memory _statuses = new Lockup.Status[](BATCH_COUNT);
+        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             _statuses[i] = Lockup.Status.CANCELED;
         }
         return _statuses;
     }
 
     function statusesBeforeCancelMultiple() internal pure returns (Lockup.Status[] memory) {
-        Lockup.Status[] memory _statuses = new Lockup.Status[](BATCH_CREATE_PARAMS_COUNT);
-        for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
+        Lockup.Status[] memory _statuses = new Lockup.Status[](BATCH_COUNT);
+        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             _statuses[i] = Lockup.Status.ACTIVE;
         }
         return _statuses;
     }
 
     function streamIds() internal pure returns (uint256[] memory) {
-        uint256[] memory _streamIds = new uint256[](BATCH_CREATE_PARAMS_COUNT);
-        for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
+        uint256[] memory _streamIds = new uint256[](BATCH_COUNT);
+        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             _streamIds[i] = i + 1;
         }
         return _streamIds;
@@ -286,9 +286,9 @@ library DefaultParams {
         pure
         returns (Batch.CreateWithDeltas[] memory)
     {
-        Batch.CreateWithDeltas[] memory params = new Batch.CreateWithDeltas[](BATCH_CREATE_PARAMS_COUNT);
+        Batch.CreateWithDeltas[] memory params = new Batch.CreateWithDeltas[](BATCH_COUNT);
 
-        for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithDeltas({
                 amount: AMOUNT,
                 broker: Broker({ account: users.broker, fee: BROKER_FEE }),
@@ -311,9 +311,9 @@ library DefaultParams {
         pure
         returns (Batch.CreateWithDurations[] memory)
     {
-        Batch.CreateWithDurations[] memory params = new Batch.CreateWithDurations[](BATCH_CREATE_PARAMS_COUNT);
+        Batch.CreateWithDurations[] memory params = new Batch.CreateWithDurations[](BATCH_COUNT);
 
-        for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithDurations({
                 amount: AMOUNT,
                 broker: Broker({ account: users.broker, fee: BROKER_FEE }),
@@ -336,9 +336,9 @@ library DefaultParams {
         pure
         returns (Batch.CreateWithMilestones[] memory)
     {
-        Batch.CreateWithMilestones[] memory params = new Batch.CreateWithMilestones[](BATCH_CREATE_PARAMS_COUNT);
+        Batch.CreateWithMilestones[] memory params = new Batch.CreateWithMilestones[](BATCH_COUNT);
 
-        for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithMilestones({
                 amount: AMOUNT,
                 broker: Broker({ account: users.broker, fee: BROKER_FEE }),
@@ -362,9 +362,9 @@ library DefaultParams {
         pure
         returns (Batch.CreateWithRange[] memory)
     {
-        Batch.CreateWithRange[] memory params = new Batch.CreateWithRange[](BATCH_CREATE_PARAMS_COUNT);
+        Batch.CreateWithRange[] memory params = new Batch.CreateWithRange[](BATCH_COUNT);
 
-        for (uint256 i = 0; i < BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithRange({
                 amount: AMOUNT,
                 broker: Broker({ account: users.broker, fee: BROKER_FEE }),

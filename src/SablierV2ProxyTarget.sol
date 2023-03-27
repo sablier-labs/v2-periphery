@@ -650,6 +650,16 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
     }
 
+    /// @dev Helper function to approve `lockup` to spend `amount` of `asset`, if necessary.
+    function _approveLockup(address lockup, IERC20 asset, uint256 amount) internal {
+        /// Interactions: query the allownace of the proxy for `lockup`
+        /// and approve `lockup`, if necessary.
+        uint256 allowance = asset.allowance(address(this), lockup);
+        if (allowance < amount) {
+            asset.approve(lockup, type(uint256).max);
+        }
+    }
+
     /// @dev Helper function that transfers `amount` funds from `msg.sender` to `address(this)` via Permit2
     /// and approves `amount` to `lockup`, if necessary.
     function _assetActions(
@@ -682,16 +692,6 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         permit2Params.permit2.transferFrom(msg.sender, address(this), amount, address(asset));
 
         _approveLockup(lockup, asset, amount);
-    }
-
-    /// @dev Helper function to approve `lockup` to spend `amount` of `asset`, if necessary.
-    function _approveLockup(address lockup, IERC20 asset, uint256 amount) internal {
-        /// Interactions: query the allownace of the proxy for `lockup`
-        /// and approve `lockup`, if necessary.
-        uint256 allowance = asset.allowance(address(this), lockup);
-        if (allowance < amount) {
-            asset.approve(lockup, type(uint256).max);
-        }
     }
 
     /// @dev Helper function to query the proxy balances for `assets` before the cancel multiple call.

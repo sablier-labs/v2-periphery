@@ -165,44 +165,44 @@ abstract contract Base_Test is Assertions, StdCheats {
         vm.expectCall(address(linear), abi.encodeCall(SablierV2LockupLinear.createWithRange, (params)));
     }
 
-    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `createWithDeltas` function of the dynamic contract.
+    /// @dev Expects `BATCH_COUNT` calls to the `createWithDeltas` function of the dynamic contract.
     function expectMultipleCreateWithDeltasCalls(LockupDynamic.CreateWithDeltas memory params) internal {
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
             expectCreateWithDeltasCall(params);
         }
     }
 
-    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `createWithDurations` function of the linear contract.
+    /// @dev Expects `BATCH_COUNT` calls to the `createWithDurations` function of the linear contract.
     function expectMultipleCreateWithDurationsCalls(LockupLinear.CreateWithDurations memory params) internal {
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
             expectCreateWithDurationsCall(params);
         }
     }
 
-    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `createWithMilestones` function of the dynamic contract.
+    /// @dev Expects `BATCH_COUNT` calls to the `createWithMilestones` function of the dynamic contract.
     function expectMultipleCreateWithMilestonesCalls(LockupDynamic.CreateWithMilestones memory params) internal {
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
             expectCreateWithMilestonesCall(params);
         }
     }
 
-    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `createWithRange` function of the linear contract.
+    /// @dev Expects `BATCH_COUNT` calls to the `createWithRange` function of the linear contract.
     function expectMultipleCreateWithRangeCalls(LockupLinear.CreateWithRange memory params) internal {
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
             expectCreateWithRangeCall(params);
         }
     }
 
-    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `transfer` function of the default ERC-20 asset.
+    /// @dev Expects `BATCH_COUNT` calls to the `transfer` function of the default ERC-20 asset.
     function expectMultipleTransferCalls(address to, uint256 amount) internal {
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
             expectTransferCall(to, amount);
         }
     }
 
-    /// @dev Expects `BATCH_CREATE_PARAMS_COUNT` calls to the `transferFrom` function of the default ERC-20 asset.
+    /// @dev Expects `BATCH_COUNT` calls to the `transferFrom` function of the default ERC-20 asset.
     function expectMultipleTransferCalls(address from, address to, uint256 amount) internal {
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
             expectTransferFromCall(from, to, amount);
         }
     }

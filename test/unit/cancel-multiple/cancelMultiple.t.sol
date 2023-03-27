@@ -19,9 +19,9 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
     function test_CancelMultiple() external {
         uint256[] memory streamIds = batchCreateWithRangeDefault();
 
-        Lockup.Status[] memory beforeStatuses = new Lockup.Status[](DefaultParams.BATCH_CREATE_PARAMS_COUNT);
+        Lockup.Status[] memory beforeStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
 
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
             beforeStatuses[i] = linear.getStatus(streamIds[i]);
         }
 
@@ -34,9 +34,9 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
         bytes memory data = abi.encodeCall(target.cancelMultiple, (linear, DefaultParams.assets(asset), streamIds));
         proxy.execute(address(target), data);
 
-        Lockup.Status[] memory afterStatuses = new Lockup.Status[](DefaultParams.BATCH_CREATE_PARAMS_COUNT);
+        Lockup.Status[] memory afterStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
 
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
             afterStatuses[i] = linear.getStatus(streamIds[i]);
         }
 

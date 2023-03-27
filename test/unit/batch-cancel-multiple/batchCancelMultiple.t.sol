@@ -23,10 +23,10 @@ contract BatchCancelMultiple_Test is Unit_Test {
         params[0] = Batch.CancelMultiple(dynamic, dynamicStreamIds);
         params[1] = Batch.CancelMultiple(linear, linearStreamIds);
 
-        Lockup.Status[] memory beforeDynamicStatuses = new Lockup.Status[](DefaultParams.BATCH_CREATE_PARAMS_COUNT);
-        Lockup.Status[] memory beforeLinearStatuses = new Lockup.Status[](DefaultParams.BATCH_CREATE_PARAMS_COUNT);
+        Lockup.Status[] memory beforeDynamicStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
+        Lockup.Status[] memory beforeLinearStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
 
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
             beforeDynamicStatuses[i] = dynamic.getStatus(dynamicStreamIds[i]);
             beforeLinearStatuses[i] = linear.getStatus(linearStreamIds[i]);
         }
@@ -45,10 +45,10 @@ contract BatchCancelMultiple_Test is Unit_Test {
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, DefaultParams.assets(asset)));
         proxy.execute(address(target), data);
 
-        Lockup.Status[] memory afterDynamicStatuses = new Lockup.Status[](DefaultParams.BATCH_CREATE_PARAMS_COUNT);
-        Lockup.Status[] memory afterLinearStatuses = new Lockup.Status[](DefaultParams.BATCH_CREATE_PARAMS_COUNT);
+        Lockup.Status[] memory afterDynamicStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
+        Lockup.Status[] memory afterLinearStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
 
-        for (uint256 i = 0; i < DefaultParams.BATCH_CREATE_PARAMS_COUNT; ++i) {
+        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
             afterDynamicStatuses[i] = dynamic.getStatus(dynamicStreamIds[i]);
             afterLinearStatuses[i] = linear.getStatus(linearStreamIds[i]);
         }
