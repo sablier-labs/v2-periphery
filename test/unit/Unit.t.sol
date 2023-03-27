@@ -26,22 +26,24 @@ contract Unit_Test is Base_Test {
                             INTERNAL CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function permit2Params() internal view returns (Permit2Params memory) {
-        return Permit2Params({
-            permit2: permit2,
-            expiration: DefaultParams.PERMIT2_EXPIRATION,
-            sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
-            signature: getPermit2Signature(DefaultParams.permitDetails(address(asset)), privateKeys.sender, address(proxy))
-        });
-    }
-
-    function permit2ParamsWithNonce(uint48 nonce) internal view returns (Permit2Params memory) {
+    function permit2Params(uint160 amount) internal view returns (Permit2Params memory) {
         return Permit2Params({
             permit2: permit2,
             expiration: DefaultParams.PERMIT2_EXPIRATION,
             sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
             signature: getPermit2Signature(
-                DefaultParams.permitDetailsWithNonce(address(asset), nonce), privateKeys.sender, address(proxy)
+                DefaultParams.permitDetails(address(asset), amount), privateKeys.sender, address(proxy)
+                )
+        });
+    }
+
+    function permit2ParamsWithNonce(uint160 amount, uint48 nonce) internal view returns (Permit2Params memory) {
+        return Permit2Params({
+            permit2: permit2,
+            expiration: DefaultParams.PERMIT2_EXPIRATION,
+            sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
+            signature: getPermit2Signature(
+                DefaultParams.permitDetailsWithNonce(address(asset), amount, nonce), privateKeys.sender, address(proxy)
                 )
         });
     }
@@ -59,7 +61,7 @@ contract Unit_Test is Base_Test {
                 asset,
                 DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithDeltas(users, address(proxy)),
-                permit2Params()
+                permit2Params(DefaultParams.TOTAL_AMOUNT)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -75,7 +77,7 @@ contract Unit_Test is Base_Test {
                 asset,
                 DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithDurations(users, address(proxy)),
-                permit2Params()
+                permit2Params(DefaultParams.TOTAL_AMOUNT)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -91,7 +93,7 @@ contract Unit_Test is Base_Test {
                 asset,
                 DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithMilestones(users, address(proxy)),
-                permit2Params()
+                permit2Params(DefaultParams.TOTAL_AMOUNT)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -107,7 +109,7 @@ contract Unit_Test is Base_Test {
                 asset,
                 DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithMilestones(users, address(proxy)),
-                permit2ParamsWithNonce(nonce)
+                permit2ParamsWithNonce(DefaultParams.TOTAL_AMOUNT, nonce)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -123,7 +125,7 @@ contract Unit_Test is Base_Test {
                 asset,
                 DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithRange(users, address(proxy)),
-                permit2Params()
+                permit2Params(DefaultParams.TOTAL_AMOUNT)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -139,7 +141,7 @@ contract Unit_Test is Base_Test {
                 asset,
                 DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithRange(users, address(proxy)),
-                permit2ParamsWithNonce(nonce)
+                permit2ParamsWithNonce(DefaultParams.TOTAL_AMOUNT, nonce)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -150,7 +152,7 @@ contract Unit_Test is Base_Test {
     function createWithDeltasDefault() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithDeltas,
-            (dynamic, DefaultParams.createWithDeltas(users, address(proxy), asset), permit2Params())
+            (dynamic, DefaultParams.createWithDeltas(users, address(proxy), asset), permit2Params(DefaultParams.AMOUNT))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -160,7 +162,11 @@ contract Unit_Test is Base_Test {
     function createWithDurationsDefault() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithDurations,
-            (linear, DefaultParams.createWithDurations(users, address(proxy), asset), permit2Params())
+            (
+                linear,
+                DefaultParams.createWithDurations(users, address(proxy), asset),
+                permit2Params(DefaultParams.AMOUNT)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -170,7 +176,11 @@ contract Unit_Test is Base_Test {
     function createWithMilestonesDefault() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithMilestones,
-            (dynamic, DefaultParams.createWithMilestones(users, address(proxy), asset), permit2Params())
+            (
+                dynamic,
+                DefaultParams.createWithMilestones(users, address(proxy), asset),
+                permit2Params(DefaultParams.AMOUNT)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -180,7 +190,11 @@ contract Unit_Test is Base_Test {
     function createWithMilestonesDefaultWithNonce(uint48 nonce) internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithMilestones,
-            (dynamic, DefaultParams.createWithMilestones(users, address(proxy), asset), permit2ParamsWithNonce(nonce))
+            (
+                dynamic,
+                DefaultParams.createWithMilestones(users, address(proxy), asset),
+                permit2ParamsWithNonce(DefaultParams.AMOUNT, nonce)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -190,7 +204,7 @@ contract Unit_Test is Base_Test {
     function createWithRangeDefault() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithRange,
-            (linear, DefaultParams.createWithRange(users, address(proxy), asset), permit2Params())
+            (linear, DefaultParams.createWithRange(users, address(proxy), asset), permit2Params(DefaultParams.AMOUNT))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -200,7 +214,11 @@ contract Unit_Test is Base_Test {
     function createWithRangeDefaultWithNonce(uint48 nonce) internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithRange,
-            (linear, DefaultParams.createWithRange(users, address(proxy), asset), permit2ParamsWithNonce(nonce))
+            (
+                linear,
+                DefaultParams.createWithRange(users, address(proxy), asset),
+                permit2ParamsWithNonce(DefaultParams.AMOUNT, nonce)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));

@@ -8,7 +8,7 @@ import { Batch } from "src/types/DataTypes.sol";
 import { Unit_Test } from "../Unit.t.sol";
 import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
 
-contract BatchCreateWithDeltas_Test is Unit_Test {
+contract BatchCancel_Test is Unit_Test {
     function setUp() public virtual override {
         Unit_Test.setUp();
 
@@ -30,11 +30,11 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
         assertEq(beforeLinearStatus, DefaultParams.statusBeforeCancel());
 
         // Asset flow: dynamic -> proxy -> sender
-        expectTransferCall(address(proxy), DefaultParams.TOTAL_AMOUNT);
-        expectTransferCall(users.sender, DefaultParams.TOTAL_AMOUNT);
+        expectTransferCall(address(proxy), DefaultParams.AMOUNT);
+        expectTransferCall(users.sender, DefaultParams.AMOUNT);
         // Asset flow: linear -> proxy -> sender
-        expectTransferCall(address(proxy), DefaultParams.TOTAL_AMOUNT);
-        expectTransferCall(users.sender, DefaultParams.TOTAL_AMOUNT);
+        expectTransferCall(address(proxy), DefaultParams.AMOUNT);
+        expectTransferCall(users.sender, DefaultParams.AMOUNT);
 
         bytes memory data = abi.encodeCall(target.batchCancel, (params));
         proxy.execute(address(target), data);

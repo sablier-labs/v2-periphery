@@ -14,8 +14,8 @@ contract CancelAndCreateWithDurations_Test is Unit_Test {
     function test_CancelAndCreateWithDurations() external {
         uint256 streamId = createWithDurationsDefault();
 
-        expectTransferCall(users.sender, DefaultParams.TOTAL_AMOUNT);
-        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
+        expectTransferCall(users.sender, DefaultParams.AMOUNT);
+        expectTransferFromCall(users.sender, address(proxy), DefaultParams.AMOUNT);
 
         uint256 expectedNewStreamId = linear.nextStreamId();
         bytes memory data = abi.encodeCall(
@@ -25,7 +25,7 @@ contract CancelAndCreateWithDurations_Test is Unit_Test {
                 linear,
                 streamId,
                 DefaultParams.createWithDurations(users, address(proxy), asset),
-                permit2ParamsWithNonce(1)
+                permit2ParamsWithNonce(DefaultParams.AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -37,8 +37,8 @@ contract CancelAndCreateWithDurations_Test is Unit_Test {
     function test_CancelAndCreateWithDurations_DifferentStreams() external {
         uint256 streamId = createWithMilestonesDefault();
 
-        expectTransferCall(users.sender, DefaultParams.TOTAL_AMOUNT);
-        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
+        expectTransferCall(users.sender, DefaultParams.AMOUNT);
+        expectTransferFromCall(users.sender, address(proxy), DefaultParams.AMOUNT);
 
         uint256 expectedNewStreamId = linear.nextStreamId();
         bytes memory data = abi.encodeCall(
@@ -48,7 +48,7 @@ contract CancelAndCreateWithDurations_Test is Unit_Test {
                 linear,
                 streamId,
                 DefaultParams.createWithDurations(users, address(proxy), asset),
-                permit2ParamsWithNonce(1)
+                permit2ParamsWithNonce(DefaultParams.AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);

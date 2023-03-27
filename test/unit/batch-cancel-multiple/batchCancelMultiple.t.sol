@@ -8,7 +8,7 @@ import { Batch } from "src/types/DataTypes.sol";
 import { Unit_Test } from "../Unit.t.sol";
 import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
 
-contract BatchCreateWithDeltas_Test is Unit_Test {
+contract BatchCancelMultiple_Test is Unit_Test {
     function setUp() public virtual override {
         Unit_Test.setUp();
 

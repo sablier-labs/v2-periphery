@@ -19,7 +19,13 @@ contract BatchCreateWithRange_Test is Unit_Test {
         uint128 totalAmountZero = 0;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, asset, totalAmountZero, DefaultParams.batchCreateWithRange(users, address(proxy)), permit2Params())
+            (
+                linear,
+                asset,
+                totalAmountZero,
+                DefaultParams.batchCreateWithRange(users, address(proxy)),
+                permit2Params(totalAmountZero)
+            )
         );
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
         proxy.execute(address(target), data);
@@ -33,7 +39,8 @@ contract BatchCreateWithRange_Test is Unit_Test {
     function test_RevertWhen_ParamsCountZero() external whenTotalAmountNotZero {
         Batch.CreateWithRange[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithRange, (linear, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params())
+            target.batchCreateWithRange,
+            (linear, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params(DefaultParams.TOTAL_AMOUNT))
         );
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -52,7 +59,13 @@ contract BatchCreateWithRange_Test is Unit_Test {
         uint128 totalAmount = DefaultParams.TOTAL_AMOUNT - 1;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, asset, totalAmount, DefaultParams.batchCreateWithRange(users, address(proxy)), permit2Params())
+            (
+                linear,
+                asset,
+                totalAmount,
+                DefaultParams.batchCreateWithRange(users, address(proxy)),
+                permit2Params(totalAmount)
+            )
         );
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -78,9 +91,9 @@ contract BatchCreateWithRange_Test is Unit_Test {
         // Asset flow: sender -> proxy -> linear
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
         expectMultipleTransferCalls(address(proxy), address(linear), DefaultParams.AMOUNT);
+        expectMultipleCreateWithRangeCalls(DefaultParams.createWithRange(users, address(proxy), asset));
 
         uint256[] memory streamIds = batchCreateWithRangeDefault();
-
         assertEq(streamIds, DefaultParams.streamIds());
     }
 }

@@ -24,7 +24,7 @@ contract BatchCreateWithDurations_Test is Unit_Test {
                 asset,
                 totalAmountZero,
                 DefaultParams.batchCreateWithDurations(users, address(proxy)),
-                permit2Params()
+                permit2Params(totalAmountZero)
             )
         );
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
@@ -39,7 +39,8 @@ contract BatchCreateWithDurations_Test is Unit_Test {
     function test_RevertWhen_ParamsCountZero() external whenTotalAmountNotZero {
         Batch.CreateWithDurations[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithDurations, (linear, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params())
+            target.batchCreateWithDurations,
+            (linear, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params(DefaultParams.TOTAL_AMOUNT))
         );
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -58,7 +59,13 @@ contract BatchCreateWithDurations_Test is Unit_Test {
         uint128 totalAmount = DefaultParams.TOTAL_AMOUNT - 1;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDurations,
-            (linear, asset, totalAmount, DefaultParams.batchCreateWithDurations(users, address(proxy)), permit2Params())
+            (
+                linear,
+                asset,
+                totalAmount,
+                DefaultParams.batchCreateWithDurations(users, address(proxy)),
+                permit2Params(totalAmount)
+            )
         );
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -84,9 +91,9 @@ contract BatchCreateWithDurations_Test is Unit_Test {
         // Asset flow: sender -> proxy -> linear
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
         expectMultipleTransferCalls(address(proxy), address(linear), DefaultParams.AMOUNT);
+        expectMultipleCreateWithDurationsCalls(DefaultParams.createWithDurations(users, address(proxy), asset));
 
         uint256[] memory streamIds = batchCreateWithDurationsDefault();
-
         assertEq(streamIds, DefaultParams.streamIds());
     }
 }

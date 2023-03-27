@@ -24,7 +24,7 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
                 asset,
                 totalAmountZero,
                 DefaultParams.batchCreateWithDeltas(users, address(proxy)),
-                permit2Params()
+                permit2Params(totalAmountZero)
             )
         );
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
@@ -39,7 +39,8 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
     function test_RevertWhen_ParamsCountZero() external whenTotalAmountNotZero {
         Batch.CreateWithDeltas[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithDeltas, (dynamic, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params())
+            target.batchCreateWithDeltas,
+            (dynamic, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params(DefaultParams.TOTAL_AMOUNT))
         );
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -58,7 +59,13 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
         uint128 totalAmount = DefaultParams.TOTAL_AMOUNT - 1;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
-            (dynamic, asset, totalAmount, DefaultParams.batchCreateWithDeltas(users, address(proxy)), permit2Params())
+            (
+                dynamic,
+                asset,
+                totalAmount,
+                DefaultParams.batchCreateWithDeltas(users, address(proxy)),
+                permit2Params(totalAmount)
+            )
         );
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -84,8 +91,9 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
         // Asset flow: sender -> proxy -> dynamic
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
         expectMultipleTransferCalls(address(proxy), address(dynamic), DefaultParams.AMOUNT);
-        uint256[] memory streamIds = batchCreateWithDeltasDefault();
+        expectMultipleCreateWithDeltasCalls(DefaultParams.createWithDeltas(users, address(proxy), asset));
 
+        uint256[] memory streamIds = batchCreateWithDeltasDefault();
         assertEq(streamIds, DefaultParams.streamIds());
     }
 }

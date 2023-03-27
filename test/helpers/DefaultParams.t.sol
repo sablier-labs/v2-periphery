@@ -64,18 +64,9 @@ library DefaultParams {
     uint48 internal constant PERMIT2_EXPIRATION = UINT48_MAX;
     uint256 internal constant PERMIT2_SIG_DEADLINE = 100;
 
-    function permitDetails(address asset) internal pure returns (IAllowanceTransfer.PermitDetails memory) {
-        return IAllowanceTransfer.PermitDetails({
-            token: asset,
-            amount: uint160(TOTAL_AMOUNT),
-            expiration: UINT48_MAX,
-            nonce: PERMIT2_NONCE
-        });
-    }
-
-    function permitDetailsWithNonce(
+    function permitDetails(
         address asset,
-        uint48 nonce
+        uint160 amount
     )
         internal
         pure
@@ -83,10 +74,22 @@ library DefaultParams {
     {
         return IAllowanceTransfer.PermitDetails({
             token: asset,
-            amount: uint160(TOTAL_AMOUNT),
+            amount: amount,
             expiration: UINT48_MAX,
-            nonce: nonce
+            nonce: PERMIT2_NONCE
         });
+    }
+
+    function permitDetailsWithNonce(
+        address asset,
+        uint160 amount,
+        uint48 nonce
+    )
+        internal
+        pure
+        returns (IAllowanceTransfer.PermitDetails memory)
+    {
+        return IAllowanceTransfer.PermitDetails({ token: asset, amount: amount, expiration: UINT48_MAX, nonce: nonce });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -147,10 +150,10 @@ library DefaultParams {
         return LockupDynamic.CreateWithDeltas({
             sender: proxy,
             recipient: users.recipient,
-            totalAmount: TOTAL_AMOUNT,
+            totalAmount: AMOUNT,
             asset: asset,
             cancelable: true,
-            segments: segmentsWithDeltas({ amount0: 25_000e18, amount1: 75_000e18 }),
+            segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
             broker: Broker({ account: users.broker, fee: BROKER_FEE })
         });
     }
@@ -167,10 +170,10 @@ library DefaultParams {
         return LockupDynamic.CreateWithMilestones({
             sender: proxy,
             recipient: user.recipient,
-            totalAmount: TOTAL_AMOUNT,
+            totalAmount: AMOUNT,
             asset: asset,
             cancelable: true,
-            segments: segments({ amount0: 25_000e18, amount1: 75_000e18 }),
+            segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
             startTime: START_TIME,
             broker: Broker({ account: user.broker, fee: BROKER_FEE })
         });
@@ -237,7 +240,7 @@ library DefaultParams {
         return LockupLinear.CreateWithDurations({
             sender: proxy,
             recipient: users.recipient,
-            totalAmount: TOTAL_AMOUNT,
+            totalAmount: AMOUNT,
             asset: asset,
             cancelable: true,
             durations: durations(),
@@ -257,7 +260,7 @@ library DefaultParams {
         return LockupLinear.CreateWithRange({
             sender: proxy,
             recipient: users.recipient,
-            totalAmount: TOTAL_AMOUNT,
+            totalAmount: AMOUNT,
             asset: asset,
             cancelable: true,
             range: linearRange(),
