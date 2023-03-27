@@ -350,6 +350,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Interactions: deposit the Ether into the WETH9 contract.
         weth9.deposit{ value: msg.value }();
 
+        _approveLockup(address(linear), weth9, params.totalAmount);
         streamId = linear.createWithDurations(params);
     }
 
@@ -371,6 +372,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Interactions: deposit the Ether into the WETH9 contract.
         weth9.deposit{ value: msg.value }();
 
+        _approveLockup(address(linear), weth9, params.totalAmount);
         streamId = linear.createWithRange(params);
     }
 
@@ -597,6 +599,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Interactions: deposit the Ether into the WETH9 contract.
         weth9.deposit{ value: msg.value }();
 
+        _approveLockup(address(dynamic), weth9, params.totalAmount);
         streamId = dynamic.createWithDeltas(params);
     }
 
@@ -618,6 +621,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Interactions: deposit the Ether into the WETH9 contract.
         weth9.deposit{ value: msg.value }();
 
+        _approveLockup(address(dynamic), weth9, params.totalAmount);
         streamId = dynamic.createWithMilestones(params);
     }
 
@@ -677,10 +681,15 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         /// Interactions: transfer funds from `msg.sender` to proxy.
         permit2Params.permit2.transferFrom(msg.sender, address(this), amount, address(asset));
 
+        _approveLockup(lockup, asset, amount);
+    }
+
+    /// @dev Helper function to approve `lockup` to spend `amount` of `asset`, if necessary.
+    function _approveLockup(address lockup, IERC20 asset, uint256 amount) internal {
         /// Interactions: query the allownace of the proxy for `lockup`
         /// and approve `lockup`, if necessary.
         uint256 allowance = asset.allowance(address(this), lockup);
-        if (allowance < uint256(amount)) {
+        if (allowance < amount) {
             asset.approve(lockup, type(uint256).max);
         }
     }
