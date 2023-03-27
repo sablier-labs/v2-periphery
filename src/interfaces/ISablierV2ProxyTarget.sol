@@ -7,7 +7,7 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { IWETH9 } from "./IWETH9.sol";
+import { IWETH9 } from "./external/IWETH9.sol";
 import { Batch, Permit2Params } from "../types/DataTypes.sol";
 
 /// @title ISablierV2ProxyTarget

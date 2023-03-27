@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { IWETH9 } from "src/interfaces/IWETH9.sol";
+import { IWETH9 } from "src/interfaces/external/IWETH9.sol";
 
 import { Unit_Test } from "../Unit.t.sol";
 import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
