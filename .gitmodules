@@ -11,7 +11,7 @@
 	path = "lib/permit2"
 	url = "https://github.com/andreivladbrg/permit2"
 [submodule "lib/prb-math"]
-	branch = "v3"
+	branch = "v4"
 	path = "lib/prb-math"
 	url = "https://github.com/paulrberg/prb-math"
 [submodule "lib/prb-proxy"]
