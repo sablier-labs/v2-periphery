@@ -8,10 +8,8 @@
   },
   "devDependencies": {
     "prettier": "^2.8.4",
-    "prettier-plugin-solidity": "^1.1.2",
-    "rimraf": "^3.0.2",
-    "solhint": "^3.3.7",
-    "solhint-plugin-prettier": "^0.0.5"
+    "rimraf": "^4.4.0",
+    "solhint": "^3.4.1"
   },
   "keywords": [
     "blockchain",
@@ -24,8 +22,8 @@
   "scripts": {
     "clean": "rimraf cache out",
     "lint": "yarn lint:sol && yarn prettier:check",
-    "lint:sol": "solhint \"{src,test}/**/*.sol\"",
-    "prettier:check": "prettier --check \"**/*.{json,md,sol,yml}\"",
-    "prettier:write": "prettier --write \"**/*.{json,md,sol,yml}\""
+    "lint:sol": "forge fmt --check && yarn solhint \"{script,src,test}/**/*.sol\"",
+    "prettier:write": "prettier --write \"**/*.{json,md,yml}\"",
+    "prettier:check": "prettier --check \"**/*.{json,md,yml}\""
   }
 }
