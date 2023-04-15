@@ -34,13 +34,15 @@ contract BatchCancelMultiple_Test is Unit_Test {
         assertEq(beforeDynamicStatuses, DefaultParams.statusesBeforeCancelMultiple());
         assertEq(beforeLinearStatuses, DefaultParams.statusesBeforeCancelMultiple());
 
+        vm.warp(DefaultParams.TIME_WARP);
+
         // Asset flow: dynamic -> proxy -> sender
         expectCancelMultipleCall(address(dynamic), dynamicStreamIds);
-        expectMultipleTransferCalls(address(proxy), DefaultParams.AMOUNT);
+        expectMultipleTransferCalls(address(proxy), DefaultParams.REFUND_AMOUNT);
         // Asset flow: linear -> proxy -> sender
         expectCancelMultipleCall(address(linear), linearStreamIds);
-        expectMultipleTransferCalls(address(proxy), DefaultParams.AMOUNT);
-        expectTransferCall(users.sender, 2 * DefaultParams.TOTAL_AMOUNT);
+        expectMultipleTransferCalls(address(proxy), DefaultParams.REFUND_AMOUNT);
+        expectTransferCall(users.sender, 2 * DefaultParams.BATCH_COUNT * DefaultParams.REFUND_AMOUNT);
 
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, DefaultParams.assets(asset)));
         proxy.execute(address(target), data);

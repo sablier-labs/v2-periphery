@@ -27,9 +27,11 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
 
         assertEq(beforeStatuses, DefaultParams.statusesBeforeCancelMultiple());
 
+        vm.warp(DefaultParams.TIME_WARP);
+
         // Asset flow: linear -> proxy -> sender
-        expectMultipleTransferCalls(address(proxy), DefaultParams.AMOUNT);
-        expectTransferCall(users.sender, DefaultParams.TOTAL_AMOUNT);
+        expectMultipleTransferCalls(address(proxy), DefaultParams.REFUND_AMOUNT);
+        expectTransferCall(users.sender, DefaultParams.REFUND_AMOUNT * DefaultParams.BATCH_COUNT);
 
         bytes memory data = abi.encodeCall(target.cancelMultiple, (linear, DefaultParams.assets(asset), streamIds));
         proxy.execute(address(target), data);

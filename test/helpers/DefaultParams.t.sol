@@ -41,10 +41,10 @@ library DefaultParams {
     uint256 internal constant MAX_SEGMENT_COUNT = 1000;
 
     uint40 internal constant CLIFF_DURATION = 2500 seconds;
-    uint40 internal constant TOTAL_DURATION = 10_000 seconds;
     uint40 internal constant TIME_WARP = 2600 seconds;
+    uint40 internal constant TOTAL_DURATION = 10_000 seconds;
 
-    uint40 internal constant START_TIME = 1;
+    uint40 internal constant START_TIME = 100;
     uint40 internal constant CLIFF_TIME = START_TIME + CLIFF_DURATION;
     uint40 internal constant END_TIME = START_TIME + TOTAL_DURATION;
 
@@ -52,8 +52,9 @@ library DefaultParams {
     UD60x18 internal constant BROKER_FEE = ZERO;
     uint128 internal constant BROKER_FEE_AMOUNT = 0;
     uint256 internal constant ETHER_AMOUNT = 10_000 ether;
+    uint128 internal constant REFUND_AMOUNT = 7500e18;
     uint128 internal constant TOTAL_AMOUNT = 100_000e18;
-    uint128 internal constant WITHDRAW_AMOUNT = 2600e18;
+    uint128 internal constant WITHDRAW_AMOUNT = 2500e18;
 
     uint256 internal constant BATCH_COUNT = 10;
 

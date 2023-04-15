@@ -76,7 +76,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         IERC20 asset = lockup.getAsset(streamId);
 
         // Interactions: query the return amount.
-        uint256 returnAmount = lockup.returnableAmountOf(streamId);
+        uint256 returnAmount = lockup.refundableAmountOf(streamId);
 
         // Interactions: cancel the stream.
         lockup.cancel(streamId);

@@ -29,14 +29,16 @@ contract BatchCancel_Test is Unit_Test {
         assertEq(beforeDynamicStatus, DefaultParams.statusBeforeCancel());
         assertEq(beforeLinearStatus, DefaultParams.statusBeforeCancel());
 
+        vm.warp(DefaultParams.TIME_WARP);
+
         // Asset flow: dynamic -> proxy -> sender
         expectCancelCall(address(dynamic), dynamicStreamId);
-        expectTransferCall(address(proxy), DefaultParams.AMOUNT);
-        expectTransferCall(users.sender, DefaultParams.AMOUNT);
+        expectTransferCall(address(proxy), DefaultParams.REFUND_AMOUNT);
+        expectTransferCall(users.sender, DefaultParams.REFUND_AMOUNT);
         // Asset flow: linear -> proxy -> sender
         expectCancelCall(address(linear), linearStreamId);
-        expectTransferCall(address(proxy), DefaultParams.AMOUNT);
-        expectTransferCall(users.sender, DefaultParams.AMOUNT);
+        expectTransferCall(address(proxy), DefaultParams.REFUND_AMOUNT);
+        expectTransferCall(users.sender, DefaultParams.REFUND_AMOUNT);
 
         bytes memory data = abi.encodeCall(target.batchCancel, (params));
         proxy.execute(address(target), data);

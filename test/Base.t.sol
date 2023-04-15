@@ -127,9 +127,8 @@ abstract contract Base_Test is Assertions, StdCheats {
     /// @dev Deploys and labels the core contracts.
     function deployCore() internal {
         comptroller = new SablierV2Comptroller(users.admin);
-        linear = new SablierV2LockupLinear(users.admin, comptroller, descriptor, DefaultParams.MAX_FEE);
-        dynamic =
-        new SablierV2LockupDynamic(users.admin, comptroller, descriptor, DefaultParams.MAX_FEE, DefaultParams.MAX_SEGMENT_COUNT);
+        linear = new SablierV2LockupLinear(users.admin, comptroller, descriptor);
+        dynamic = new SablierV2LockupDynamic(users.admin, comptroller, descriptor,  DefaultParams.MAX_SEGMENT_COUNT);
         vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(linear), newLabel: "LockupLinear" });
