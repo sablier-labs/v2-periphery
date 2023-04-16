@@ -1,51 +1,110 @@
-name: CI
+name: "CI"
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{github.workflow}}-${{github.ref}}
 
 on:
+  workflow_dispatch:
   pull_request:
-    branches:
-      - "main"
   push:
     branches:
       - "main"
 
 jobs:
-  run-ci:
-    runs-on: ubuntu-latest
+  lint:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v3"
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Install Pnpm"
+        uses: "pnpm/action-setup@v2"
+        with:
+          version: "8"
+
+      - name: "Install Node.js"
+        uses: "actions/setup-node@v3"
+        with:
+          cache: "pnpm"
+          node-version: "lts/*"
+
+      - name: "Install the Node.js dependencies"
+        run: "pnpm install"
+
+      - name: "Lint the contracts"
+        run: "pnpm lint"
+
+      - name: "Add lint summary"
+        run: |
+          echo "## Lint result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+
+  build:
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
         uses: "actions/checkout@v3"
         with:
           submodules: "recursive"
-          token: ${{ secrets.CI_TOKEN }}
+          token: "${{ secrets.CI_TOKEN }}"
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: Build the contracts
-        run: |
-          FOUNDRY_PROFILE=ci forge --version
-          FOUNDRY_PROFILE=ci forge build --sizes
+      - name: "Show the Foundry config"
+        run: "forge config"
+
+      - name: "Produce an optimized build with --via-ir"
+        run: "FOUNDRY_PROFILE=optimized forge build"
 
       - name: "Cache the build so that it can be re-used by the other jobs"
         uses: "actions/cache/save@v3"
         with:
-          path: "out"
+          path: "optimized-out"
           key: "foundry-build-${{ github.sha }}"
 
-      - name: "Store contract ABIs as artifacts in GitHub Actions"
+      - name: "Store contract ABIs as artifacts"
         uses: "actions/upload-artifact@v3"
         with:
           name: contract-abis
           path: |
-            out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json
-            out/ISablierV2ProxyTarget.sol/ISablierV2ProxyTarget.json
-            out/DataTypes.sol/Batch.json
-            out/Errors.sol/Errors.json
+            optimized-out/Errors.sol/Errors.json
+            optimized-out/ISablierV2ProxyTarget.sol/ISablierV2ProxyTarget.json
+            optimized-out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json
 
-      - name: Run tests
-        run: forge test
-
-      - name: Add test summary
+      - name: "Add build summary"
         run: |
-          echo ## Tests >> $GITHUB_STEP_SUMMARY
-          echo ✅ Passed >> $GITHUB_STEP_SUMMARY
+          echo "## Build result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+
+  test-unit:
+    needs: ["lint", "build"]
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v3"
+        with:
+          submodules: "recursive"
+          token: "${{ secrets.CI_TOKEN }}"
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Restore the cached build"
+        uses: "actions/cache/restore@v3"
+        with:
+          fail-on-cache-miss: true
+          key: "foundry-build-${{ github.sha }}"
+          path: "optimized-out"
+
+      - name: "Run the unit tests against the optimized build"
+        run: "FOUNDRY_PROFILE=test-optimized forge test --match-path \"test/unit/**/*.sol\""
+
+      - name: "Add test summary"
+        run: |
+          echo "## Unit tests result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
