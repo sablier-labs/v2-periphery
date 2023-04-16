@@ -81,20 +81,6 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @inheritdoc ISablierV2ProxyTarget
     function cancelMultiple(ISablierV2Lockup lockup, IERC20[] calldata assets, uint256[] calldata streamIds) external {
-        _cancelMultiple(lockup, assets, streamIds);
-    }
-
-    /// @dev Internal function that:
-    /// 1. Queries the proxy balances of each asset before the streams are canceled.
-    /// 2. Performs an external call on {SablierV2Lockup.cancelMultiple}.
-    /// 3. Transfers the return amounts sum to proxy owner, if greater than zero.
-    function _cancelMultiple(
-        ISablierV2Lockup lockup,
-        IERC20[] calldata assets,
-        uint256[] calldata streamIds
-    )
-        internal
-    {
         uint256[] memory balancesBefore = _beforeCancelMultiple(assets);
 
         /// Interactions: cancel the streams.
