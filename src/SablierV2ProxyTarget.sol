@@ -25,9 +25,11 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @inheritdoc ISablierV2ProxyTarget
     function batchCancelMultiple(Batch.CancelMultiple[] calldata params, IERC20[] calldata assets) external {
+        // Load the balances before the cancellation.
         uint256[] memory balancesBefore = _beforeCancelMultiple(assets);
 
-        for (uint256 i = 0; i < params.length;) {
+        uint256 count = params.length;
+        for (uint256 i = 0; i < count;) {
             // Interactions: cancel the streams.
             params[i].lockup.cancelMultiple(params[i].streamIds);
 
@@ -37,42 +39,35 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             }
         }
 
+        // Load the balances after the cancellation, and transfer the differences to the proxy owner.
         _afterCancelMultiple(balancesBefore, assets);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function cancel(ISablierV2Lockup lockup, uint256 streamId) external {
-        _cancel(lockup, streamId);
-    }
-
-    /// @dev Internal function that:
-    /// 1. Queries the asset of the stream.
-    /// 2. Queries the return amount of the stream.
-    /// 3. Performs an external call on {SablierV2Lockup.cancel}.
-    /// 4. Transfers the return amount to proxy owner, if greater than zero.
-    function _cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
-        // Interactions: query the asset.
+    function cancel(ISablierV2Lockup lockup, uint256 streamId) public {
+        // Interactions: retrieve the asset used for streaming.
         IERC20 asset = lockup.getAsset(streamId);
 
-        // Interactions: query the return amount.
-        uint256 returnAmount = lockup.refundableAmountOf(streamId);
+        // Interactions: retrieve the refunded amount.
+        uint256 refundedAmount = lockup.refundableAmountOf(streamId);
 
         // Interactions: cancel the stream.
         lockup.cancel(streamId);
 
-        // Interactions: transfer the return amount to proxy owner, if greater than zero.
-        if (returnAmount > 0) {
-            asset.safeTransfer(msg.sender, returnAmount);
-        }
+        // Interactions: forward the refunded amount to the proxy owner. We know this is not zero because settled
+        // streams cannot be canceled.
+        asset.safeTransfer(msg.sender, refundedAmount);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function cancelMultiple(ISablierV2Lockup lockup, IERC20[] calldata assets, uint256[] calldata streamIds) external {
+        // Load the balances before the cancellation.
         uint256[] memory balancesBefore = _beforeCancelMultiple(assets);
 
-        /// Interactions: cancel the streams.
+        // Interactions: cancel the streams.
         lockup.cancelMultiple(streamIds);
 
+        // Load the balances after the cancellation, and transfer the differences to the proxy owner.
         _afterCancelMultiple(balancesBefore, assets);
     }
 
@@ -219,7 +214,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256 newStreamId)
     {
-        _cancel(lockup, streamId);
+        cancel(lockup, streamId);
         newStreamId = _createWithDurations(linear, params, permit2Params);
     }
 
@@ -235,7 +230,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256 newStreamId)
     {
-        _cancel(lockup, streamId);
+        cancel(lockup, streamId);
         newStreamId = _createWithRange(linear, params, permit2Params);
     }
 
@@ -464,7 +459,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256 newStreamId)
     {
-        _cancel(lockup, streamId);
+        cancel(lockup, streamId);
         newStreamId = _createWithDeltas(dynamic, params, permit2Params);
     }
 
@@ -480,7 +475,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256 newStreamId)
     {
-        _cancel(lockup, streamId);
+        cancel(lockup, streamId);
         newStreamId = _createWithMilestones(dynamic, params, permit2Params);
     }
 
