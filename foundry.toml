@@ -1,22 +1,42 @@
-# Full reference https://github.com/foundry-rs/foundry/tree/master/config
-
 [profile.default]
   auto_detect_solc = false
   bytecode_hash = "none"
+  cbor_metadata = false
+  fs_permissions = [{ access = "read", path = "optimized-out" }]
   gas_reports = ["*"]
   libs = ["lib"]
   optimizer = true
-  optimizer_runs = 10_000
+  optimizer_runs = 5_000
   out = "out"
-  solc = "0.8.19"
   script = "script"
+  solc = "0.8.19"
   src = "src"
   test = "test"
 
-[profile.ci]
-  fuzz_runs = 10_000
-  verbosity = 4
+[profile.default.fuzz]
+  max_test_rejects = 1_000_000 # Number of times `vm.assume` can fail
+  runs = 50
+
+# Speed up compilation and tests during development
+[profile.lite]
+  optimizer = false
+
+# Compile only the production code with IR
+[profile.optimized]
+  out = "optimized-out"
+  test = "src"
   via_ir = true
+
+# Test the optimized contracts without re-compiling them
+[profile.test-optimized]
+  fuzz = { runs = 5_000 }
+  src = "test"
+  verbosity = 4
+
+[doc]
+  ignore = ["**/*.t.sol"]
+  out = "docs"
+  repository = "https://github.com/sablierhq/v2-periphery"
 
 [fmt]
   bracket_spacing = true
@@ -27,8 +47,7 @@
   quote_style = "double"
   tab_width = 4
   wrap_comments = true
-  
+
 [rpc_endpoints]
+  goerli = "https://goerli.infura.io/v3/${API_KEY_INFURA}"
   localhost = "http://localhost:8545"
-  goerli = "https://goerli.infura.io/v3/${INFURA_API_KEY}"
-  mainnet = "https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}"
