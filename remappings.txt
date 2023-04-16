@@ -5,4 +5,3 @@
 @prb/test/=lib/prb-test/src/
 @sablier/v2-core/=lib/v2-core/src/
 forge-std/=lib/forge-std/src/
-src/=src/
