@@ -11,12 +11,19 @@
     "solhint": "^3.4.1"
   },
   "keywords": [
+    "asset-streaming",
     "blockchain",
+    "cryptoasset-streaming",
+    "cryptoassets",
     "ethereum",
-    "forge",
     "foundry",
+    "money-streaming",
+    "real-time-finance",
+    "sablier",
+    "sablier-v2",
     "smart-contracts",
-    "solidity"
+    "solidity",
+    "token-streaming"
   ],
   "scripts": {
     "clean": "rm -rf cache out",
