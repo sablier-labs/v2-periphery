@@ -6,12 +6,6 @@ import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.s
 import { Broker, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
 library Batch {
-    /// @notice Struct encapsulating the lockup contract's address and the stream id.
-    struct Cancel {
-        ISablierV2Lockup lockup;
-        uint256 streamId;
-    }
-
     /// @notice Struct encapsulating the lockup contract's address and the stream ids.
     struct CancelMultiple {
         ISablierV2Lockup lockup;

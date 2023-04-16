@@ -17,15 +17,6 @@ interface ISablierV2ProxyTarget {
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Cancel a stream on each `lockup` contract.
-    ///
-    /// @dev Notes:
-    /// - See {ISablierV2Lockup.cancel} for documentation.
-    /// - `params.lockup` should include {SablierV2LockupLinear} and {SablierV2LockupDynamic} contracts.
-    ///
-    /// @param params Struct that encapsulates the lockup contract and the stream id.
-    function batchCancel(Batch.Cancel[] calldata params) external;
-
     /// @notice Cancel multiple streams on each `lockup` contract.
     ///
     /// 1. Queries the proxy balances of each asset before the streams are canceled.

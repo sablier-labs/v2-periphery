@@ -24,19 +24,6 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function batchCancel(Batch.Cancel[] calldata params) external {
-        for (uint256 i = 0; i < params.length;) {
-            // Interactions: cancel the stream.
-            _cancel(params[i].lockup, params[i].streamId);
-
-            // Increment the for loop iterator.
-            unchecked {
-                i += 1;
-            }
-        }
-    }
-
-    /// @inheritdoc ISablierV2ProxyTarget
     function batchCancelMultiple(Batch.CancelMultiple[] calldata params, IERC20[] calldata assets) external {
         uint256[] memory balancesBefore = _beforeCancelMultiple(assets);
 
