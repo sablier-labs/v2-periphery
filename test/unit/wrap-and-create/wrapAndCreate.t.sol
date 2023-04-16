@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { IWETH9 } from "src/interfaces/external/IWETH9.sol";
+import { IWrappedNativeAsset } from "src/interfaces/external/IWrappedNativeAsset.sol";
 
 import { Unit_Test } from "../Unit.t.sol";
 import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
@@ -14,11 +14,10 @@ contract WrapEtherAndCreate_Test is Unit_Test {
     }
 
     function test_WrapEtherAndCreateWithDeltas() external {
-        vm.expectCall(address(weth9), abi.encodeCall(IWETH9.deposit, ()));
-        expectTransferFromCall(address(weth9), address(proxy), address(dynamic), DefaultParams.ETHER_AMOUNT);
+        vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
+        expectTransferFromCall(address(weth), address(proxy), address(dynamic), DefaultParams.ETHER_AMOUNT);
         bytes memory data = abi.encodeCall(
-            target.wrapEtherAndCreateWithDeltas,
-            (dynamic, weth9, DefaultParams.createWithDeltas(users, address(proxy), weth9))
+            target.wrapAndCreateWithDeltas, (dynamic, DefaultParams.createWithDeltas(users, address(proxy), weth))
         );
         bytes memory response = proxy.execute{ value: DefaultParams.ETHER_AMOUNT }(address(target), data);
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -27,11 +26,10 @@ contract WrapEtherAndCreate_Test is Unit_Test {
     }
 
     function test_WrapEtherAndCreateWithDurations() external {
-        vm.expectCall(address(weth9), abi.encodeCall(IWETH9.deposit, ()));
-        expectTransferFromCall(address(weth9), address(proxy), address(linear), DefaultParams.ETHER_AMOUNT);
+        vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
+        expectTransferFromCall(address(weth), address(proxy), address(linear), DefaultParams.ETHER_AMOUNT);
         bytes memory data = abi.encodeCall(
-            target.wrapEtherAndCreateWithDurations,
-            (linear, weth9, DefaultParams.createWithDurations(users, address(proxy), weth9))
+            target.wrapAndCreateWithDurations, (linear, DefaultParams.createWithDurations(users, address(proxy), weth))
         );
         bytes memory response = proxy.execute{ value: DefaultParams.ETHER_AMOUNT }(address(target), data);
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -40,11 +38,11 @@ contract WrapEtherAndCreate_Test is Unit_Test {
     }
 
     function test_WrapEtherAndCreateWithMilestones() external {
-        vm.expectCall(address(weth9), abi.encodeCall(IWETH9.deposit, ()));
-        expectTransferFromCall(address(weth9), address(proxy), address(dynamic), DefaultParams.ETHER_AMOUNT);
+        vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
+        expectTransferFromCall(address(weth), address(proxy), address(dynamic), DefaultParams.ETHER_AMOUNT);
         bytes memory data = abi.encodeCall(
-            target.wrapEtherAndCreateWithMilestones,
-            (dynamic, weth9, DefaultParams.createWithMilestones(users, address(proxy), weth9))
+            target.wrapAndCreateWithMilestones,
+            (dynamic, DefaultParams.createWithMilestones(users, address(proxy), weth))
         );
         bytes memory response = proxy.execute{ value: DefaultParams.ETHER_AMOUNT }(address(target), data);
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -53,11 +51,10 @@ contract WrapEtherAndCreate_Test is Unit_Test {
     }
 
     function test_WrapEtherAndCreateWithRange() external {
-        vm.expectCall(address(weth9), abi.encodeCall(IWETH9.deposit, ()));
-        expectTransferFromCall(address(weth9), address(proxy), address(linear), DefaultParams.ETHER_AMOUNT);
+        vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
+        expectTransferFromCall(address(weth), address(proxy), address(linear), DefaultParams.ETHER_AMOUNT);
         bytes memory data = abi.encodeCall(
-            target.wrapEtherAndCreateWithRange,
-            (linear, weth9, DefaultParams.createWithRange(users, address(proxy), weth9))
+            target.wrapAndCreateWithRange, (linear, DefaultParams.createWithRange(users, address(proxy), weth))
         );
         bytes memory response = proxy.execute{ value: DefaultParams.ETHER_AMOUNT }(address(target), data);
         uint256 actualStreamId = abi.decode(response, (uint256));

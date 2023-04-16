@@ -9,8 +9,8 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
+import { IWrappedNativeAsset } from "./interfaces/external/IWrappedNativeAsset.sol";
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
-import { IWETH9 } from "./interfaces/external/IWETH9.sol";
 import { Errors } from "./libraries/Errors.sol";
 import { Batch, Permit2Params } from "./types/DataTypes.sol";
 
@@ -325,9 +325,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function wrapEtherAndCreateWithDurations(
+    function wrapAndCreateWithDurations(
         ISablierV2LockupLinear linear,
-        IWETH9 weth9,
         LockupLinear.CreateWithDurations memory params
     )
         external
@@ -335,21 +334,19 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256 streamId)
     {
-        params.asset = weth9;
-        // This cast is safe because realistically the total supply of ETH will not exceed 2^128-1.
+        // All production chains have a native asset with a circulating supply much smaller than 2^128.
         params.totalAmount = uint128(msg.value);
 
-        // Interactions: deposit the Ether into the WETH9 contract.
-        weth9.deposit{ value: msg.value }();
+        // Interactions: wrap the native assets in ERC-20 form.
+        IWrappedNativeAsset(address(params.asset)).deposit{ value: msg.value }();
 
-        _approveLockup(address(linear), weth9, params.totalAmount);
+        _approveLockup(address(linear), params.asset, params.totalAmount);
         streamId = linear.createWithDurations(params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function wrapEtherAndCreateWithRange(
+    function wrapAndCreateWithRange(
         ISablierV2LockupLinear linear,
-        IWETH9 weth9,
         LockupLinear.CreateWithRange memory params
     )
         external
@@ -357,14 +354,13 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256 streamId)
     {
-        params.asset = weth9;
-        // This cast is safe because realistically the total supply of ETH will not exceed 2^128-1.
+        // All production chains have a native asset with a circulating supply much smaller than 2^128.
         params.totalAmount = uint128(msg.value);
 
-        // Interactions: deposit the Ether into the WETH9 contract.
-        weth9.deposit{ value: msg.value }();
+        // Interactions: wrap the native assets in ERC-20 form.
+        IWrappedNativeAsset(address(params.asset)).deposit{ value: msg.value }();
 
-        _approveLockup(address(linear), weth9, params.totalAmount);
+        _approveLockup(address(linear), params.asset, params.totalAmount);
         streamId = linear.createWithRange(params);
     }
 
@@ -574,9 +570,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function wrapEtherAndCreateWithDeltas(
+    function wrapAndCreateWithDeltas(
         ISablierV2LockupDynamic dynamic,
-        IWETH9 weth9,
         LockupDynamic.CreateWithDeltas memory params
     )
         external
@@ -584,21 +579,19 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256 streamId)
     {
-        params.asset = weth9;
-        // This cast is safe because realistically the total supply of ETH will not exceed 2^128-1.
+        // All production chains have a native asset with a circulating supply much smaller than 2^128.
         params.totalAmount = uint128(msg.value);
 
-        // Interactions: deposit the Ether into the WETH9 contract.
-        weth9.deposit{ value: msg.value }();
+        // Interactions: wrap the native assets in ERC-20 form.
+        IWrappedNativeAsset(address(params.asset)).deposit{ value: msg.value }();
 
-        _approveLockup(address(dynamic), weth9, params.totalAmount);
+        _approveLockup(address(dynamic), params.asset, params.totalAmount);
         streamId = dynamic.createWithDeltas(params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function wrapEtherAndCreateWithMilestones(
+    function wrapAndCreateWithMilestones(
         ISablierV2LockupDynamic dynamic,
-        IWETH9 weth9,
         LockupDynamic.CreateWithMilestones memory params
     )
         external
@@ -606,14 +599,13 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256 streamId)
     {
-        params.asset = weth9;
-        // This cast is safe because realistically the total supply of ETH will not exceed 2^128-1.
+        // All production chains have a native asset with a circulating supply much smaller than 2^128.
         params.totalAmount = uint128(msg.value);
 
-        // Interactions: deposit the Ether into the WETH9 contract.
-        weth9.deposit{ value: msg.value }();
+        // Interactions: wrap the native assets in ERC-20 form.
+        IWrappedNativeAsset(address(params.asset)).deposit{ value: msg.value }();
 
-        _approveLockup(address(dynamic), weth9, params.totalAmount);
+        _approveLockup(address(dynamic), params.asset, params.totalAmount);
         streamId = dynamic.createWithMilestones(params);
     }
 

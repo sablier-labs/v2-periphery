@@ -19,7 +19,7 @@ import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
 import { Assertions } from "./helpers/Assertions.t.sol";
 import { DefaultParams } from "./helpers/DefaultParams.t.sol";
 import { SablierV2NFTDescriptor } from "./mockups/SablierV2NFTDescriptor.t.sol";
-import { WETH9 } from "./mockups/WETH9.t.sol";
+import { WETH } from "./mockups/WETH.t.sol";
 
 /// @title Base_Test
 /// @notice Base test contract with common logic needed by all test contracts.
@@ -30,7 +30,7 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     ERC20 internal asset = new ERC20("Asset Coin", "Asset");
     AllowanceTransfer internal permit2 = new AllowanceTransfer();
-    WETH9 internal weth9 = new WETH9();
+    WETH internal weth = new WETH();
 
     PRBProxyRegistry internal registry = new PRBProxyRegistry();
     IPRBProxy internal proxy;
