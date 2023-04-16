@@ -2,9 +2,9 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
-import { AllowanceTransfer } from "@permit2/AllowanceTransfer.sol";
-import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
-import { PermitHash } from "@permit2/libraries/PermitHash.sol";
+import { AllowanceTransfer } from "permit2/AllowanceTransfer.sol";
+import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
+import { PermitHash } from "permit2/libraries/PermitHash.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
 import { PRBProxyRegistry } from "@prb/proxy/PRBProxyRegistry.sol";
 import { SablierV2Lockup } from "@sablier/v2-core/abstracts/SablierV2Lockup.sol";

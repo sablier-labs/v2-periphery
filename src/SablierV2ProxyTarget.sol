@@ -3,7 +3,7 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
-import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
+import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
@@ -38,14 +38,6 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @inheritdoc ISablierV2ProxyTarget
     function batchCancelMultiple(Batch.CancelMultiple[] calldata params, IERC20[] calldata assets) external {
-        _batchCancelMultiple(params, assets);
-    }
-
-    /// @dev Internal function that:
-    /// 1. Queries the proxy balances of each asset before the streams are canceled.
-    /// 2. Performs multiple external calls on {SablierV2Lockup.cancelMultiple}.
-    /// 3. Transfers the returned amounts of each asset to proxy owner, if greater than zero.
-    function _batchCancelMultiple(Batch.CancelMultiple[] calldata params, IERC20[] calldata assets) internal {
         uint256[] memory balancesBefore = _beforeCancelMultiple(assets);
 
         for (uint256 i = 0; i < params.length;) {

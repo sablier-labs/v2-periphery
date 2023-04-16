@@ -28,6 +28,10 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Cancel multiple streams on each `lockup` contract.
     ///
+    /// 1. Queries the proxy balances of each asset before the streams are canceled.
+    /// 2. Performs multiple external calls on {SablierV2Lockup.cancelMultiple}.
+    /// 3. Transfers the returned amounts of each asset to proxy owner, if greater than zero.
+    ///
     /// @dev Notes:
     /// - The function assumes that the assets of the `params.streamIds` are the same as those in `assets` array.
     /// If any asset is missing, the returned amount will be left in the proxy contract.

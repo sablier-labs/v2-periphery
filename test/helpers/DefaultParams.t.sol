@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
-import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
+import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { UD2x18, ud2x18 } from "@prb/math/UD2x18.sol";
 import { UD60x18, ZERO } from "@prb/math/UD60x18.sol";
 import { Broker, Lockup, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
