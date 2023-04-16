@@ -6,13 +6,13 @@ import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.s
 import { Broker, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
 library Batch {
-    /// @notice Struct encapsulating the lockup contract's address and the stream ids.
+    /// @notice Struct encapsulating the lockup contract's address and the stream ids to cancel.
     struct CancelMultiple {
         ISablierV2Lockup lockup;
         uint256[] streamIds;
     }
 
-    /// @notice Struct encapsulating a subset of the {SablierV2LockupDynamic.createWithDelta} function's parameters.
+    /// @notice Struct encapsulating a subset of the parameters of {SablierV2LockupDynamic.createWithDelta}.
     struct CreateWithDeltas {
         uint128 amount;
         Broker broker;
@@ -22,7 +22,7 @@ library Batch {
         address sender;
     }
 
-    /// @notice Struct encapsulating a subset of the {SablierV2LockupLinear.createWithDurations} function's parameters.
+    /// @notice Struct encapsulating a subset of the parameters of {SablierV2LockupLinear.createWithDurations}.
     struct CreateWithDurations {
         uint128 amount;
         Broker broker;
@@ -32,8 +32,7 @@ library Batch {
         address sender;
     }
 
-    /// @notice Struct encapsulating a subset of the {SablierV2LockupDynamic.createWithMilestones} function's
-    /// parameters.
+    /// @notice Struct encapsulating a subset of the parameters of {SablierV2LockupDynamic.createWithMilestones}.
     struct CreateWithMilestones {
         uint128 amount;
         Broker broker;
@@ -44,7 +43,7 @@ library Batch {
         uint40 startTime;
     }
 
-    /// @notice Struct encapsulating a subset of the {SablierV2LockupLinear.createWithRange} function's parameters.
+    /// @notice Struct encapsulating a subset of the parameters of {SablierV2LockupLinear.createWithRange}.
     struct CreateWithRange {
         uint128 amount;
         Broker broker;
@@ -55,9 +54,10 @@ library Batch {
     }
 }
 
+/// @notice Struct encapsulating the user parameters needed for Permit2.
 struct Permit2Params {
-    IAllowanceTransfer permit2;
     uint48 expiration;
+    IAllowanceTransfer permit2;
     uint256 sigDeadline;
     bytes signature;
 }

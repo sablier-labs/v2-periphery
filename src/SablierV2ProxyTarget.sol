@@ -7,7 +7,7 @@ import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
-import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
+import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { IWrappedNativeAsset } from "./interfaces/external/IWrappedNativeAsset.sol";
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
@@ -94,96 +94,6 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
-
-    /// @inheritdoc ISablierV2ProxyTarget
-    function cancelAndCreateWithDurations(
-        ISablierV2Lockup lockup,
-        ISablierV2LockupLinear linear,
-        uint256 streamId,
-        LockupLinear.CreateWithDurations calldata params,
-        Permit2Params calldata permit2Params
-    )
-        external
-        override
-        returns (uint256 newStreamId)
-    {
-        _cancel(lockup, streamId);
-        newStreamId = _createWithDurations(linear, params, permit2Params);
-    }
-
-    /// @inheritdoc ISablierV2ProxyTarget
-    function cancelAndCreateWithRange(
-        ISablierV2Lockup lockup,
-        ISablierV2LockupLinear linear,
-        uint256 streamId,
-        LockupLinear.CreateWithRange calldata params,
-        Permit2Params calldata permit2Params
-    )
-        external
-        override
-        returns (uint256 newStreamId)
-    {
-        _cancel(lockup, streamId);
-        newStreamId = _createWithRange(linear, params, permit2Params);
-    }
-
-    /// @inheritdoc ISablierV2ProxyTarget
-    function createWithDurations(
-        ISablierV2LockupLinear linear,
-        LockupLinear.CreateWithDurations calldata params,
-        Permit2Params calldata permit2Params
-    )
-        external
-        override
-        returns (uint256 streamId)
-    {
-        streamId = _createWithDurations(linear, params, permit2Params);
-    }
-
-    /// @dev Internal function that:
-    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy, if necessary.
-    /// 3. Performs an external call on {SablierV2LockupLinear.createWithDeltas}.
-    function _createWithDurations(
-        ISablierV2LockupLinear linear,
-        LockupLinear.CreateWithDurations calldata params,
-        Permit2Params calldata permit2Params
-    )
-        internal
-        returns (uint256 streamId)
-    {
-        _assetActions(address(linear), params.asset, params.totalAmount, permit2Params);
-        streamId = linear.createWithDurations(params);
-    }
-
-    /// @inheritdoc ISablierV2ProxyTarget
-    function createWithRange(
-        ISablierV2LockupLinear linear,
-        LockupLinear.CreateWithRange calldata params,
-        Permit2Params calldata permit2Params
-    )
-        external
-        override
-        returns (uint256 streamId)
-    {
-        streamId = _createWithRange(linear, params, permit2Params);
-    }
-
-    /// @dev Internal function that:
-    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves {SablierV2LockupLinear} to spend funds from proxy, if necessary.
-    /// 3. Performs an external call on {SablierV2LockupLinear.createWithRange}.
-    function _createWithRange(
-        ISablierV2LockupLinear linear,
-        LockupLinear.CreateWithRange calldata params,
-        Permit2Params calldata permit2Params
-    )
-        internal
-        returns (uint256 streamId)
-    {
-        _assetActions(address(linear), params.asset, params.totalAmount, permit2Params);
-        streamId = linear.createWithRange(params);
-    }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function batchCreateWithDurations(
@@ -298,6 +208,96 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
+    function cancelAndCreateWithDurations(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupLinear linear,
+        uint256 streamId,
+        LockupLinear.CreateWithDurations calldata params,
+        Permit2Params calldata permit2Params
+    )
+        external
+        override
+        returns (uint256 newStreamId)
+    {
+        _cancel(lockup, streamId);
+        newStreamId = _createWithDurations(linear, params, permit2Params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function cancelAndCreateWithRange(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupLinear linear,
+        uint256 streamId,
+        LockupLinear.CreateWithRange calldata params,
+        Permit2Params calldata permit2Params
+    )
+        external
+        override
+        returns (uint256 newStreamId)
+    {
+        _cancel(lockup, streamId);
+        newStreamId = _createWithRange(linear, params, permit2Params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function createWithDurations(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithDurations calldata params,
+        Permit2Params calldata permit2Params
+    )
+        external
+        override
+        returns (uint256 streamId)
+    {
+        streamId = _createWithDurations(linear, params, permit2Params);
+    }
+
+    /// @dev Internal function that:
+    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
+    /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy, if necessary.
+    /// 3. Performs an external call on {SablierV2LockupLinear.createWithDeltas}.
+    function _createWithDurations(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithDurations calldata params,
+        Permit2Params calldata permit2Params
+    )
+        internal
+        returns (uint256 streamId)
+    {
+        _assetActions(address(linear), params.asset, params.totalAmount, permit2Params);
+        streamId = linear.createWithDurations(params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function createWithRange(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithRange calldata params,
+        Permit2Params calldata permit2Params
+    )
+        external
+        override
+        returns (uint256 streamId)
+    {
+        streamId = _createWithRange(linear, params, permit2Params);
+    }
+
+    /// @dev Internal function that:
+    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
+    /// 2. Approves {SablierV2LockupLinear} to spend funds from proxy, if necessary.
+    /// 3. Performs an external call on {SablierV2LockupLinear.createWithRange}.
+    function _createWithRange(
+        ISablierV2LockupLinear linear,
+        LockupLinear.CreateWithRange calldata params,
+        Permit2Params calldata permit2Params
+    )
+        internal
+        returns (uint256 streamId)
+    {
+        _assetActions(address(linear), params.asset, params.totalAmount, permit2Params);
+        streamId = linear.createWithRange(params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
     function wrapAndCreateWithDurations(
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithDurations memory params
@@ -338,98 +338,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                               SABLIER-V2-LOCKUP-PRO
+                             SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
-
-    /// @inheritdoc ISablierV2ProxyTarget
-    function cancelAndCreateWithDeltas(
-        ISablierV2Lockup lockup,
-        ISablierV2LockupDynamic dynamic,
-        uint256 streamId,
-        LockupDynamic.CreateWithDeltas calldata params,
-        Permit2Params calldata permit2Params
-    )
-        external
-        override
-        returns (uint256 newStreamId)
-    {
-        _cancel(lockup, streamId);
-        newStreamId = _createWithDeltas(dynamic, params, permit2Params);
-    }
-
-    /// @inheritdoc ISablierV2ProxyTarget
-    function cancelAndCreateWithMilestones(
-        ISablierV2Lockup lockup,
-        ISablierV2LockupDynamic dynamic,
-        uint256 streamId,
-        LockupDynamic.CreateWithMilestones calldata params,
-        Permit2Params calldata permit2Params
-    )
-        external
-        override
-        returns (uint256 newStreamId)
-    {
-        _cancel(lockup, streamId);
-        newStreamId = _createWithMilestones(dynamic, params, permit2Params);
-    }
-
-    /// @inheritdoc ISablierV2ProxyTarget
-    function createWithDeltas(
-        ISablierV2LockupDynamic dynamic,
-        LockupDynamic.CreateWithDeltas calldata params,
-        Permit2Params calldata permit2Params
-    )
-        external
-        override
-        returns (uint256 streamId)
-    {
-        streamId = _createWithDeltas(dynamic, params, permit2Params);
-    }
-
-    /// @dev Internal function that:
-    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves the {SablierV2LockupDynamic} contract to spend funds from proxy, if necessary.
-    /// 3. Performs an external call on {SablierV2LockupDynamic.createWithDeltas}.
-    function _createWithDeltas(
-        ISablierV2LockupDynamic dynamic,
-        LockupDynamic.CreateWithDeltas calldata params,
-        Permit2Params calldata permit2Params
-    )
-        internal
-        returns (uint256 streamId)
-    {
-        _assetActions(address(dynamic), params.asset, params.totalAmount, permit2Params);
-        streamId = dynamic.createWithDeltas(params);
-    }
-
-    /// @inheritdoc ISablierV2ProxyTarget
-    function createWithMilestones(
-        ISablierV2LockupDynamic dynamic,
-        LockupDynamic.CreateWithMilestones calldata params,
-        Permit2Params calldata permit2Params
-    )
-        external
-        override
-        returns (uint256 streamId)
-    {
-        streamId = _createWithMilestones(dynamic, params, permit2Params);
-    }
-
-    /// @dev Internal function that:
-    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves the {SablierV2LockupDynamic} contract to spend funds from proxy, if necessary.
-    /// 3. Performs an external call on {SablierV2LockupDynamic.createWithMilestones}.
-    function _createWithMilestones(
-        ISablierV2LockupDynamic dynamic,
-        LockupDynamic.CreateWithMilestones calldata params,
-        Permit2Params calldata permit2Params
-    )
-        internal
-        returns (uint256 streamId)
-    {
-        _assetActions(address(dynamic), params.asset, params.totalAmount, permit2Params);
-        streamId = dynamic.createWithMilestones(params);
-    }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function batchCreateWithDeltas(
@@ -540,6 +450,96 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         }
 
         streamIds = _streamIds;
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function cancelAndCreateWithDeltas(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupDynamic dynamic,
+        uint256 streamId,
+        LockupDynamic.CreateWithDeltas calldata params,
+        Permit2Params calldata permit2Params
+    )
+        external
+        override
+        returns (uint256 newStreamId)
+    {
+        _cancel(lockup, streamId);
+        newStreamId = _createWithDeltas(dynamic, params, permit2Params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function cancelAndCreateWithMilestones(
+        ISablierV2Lockup lockup,
+        ISablierV2LockupDynamic dynamic,
+        uint256 streamId,
+        LockupDynamic.CreateWithMilestones calldata params,
+        Permit2Params calldata permit2Params
+    )
+        external
+        override
+        returns (uint256 newStreamId)
+    {
+        _cancel(lockup, streamId);
+        newStreamId = _createWithMilestones(dynamic, params, permit2Params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function createWithDeltas(
+        ISablierV2LockupDynamic dynamic,
+        LockupDynamic.CreateWithDeltas calldata params,
+        Permit2Params calldata permit2Params
+    )
+        external
+        override
+        returns (uint256 streamId)
+    {
+        streamId = _createWithDeltas(dynamic, params, permit2Params);
+    }
+
+    /// @dev Internal function that:
+    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
+    /// 2. Approves the {SablierV2LockupDynamic} contract to spend funds from proxy, if necessary.
+    /// 3. Performs an external call on {SablierV2LockupDynamic.createWithDeltas}.
+    function _createWithDeltas(
+        ISablierV2LockupDynamic dynamic,
+        LockupDynamic.CreateWithDeltas calldata params,
+        Permit2Params calldata permit2Params
+    )
+        internal
+        returns (uint256 streamId)
+    {
+        _assetActions(address(dynamic), params.asset, params.totalAmount, permit2Params);
+        streamId = dynamic.createWithDeltas(params);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
+    function createWithMilestones(
+        ISablierV2LockupDynamic dynamic,
+        LockupDynamic.CreateWithMilestones calldata params,
+        Permit2Params calldata permit2Params
+    )
+        external
+        override
+        returns (uint256 streamId)
+    {
+        streamId = _createWithMilestones(dynamic, params, permit2Params);
+    }
+
+    /// @dev Internal function that:
+    /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
+    /// 2. Approves the {SablierV2LockupDynamic} contract to spend funds from proxy, if necessary.
+    /// 3. Performs an external call on {SablierV2LockupDynamic.createWithMilestones}.
+    function _createWithMilestones(
+        ISablierV2LockupDynamic dynamic,
+        LockupDynamic.CreateWithMilestones calldata params,
+        Permit2Params calldata permit2Params
+    )
+        internal
+        returns (uint256 streamId)
+    {
+        _assetActions(address(dynamic), params.asset, params.totalAmount, permit2Params);
+        streamId = dynamic.createWithMilestones(params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -672,12 +672,12 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     function _checkBatchCreateParams(uint128 totalAmount, uint128 amountsSum) internal pure {
         // Checks: the total amount is not zero.
         if (totalAmount == 0) {
-            revert Errors.SablierV2ProxyTarget_TotalAmountZero();
+            revert Errors.SablierV2ProxyTarget_FullAmountZero();
         }
 
         /// Checks: the total amount is equal to the parameters amounts summed up.
         if (amountsSum != totalAmount) {
-            revert Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum(totalAmount, amountsSum);
+            revert Errors.SablierV2ProxyTarget_FullAmountNotEqualToAmountsSum(totalAmount, amountsSum);
         }
     }
 }

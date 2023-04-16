@@ -27,7 +27,7 @@ contract BatchCreateWithDurations_Test is Unit_Test {
                 permit2Params(totalAmountZero)
             )
         );
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_TotalAmountZero.selector));
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_FullAmountZero.selector));
         proxy.execute(address(target), data);
     }
 
@@ -44,7 +44,7 @@ contract BatchCreateWithDurations_Test is Unit_Test {
         );
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector, DefaultParams.TOTAL_AMOUNT, 0
+                Errors.SablierV2ProxyTarget_FullAmountNotEqualToAmountsSum.selector, DefaultParams.TOTAL_AMOUNT, 0
             )
         );
         proxy.execute(address(target), data);
@@ -69,7 +69,7 @@ contract BatchCreateWithDurations_Test is Unit_Test {
         );
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2ProxyTarget_TotalAmountNotEqualToAmountsSum.selector,
+                Errors.SablierV2ProxyTarget_FullAmountNotEqualToAmountsSum.selector,
                 totalAmount,
                 DefaultParams.TOTAL_AMOUNT
             )
