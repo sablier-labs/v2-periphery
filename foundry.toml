@@ -38,6 +38,9 @@
   out = "docs"
   repository = "https://github.com/sablierhq/v2-periphery"
 
+[etherscan]
+  goerli = { key = "${API_KEY_ETHERSCAN}" }
+
 [fmt]
   bracket_spacing = true
   int_types = "long"

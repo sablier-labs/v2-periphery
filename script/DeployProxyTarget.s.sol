@@ -5,7 +5,7 @@ import { BaseScript } from "@sablier/v2-core/../script/shared/Base.s.sol";
 
 import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
 
-contract DeploySablierV2ProxyTarget is BaseScript {
+contract DeployProxyTarget is BaseScript {
     function run() public broadcaster returns (SablierV2ProxyTarget target) {
         target = new SablierV2ProxyTarget();
     }
