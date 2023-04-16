@@ -5,27 +5,20 @@ import { IAllowanceTransfer } from "@permit2/interfaces/IAllowanceTransfer.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { Broker, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
-struct Permit2Params {
-    IAllowanceTransfer permit2;
-    uint48 expiration;
-    uint256 sigDeadline;
-    bytes signature;
-}
-
 library Batch {
-    /// @notice Simple struct that encapsulates (i) the lockup contract and (ii) the stream id.
+    /// @notice Struct encapsulating the lockup contract's address and the stream id.
     struct Cancel {
         ISablierV2Lockup lockup;
         uint256 streamId;
     }
 
-    /// @notice Simple struct that encapsulates (i) the lockup contract and (ii) the stream ids.
+    /// @notice Struct encapsulating the lockup contract's address and the stream ids.
     struct CancelMultiple {
         ISablierV2Lockup lockup;
         uint256[] streamIds;
     }
 
-    /// @notice Struct that partially encapsulates the {SablierV2LockupDynamic-createWithDelta} function parameters.
+    /// @notice Struct encapsulating a subset of the {SablierV2LockupDynamic.createWithDelta} function's parameters.
     struct CreateWithDeltas {
         uint128 amount;
         Broker broker;
@@ -35,7 +28,7 @@ library Batch {
         address sender;
     }
 
-    /// @notice Struct that partially encapsulates the {SablierV2LockupLinear-createWithDurations} function parameters.
+    /// @notice Struct encapsulating a subset of the {SablierV2LockupLinear.createWithDurations} function's parameters.
     struct CreateWithDurations {
         uint128 amount;
         Broker broker;
@@ -45,7 +38,7 @@ library Batch {
         address sender;
     }
 
-    /// @notice Struct that partially encapsulates the {SablierV2LockupDynamic-createWithMilestones} function
+    /// @notice Struct encapsulating a subset of the {SablierV2LockupDynamic.createWithMilestones} function's
     /// parameters.
     struct CreateWithMilestones {
         uint128 amount;
@@ -57,7 +50,7 @@ library Batch {
         uint40 startTime;
     }
 
-    /// @notice Struct that partially encapsulates the {SablierV2LockupLinear-createWithRange} function parameters.
+    /// @notice Struct encapsulating a subset of the {SablierV2LockupLinear.createWithRange} function's parameters.
     struct CreateWithRange {
         uint128 amount;
         Broker broker;
@@ -66,4 +59,11 @@ library Batch {
         address recipient;
         address sender;
     }
+}
+
+struct Permit2Params {
+    IAllowanceTransfer permit2;
+    uint48 expiration;
+    uint256 sigDeadline;
+    bytes signature;
 }

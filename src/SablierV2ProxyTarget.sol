@@ -43,7 +43,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @dev Internal function that:
     /// 1. Queries the proxy balances of each asset before the streams are canceled.
-    /// 2. Performs multiple external calls on {SablierV2Lockup-cancelMultiple}.
+    /// 2. Performs multiple external calls on {SablierV2Lockup.cancelMultiple}.
     /// 3. Transfers the returned amounts of each asset to proxy owner, if greater than zero.
     function _batchCancelMultiple(Batch.CancelMultiple[] calldata params, IERC20[] calldata assets) internal {
         uint256[] memory balancesBefore = _beforeCancelMultiple(assets);
@@ -69,7 +69,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /// @dev Internal function that:
     /// 1. Queries the asset of the stream.
     /// 2. Queries the return amount of the stream.
-    /// 3. Performs an external call on {SablierV2Lockup-cancel}.
+    /// 3. Performs an external call on {SablierV2Lockup.cancel}.
     /// 4. Transfers the return amount to proxy owner, if greater than zero.
     function _cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
         // Interactions: query the asset.
@@ -94,7 +94,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @dev Internal function that:
     /// 1. Queries the proxy balances of each asset before the streams are canceled.
-    /// 2. Performs an external call on {SablierV2Lockup-cancelMultiple}.
+    /// 2. Performs an external call on {SablierV2Lockup.cancelMultiple}.
     /// 3. Transfers the return amounts sum to proxy owner, if greater than zero.
     function _cancelMultiple(
         ISablierV2Lockup lockup,
@@ -178,7 +178,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /// @dev Internal function that:
     /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
     /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy, if necessary.
-    /// 3. Performs an external call on {SablierV2LockupLinear-createWithDeltas}.
+    /// 3. Performs an external call on {SablierV2LockupLinear.createWithDeltas}.
     function _createWithDurations(
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithDurations calldata params,
@@ -206,8 +206,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @dev Internal function that:
     /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
-    /// 2. Approves the {SablierV2LockupLinear} contract to spend funds from proxy, if necessary.
-    /// 3. Performs an external call on {SablierV2LockupLinear-createWithRange}.
+    /// 2. Approves {SablierV2LockupLinear} to spend funds from proxy, if necessary.
+    /// 3. Performs an external call on {SablierV2LockupLinear.createWithRange}.
     function _createWithRange(
         ISablierV2LockupLinear linear,
         LockupLinear.CreateWithRange calldata params,
@@ -428,7 +428,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /// @dev Internal function that:
     /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
     /// 2. Approves the {SablierV2LockupDynamic} contract to spend funds from proxy, if necessary.
-    /// 3. Performs an external call on {SablierV2LockupDynamic-createWithDeltas}.
+    /// 3. Performs an external call on {SablierV2LockupDynamic.createWithDeltas}.
     function _createWithDeltas(
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithDeltas calldata params,
@@ -457,7 +457,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /// @dev Internal function that:
     /// 1. Transfers funds from the `msg.sender` to the proxy contract via Permit2.
     /// 2. Approves the {SablierV2LockupDynamic} contract to spend funds from proxy, if necessary.
-    /// 3. Performs an external call on {SablierV2LockupDynamic-createWithMilestones}.
+    /// 3. Performs an external call on {SablierV2LockupDynamic.createWithMilestones}.
     function _createWithMilestones(
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithMilestones calldata params,
