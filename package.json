@@ -3,13 +3,21 @@
   "description": "Peripheral smart contracts for interacting with Sablier V2 Core",
   "version": "1.0.0",
   "author": {
-    "name": "Sablier Labs Ltd.",
+    "name": "Sablier Labs Ltd",
     "url": "https://sablier.com"
+  },
+  "bugs": {
+    "url": "https://github.com/sablierhq/v2-periphery/issues"
   },
   "devDependencies": {
     "prettier": "^2.8.7",
     "solhint": "^3.4.1"
   },
+  "files": [
+    "/src",
+    "CHANGELOG.md"
+  ],
+  "homepage": "https://github.com/sablierhq/v2-periphery#readme",
   "keywords": [
     "asset-streaming",
     "blockchain",
@@ -25,6 +33,13 @@
     "solidity",
     "token-streaming"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sablierhq/v2-periphery"
+  },
   "scripts": {
     "build": "forge build",
     "build:optimized": "FOUNDRY_PROFILE=optimized forge build",
