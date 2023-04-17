@@ -20,8 +20,9 @@ interface ISablierV2ProxyTarget {
     /// @notice Cancels multiple streams across different lockup contracts.
     ///
     /// @dev Notes:
+    /// - At least one set of streams must be canceled.
     /// - All refunded assets are forwarded to the proxy owner.
-    /// - It is assumed that the `assets` array includes all the assets associated with `params.streamIds`. If any asset
+    /// - It is assumed that `assets` includes all the assets associated with `params.streamIds`. If any asset
     /// is missing, the refunded amount will be left in the proxy.
     ///
     /// @param params Struct encapsulating the lockup contract's address and the stream ids to cancel.
@@ -35,7 +36,7 @@ interface ISablierV2ProxyTarget {
     ///
     /// @dev Notes:
     /// - All refunded assets are forwarded to the proxy owner.
-    /// - It is assumed that the `assets` array includes all the assets associated with `params.streamIds`. If any asset
+    /// - It is assumed that `assets` includes all the assets associated with `params.streamIds`. If any asset
     /// is missing, the refunded amount will be left in the proxy.
     ///
     /// @param lockup The address of the lockup streaming contract.
@@ -59,6 +60,7 @@ interface ISablierV2ProxyTarget {
     /// @notice Creates a batch of linear streams with durations. Assets are transferred to the proxy via Permit2.
     ///
     /// @dev Requirements:
+    /// - At least one stream must be created.
     /// - All requirements from {ISablierV2LockupLinear.createWithDurations} must be met for each stream.
     ///
     /// @param linear The address of the {SablierV2LockupLinear} contract.
@@ -78,6 +80,7 @@ interface ISablierV2ProxyTarget {
     /// @notice Creates a batch of linear streams with range. Assets are transferred to the proxy via Permit2.
     ///
     /// @dev Requirements:
+    /// - At least one stream must be created.
     /// - All requirements from {ISablierV2LockupLinear.createWithRange} must be met for each stream.
     ///
     /// @param linear The address of the {SablierV2LockupLinear} contract.
@@ -197,6 +200,7 @@ interface ISablierV2ProxyTarget {
     /// @notice Creates a batch of dynamic streams with deltas. Assets are transferred to the proxy via Permit2.
     ///
     /// @dev Requirements:
+    /// - At least one stream must be created.
     /// - All requirements from {ISablierV2LockupDynamic.createWithDeltas} must be met for each stream.
     ///
     /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
@@ -216,6 +220,7 @@ interface ISablierV2ProxyTarget {
     /// @notice Creates a batch of dynamic streams with milestones. Assets are transferred to the proxy via Permit2.
     ///
     /// @dev Requirements:
+    /// - At least one stream must be created.
     /// - All requirements from {ISablierV2LockupDynamic.createWithMilestones} must be met for each stream.
     ///
     /// @param dynamic The address of the {SablierV2LockupDynamic} contract.

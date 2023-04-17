@@ -3,14 +3,16 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
+import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
 import { Base_Test } from "../../Base.t.sol";
 import { Defaults } from "../../helpers/Defaults.t.sol";
 
 contract BatchCancelMultiple_Unit_Test is Base_Test {
-    function test_BatchCancelMultiple_BatchSizeZero() external {
+    function test_RevertWhen_BatchSizeZero() external {
         Batch.CancelMultiple[] memory params = new Batch.CancelMultiple[](0);
+        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, Defaults.assets(dai)));
         proxy.execute(address(target), data);
     }

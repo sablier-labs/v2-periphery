@@ -43,10 +43,15 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @inheritdoc ISablierV2ProxyTarget
     function batchCancelMultiple(Batch.CancelMultiple[] calldata params, IERC20[] calldata assets) external {
+        // Check that the batch size is not zero.
+        uint256 batchSize = params.length;
+        if (batchSize == 0) {
+            revert Errors.SablierV2ProxyTarget_BatchSizeZero();
+        }
+
         // Load the balances before the cancellation.
         uint256[] memory initialBalances = _getBalances(assets);
 
-        uint256 batchSize = params.length;
         for (uint256 i = 0; i < batchSize;) {
             // Cancel the streams.
             params[i].lockup.cancelMultiple(params[i].streamIds);
@@ -119,7 +124,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256[] memory streamIds)
     {
-        // Check that the batch is not empty.
+        // Check that the batch size is not zero.
         uint256 batchSize = params.length;
         if (batchSize == 0) {
             revert Errors.SablierV2ProxyTarget_BatchSizeZero();
@@ -337,7 +342,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256[] memory streamIds)
     {
-        // Check that the batch is not empty.
+        // Check that the batch size is not zero.
         uint256 batchSize = params.length;
         if (batchSize == 0) {
             revert Errors.SablierV2ProxyTarget_BatchSizeZero();
@@ -391,7 +396,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         override
         returns (uint256[] memory streamIds)
     {
-        // Check that the batch is not empty.
+        // Check that the batch size is not zero.
         uint256 batchSize = params.length;
         if (batchSize == 0) {
             revert Errors.SablierV2ProxyTarget_BatchSizeZero();

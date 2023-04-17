@@ -10,10 +10,10 @@ import { Defaults } from "../../helpers/Defaults.t.sol";
 contract BatchCreateWithDeltas_Unit_Test is Base_Test {
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithDeltas[] memory params = new Batch.CreateWithDeltas[](0);
+        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas, (dynamic, dai, params, permit2Params(Defaults.TRANSFER_AMOUNT))
         );
-        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);
     }
 

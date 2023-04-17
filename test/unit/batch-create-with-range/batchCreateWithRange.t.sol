@@ -10,9 +10,9 @@ import { Defaults } from "../../helpers/Defaults.t.sol";
 contract BatchCreateWithRange_Unit_Test is Base_Test {
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithRange[] memory params = new Batch.CreateWithRange[](0);
+        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         bytes memory data =
             abi.encodeCall(target.batchCreateWithRange, (linear, dai, params, permit2Params(Defaults.TRANSFER_AMOUNT)));
-        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);
     }
 

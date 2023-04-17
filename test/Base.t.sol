@@ -28,6 +28,12 @@ import { WETH } from "./mockups/WETH.t.sol";
 /// @notice Base test contract with common logic needed by all test contracts.
 abstract contract Base_Test is Assertions, StdCheats {
     /*//////////////////////////////////////////////////////////////////////////
+                                     CONSTANTS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    bytes32 internal immutable DOMAIN_SEPARATOR;
+
+    /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -49,6 +55,14 @@ abstract contract Base_Test is Assertions, StdCheats {
     SablierV2LockupDynamic internal dynamic;
     SablierV2LockupLinear internal linear;
     SablierV2ProxyTarget internal target = new SablierV2ProxyTarget();
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    constructor() {
+        DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();
+    }
 
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION
@@ -331,7 +345,7 @@ abstract contract Base_Test is Assertions, StdCheats {
         bytes32 digest = keccak256(
             abi.encodePacked(
                 "\x19\x01",
-                permit2.DOMAIN_SEPARATOR(),
+                DOMAIN_SEPARATOR,
                 keccak256(
                     abi.encode(PermitHash._PERMIT_SINGLE_TYPEHASH, permitHash, spender, Defaults.PERMIT2_SIG_DEADLINE)
                 )
