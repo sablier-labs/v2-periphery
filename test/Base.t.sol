@@ -111,9 +111,9 @@ abstract contract Base_Test is Assertions, StdCheats {
     /// @dev Helper function to approve the `permit2` contract to spend ERC-20 assets from the sender and recipient.
     function approvePermit2() internal {
         changePrank({ msgSender: users.sender });
-        asset.approve({ spender: address(permit2), amount: DefaultParams.UINT256_MAX });
+        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
         changePrank({ msgSender: users.recipient });
-        asset.approve({ spender: address(permit2), amount: DefaultParams.UINT256_MAX });
+        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
     }
 
     /// @dev Generates an address by hashing the name, labels the address and funds it with 100 ETH, 1 million assets.

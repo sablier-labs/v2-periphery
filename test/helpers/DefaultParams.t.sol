@@ -29,41 +29,32 @@ library DefaultParams {
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                     CONSTANTS
+                                     GENERIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint128 internal constant UINT128_MAX = type(uint128).max;
-    uint160 internal constant UINT160_MAX = type(uint160).max;
-    uint256 internal constant UINT256_MAX = type(uint256).max;
-    uint48 internal constant UINT48_MAX = type(uint48).max;
-
-    UD60x18 internal constant MAX_FEE = UD60x18.wrap(0.1e18); // 10%
-    uint256 internal constant MAX_SEGMENT_COUNT = 1000;
-
-    uint40 internal constant CLIFF_DURATION = 2500 seconds;
-    uint40 internal constant TIME_WARP = 2600 seconds;
-    uint40 internal constant TOTAL_DURATION = 10_000 seconds;
-
-    uint40 internal constant START_TIME = 100;
-    uint40 internal constant CLIFF_TIME = START_TIME + CLIFF_DURATION;
-    uint40 internal constant END_TIME = START_TIME + TOTAL_DURATION;
-
     uint128 internal constant AMOUNT = 10_000e18;
+    uint256 internal constant BATCH_COUNT = 10;
     UD60x18 internal constant BROKER_FEE = ZERO;
     uint128 internal constant BROKER_FEE_AMOUNT = 0;
+    uint40 internal constant CLIFF_DURATION = 2500 seconds;
+    uint40 internal constant CLIFF_TIME = START_TIME + CLIFF_DURATION;
+    uint40 internal constant END_TIME = START_TIME + TOTAL_DURATION;
     uint256 internal constant ETHER_AMOUNT = 10_000 ether;
+    UD60x18 internal constant MAX_FEE = UD60x18.wrap(0.1e18); // 10%
+    uint256 internal constant MAX_SEGMENT_COUNT = 1000;
     uint128 internal constant REFUND_AMOUNT = 7500e18;
+    uint40 internal constant START_TIME = 100;
+    uint40 internal constant TIME_WARP = 2600 seconds;
     uint128 internal constant TOTAL_AMOUNT = 100_000e18;
+    uint40 internal constant TOTAL_DURATION = 10_000 seconds;
     uint128 internal constant WITHDRAW_AMOUNT = 2500e18;
-
-    uint256 internal constant BATCH_COUNT = 10;
 
     /*//////////////////////////////////////////////////////////////////////////
                                       PERMIT2
     //////////////////////////////////////////////////////////////////////////*/
 
+    uint48 internal constant PERMIT2_EXPIRATION = type(uint48).max;
     uint48 internal constant PERMIT2_NONCE = 0;
-    uint48 internal constant PERMIT2_EXPIRATION = UINT48_MAX;
     uint256 internal constant PERMIT2_SIG_DEADLINE = 100;
 
     function permitDetails(
@@ -72,12 +63,12 @@ library DefaultParams {
     )
         internal
         pure
-        returns (IAllowanceTransfer.PermitDetails memory)
+        returns (IAllowanceTransfer.PermitDetails memory details)
     {
-        return IAllowanceTransfer.PermitDetails({
+        details = IAllowanceTransfer.PermitDetails({
             token: asset,
             amount: amount,
-            expiration: UINT48_MAX,
+            expiration: PERMIT2_EXPIRATION,
             nonce: PERMIT2_NONCE
         });
     }
@@ -89,51 +80,52 @@ library DefaultParams {
     )
         internal
         pure
-        returns (IAllowanceTransfer.PermitDetails memory)
+        returns (IAllowanceTransfer.PermitDetails memory details)
     {
-        return IAllowanceTransfer.PermitDetails({ token: asset, amount: amount, expiration: UINT48_MAX, nonce: nonce });
+        details = IAllowanceTransfer.PermitDetails({
+            token: asset,
+            amount: amount,
+            expiration: PERMIT2_EXPIRATION,
+            nonce: nonce
+        });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    function assets(IERC20 asset) internal pure returns (IERC20[] memory) {
-        IERC20[] memory _assets = new IERC20[](1);
-        _assets[0] = asset;
-        return _assets;
+    function assets(IERC20 asset) internal pure returns (IERC20[] memory assets_) {
+        assets_ = new IERC20[](1);
+        assets_[0] = asset;
     }
 
-    function statusAfterCancel() internal pure returns (Lockup.Status) {
-        return Lockup.Status.CANCELED;
+    function statusAfterCancel() internal pure returns (Lockup.Status status) {
+        status = Lockup.Status.CANCELED;
     }
 
-    function statusBeforeCancel() internal pure returns (Lockup.Status) {
-        return Lockup.Status.ACTIVE;
+    function statusBeforeCancel() internal pure returns (Lockup.Status status) {
+        status = Lockup.Status.ACTIVE;
     }
 
-    function statusesAfterCancelMultiple() internal pure returns (Lockup.Status[] memory) {
-        Lockup.Status[] memory _statuses = new Lockup.Status[](BATCH_COUNT);
+    function statusesAfterCancelMultiple() internal pure returns (Lockup.Status[] memory statuses) {
+        statuses = new Lockup.Status[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
-            _statuses[i] = Lockup.Status.CANCELED;
+            statuses[i] = Lockup.Status.CANCELED;
         }
-        return _statuses;
     }
 
-    function statusesBeforeCancelMultiple() internal pure returns (Lockup.Status[] memory) {
-        Lockup.Status[] memory _statuses = new Lockup.Status[](BATCH_COUNT);
+    function statusesBeforeCancelMultiple() internal pure returns (Lockup.Status[] memory statuses) {
+        statuses = new Lockup.Status[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
-            _statuses[i] = Lockup.Status.ACTIVE;
+            statuses[i] = Lockup.Status.ACTIVE;
         }
-        return _statuses;
     }
 
-    function streamIds() internal pure returns (uint256[] memory) {
-        uint256[] memory _streamIds = new uint256[](BATCH_COUNT);
+    function streamIds() internal pure returns (uint256[] memory streamIds_) {
+        streamIds_ = new uint256[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
-            _streamIds[i] = i + 1;
+            streamIds_[i] = i + 1;
         }
-        return _streamIds;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -147,9 +139,9 @@ library DefaultParams {
     )
         internal
         pure
-        returns (LockupDynamic.CreateWithDeltas memory)
+        returns (LockupDynamic.CreateWithDeltas memory params)
     {
-        return LockupDynamic.CreateWithDeltas({
+        params = LockupDynamic.CreateWithDeltas({
             sender: proxy,
             recipient: users.recipient,
             totalAmount: AMOUNT,
@@ -167,9 +159,9 @@ library DefaultParams {
     )
         internal
         pure
-        returns (LockupDynamic.CreateWithMilestones memory)
+        returns (LockupDynamic.CreateWithMilestones memory params)
     {
-        return LockupDynamic.CreateWithMilestones({
+        params = LockupDynamic.CreateWithMilestones({
             sender: proxy,
             recipient: user.recipient,
             totalAmount: AMOUNT,
@@ -186,21 +178,25 @@ library DefaultParams {
     }
 
     /// @dev Helper function to return an array of `LockupDynamic.Segment`.
-    function segments(uint128 amount0, uint128 amount1) internal pure returns (LockupDynamic.Segment[] memory) {
-        LockupDynamic.Segment[] memory _segments = new LockupDynamic.Segment[](2);
-
-        _segments[0] = LockupDynamic.Segment({
+    function segments(
+        uint128 amount0,
+        uint128 amount1
+    )
+        internal
+        pure
+        returns (LockupDynamic.Segment[] memory segments_)
+    {
+        segments_ = new LockupDynamic.Segment[](2);
+        segments_[0] = LockupDynamic.Segment({
             amount: amount0,
             exponent: ud2x18(3.14e18),
             milestone: START_TIME + CLIFF_DURATION
         });
-        _segments[1] = LockupDynamic.Segment({
+        segments_[1] = LockupDynamic.Segment({
             amount: amount1,
             exponent: ud2x18(3.14e18),
             milestone: START_TIME + TOTAL_DURATION
         });
-
-        return _segments;
     }
 
     /// @dev Helper function to return an array of `LockupDynamic.SegmentWithDelta`.
@@ -210,16 +206,13 @@ library DefaultParams {
     )
         internal
         pure
-        returns (LockupDynamic.SegmentWithDelta[] memory)
+        returns (LockupDynamic.SegmentWithDelta[] memory segments_)
     {
-        LockupDynamic.SegmentWithDelta[] memory _segments = new LockupDynamic.SegmentWithDelta[](2);
-
-        _segments[0] =
+        segments_ = new LockupDynamic.SegmentWithDelta[](2);
+        segments_[0] =
             LockupDynamic.SegmentWithDelta({ amount: amount0, delta: 2500 seconds, exponent: ud2x18(3.14e18) });
-        _segments[1] =
+        segments_[1] =
             LockupDynamic.SegmentWithDelta({ amount: amount1, delta: 7500 seconds, exponent: ud2x18(3.14e18) });
-
-        return _segments;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -237,9 +230,9 @@ library DefaultParams {
     )
         internal
         pure
-        returns (LockupLinear.CreateWithDurations memory)
+        returns (LockupLinear.CreateWithDurations memory params)
     {
-        return LockupLinear.CreateWithDurations({
+        params = LockupLinear.CreateWithDurations({
             sender: proxy,
             recipient: users.recipient,
             totalAmount: AMOUNT,
@@ -257,9 +250,9 @@ library DefaultParams {
     )
         internal
         pure
-        returns (LockupLinear.CreateWithRange memory)
+        returns (LockupLinear.CreateWithRange memory params)
     {
-        return LockupLinear.CreateWithRange({
+        params = LockupLinear.CreateWithRange({
             sender: proxy,
             recipient: users.recipient,
             totalAmount: AMOUNT,
@@ -285,22 +278,19 @@ library DefaultParams {
     )
         internal
         pure
-        returns (Batch.CreateWithDeltas[] memory)
+        returns (Batch.CreateWithDeltas[] memory params)
     {
-        Batch.CreateWithDeltas[] memory params = new Batch.CreateWithDeltas[](BATCH_COUNT);
-
+        params = new Batch.CreateWithDeltas[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithDeltas({
-                amount: AMOUNT,
                 broker: Broker({ account: users.broker, fee: BROKER_FEE }),
                 cancelable: true,
                 recipient: users.recipient,
                 segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
-                sender: proxy
+                sender: proxy,
+                totalAmount: AMOUNT
             });
         }
-
-        return params;
     }
 
     /// @dev Helper function to return an array of `Batch.CreateWithDurations`.
@@ -310,22 +300,19 @@ library DefaultParams {
     )
         internal
         pure
-        returns (Batch.CreateWithDurations[] memory)
+        returns (Batch.CreateWithDurations[] memory params)
     {
-        Batch.CreateWithDurations[] memory params = new Batch.CreateWithDurations[](BATCH_COUNT);
-
+        params = new Batch.CreateWithDurations[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithDurations({
-                amount: AMOUNT,
                 broker: Broker({ account: users.broker, fee: BROKER_FEE }),
                 cancelable: true,
                 durations: durations(),
                 recipient: users.recipient,
-                sender: proxy
+                sender: proxy,
+                totalAmount: AMOUNT
             });
         }
-
-        return params;
     }
 
     /// @dev Helper function to return an array of `Batch.CreateWithMilestones`.
@@ -335,23 +322,20 @@ library DefaultParams {
     )
         internal
         pure
-        returns (Batch.CreateWithMilestones[] memory)
+        returns (Batch.CreateWithMilestones[] memory params)
     {
-        Batch.CreateWithMilestones[] memory params = new Batch.CreateWithMilestones[](BATCH_COUNT);
-
+        params = new Batch.CreateWithMilestones[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithMilestones({
-                amount: AMOUNT,
                 broker: Broker({ account: users.broker, fee: BROKER_FEE }),
                 cancelable: true,
                 recipient: users.recipient,
                 segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
                 sender: proxy,
-                startTime: START_TIME
+                startTime: START_TIME,
+                totalAmount: AMOUNT
             });
         }
-
-        return params;
     }
 
     /// @dev Helper function to return an array of `Batch.CreateWithRange`.
@@ -361,21 +345,18 @@ library DefaultParams {
     )
         internal
         pure
-        returns (Batch.CreateWithRange[] memory)
+        returns (Batch.CreateWithRange[] memory params)
     {
-        Batch.CreateWithRange[] memory params = new Batch.CreateWithRange[](BATCH_COUNT);
-
+        params = new Batch.CreateWithRange[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithRange({
-                amount: AMOUNT,
                 broker: Broker({ account: users.broker, fee: BROKER_FEE }),
                 cancelable: true,
                 range: linearRange(),
                 recipient: users.recipient,
-                sender: proxy
+                sender: proxy,
+                totalAmount: AMOUNT
             });
         }
-
-        return params;
     }
 }

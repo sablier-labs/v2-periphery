@@ -59,7 +59,6 @@ contract Unit_Test is Base_Test {
             (
                 dynamic,
                 asset,
-                DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithDeltas(users, address(proxy)),
                 permit2Params(DefaultParams.TOTAL_AMOUNT)
             )
@@ -75,7 +74,6 @@ contract Unit_Test is Base_Test {
             (
                 linear,
                 asset,
-                DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithDurations(users, address(proxy)),
                 permit2Params(DefaultParams.TOTAL_AMOUNT)
             )
@@ -91,7 +89,6 @@ contract Unit_Test is Base_Test {
             (
                 dynamic,
                 asset,
-                DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithMilestones(users, address(proxy)),
                 permit2Params(DefaultParams.TOTAL_AMOUNT)
             )
@@ -107,7 +104,6 @@ contract Unit_Test is Base_Test {
             (
                 dynamic,
                 asset,
-                DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithMilestones(users, address(proxy)),
                 permit2ParamsWithNonce(DefaultParams.TOTAL_AMOUNT, nonce)
             )
@@ -123,7 +119,6 @@ contract Unit_Test is Base_Test {
             (
                 linear,
                 asset,
-                DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithRange(users, address(proxy)),
                 permit2Params(DefaultParams.TOTAL_AMOUNT)
             )
@@ -139,7 +134,6 @@ contract Unit_Test is Base_Test {
             (
                 linear,
                 asset,
-                DefaultParams.TOTAL_AMOUNT,
                 DefaultParams.batchCreateWithRange(users, address(proxy)),
                 permit2ParamsWithNonce(DefaultParams.TOTAL_AMOUNT, nonce)
             )

@@ -56,56 +56,45 @@ interface ISablierV2ProxyTarget {
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Creates a batch of linear streams with durations. Permit2 is used to transfer the assets from
-    /// the caller to the proxy.
+    /// @notice Creates a batch of linear streams with durations. Assets are transferred to the proxy via Permit2.
     ///
     /// @dev Requirements:
-    /// - `fullAmount` must be greater than zero.
-    /// - `fullAmount` must be equal to the sum of all amounts in `params`.
     /// - All requirements from {ISablierV2LockupLinear.createWithDurations} must be met for each stream.
     ///
     /// @param linear The address of the {SablierV2LockupLinear} contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
-    /// @param fullAmount The amount of assets for all the streams, in units of the asset's decimals.
     /// @param params Struct encapsulating a subset of the parameters of {SablierV2LockupLinear.createWithDurations}.
     /// @param permit2Params Struct encapsulating the user parameters needed for Permit2.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithDurations(
         ISablierV2LockupLinear linear,
         IERC20 asset,
-        uint128 fullAmount,
         Batch.CreateWithDurations[] calldata params,
         Permit2Params calldata permit2Params
     )
         external
         returns (uint256[] memory streamIds);
 
-    /// @notice Creates a batch of linear streams with range. Permit2 is used to transfer the assets from the
-    /// caller to the proxy.
+    /// @notice Creates a batch of linear streams with range. Assets are transferred to the proxy via Permit2.
     ///
     /// @dev Requirements:
-    /// - `fullAmount` must be greater than zero.
-    /// - `fullAmount` must be equal to the sum of all amounts in `params`.
     /// - All requirements from {ISablierV2LockupLinear.createWithRange} must be met for each stream.
     ///
     /// @param linear The address of the {SablierV2LockupLinear} contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
-    /// @param fullAmount The amount of assets for all the streams, in units of the asset's decimals.
     /// @param params Struct encapsulating a subset of the parameters of {SablierV2LockupLinear.createWithRange}.
     /// @param permit2Params Struct encapsulating the user parameters needed for Permit2.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithRange(
         ISablierV2LockupLinear linear,
         IERC20 asset,
-        uint128 fullAmount,
         Batch.CreateWithRange[] calldata params,
         Permit2Params calldata permit2Params
     )
         external
         returns (uint256[] memory streamIds);
 
-    /// @notice Cancels a stream and creates a new one with durations. Permit2 is used to transfer the assets from
-    /// the caller to the proxy.
+    /// @notice Cancels a stream and creates a new one with durations. Assets are transferred to the proxy via Permit2.
     ///
     /// @dev Notes:
     /// - See {ISablierV2Lockup.cancel} and {ISablierV2LockupLinear.createWithDurations} for full documentation.
@@ -125,8 +114,7 @@ interface ISablierV2ProxyTarget {
         external
         returns (uint256 newStreamId);
 
-    /// @notice Cancels a stream and creates a new one with range. Permit2 is used to transfer the assets from the
-    /// caller to the proxy.
+    /// @notice Cancels a stream and creates a new one with range. Assets are transferred to the proxy via Permit2.
     ///
     /// @dev Notes:
     /// - See {ISablierV2Lockup.cancel} and {ISablierV2LockupLinear.createWithRange} for full documentation.
@@ -146,8 +134,7 @@ interface ISablierV2ProxyTarget {
         external
         returns (uint256 newStreamId);
 
-    /// @notice Mirror for {SablierV2LockupLinear.createWithDurations}. Permit2 is used to transfer the assets from the
-    /// caller to the proxy.
+    /// @notice Mirror for {SablierV2LockupLinear.createWithDurations}. Assets are transferred to the proxy via Permit2.
     /// @param linear The address of the {SablierV2LockupLinear} contract.
     /// @param params Struct encapsulating the function parameters, which are documented in Sablier V2 Core.
     /// @param permit2Params Struct encapsulating the user parameters needed for Permit2.
@@ -160,8 +147,7 @@ interface ISablierV2ProxyTarget {
         external
         returns (uint256 streamId);
 
-    /// @notice Mirror for {SablierV2LockupLinear.createWithRange}. Permit2 is used to transfer the assets from the
-    /// caller to the proxy.
+    /// @notice Mirror for {SablierV2LockupLinear.createWithRange}. Assets are transferred to the proxy via Permit2.
     /// @param linear The address of the {SablierV2LockupLinear} contract.
     /// @param params Struct encapsulating the function parameters, which are documented in Sablier V2 Core.
     /// @param permit2Params Struct encapsulating the user parameters needed for Permit2.
@@ -208,8 +194,45 @@ interface ISablierV2ProxyTarget {
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Cancels a stream and creates a new one with deltas. Permit2 is used to transfer the assets from
-    /// the caller to the proxy.
+    /// @notice Creates a batch of dynamic streams with deltas. Assets are transferred to the proxy via Permit2.
+    ///
+    /// @dev Requirements:
+    /// - All requirements from {ISablierV2LockupDynamic.createWithDeltas} must be met for each stream.
+    ///
+    /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
+    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param params Struct encapsulating a subset of the parameters of {SablierV2LockupDynamic.createWithDeltas}.
+    /// @param permit2Params Struct encapsulating the user parameters needed for Permit2.
+    /// @return streamIds The ids of the newly created streams.
+    function batchCreateWithDeltas(
+        ISablierV2LockupDynamic dynamic,
+        IERC20 asset,
+        Batch.CreateWithDeltas[] calldata params,
+        Permit2Params calldata permit2Params
+    )
+        external
+        returns (uint256[] memory streamIds);
+
+    /// @notice Creates a batch of dynamic streams with milestones. Assets are transferred to the proxy via Permit2.
+    ///
+    /// @dev Requirements:
+    /// - All requirements from {ISablierV2LockupDynamic.createWithMilestones} must be met for each stream.
+    ///
+    /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
+    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param params Struct encapsulating a subset of the parameters of {SablierV2LockupDynamic.createWithMilestones}.
+    /// @param permit2Params Struct encapsulating the user parameters needed for Permit2.
+    /// @return streamIds The ids of the newly created streams.
+    function batchCreateWithMilestones(
+        ISablierV2LockupDynamic dynamic,
+        IERC20 asset,
+        Batch.CreateWithMilestones[] calldata params,
+        Permit2Params calldata permit2Params
+    )
+        external
+        returns (uint256[] memory streamIds);
+
+    /// @notice Cancels a stream and creates a new one with deltas. Assets are transferred to the proxy via Permit2.
     ///
     /// @dev Notes:
     /// - See {ISablierV2Lockup.cancel} and {ISablierV2LockupDynamic.createWithDeltas} for full documentation.
@@ -229,8 +252,7 @@ interface ISablierV2ProxyTarget {
         external
         returns (uint256 newStreamId);
 
-    /// @notice Cancels a stream and creates a new one with milestones. Permit2 is used to transfer the assets from
-    /// the caller to the proxy.
+    /// @notice Cancels a stream and creates a new one with milestones. Assets are transferred to the proxy via Permit2.
     ///
     /// @dev Notes:
     /// - See {ISablierV2Lockup.cancel} and {ISablierV2LockupDynamic.createWithMilestones} for full documentation.
@@ -250,8 +272,7 @@ interface ISablierV2ProxyTarget {
         external
         returns (uint256 newStreamId);
 
-    /// @notice Mirror for {SablierV2LockupDynamic.createWithDeltas}. Permit2 is used to transfer the assets from
-    /// the caller to the proxy.
+    /// @notice Mirror for {SablierV2LockupDynamic.createWithDeltas}. Assets are transferred to the proxy via Permit2.
     /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param params Struct encapsulating the function parameters, which are documented in Sablier V2 Core.
     /// @param permit2Params Struct encapsulating the user parameters needed for Permit2.
@@ -264,8 +285,8 @@ interface ISablierV2ProxyTarget {
         external
         returns (uint256 streamId);
 
-    /// @notice Mirror for {SablierV2LockupDynamic.createWithMilestones}. Permit2 is used to transfer the assets from
-    /// the caller to the proxy.
+    /// @notice Mirror for {SablierV2LockupDynamic.createWithMilestones}. Assets are transferred to the proxy via
+    /// Permit2.
     /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param params Struct encapsulating the function parameters, which are documented in Sablier V2 Core.
     /// @param permit2Params Struct encapsulating the user parameters needed for Permit2.
@@ -277,55 +298,6 @@ interface ISablierV2ProxyTarget {
     )
         external
         returns (uint256 streamId);
-
-    /// @notice Creates a batch of dynamic streams with deltas. Permit2 is used to transfer the assets from the caller
-    /// to the proxy.
-    ///
-    /// @dev Requirements:
-    /// - `fullAmount` must be greater than zero.
-    /// - `fullAmount` must be equal to the sum of all amounts in `params`.
-    /// - All requirements from {ISablierV2LockupDynamic.createWithDeltas} must be met for each stream.
-    ///
-    /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
-    /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
-    /// @param params Struct encapsulating a subset of the parameters of {SablierV2LockupDynamic.createWithDeltas}.
-    /// @param permit2Params Struct encapsulating the user parameters needed for Permit2.
-    /// @return streamIds The ids of the newly created streams.
-    function batchCreateWithDeltas(
-        ISablierV2LockupDynamic dynamic,
-        IERC20 asset,
-        uint128 totalAmount,
-        Batch.CreateWithDeltas[] calldata params,
-        Permit2Params calldata permit2Params
-    )
-        external
-        returns (uint256[] memory streamIds);
-
-    /// @notice Creates a batch of dynamic streams with milestones. Permit2 is used to transfer the assets from the
-    /// caller
-    /// to the proxy.
-    ///
-    /// @dev Requirements:
-    /// - `fullAmount` must be greater than zero.
-    /// - `fullAmount` must be equal to the sum of all amounts in `params`.
-    /// - All requirements from {ISablierV2LockupDynamic.createWithMilestones} must be met for each stream.
-    ///
-    /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
-    /// @param totalAmount The amount of assets for all the streams, in units of the asset's decimals.
-    /// @param params Struct encapsulating a subset of the parameters of {SablierV2LockupDynamic.createWithMilestones}.
-    /// @param permit2Params Struct encapsulating the user parameters needed for Permit2.
-    /// @return streamIds The ids of the newly created streams.
-    function batchCreateWithMilestones(
-        ISablierV2LockupDynamic dynamic,
-        IERC20 asset,
-        uint128 totalAmount,
-        Batch.CreateWithMilestones[] calldata params,
-        Permit2Params calldata permit2Params
-    )
-        external
-        returns (uint256[] memory streamIds);
 
     /// @notice Wraps the native asset payment in ERC-20 form and creates a dynamic stream with deltas.
     ///

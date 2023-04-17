@@ -1,11 +1,6 @@
 batchCreateWithMilestones.t.sol
-├── when the total amount is zero
+├── when the batch is empty
 │  └── it should revert
-└── when the total amount is not zero
-   ├── when the parameters count is zero
-   │  └── it should revert
-   └── when the parameters count is not zero
-      ├── when the total amount is not equal to the parameters amounts summed up
-      │  └── it should revert
-      └── when the total amount is equal to the parameters amounts summed up
-         └── it should perform the ERC-20 transfers and create multiple streams
+└── when the batch is not empty
+   ├── it should create a batch of streams with range
+   └── it should perform the ERC-20 transfers

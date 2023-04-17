@@ -14,80 +14,20 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
         changePrank(users.sender);
     }
 
-    /// @dev it should revert.
-    function test_RevertWhen_TotalAmountZero() external {
-        uint128 totalAmountZero = 0;
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithDeltas,
-            (
-                dynamic,
-                asset,
-                totalAmountZero,
-                DefaultParams.batchCreateWithDeltas(users, address(proxy)),
-                permit2Params(totalAmountZero)
-            )
-        );
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_FullAmountZero.selector));
-        proxy.execute(address(target), data);
-    }
-
-    modifier whenTotalAmountNotZero() {
-        _;
-    }
-
-    /// @dev it should revert.
-    function test_RevertWhen_ParamsCountZero() external whenTotalAmountNotZero {
+    function test_RevertWhen_BatchEmpty() external {
         Batch.CreateWithDeltas[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithDeltas,
-            (dynamic, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params(DefaultParams.TOTAL_AMOUNT))
+            target.batchCreateWithDeltas, (dynamic, asset, params, permit2Params(DefaultParams.TOTAL_AMOUNT))
         );
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Errors.SablierV2ProxyTarget_FullAmountNotEqualToAmountsSum.selector, DefaultParams.TOTAL_AMOUNT, 0
-            )
-        );
+        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchEmpty.selector);
         proxy.execute(address(target), data);
     }
 
-    modifier whenParamsCountNotZero() {
+    modifier whenBatchNotEmpty() {
         _;
     }
 
-    /// @dev it should revert.
-    function test_RevertWhen_TotalAmountNotEqualToAmountsSum() external whenTotalAmountNotZero whenParamsCountNotZero {
-        uint128 totalAmount = DefaultParams.TOTAL_AMOUNT - 1;
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithDeltas,
-            (
-                dynamic,
-                asset,
-                totalAmount,
-                DefaultParams.batchCreateWithDeltas(users, address(proxy)),
-                permit2Params(totalAmount)
-            )
-        );
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Errors.SablierV2ProxyTarget_FullAmountNotEqualToAmountsSum.selector,
-                totalAmount,
-                DefaultParams.TOTAL_AMOUNT
-            )
-        );
-        proxy.execute(address(target), data);
-    }
-
-    modifier whenTotalAmountEqualToAmountsSum() {
-        _;
-    }
-
-    /// @dev it should create multiple streams.
-    function test_BatchCreateWithDeltas()
-        external
-        whenTotalAmountNotZero
-        whenParamsCountNotZero
-        whenTotalAmountEqualToAmountsSum
-    {
+    function test_BatchCreateWithDeltas() external whenBatchNotEmpty {
         // Asset flow: sender -> proxy -> dynamic
         expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
         expectMultipleCreateWithDeltasCalls(DefaultParams.createWithDeltas(users, address(proxy), asset));
