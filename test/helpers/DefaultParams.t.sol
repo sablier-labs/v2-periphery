@@ -3,8 +3,7 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
-import { UD2x18, ud2x18 } from "@prb/math/UD2x18.sol";
-import { UD60x18, ZERO } from "@prb/math/UD60x18.sol";
+import { ud2x18, UD60x18 } from "@sablier/v2-core/types/Math.sol";
 import { Broker, Lockup, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
@@ -34,8 +33,7 @@ library DefaultParams {
 
     uint128 internal constant AMOUNT = 10_000e18;
     uint256 internal constant BATCH_COUNT = 10;
-    UD60x18 internal constant BROKER_FEE = ZERO;
-    uint128 internal constant BROKER_FEE_AMOUNT = 0;
+    UD60x18 internal constant BROKER_FEE = UD60x18.wrap(0);
     uint40 internal constant CLIFF_DURATION = 2500 seconds;
     uint40 internal constant CLIFF_TIME = START_TIME + CLIFF_DURATION;
     uint40 internal constant END_TIME = START_TIME + TOTAL_DURATION;
