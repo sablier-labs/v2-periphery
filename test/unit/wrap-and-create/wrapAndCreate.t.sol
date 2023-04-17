@@ -10,7 +10,7 @@ contract WrapEtherAndCreate_Test is Unit_Test {
     function setUp() public virtual override {
         Unit_Test.setUp();
 
-        changePrank(users.sender);
+        changePrank({ msgSender: users.sender.addr });
     }
 
     function test_WrapEtherAndCreateWithDeltas() external {

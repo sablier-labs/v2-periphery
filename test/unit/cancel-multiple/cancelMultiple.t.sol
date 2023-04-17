@@ -12,7 +12,7 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
     function setUp() public virtual override {
         Unit_Test.setUp();
 
-        changePrank(users.sender);
+        changePrank({ msgSender: users.sender.addr });
     }
 
     function test_CancelMultiple() external {
@@ -30,7 +30,7 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
 
         // Asset flow: linear -> proxy -> sender
         expectMultipleTransferCalls(address(proxy), DefaultParams.REFUND_AMOUNT);
-        expectTransferCall(users.sender, DefaultParams.REFUND_AMOUNT * DefaultParams.BATCH_COUNT);
+        expectTransferCall(users.sender.addr, DefaultParams.REFUND_AMOUNT * DefaultParams.BATCH_COUNT);
 
         bytes memory data = abi.encodeCall(target.cancelMultiple, (linear, DefaultParams.assets(asset), streamIds));
         proxy.execute(address(target), data);

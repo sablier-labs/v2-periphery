@@ -2,30 +2,18 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { ud2x18, UD60x18 } from "@sablier/v2-core/types/Math.sol";
 import { Broker, Lockup, LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
+
+import { Users } from "./Types.t.sol";
 
 library DefaultParams {
     /*//////////////////////////////////////////////////////////////////////////
                                       STRUCTS
     //////////////////////////////////////////////////////////////////////////*/
-
-    struct PrivateKeys {
-        uint256 admin;
-        uint256 broker;
-        uint256 recipient;
-        uint256 sender;
-    }
-
-    struct Users {
-        address payable admin;
-        address payable broker;
-        address payable recipient;
-        address payable sender;
-    }
 
     /*//////////////////////////////////////////////////////////////////////////
                                      GENERIC
@@ -64,10 +52,10 @@ library DefaultParams {
         returns (IAllowanceTransfer.PermitDetails memory details)
     {
         details = IAllowanceTransfer.PermitDetails({
-            token: asset,
             amount: amount,
             expiration: PERMIT2_EXPIRATION,
-            nonce: PERMIT2_NONCE
+            nonce: PERMIT2_NONCE,
+            token: asset
         });
     }
 
@@ -81,10 +69,10 @@ library DefaultParams {
         returns (IAllowanceTransfer.PermitDetails memory details)
     {
         details = IAllowanceTransfer.PermitDetails({
-            token: asset,
             amount: amount,
             expiration: PERMIT2_EXPIRATION,
-            nonce: nonce
+            nonce: nonce,
+            token: asset
         });
     }
 
@@ -140,13 +128,13 @@ library DefaultParams {
         returns (LockupDynamic.CreateWithDeltas memory params)
     {
         params = LockupDynamic.CreateWithDeltas({
-            sender: proxy,
-            recipient: users.recipient,
-            totalAmount: PER_STREAM_TOTAL_AMOUNT,
             asset: asset,
+            broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
             cancelable: true,
+            recipient: users.recipient.addr,
             segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
-            broker: Broker({ account: users.broker, fee: BROKER_FEE })
+            sender: proxy,
+            totalAmount: PER_STREAM_TOTAL_AMOUNT
         });
     }
 
@@ -160,14 +148,14 @@ library DefaultParams {
         returns (LockupDynamic.CreateWithMilestones memory params)
     {
         params = LockupDynamic.CreateWithMilestones({
-            sender: proxy,
-            recipient: user.recipient,
-            totalAmount: PER_STREAM_TOTAL_AMOUNT,
             asset: asset,
+            broker: Broker({ account: user.broker.addr, fee: BROKER_FEE }),
             cancelable: true,
+            recipient: user.recipient.addr,
             segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
+            sender: proxy,
             startTime: START_TIME,
-            broker: Broker({ account: user.broker, fee: BROKER_FEE })
+            totalAmount: PER_STREAM_TOTAL_AMOUNT
         });
     }
 
@@ -208,9 +196,9 @@ library DefaultParams {
     {
         segments_ = new LockupDynamic.SegmentWithDelta[](2);
         segments_[0] =
-            LockupDynamic.SegmentWithDelta({ amount: amount0, delta: 2500 seconds, exponent: ud2x18(3.14e18) });
+            LockupDynamic.SegmentWithDelta({ amount: amount0, exponent: ud2x18(3.14e18), delta: 2500 seconds });
         segments_[1] =
-            LockupDynamic.SegmentWithDelta({ amount: amount1, delta: 7500 seconds, exponent: ud2x18(3.14e18) });
+            LockupDynamic.SegmentWithDelta({ amount: amount1, exponent: ud2x18(3.14e18), delta: 7500 seconds });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -231,13 +219,13 @@ library DefaultParams {
         returns (LockupLinear.CreateWithDurations memory params)
     {
         params = LockupLinear.CreateWithDurations({
-            sender: proxy,
-            recipient: users.recipient,
-            totalAmount: PER_STREAM_TOTAL_AMOUNT,
             asset: asset,
-            cancelable: true,
+            broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
             durations: durations(),
-            broker: Broker({ account: users.broker, fee: BROKER_FEE })
+            cancelable: true,
+            recipient: users.recipient.addr,
+            sender: proxy,
+            totalAmount: PER_STREAM_TOTAL_AMOUNT
         });
     }
 
@@ -251,13 +239,13 @@ library DefaultParams {
         returns (LockupLinear.CreateWithRange memory params)
     {
         params = LockupLinear.CreateWithRange({
-            sender: proxy,
-            recipient: users.recipient,
-            totalAmount: PER_STREAM_TOTAL_AMOUNT,
             asset: asset,
+            broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
             cancelable: true,
             range: linearRange(),
-            broker: Broker({ account: users.broker, fee: BROKER_FEE })
+            recipient: users.recipient.addr,
+            sender: proxy,
+            totalAmount: PER_STREAM_TOTAL_AMOUNT
         });
     }
 
@@ -281,9 +269,9 @@ library DefaultParams {
         params = new Batch.CreateWithDeltas[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithDeltas({
-                broker: Broker({ account: users.broker, fee: BROKER_FEE }),
+                broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
-                recipient: users.recipient,
+                recipient: users.recipient.addr,
                 segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
                 sender: proxy,
                 totalAmount: PER_STREAM_TOTAL_AMOUNT
@@ -303,10 +291,10 @@ library DefaultParams {
         params = new Batch.CreateWithDurations[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithDurations({
-                broker: Broker({ account: users.broker, fee: BROKER_FEE }),
+                broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
                 durations: durations(),
-                recipient: users.recipient,
+                recipient: users.recipient.addr,
                 sender: proxy,
                 totalAmount: PER_STREAM_TOTAL_AMOUNT
             });
@@ -325,9 +313,9 @@ library DefaultParams {
         params = new Batch.CreateWithMilestones[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithMilestones({
-                broker: Broker({ account: users.broker, fee: BROKER_FEE }),
+                broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
-                recipient: users.recipient,
+                recipient: users.recipient.addr,
                 segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
                 sender: proxy,
                 startTime: START_TIME,
@@ -348,10 +336,10 @@ library DefaultParams {
         params = new Batch.CreateWithRange[](BATCH_COUNT);
         for (uint256 i = 0; i < BATCH_COUNT; ++i) {
             params[i] = Batch.CreateWithRange({
-                broker: Broker({ account: users.broker, fee: BROKER_FEE }),
+                broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
                 range: linearRange(),
-                recipient: users.recipient,
+                recipient: users.recipient.addr,
                 sender: proxy,
                 totalAmount: PER_STREAM_TOTAL_AMOUNT
             });

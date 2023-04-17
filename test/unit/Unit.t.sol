@@ -15,7 +15,7 @@ contract Unit_Test is Base_Test {
         Base_Test.setUp();
 
         // Deploy and label the sender proxy.
-        proxy = registry.deployFor(users.sender);
+        proxy = registry.deployFor(users.sender.addr);
         vm.label({ account: address(proxy), newLabel: "Proxy" });
 
         deployCore();
@@ -32,7 +32,7 @@ contract Unit_Test is Base_Test {
             expiration: DefaultParams.PERMIT2_EXPIRATION,
             sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
             signature: getPermit2Signature(
-                DefaultParams.permitDetails(address(asset), amount), privateKeys.sender, address(proxy)
+                DefaultParams.permitDetails(address(asset), amount), users.sender.key, address(proxy)
                 )
         });
     }
@@ -43,7 +43,7 @@ contract Unit_Test is Base_Test {
             expiration: DefaultParams.PERMIT2_EXPIRATION,
             sigDeadline: DefaultParams.PERMIT2_SIG_DEADLINE,
             signature: getPermit2Signature(
-                DefaultParams.permitDetailsWithNonce(address(asset), amount, nonce), privateKeys.sender, address(proxy)
+                DefaultParams.permitDetailsWithNonce(address(asset), amount, nonce), users.sender.key, address(proxy)
                 )
         });
     }

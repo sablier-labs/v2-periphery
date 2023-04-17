@@ -11,7 +11,7 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
     function setUp() public virtual override {
         Unit_Test.setUp();
 
-        changePrank(users.sender);
+        changePrank({ msgSender: users.sender.addr });
     }
 
     function test_RevertWhen_BatchEmpty() external {
@@ -29,7 +29,7 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
 
     function test_BatchCreateWithDeltas() external whenBatchNotEmpty {
         // Asset flow: sender -> proxy -> dynamic
-        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TRANSFER_AMOUNT);
+        expectTransferFromCall(users.sender.addr, address(proxy), DefaultParams.TRANSFER_AMOUNT);
         expectMultipleCreateWithDeltasCalls(DefaultParams.createWithDeltas(users, address(proxy), asset));
         expectMultipleTransferCalls(address(proxy), address(dynamic), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
 

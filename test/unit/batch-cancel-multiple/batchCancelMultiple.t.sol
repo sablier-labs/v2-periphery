@@ -12,7 +12,7 @@ contract BatchCancelMultiple_Test is Unit_Test {
     function setUp() public virtual override {
         Unit_Test.setUp();
 
-        changePrank(users.sender);
+        changePrank({ msgSender: users.sender.addr });
     }
 
     function test_BatchCancelMultiple() external {
@@ -42,7 +42,7 @@ contract BatchCancelMultiple_Test is Unit_Test {
         // Asset flow: linear -> proxy -> sender
         expectCancelMultipleCall(address(linear), linearStreamIds);
         expectMultipleTransferCalls(address(proxy), DefaultParams.REFUND_AMOUNT);
-        expectTransferCall(users.sender, 2 * DefaultParams.BATCH_COUNT * DefaultParams.REFUND_AMOUNT);
+        expectTransferCall(users.sender.addr, 2 * DefaultParams.BATCH_COUNT * DefaultParams.REFUND_AMOUNT);
 
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, DefaultParams.assets(asset)));
         proxy.execute(address(target), data);

@@ -11,7 +11,7 @@ contract BatchCreateWithRange_Test is Unit_Test {
     function setUp() public virtual override {
         Unit_Test.setUp();
 
-        changePrank(users.sender);
+        changePrank({ msgSender: users.sender.addr });
     }
 
     function test_RevertWhen_BatchEmpty() external {
@@ -29,7 +29,7 @@ contract BatchCreateWithRange_Test is Unit_Test {
 
     function test_BatchCreateWithRange() external whenBatchNotEmpty {
         // Asset flow: sender -> proxy -> linear
-        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TRANSFER_AMOUNT);
+        expectTransferFromCall(users.sender.addr, address(proxy), DefaultParams.TRANSFER_AMOUNT);
         expectMultipleCreateWithRangeCalls(DefaultParams.createWithRange(users, address(proxy), asset));
         expectMultipleTransferCalls(address(proxy), address(linear), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
 

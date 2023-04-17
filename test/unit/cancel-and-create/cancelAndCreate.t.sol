@@ -8,14 +8,14 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
     function setUp() public virtual override {
         Unit_Test.setUp();
 
-        changePrank(users.sender);
+        changePrank({ msgSender: users.sender.addr });
     }
 
     function expectCancelAndTransferCalls(address cancelLockup, address createLockup, uint256 streamId) internal {
         expectCancelCall(cancelLockup, streamId);
         expectTransferCall(address(proxy), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
-        expectTransferCall(users.sender, DefaultParams.PER_STREAM_TOTAL_AMOUNT);
-        expectTransferFromCall(users.sender, address(proxy), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
+        expectTransferCall(users.sender.addr, DefaultParams.PER_STREAM_TOTAL_AMOUNT);
+        expectTransferFromCall(users.sender.addr, address(proxy), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
         expectTransferFromCall(address(proxy), createLockup, DefaultParams.PER_STREAM_TOTAL_AMOUNT);
     }
 

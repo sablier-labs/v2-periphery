@@ -2,9 +2,6 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
-import { AllowanceTransfer } from "permit2/AllowanceTransfer.sol";
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
-import { PermitHash } from "permit2/libraries/PermitHash.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
 import { PRBProxyRegistry } from "@prb/proxy/PRBProxyRegistry.sol";
 import { SablierV2Lockup } from "@sablier/v2-core/abstracts/SablierV2Lockup.sol";
@@ -13,12 +10,16 @@ import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.so
 import { SablierV2LockupDynamic } from "@sablier/v2-core/SablierV2LockupDynamic.sol";
 import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
+import { AllowanceTransfer } from "permit2/AllowanceTransfer.sol";
+import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
+import { PermitHash } from "permit2/libraries/PermitHash.sol";
 
 import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
 
 import { Assertions } from "./helpers/Assertions.t.sol";
 import { DefaultParams } from "./helpers/DefaultParams.t.sol";
 import { SablierV2NFTDescriptor } from "./mockups/SablierV2NFTDescriptor.t.sol";
+import { Users } from "./helpers/Types.t.sol";
 import { WETH } from "./mockups/WETH.t.sol";
 
 /// @title Base_Test
@@ -42,18 +43,17 @@ abstract contract Base_Test is Assertions, StdCheats {
     SablierV2ProxyTarget internal target;
 
     /*//////////////////////////////////////////////////////////////////////////
-                                  INTERNAL STORAGE
+                                   TEST VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
-    DefaultParams.PrivateKeys internal privateKeys;
-    DefaultParams.Users internal users;
+    Users internal users;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
     constructor() {
-        // Deploy the target contract.
+        // Deploy the proxy target.
         target = new SablierV2ProxyTarget();
 
         // Label all the contracts just deployed.
@@ -68,10 +68,10 @@ abstract contract Base_Test is Assertions, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual {
-        (users.admin, privateKeys.admin) = createUser("Admin");
-        (users.broker, privateKeys.broker) = createUser("Broker");
-        (users.recipient, privateKeys.recipient) = createUser("Recipient");
-        (users.sender, privateKeys.sender) = createUser("Sender");
+        users.admin = createUser("Admin");
+        users.broker = createUser("Broker");
+        users.recipient = createUser("Recipient");
+        users.sender = createUser("Sender");
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -110,25 +110,34 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Helper function to approve the `permit2` contract to spend ERC-20 assets from the sender and recipient.
     function approvePermit2() internal {
-        changePrank({ msgSender: users.sender });
+        changePrank({ msgSender: users.sender.addr });
         asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
-        changePrank({ msgSender: users.recipient });
+        changePrank({ msgSender: users.recipient.addr });
         asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
     }
 
-    /// @dev Generates an address by hashing the name, labels the address and funds it with 100 ETH, 1 million assets.
-    function createUser(string memory name) internal returns (address payable, uint256) {
-        (address addr, uint256 privateKey) = makeAddrAndKey(name);
-        vm.deal({ account: addr, newBalance: 1_000_000 ether });
-        deal({ token: address(asset), to: addr, give: 1_000_000e18 });
-        return (payable(addr), privateKey);
+    /// @dev Generates an address by hashing the name, labels the address, and funds it with 100k ETH and 1M asset
+    /// units.
+    function createUser(string memory name) internal returns (Account memory user) {
+        user = makeAccount(name);
+        vm.deal({ account: user.addr, newBalance: 100_000 ether });
+        deal({ token: address(asset), to: user.addr, give: 1_000_000e18 });
     }
 
     /// @dev Deploys and labels the core contracts.
     function deployCore() internal {
-        comptroller = new SablierV2Comptroller(users.admin);
-        linear = new SablierV2LockupLinear(users.admin, comptroller, descriptor);
-        dynamic = new SablierV2LockupDynamic(users.admin, comptroller, descriptor,  DefaultParams.MAX_SEGMENT_COUNT);
+        comptroller = new SablierV2Comptroller({ initialAdmin: users.admin.addr });
+        linear = new SablierV2LockupLinear({
+            initialAdmin: users.admin.addr,
+            initialComptroller: comptroller,
+            initialNFTDescriptor: descriptor
+        });
+        dynamic = new SablierV2LockupDynamic({
+            initialAdmin: users.admin.addr,
+            initialComptroller: comptroller,
+            initialNFTDescriptor: descriptor,
+            maxSegmentCount: DefaultParams.MAX_SEGMENT_COUNT
+        });
         vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(linear), newLabel: "LockupLinear" });
