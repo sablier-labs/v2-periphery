@@ -5,57 +5,42 @@ import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Unit_Test } from "../Unit.t.sol";
-import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
+import { Base_Test } from "../../Base.t.sol";
+import { Defaults } from "../../helpers/Defaults.t.sol";
 
-contract BatchCancelMultiple_Test is Unit_Test {
-    function setUp() public virtual override {
-        Unit_Test.setUp();
-
-        changePrank({ msgSender: users.sender.addr });
-    }
-
+contract BatchCancelMultiple_Unit_Test is Base_Test {
     function test_BatchCancelMultiple() external {
-        uint256[] memory dynamicStreamIds = batchCreateWithMilestonesDefaultWithNonce(0);
-        uint256[] memory linearStreamIds = batchCreateWithRangeDefaultWithNonce(1);
+        // Create two batches of streams due to be canceled.
+        uint256[] memory dynamicStreamIds = batchCreateWithMilestones({ nonce: 0 });
+        uint256[] memory linearStreamIds = batchCreateWithRange({ nonce: 1 });
 
+        // Warp into the future.
+        vm.warp({ timestamp: Defaults.WARP_26_PERCENT });
+
+        // Expects calls to cancel multiple streams.
+        expectCallToCancelMultiple({ lockup: address(dynamic), streamIds: dynamicStreamIds });
+        expectCallToCancelMultiple({ lockup: address(linear), streamIds: linearStreamIds });
+
+        // Asset flow: Sablier → proxy → proxy owner
+        // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.
+        expectMultipleCallsToTransfer({ to: address(proxy), amount: Defaults.REFUND_AMOUNT });
+        expectMultipleCallsToTransfer({ to: address(proxy), amount: Defaults.REFUND_AMOUNT });
+        expectCallToTransfer({ to: users.sender.addr, amount: 2 * Defaults.BATCH_COUNT * Defaults.REFUND_AMOUNT });
+
+        // ABI encode the parameters and call the function via the proxy.
         Batch.CancelMultiple[] memory params = new Batch.CancelMultiple[](2);
         params[0] = Batch.CancelMultiple(dynamic, dynamicStreamIds);
         params[1] = Batch.CancelMultiple(linear, linearStreamIds);
-
-        Lockup.Status[] memory beforeDynamicStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
-        Lockup.Status[] memory beforeLinearStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
-
-        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
-            beforeDynamicStatuses[i] = dynamic.getStatus(dynamicStreamIds[i]);
-            beforeLinearStatuses[i] = linear.getStatus(linearStreamIds[i]);
-        }
-
-        assertEq(beforeDynamicStatuses, DefaultParams.statusesBeforeCancelMultiple());
-        assertEq(beforeLinearStatuses, DefaultParams.statusesBeforeCancelMultiple());
-
-        vm.warp(DefaultParams.TIME_WARP);
-
-        // Asset flow: dynamic -> proxy -> sender
-        expectCancelMultipleCall(address(dynamic), dynamicStreamIds);
-        expectMultipleTransferCalls(address(proxy), DefaultParams.REFUND_AMOUNT);
-        // Asset flow: linear -> proxy -> sender
-        expectCancelMultipleCall(address(linear), linearStreamIds);
-        expectMultipleTransferCalls(address(proxy), DefaultParams.REFUND_AMOUNT);
-        expectTransferCall(users.sender.addr, 2 * DefaultParams.BATCH_COUNT * DefaultParams.REFUND_AMOUNT);
-
-        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, DefaultParams.assets(asset)));
+        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, Defaults.assets(dai)));
         proxy.execute(address(target), data);
 
-        Lockup.Status[] memory afterDynamicStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
-        Lockup.Status[] memory afterLinearStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
-
-        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
-            afterDynamicStatuses[i] = dynamic.getStatus(dynamicStreamIds[i]);
-            afterLinearStatuses[i] = linear.getStatus(linearStreamIds[i]);
+        // Assert that all streams have been marked as canceled.
+        Lockup.Status expectedStatus = Lockup.Status.CANCELED;
+        for (uint256 i = 0; i < Defaults.BATCH_COUNT; ++i) {
+            Lockup.Status actualDynamicStatus = dynamic.getStatus(dynamicStreamIds[i]);
+            Lockup.Status actualLinearStatus = linear.getStatus(dynamicStreamIds[i]);
+            assertEq(actualDynamicStatus, expectedStatus, "dynamic stream status not canceled");
+            assertEq(actualLinearStatus, expectedStatus, "linear stream status not canceled");
         }
-
-        assertEq(afterDynamicStatuses, DefaultParams.statusesAfterCancelMultiple());
-        assertEq(afterLinearStatuses, DefaultParams.statusesAfterCancelMultiple());
     }
 }

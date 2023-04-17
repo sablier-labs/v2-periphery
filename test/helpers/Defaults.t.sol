@@ -2,6 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
+import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
 import { ud2x18, UD60x18 } from "@sablier/v2-core/types/Math.sol";
 import { Broker, Lockup, LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
@@ -10,11 +11,8 @@ import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
 import { Users } from "./Types.t.sol";
 
-library DefaultParams {
-    /*//////////////////////////////////////////////////////////////////////////
-                                      STRUCTS
-    //////////////////////////////////////////////////////////////////////////*/
-
+/// @notice This library contains default values for testing.
+library Defaults {
     /*//////////////////////////////////////////////////////////////////////////
                                      GENERIC
     //////////////////////////////////////////////////////////////////////////*/
@@ -25,14 +23,13 @@ library DefaultParams {
     uint40 internal constant CLIFF_TIME = START_TIME + CLIFF_DURATION;
     uint40 internal constant END_TIME = START_TIME + TOTAL_DURATION;
     uint256 internal constant ETHER_AMOUNT = 10_000 ether;
-    UD60x18 internal constant MAX_FEE = UD60x18.wrap(0.1e18); // 10%
     uint256 internal constant MAX_SEGMENT_COUNT = 1000;
-    uint128 internal constant PER_STREAM_TOTAL_AMOUNT = 10_000e18;
+    uint128 internal constant PER_STREAM_AMOUNT = 10_000e18;
     uint128 internal constant REFUND_AMOUNT = 7500e18;
-    uint40 internal constant START_TIME = 100;
-    uint40 internal constant TIME_WARP = 2600 seconds;
+    uint40 internal constant START_TIME = 100 seconds;
     uint40 internal constant TOTAL_DURATION = 10_000 seconds;
     uint128 internal constant TRANSFER_AMOUNT = 100_000e18;
+    uint40 internal constant WARP_26_PERCENT = 2600 seconds;
     uint128 internal constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -44,7 +41,7 @@ library DefaultParams {
     uint256 internal constant PERMIT2_SIG_DEADLINE = 100;
 
     function permitDetails(
-        address asset,
+        IERC20 asset,
         uint160 amount
     )
         internal
@@ -55,12 +52,12 @@ library DefaultParams {
             amount: amount,
             expiration: PERMIT2_EXPIRATION,
             nonce: PERMIT2_NONCE,
-            token: asset
+            token: address(asset)
         });
     }
 
-    function permitDetailsWithNonce(
-        address asset,
+    function permitDetails(
+        IERC20 asset,
         uint160 amount,
         uint48 nonce
     )
@@ -72,7 +69,7 @@ library DefaultParams {
             amount: amount,
             expiration: PERMIT2_EXPIRATION,
             nonce: nonce,
-            token: asset
+            token: address(asset)
         });
     }
 
@@ -83,28 +80,6 @@ library DefaultParams {
     function assets(IERC20 asset) internal pure returns (IERC20[] memory assets_) {
         assets_ = new IERC20[](1);
         assets_[0] = asset;
-    }
-
-    function statusAfterCancel() internal pure returns (Lockup.Status status) {
-        status = Lockup.Status.CANCELED;
-    }
-
-    function statusBeforeCancel() internal pure returns (Lockup.Status status) {
-        status = Lockup.Status.ACTIVE;
-    }
-
-    function statusesAfterCancelMultiple() internal pure returns (Lockup.Status[] memory statuses) {
-        statuses = new Lockup.Status[](BATCH_COUNT);
-        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
-            statuses[i] = Lockup.Status.CANCELED;
-        }
-    }
-
-    function statusesBeforeCancelMultiple() internal pure returns (Lockup.Status[] memory statuses) {
-        statuses = new Lockup.Status[](BATCH_COUNT);
-        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
-            statuses[i] = Lockup.Status.ACTIVE;
-        }
     }
 
     function streamIds() internal pure returns (uint256[] memory streamIds_) {
@@ -120,7 +95,7 @@ library DefaultParams {
 
     function createWithDeltas(
         Users memory users,
-        address proxy,
+        IPRBProxy proxy,
         IERC20 asset
     )
         internal
@@ -133,14 +108,14 @@ library DefaultParams {
             cancelable: true,
             recipient: users.recipient.addr,
             segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
-            sender: proxy,
-            totalAmount: PER_STREAM_TOTAL_AMOUNT
+            sender: address(proxy),
+            totalAmount: PER_STREAM_AMOUNT
         });
     }
 
     function createWithMilestones(
         Users memory user,
-        address proxy,
+        IPRBProxy proxy,
         IERC20 asset
     )
         internal
@@ -153,9 +128,9 @@ library DefaultParams {
             cancelable: true,
             recipient: user.recipient.addr,
             segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
-            sender: proxy,
+            sender: address(proxy),
             startTime: START_TIME,
-            totalAmount: PER_STREAM_TOTAL_AMOUNT
+            totalAmount: PER_STREAM_AMOUNT
         });
     }
 
@@ -211,7 +186,7 @@ library DefaultParams {
 
     function createWithDurations(
         Users memory users,
-        address proxy,
+        IPRBProxy proxy,
         IERC20 asset
     )
         internal
@@ -224,14 +199,14 @@ library DefaultParams {
             durations: durations(),
             cancelable: true,
             recipient: users.recipient.addr,
-            sender: proxy,
-            totalAmount: PER_STREAM_TOTAL_AMOUNT
+            sender: address(proxy),
+            totalAmount: PER_STREAM_AMOUNT
         });
     }
 
     function createWithRange(
         Users memory users,
-        address proxy,
+        IPRBProxy proxy,
         IERC20 asset
     )
         internal
@@ -244,8 +219,8 @@ library DefaultParams {
             cancelable: true,
             range: linearRange(),
             recipient: users.recipient.addr,
-            sender: proxy,
-            totalAmount: PER_STREAM_TOTAL_AMOUNT
+            sender: address(proxy),
+            totalAmount: PER_STREAM_AMOUNT
         });
     }
 
@@ -260,7 +235,7 @@ library DefaultParams {
     /// @dev Helper function to return an array of `Batch.CreateWithDeltas`.
     function batchCreateWithDeltas(
         Users memory users,
-        address proxy
+        IPRBProxy proxy
     )
         internal
         pure
@@ -273,8 +248,8 @@ library DefaultParams {
                 cancelable: true,
                 recipient: users.recipient.addr,
                 segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
-                sender: proxy,
-                totalAmount: PER_STREAM_TOTAL_AMOUNT
+                sender: address(proxy),
+                totalAmount: PER_STREAM_AMOUNT
             });
         }
     }
@@ -282,7 +257,7 @@ library DefaultParams {
     /// @dev Helper function to return an array of `Batch.CreateWithDurations`.
     function batchCreateWithDurations(
         Users memory users,
-        address proxy
+        IPRBProxy proxy
     )
         internal
         pure
@@ -295,8 +270,8 @@ library DefaultParams {
                 cancelable: true,
                 durations: durations(),
                 recipient: users.recipient.addr,
-                sender: proxy,
-                totalAmount: PER_STREAM_TOTAL_AMOUNT
+                sender: address(proxy),
+                totalAmount: PER_STREAM_AMOUNT
             });
         }
     }
@@ -304,7 +279,7 @@ library DefaultParams {
     /// @dev Helper function to return an array of `Batch.CreateWithMilestones`.
     function batchCreateWithMilestones(
         Users memory users,
-        address proxy
+        IPRBProxy proxy
     )
         internal
         pure
@@ -317,9 +292,9 @@ library DefaultParams {
                 cancelable: true,
                 recipient: users.recipient.addr,
                 segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
-                sender: proxy,
+                sender: address(proxy),
                 startTime: START_TIME,
-                totalAmount: PER_STREAM_TOTAL_AMOUNT
+                totalAmount: PER_STREAM_AMOUNT
             });
         }
     }
@@ -327,7 +302,7 @@ library DefaultParams {
     /// @dev Helper function to return an array of `Batch.CreateWithRange`.
     function batchCreateWithRange(
         Users memory users,
-        address proxy
+        IPRBProxy proxy
     )
         internal
         pure
@@ -340,8 +315,8 @@ library DefaultParams {
                 cancelable: true,
                 range: linearRange(),
                 recipient: users.recipient.addr,
-                sender: proxy,
-                totalAmount: PER_STREAM_TOTAL_AMOUNT
+                sender: address(proxy),
+                totalAmount: PER_STREAM_AMOUNT
             });
         }
     }

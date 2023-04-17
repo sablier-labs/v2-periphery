@@ -11,11 +11,11 @@ contract WETH is IWrappedNativeAsset, ERC20("Wrapped Ether", "WETH") {
     }
 
     function deposit() public payable virtual {
-        _mint(msg.sender, msg.value);
+        _mint({ account: msg.sender, amount: msg.value });
     }
 
     function withdraw(uint256 amount) public virtual {
-        _burn(msg.sender, amount);
+        _burn({ account: msg.sender, amount: amount });
         payable(msg.sender).transfer(amount);
     }
 }

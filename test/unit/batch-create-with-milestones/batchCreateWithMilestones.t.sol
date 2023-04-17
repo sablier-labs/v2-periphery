@@ -4,20 +4,14 @@ pragma solidity >=0.8.19 <0.9.0;
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Unit_Test } from "../Unit.t.sol";
-import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
+import { Base_Test } from "../../Base.t.sol";
+import { Defaults } from "../../helpers/Defaults.t.sol";
 
-contract BatchCreateWithMilestones_Test is Unit_Test {
-    function setUp() public virtual override {
-        Unit_Test.setUp();
-
-        changePrank({ msgSender: users.sender.addr });
-    }
-
+contract BatchCreateWithMilestones_Unit_Test is Base_Test {
     function test_RevertWhen_BatchEmpty() external {
         Batch.CreateWithMilestones[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones, (dynamic, asset, params, permit2Params(DefaultParams.TRANSFER_AMOUNT))
+            target.batchCreateWithMilestones, (dynamic, dai, params, permit2Params(Defaults.TRANSFER_AMOUNT))
         );
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchEmpty.selector);
         proxy.execute(address(target), data);
@@ -28,12 +22,19 @@ contract BatchCreateWithMilestones_Test is Unit_Test {
     }
 
     function test_BatchCreateWithMilestones() external whenBatchNotEmpty {
-        // Asset flow: sender -> proxy -> dynamic
-        expectTransferFromCall(users.sender.addr, address(proxy), DefaultParams.TRANSFER_AMOUNT);
-        expectMultipleCreateWithMilestonesCalls(DefaultParams.createWithMilestones(users, address(proxy), asset));
-        expectMultipleTransferCalls(address(proxy), address(dynamic), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
+        // Asset flow: proxy owner → proxy → Sablier
+        // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
+        expectCallToTransferFrom({ from: users.sender.addr, to: address(proxy), amount: Defaults.TRANSFER_AMOUNT });
+        expectMultipleCallsToCreateWithMilestones({ params: Defaults.createWithMilestones(users, proxy, dai) });
+        expectMultipleCallsToTransferFrom({
+            from: address(proxy),
+            to: address(dynamic),
+            amount: Defaults.PER_STREAM_AMOUNT
+        });
 
-        uint256[] memory streamIds = batchCreateWithMilestonesDefault();
-        assertEq(streamIds, DefaultParams.streamIds());
+        // Assert that the batch of streams has been created successfully.
+        uint256[] memory actualStreamIds = batchCreateWithMilestones();
+        uint256[] memory expectedStreamIds = Defaults.streamIds();
+        assertEq(actualStreamIds, expectedStreamIds, "stream ids do not match");
     }
 }

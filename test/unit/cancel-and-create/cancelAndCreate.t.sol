@@ -1,205 +1,295 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { Unit_Test } from "../Unit.t.sol";
-import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
+import { Base_Test } from "../../Base.t.sol";
+import { Defaults } from "../../helpers/Defaults.t.sol";
 
-contract CancelAndCreateWithRange_Test is Unit_Test {
-    function setUp() public virtual override {
-        Unit_Test.setUp();
-
-        changePrank({ msgSender: users.sender.addr });
-    }
-
-    function expectCancelAndTransferCalls(address cancelLockup, address createLockup, uint256 streamId) internal {
-        expectCancelCall(cancelLockup, streamId);
-        expectTransferCall(address(proxy), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
-        expectTransferCall(users.sender.addr, DefaultParams.PER_STREAM_TOTAL_AMOUNT);
-        expectTransferFromCall(users.sender.addr, address(proxy), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
-        expectTransferFromCall(address(proxy), createLockup, DefaultParams.PER_STREAM_TOTAL_AMOUNT);
-    }
+/// @dev This contracts tests the following functions:
+/// - `cancelAndCreateWithDeltas`
+/// - `cancelAndCreateWithDurations`
+/// - `cancelAndCreateWithMilestones`
+/// - `cancelAndCreateWithRange`
+contract CancelAndCreate_Unit_Test is Base_Test {
+    /*//////////////////////////////////////////////////////////////////////////
+                                 CREATE WITH DELTAS
+    //////////////////////////////////////////////////////////////////////////*/
 
     function test_CancelAndCreateWithDeltas() external {
-        uint256 streamId = createWithDeltasDefault();
+        // Create the stream due to be canceled.
+        uint256 streamId = createWithDeltas();
 
-        expectCancelAndTransferCalls(address(dynamic), address(dynamic), streamId);
-        expectCreateWithDeltasCall(DefaultParams.createWithDeltas(users, address(proxy), asset));
+        // Expect the correct calls to be made.
+        expectCancelAndTransferCalls({
+            cancelContract: address(dynamic),
+            createContract: address(dynamic),
+            streamId: streamId
+        });
+        expectCallToCreateWithDeltas({ params: Defaults.createWithDeltas(users, proxy, dai) });
 
-        uint256 expectedNewStreamId = dynamic.nextStreamId();
+        // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDeltas,
             (
                 dynamic,
                 dynamic,
                 streamId,
-                DefaultParams.createWithDeltas(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
+                Defaults.createWithDeltas(users, proxy, dai),
+                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
-        uint256 actualNewStreamId = abi.decode(response, (uint256));
 
-        assertEq(actualNewStreamId, expectedNewStreamId);
+        // Assert that the new stream has been created successfully.
+        uint256 actualNewStreamId = abi.decode(response, (uint256));
+        uint256 expectedNewStreamId = dynamic.nextStreamId() - 1;
+        assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithDeltas_DifferentStreams() external {
-        uint256 streamId = createWithRangeDefault();
+    function test_CancelAndCreateWithDeltas_AcrossSablierContracts() external {
+        // Create the stream due to be canceled.
+        uint256 streamId = createWithRange();
 
-        expectCancelAndTransferCalls(address(linear), address(dynamic), streamId);
-        expectCreateWithDeltasCall(DefaultParams.createWithDeltas(users, address(proxy), asset));
+        // Expect the correct calls to be made.
+        expectCancelAndTransferCalls({
+            cancelContract: address(linear),
+            createContract: address(dynamic),
+            streamId: streamId
+        });
+        expectCallToCreateWithDeltas({ params: Defaults.createWithDeltas(users, proxy, dai) });
 
-        uint256 expectedNewStreamId = dynamic.nextStreamId();
+        // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDeltas,
             (
                 linear,
                 dynamic,
                 streamId,
-                DefaultParams.createWithDeltas(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
+                Defaults.createWithDeltas(users, proxy, dai),
+                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
-        uint256 actualNewStreamId = abi.decode(response, (uint256));
 
-        assertEq(actualNewStreamId, expectedNewStreamId);
+        // Assert that the new stream has been created successfully.
+        uint256 actualNewStreamId = abi.decode(response, (uint256));
+        uint256 expectedNewStreamId = dynamic.nextStreamId() - 1;
+        assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithDurations() external {
-        uint256 streamId = createWithDurationsDefault();
+    /*//////////////////////////////////////////////////////////////////////////
+                               CREATE WITH DURATIONS
+    //////////////////////////////////////////////////////////////////////////*/
 
-        expectCancelAndTransferCalls(address(linear), address(linear), streamId);
-        expectCreateWithDurationsCall(DefaultParams.createWithDurations(users, address(proxy), asset));
+    function test_CancelAndCreateWithDurations_SameSablierContract() external {
+        // Create the stream due to be canceled.
+        uint256 streamId = createWithDurations();
 
-        uint256 expectedNewStreamId = linear.nextStreamId();
+        // Expect the correct calls to be made.
+        expectCancelAndTransferCalls({
+            cancelContract: address(linear),
+            createContract: address(linear),
+            streamId: streamId
+        });
+        expectCallToCreateWithDurations({ params: Defaults.createWithDurations(users, proxy, dai) });
+
+        // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDurations,
             (
                 linear,
                 linear,
                 streamId,
-                DefaultParams.createWithDurations(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
+                Defaults.createWithDurations(users, proxy, dai),
+                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
-        uint256 actualNewStreamId = abi.decode(response, (uint256));
 
-        assertEq(actualNewStreamId, expectedNewStreamId);
+        // Assert that the new stream has been created successfully.
+        uint256 actualNewStreamId = abi.decode(response, (uint256));
+        uint256 expectedNewStreamId = linear.nextStreamId() - 1;
+        assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithDurations_DifferentStreams() external {
-        uint256 streamId = createWithMilestonesDefault();
+    function test_CancelAndCreateWithDurations_AcrossSablierContracts() external {
+        // Create the stream due to be canceled.
+        uint256 streamId = createWithMilestones();
 
-        expectCancelAndTransferCalls(address(dynamic), address(linear), streamId);
-        expectCreateWithDurationsCall(DefaultParams.createWithDurations(users, address(proxy), asset));
+        // Expect the correct calls to be made.
+        expectCancelAndTransferCalls({
+            cancelContract: address(dynamic),
+            createContract: address(linear),
+            streamId: streamId
+        });
+        expectCallToCreateWithDurations({ params: Defaults.createWithDurations(users, proxy, dai) });
 
-        uint256 expectedNewStreamId = linear.nextStreamId();
+        // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDurations,
             (
                 dynamic,
                 linear,
                 streamId,
-                DefaultParams.createWithDurations(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
+                Defaults.createWithDurations(users, proxy, dai),
+                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
-        uint256 actualNewStreamId = abi.decode(response, (uint256));
 
-        assertEq(actualNewStreamId, expectedNewStreamId);
+        // Assert that the new stream has been created successfully.
+        uint256 actualNewStreamId = abi.decode(response, (uint256));
+        uint256 expectedNewStreamId = linear.nextStreamId() - 1;
+        assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithMilestones() external {
-        uint256 streamId = createWithMilestonesDefault();
+    /*//////////////////////////////////////////////////////////////////////////
+                               CREATE WITH MILESTONES
+    //////////////////////////////////////////////////////////////////////////*/
 
-        expectCancelAndTransferCalls(address(dynamic), address(dynamic), streamId);
-        expectCreateWithMilestonesCall(DefaultParams.createWithMilestones(users, address(proxy), asset));
+    function test_CancelAndCreateWithMilestones_SameSablierContract() external {
+        // Create the stream due to be canceled.
+        uint256 streamId = createWithMilestones();
 
-        uint256 expectedNewStreamId = dynamic.nextStreamId();
+        // Expect the correct calls to be made.
+        expectCancelAndTransferCalls({
+            cancelContract: address(dynamic),
+            createContract: address(dynamic),
+            streamId: streamId
+        });
+        expectCallToCreateWithMilestones({ params: Defaults.createWithMilestones(users, proxy, dai) });
+
+        // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithMilestones,
             (
                 dynamic,
                 dynamic,
                 streamId,
-                DefaultParams.createWithMilestones(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
+                Defaults.createWithMilestones(users, proxy, dai),
+                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
-        uint256 actualNewStreamId = abi.decode(response, (uint256));
 
-        assertEq(actualNewStreamId, expectedNewStreamId);
+        // Assert that the new stream has been created successfully.
+        uint256 actualNewStreamId = abi.decode(response, (uint256));
+        uint256 expectedNewStreamId = dynamic.nextStreamId() - 1;
+        assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithMilestones_DifferentStreams() external {
-        uint256 streamId = createWithRangeDefault();
+    function test_CancelAndCreateWithMilestones_AcrossSablierContracts() external {
+        // Create the stream due to be canceled.
+        uint256 streamId = createWithRange();
 
-        expectCancelAndTransferCalls(address(linear), address(dynamic), streamId);
-        expectCreateWithMilestonesCall(DefaultParams.createWithMilestones(users, address(proxy), asset));
+        // Expect the correct calls to be made.
+        expectCancelAndTransferCalls({
+            cancelContract: address(linear),
+            createContract: address(dynamic),
+            streamId: streamId
+        });
+        expectCallToCreateWithMilestones({ params: Defaults.createWithMilestones(users, proxy, dai) });
 
-        uint256 expectedNewStreamId = dynamic.nextStreamId();
+        // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithMilestones,
             (
                 linear,
                 dynamic,
                 streamId,
-                DefaultParams.createWithMilestones(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
+                Defaults.createWithMilestones(users, proxy, dai),
+                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
-        uint256 actualNewStreamId = abi.decode(response, (uint256));
 
-        assertEq(actualNewStreamId, expectedNewStreamId);
+        // Assert that the new stream has been created successfully.
+        uint256 actualNewStreamId = abi.decode(response, (uint256));
+        uint256 expectedNewStreamId = dynamic.nextStreamId() - 1;
+        assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithRange() external {
-        uint256 streamId = createWithRangeDefault();
+    /*//////////////////////////////////////////////////////////////////////////
+                                 CREATE WITH RANGE
+    //////////////////////////////////////////////////////////////////////////*/
 
-        expectCancelAndTransferCalls(address(linear), address(linear), streamId);
-        expectCreateWithRangeCall(DefaultParams.createWithRange(users, address(proxy), asset));
+    function test_CancelAndCreateWithRange_SameSablierContract() external {
+        // Create the stream due to be canceled.
+        uint256 streamId = createWithRange();
 
-        uint256 expectedNewStreamId = linear.nextStreamId();
+        // Expect the correct calls to be made.
+        expectCancelAndTransferCalls({
+            cancelContract: address(linear),
+            createContract: address(linear),
+            streamId: streamId
+        });
+        expectCallToCreateWithRange({ params: Defaults.createWithRange(users, proxy, dai) });
+
+        // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithRange,
             (
                 linear,
                 linear,
                 streamId,
-                DefaultParams.createWithRange(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
+                Defaults.createWithRange(users, proxy, dai),
+                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
-        uint256 actualNewStreamId = abi.decode(response, (uint256));
 
-        assertEq(actualNewStreamId, expectedNewStreamId);
+        // Assert that the new stream has been created successfully.
+        uint256 actualNewStreamId = abi.decode(response, (uint256));
+        uint256 expectedNewStreamId = linear.nextStreamId() - 1;
+        assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithRange_DifferentStreams() external {
-        uint256 streamId = createWithMilestonesDefault();
+    function test_CancelAndCreateWithRange_AcrossSablierContracts() external {
+        // Create the stream due to be canceled.
+        uint256 streamId = createWithMilestones();
 
-        expectCancelAndTransferCalls(address(dynamic), address(linear), streamId);
-        expectCreateWithRangeCall(DefaultParams.createWithRange(users, address(proxy), asset));
+        // Expect the correct calls to be made.
+        expectCancelAndTransferCalls({
+            cancelContract: address(dynamic),
+            createContract: address(linear),
+            streamId: streamId
+        });
+        expectCallToCreateWithRange({ params: Defaults.createWithRange(users, proxy, dai) });
 
-        uint256 expectedNewStreamId = linear.nextStreamId();
+        // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithRange,
             (
                 dynamic,
                 linear,
                 streamId,
-                DefaultParams.createWithRange(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
+                Defaults.createWithRange(users, proxy, dai),
+                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
-        uint256 actualNewStreamId = abi.decode(response, (uint256));
 
-        assertEq(actualNewStreamId, expectedNewStreamId);
+        // Assert that the new stream has been created successfully.
+        uint256 actualNewStreamId = abi.decode(response, (uint256));
+        uint256 expectedNewStreamId = linear.nextStreamId() - 1;
+        assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                      HELPERS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Logic shared between all tests.
+    function expectCancelAndTransferCalls(address cancelContract, address createContract, uint256 streamId) internal {
+        expectCallToCancel(cancelContract, streamId);
+
+        // Asset flow: Sablier → proxy → proxy owner
+        // Expect transfers from Sablier to the proxy, and then from the proxy to the proxy owner.
+        expectCallToTransfer({ to: address(proxy), amount: Defaults.PER_STREAM_AMOUNT });
+        expectCallToTransfer({ to: users.sender.addr, amount: Defaults.PER_STREAM_AMOUNT });
+
+        // Asset flow: proxy owner → proxy → Sablier
+        // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
+        expectCallToTransferFrom({ from: users.sender.addr, to: address(proxy), amount: Defaults.PER_STREAM_AMOUNT });
+        expectCallToTransferFrom({ from: address(proxy), to: createContract, amount: Defaults.PER_STREAM_AMOUNT });
     }
 }
