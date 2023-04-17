@@ -17,7 +17,7 @@ library Defaults {
                                      GENERIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint256 internal constant BATCH_COUNT = 10;
+    uint256 internal constant BATCH_SIZE = 10;
     UD60x18 internal constant BROKER_FEE = UD60x18.wrap(0);
     uint40 internal constant CLIFF_DURATION = 2500 seconds;
     uint40 internal constant CLIFF_TIME = START_TIME + CLIFF_DURATION;
@@ -83,8 +83,8 @@ library Defaults {
     }
 
     function streamIds() internal pure returns (uint256[] memory streamIds_) {
-        streamIds_ = new uint256[](BATCH_COUNT);
-        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
+        streamIds_ = new uint256[](BATCH_SIZE);
+        for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             streamIds_[i] = i + 1;
         }
     }
@@ -241,8 +241,8 @@ library Defaults {
         pure
         returns (Batch.CreateWithDeltas[] memory params)
     {
-        params = new Batch.CreateWithDeltas[](BATCH_COUNT);
-        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
+        params = new Batch.CreateWithDeltas[](BATCH_SIZE);
+        for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             params[i] = Batch.CreateWithDeltas({
                 broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
@@ -263,8 +263,8 @@ library Defaults {
         pure
         returns (Batch.CreateWithDurations[] memory params)
     {
-        params = new Batch.CreateWithDurations[](BATCH_COUNT);
-        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
+        params = new Batch.CreateWithDurations[](BATCH_SIZE);
+        for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             params[i] = Batch.CreateWithDurations({
                 broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
@@ -285,8 +285,8 @@ library Defaults {
         pure
         returns (Batch.CreateWithMilestones[] memory params)
     {
-        params = new Batch.CreateWithMilestones[](BATCH_COUNT);
-        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
+        params = new Batch.CreateWithMilestones[](BATCH_SIZE);
+        for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             params[i] = Batch.CreateWithMilestones({
                 broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
@@ -308,8 +308,8 @@ library Defaults {
         pure
         returns (Batch.CreateWithRange[] memory params)
     {
-        params = new Batch.CreateWithRange[](BATCH_COUNT);
-        for (uint256 i = 0; i < BATCH_COUNT; ++i) {
+        params = new Batch.CreateWithRange[](BATCH_SIZE);
+        for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             params[i] = Batch.CreateWithRange({
                 broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,

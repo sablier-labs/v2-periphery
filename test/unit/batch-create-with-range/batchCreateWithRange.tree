@@ -1,6 +1,6 @@
 batchCreateWithRange.t.sol
-├── when the batch is empty
+├── when the batch size is zero
 │  └── it should revert
-└── when the batch is not empty
+└── when the batch size is not zero
    ├── it should create a batch of streams with range
    └── it should perform the ERC-20 transfers

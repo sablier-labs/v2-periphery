@@ -25,7 +25,7 @@ contract BatchCancelMultiple_Unit_Test is Base_Test {
         // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.
         expectMultipleCallsToTransfer({ to: address(proxy), amount: Defaults.REFUND_AMOUNT });
         expectMultipleCallsToTransfer({ to: address(proxy), amount: Defaults.REFUND_AMOUNT });
-        expectCallToTransfer({ to: users.sender.addr, amount: 2 * Defaults.BATCH_COUNT * Defaults.REFUND_AMOUNT });
+        expectCallToTransfer({ to: users.sender.addr, amount: 2 * Defaults.BATCH_SIZE * Defaults.REFUND_AMOUNT });
 
         // ABI encode the parameters and call the function via the proxy.
         Batch.CancelMultiple[] memory params = new Batch.CancelMultiple[](2);
@@ -36,7 +36,7 @@ contract BatchCancelMultiple_Unit_Test is Base_Test {
 
         // Assert that all streams have been marked as canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
-        for (uint256 i = 0; i < Defaults.BATCH_COUNT; ++i) {
+        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
             Lockup.Status actualDynamicStatus = dynamic.getStatus(dynamicStreamIds[i]);
             Lockup.Status actualLinearStatus = linear.getStatus(dynamicStreamIds[i]);
             assertEq(actualDynamicStatus, expectedStatus, "dynamic stream status not canceled");

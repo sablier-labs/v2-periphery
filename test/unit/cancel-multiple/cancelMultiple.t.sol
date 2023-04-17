@@ -32,14 +32,14 @@ contract CancelMultiple_Unit_Test is Base_Test {
 
         // Asset flow: proxy owner → proxy → sender
         expectMultipleCallsToTransfer({ to: address(proxy), amount: Defaults.REFUND_AMOUNT });
-        expectCallToTransfer({ to: users.sender.addr, amount: Defaults.REFUND_AMOUNT * Defaults.BATCH_COUNT });
+        expectCallToTransfer({ to: users.sender.addr, amount: Defaults.REFUND_AMOUNT * Defaults.BATCH_SIZE });
 
         bytes memory data = abi.encodeCall(target.cancelMultiple, (lockup, Defaults.assets(dai), streamIds));
         proxy.execute(address(target), data);
 
         // Assert that all streams have been marked as canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
-        for (uint256 i = 0; i < Defaults.BATCH_COUNT; ++i) {
+        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
             Lockup.Status actualStatus = lockup.getStatus(streamIds[i]);
             assertEq(actualStatus, expectedStatus, "stream status not canceled");
         }

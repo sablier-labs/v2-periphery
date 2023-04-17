@@ -46,8 +46,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Load the balances before the cancellation.
         uint256[] memory initialBalances = _getBalances(assets);
 
-        uint256 count = params.length;
-        for (uint256 i = 0; i < count;) {
+        uint256 batchSize = params.length;
+        for (uint256 i = 0; i < batchSize;) {
             // Cancel the streams.
             params[i].lockup.cancelMultiple(params[i].streamIds);
 
@@ -120,16 +120,16 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256[] memory streamIds)
     {
         // Check that the batch is not empty.
-        uint256 count = params.length;
-        if (count == 0) {
-            revert Errors.SablierV2ProxyTarget_BatchEmpty();
+        uint256 batchSize = params.length;
+        if (batchSize == 0) {
+            revert Errors.SablierV2ProxyTarget_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
         uint128 transferAmount;
-        for (i = 0; i < count;) {
+        for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += params[i].totalAmount;
                 i += 1;
@@ -139,9 +139,9 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Transfers the assets to the proxy and approve the Sablier contract to spend them.
         _transferAndApprove(address(linear), asset, transferAmount, permit2Params);
 
-        // Create a stream for each element in the array of parameters array.
-        streamIds = new uint256[](count);
-        for (i = 0; i < count;) {
+        // Create a stream for each element in the parameter array.
+        streamIds = new uint256[](batchSize);
+        for (i = 0; i < batchSize;) {
             // Create the stream.
             streamIds[i] = linear.createWithDurations(
                 LockupLinear.CreateWithDurations({
@@ -174,16 +174,16 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256[] memory streamIds)
     {
         // Check that the batch is not empty.
-        uint256 count = params.length;
-        if (count == 0) {
-            revert Errors.SablierV2ProxyTarget_BatchEmpty();
+        uint256 batchSize = params.length;
+        if (batchSize == 0) {
+            revert Errors.SablierV2ProxyTarget_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
         uint128 transferAmount;
-        for (i = 0; i < count;) {
+        for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += params[i].totalAmount;
                 i += 1;
@@ -193,9 +193,9 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Transfers the assets to the proxy and approve the Sablier contract to spend them.
         _transferAndApprove(address(linear), asset, transferAmount, permit2Params);
 
-        // Create a stream for each element in the array of parameters array.
-        streamIds = new uint256[](count);
-        for (i = 0; i < count;) {
+        // Create a stream for each element in the parameter array.
+        streamIds = new uint256[](batchSize);
+        for (i = 0; i < batchSize;) {
             // Create the stream.
             streamIds[i] = linear.createWithRange(
                 LockupLinear.CreateWithRange({
@@ -338,16 +338,16 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256[] memory streamIds)
     {
         // Check that the batch is not empty.
-        uint256 count = params.length;
-        if (count == 0) {
-            revert Errors.SablierV2ProxyTarget_BatchEmpty();
+        uint256 batchSize = params.length;
+        if (batchSize == 0) {
+            revert Errors.SablierV2ProxyTarget_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
         uint128 transferAmount;
-        for (i = 0; i < count;) {
+        for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += params[i].totalAmount;
                 i += 1;
@@ -357,9 +357,9 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
         _transferAndApprove(address(dynamic), asset, transferAmount, permit2Params);
 
-        // Create a stream for each element in the array of parameters array.
-        streamIds = new uint256[](count);
-        for (i = 0; i < count;) {
+        // Create a stream for each element in the parameter array.
+        streamIds = new uint256[](batchSize);
+        for (i = 0; i < batchSize;) {
             // Create the stream.
             streamIds[i] = dynamic.createWithDeltas(
                 LockupDynamic.CreateWithDeltas({
@@ -392,16 +392,16 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256[] memory streamIds)
     {
         // Check that the batch is not empty.
-        uint256 count = params.length;
-        if (count == 0) {
-            revert Errors.SablierV2ProxyTarget_BatchEmpty();
+        uint256 batchSize = params.length;
+        if (batchSize == 0) {
+            revert Errors.SablierV2ProxyTarget_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
         uint128 transferAmount;
-        for (i = 0; i < count;) {
+        for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += params[i].totalAmount;
                 i += 1;
@@ -411,9 +411,9 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
         _transferAndApprove(address(dynamic), asset, transferAmount, permit2Params);
 
-        // Create a stream for each element in the array of parameters array.
-        streamIds = new uint256[](count);
-        for (i = 0; i < count;) {
+        // Create a stream for each element in the parameter array.
+        streamIds = new uint256[](batchSize);
+        for (i = 0; i < batchSize;) {
             // Create the stream.
             streamIds[i] = dynamic.createWithMilestones(
                 LockupDynamic.CreateWithMilestones({
@@ -557,9 +557,9 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @dev Helper function to retrieve the proxy's balance for the provided assets.
     function _getBalances(IERC20[] calldata assets) internal view returns (uint256[] memory initialBalances) {
-        uint256 count = assets.length;
-        initialBalances = new uint256[](count);
-        for (uint256 i = 0; i < count;) {
+        uint256 assetCount = assets.length;
+        initialBalances = new uint256[](assetCount);
+        for (uint256 i = 0; i < assetCount;) {
             initialBalances[i] = assets[i].balanceOf(address(this));
             unchecked {
                 i += 1;
@@ -569,10 +569,10 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @dev Shared logic between {cancelMultiple} and {batchCancelMultiple}.
     function _postCancelMultiple(uint256[] memory initialBalances, IERC20[] calldata assets) internal {
-        uint256 count = assets.length;
+        uint256 assetCount = assets.length;
         uint256 balanceFinal;
         uint256 balanceDelta;
-        for (uint256 i = 0; i < count;) {
+        for (uint256 i = 0; i < assetCount;) {
             // Calculate the difference between the final and initial balances.
             balanceFinal = assets[i].balanceOf(address(this));
             balanceDelta = balanceFinal - initialBalances[i];

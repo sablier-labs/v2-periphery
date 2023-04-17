@@ -259,42 +259,42 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Expects multiple calls to {SablierV2LockupDynamic.createWithMilestones}.
     function expectMultipleCallsToCreateWithDeltas(LockupDynamic.CreateWithDeltas memory params) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_COUNT; ++i) {
+        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
             expectCallToCreateWithDeltas(params);
         }
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupLinear.createWithDurations}.
     function expectMultipleCallsToCreateWithDurations(LockupLinear.CreateWithDurations memory params) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_COUNT; ++i) {
+        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
             expectCallToCreateWithDurations(params);
         }
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupDynamic.createWithMilestones}.
     function expectMultipleCallsToCreateWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_COUNT; ++i) {
+        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
             expectCallToCreateWithMilestones(params);
         }
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupLinear.createWithRange}.
     function expectMultipleCallsToCreateWithRange(LockupLinear.CreateWithRange memory params) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_COUNT; ++i) {
+        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
             expectCallToCreateWithRange(params);
         }
     }
 
     /// @dev Expects multiple calls to the `transfer` function of the default ERC-20 contract.
     function expectMultipleCallsToTransfer(address to, uint256 amount) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_COUNT; ++i) {
+        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
             expectCallToTransfer(to, amount);
         }
     }
 
     /// @dev Expects multiple calls to the `transferFrom` function of the default ERC-20 contract.
     function expectMultipleCallsToTransferFrom(address from, address to, uint256 amount) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_COUNT; ++i) {
+        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
             expectCallToTransferFrom(from, to, amount);
         }
     }

@@ -5,5 +5,5 @@ pragma solidity >=0.8.19;
 /// @notice Library containing all the custom errors the protocol may revert with.
 library Errors {
     /// @notice Thrown when attempting to create an empty batch of streams.
-    error SablierV2ProxyTarget_BatchEmpty();
+    error SablierV2ProxyTarget_BatchSizeZero();
 }

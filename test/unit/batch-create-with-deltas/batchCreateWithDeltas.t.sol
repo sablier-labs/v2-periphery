@@ -8,20 +8,20 @@ import { Base_Test } from "../../Base.t.sol";
 import { Defaults } from "../../helpers/Defaults.t.sol";
 
 contract BatchCreateWithDeltas_Unit_Test is Base_Test {
-    function test_RevertWhen_BatchEmpty() external {
+    function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithDeltas[] memory params;
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas, (dynamic, dai, params, permit2Params(Defaults.TRANSFER_AMOUNT))
         );
-        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchEmpty.selector);
+        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);
     }
 
-    modifier whenBatchNotEmpty() {
+    modifier whenBatchSizeNotZero() {
         _;
     }
 
-    function test_BatchCreateWithDeltas() external whenBatchNotEmpty {
+    function test_BatchCreateWithDeltas() external whenBatchSizeNotZero {
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
         expectCallToTransferFrom({ from: users.sender.addr, to: address(proxy), amount: Defaults.TRANSFER_AMOUNT });
