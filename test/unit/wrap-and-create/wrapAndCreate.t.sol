@@ -3,62 +3,98 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { IWrappedNativeAsset } from "src/interfaces/external/IWrappedNativeAsset.sol";
 
-import { Unit_Test } from "../Unit.t.sol";
-import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
+import { Base_Test } from "../../Base.t.sol";
+import { Defaults } from "../../helpers/Defaults.t.sol";
 
-contract WrapEtherAndCreate_Test is Unit_Test {
-    function setUp() public virtual override {
-        Unit_Test.setUp();
+/// @dev This contracts tests the following functions:
+/// - `wrapEtherAndCreateWithDeltas`
+/// - `wrapEtherAndCreateWithDurations`
+/// - `wrapEtherAndCreateWithMilestones`
+/// - `wrapEtherAndCreateWithRange`
+contract WrapAndCreate_Unit_Test is Base_Test {
+    function test_WrapAndCreateWithDeltas() external {
+        // Expect the correct calls to be made.
+        vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
+        expectCallToTransferFrom({
+            asset: address(weth),
+            from: address(proxy),
+            to: address(dynamic),
+            amount: Defaults.ETHER_AMOUNT
+        });
 
-        changePrank(users.sender);
+        // ABI encode the parameters and call the function via the proxy.
+        bytes memory data =
+            abi.encodeCall(target.wrapAndCreateWithDeltas, (dynamic, Defaults.createWithDeltas(users, proxy, weth)));
+        bytes memory response = proxy.execute{ value: Defaults.ETHER_AMOUNT }(address(target), data);
+
+        // Assert that the stream has been created successfully.
+        uint256 actualStreamId = abi.decode(response, (uint256));
+        uint256 expectedStreamId = dynamic.nextStreamId() - 1;
+        assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
 
-    function test_WrapEtherAndCreateWithDeltas() external {
+    function test_WrapAndCreateWithDurations() external {
+        // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
-        expectTransferFromCall(address(weth), address(proxy), address(dynamic), DefaultParams.ETHER_AMOUNT);
+        expectCallToTransferFrom({
+            asset: address(weth),
+            from: address(proxy),
+            to: address(linear),
+            amount: Defaults.ETHER_AMOUNT
+        });
+
+        // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
-            target.wrapAndCreateWithDeltas, (dynamic, DefaultParams.createWithDeltas(users, address(proxy), weth))
+            target.wrapAndCreateWithDurations, (linear, Defaults.createWithDurations(users, proxy, weth))
         );
-        bytes memory response = proxy.execute{ value: DefaultParams.ETHER_AMOUNT }(address(target), data);
+        bytes memory response = proxy.execute{ value: Defaults.ETHER_AMOUNT }(address(target), data);
+
+        // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
-        uint256 expectedStreamId = 1;
-        assertEq(actualStreamId, expectedStreamId);
+        uint256 expectedStreamId = linear.nextStreamId() - 1;
+        assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
 
-    function test_WrapEtherAndCreateWithDurations() external {
+    function test_WrapAndCreateWithMilestones() external {
+        // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
-        expectTransferFromCall(address(weth), address(proxy), address(linear), DefaultParams.ETHER_AMOUNT);
+        expectCallToTransferFrom({
+            asset: address(weth),
+            from: address(proxy),
+            to: address(dynamic),
+            amount: Defaults.ETHER_AMOUNT
+        });
+
+        // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
-            target.wrapAndCreateWithDurations, (linear, DefaultParams.createWithDurations(users, address(proxy), weth))
+            target.wrapAndCreateWithMilestones, (dynamic, Defaults.createWithMilestones(users, proxy, weth))
         );
-        bytes memory response = proxy.execute{ value: DefaultParams.ETHER_AMOUNT }(address(target), data);
+        bytes memory response = proxy.execute{ value: Defaults.ETHER_AMOUNT }(address(target), data);
+
+        // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
-        uint256 expectedStreamId = 1;
-        assertEq(actualStreamId, expectedStreamId);
+        uint256 expectedStreamId = dynamic.nextStreamId() - 1;
+        assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
 
-    function test_WrapEtherAndCreateWithMilestones() external {
+    function test_WrapAndCreateWithRange() external {
+        // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
-        expectTransferFromCall(address(weth), address(proxy), address(dynamic), DefaultParams.ETHER_AMOUNT);
-        bytes memory data = abi.encodeCall(
-            target.wrapAndCreateWithMilestones,
-            (dynamic, DefaultParams.createWithMilestones(users, address(proxy), weth))
-        );
-        bytes memory response = proxy.execute{ value: DefaultParams.ETHER_AMOUNT }(address(target), data);
-        uint256 actualStreamId = abi.decode(response, (uint256));
-        uint256 expectedStreamId = 1;
-        assertEq(actualStreamId, expectedStreamId);
-    }
+        expectCallToTransferFrom({
+            asset: address(weth),
+            from: address(proxy),
+            to: address(linear),
+            amount: Defaults.ETHER_AMOUNT
+        });
 
-    function test_WrapEtherAndCreateWithRange() external {
-        vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
-        expectTransferFromCall(address(weth), address(proxy), address(linear), DefaultParams.ETHER_AMOUNT);
-        bytes memory data = abi.encodeCall(
-            target.wrapAndCreateWithRange, (linear, DefaultParams.createWithRange(users, address(proxy), weth))
-        );
-        bytes memory response = proxy.execute{ value: DefaultParams.ETHER_AMOUNT }(address(target), data);
+        // ABI encode the parameters and call the function via the proxy.
+        bytes memory data =
+            abi.encodeCall(target.wrapAndCreateWithRange, (linear, Defaults.createWithRange(users, proxy, weth)));
+        bytes memory response = proxy.execute{ value: Defaults.ETHER_AMOUNT }(address(target), data);
+
+        // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
-        uint256 expectedStreamId = 1;
-        assertEq(actualStreamId, expectedStreamId);
+        uint256 expectedStreamId = linear.nextStreamId() - 1;
+        assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
 }

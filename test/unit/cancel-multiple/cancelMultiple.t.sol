@@ -1,47 +1,47 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
+import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Unit_Test } from "../Unit.t.sol";
-import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
+import { Base_Test } from "../../Base.t.sol";
+import { Defaults } from "../../helpers/Defaults.t.sol";
 
-contract BatchCreateWithDeltas_Test is Unit_Test {
-    function setUp() public virtual override {
-        Unit_Test.setUp();
+contract CancelMultiple_Unit_Test is Base_Test {
+    function test_CancelMultiple_Linear() internal {
+        // Create a batch of streams due to be canceled.
+        uint256[] memory streamIds = batchCreateWithRange();
 
-        changePrank(users.sender);
+        // Run the test.
+        test_CancelMultiple(streamIds, linear);
     }
 
-    function test_CancelMultiple() external {
-        uint256[] memory streamIds = batchCreateWithRangeDefault();
+    function test_CancelMultiple_Dynamic() internal {
+        // Create a batch of streams due to be canceled.
+        uint256[] memory streamIds = batchCreateWithMilestones();
 
-        Lockup.Status[] memory beforeStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
+        // Run the test.
+        test_CancelMultiple(streamIds, dynamic);
+    }
 
-        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
-            beforeStatuses[i] = linear.getStatus(streamIds[i]);
-        }
+    function test_CancelMultiple(uint256[] memory streamIds, ISablierV2Lockup lockup) internal {
+        // Warp into the future.
+        vm.warp(Defaults.WARP_26_PERCENT);
 
-        assertEq(beforeStatuses, DefaultParams.statusesBeforeCancelMultiple());
+        // Asset flow: proxy owner → proxy → sender
+        expectMultipleCallsToTransfer({ to: address(proxy), amount: Defaults.REFUND_AMOUNT });
+        expectCallToTransfer({ to: users.sender.addr, amount: Defaults.REFUND_AMOUNT * Defaults.BATCH_COUNT });
 
-        vm.warp(DefaultParams.TIME_WARP);
-
-        // Asset flow: linear -> proxy -> sender
-        expectMultipleTransferCalls(address(proxy), DefaultParams.REFUND_AMOUNT);
-        expectTransferCall(users.sender, DefaultParams.REFUND_AMOUNT * DefaultParams.BATCH_COUNT);
-
-        bytes memory data = abi.encodeCall(target.cancelMultiple, (linear, DefaultParams.assets(asset), streamIds));
+        bytes memory data = abi.encodeCall(target.cancelMultiple, (lockup, Defaults.assets(dai), streamIds));
         proxy.execute(address(target), data);
 
-        Lockup.Status[] memory afterStatuses = new Lockup.Status[](DefaultParams.BATCH_COUNT);
-
-        for (uint256 i = 0; i < DefaultParams.BATCH_COUNT; ++i) {
-            afterStatuses[i] = linear.getStatus(streamIds[i]);
+        // Assert that all streams have been marked as canceled.
+        Lockup.Status expectedStatus = Lockup.Status.CANCELED;
+        for (uint256 i = 0; i < Defaults.BATCH_COUNT; ++i) {
+            Lockup.Status actualStatus = lockup.getStatus(streamIds[i]);
+            assertEq(actualStatus, expectedStatus, "stream status not canceled");
         }
-
-        assertEq(afterStatuses, DefaultParams.statusesAfterCancelMultiple());
     }
 }

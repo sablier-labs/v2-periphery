@@ -10,10 +10,6 @@
   branch = "main"
   path = "lib/permit2"
   url = "https://github.com/andreivladbrg/permit2"
-[submodule "lib/prb-math"]
-  branch = "v4"
-  path = "lib/prb-math"
-  url = "https://github.com/paulrberg/prb-math"
 [submodule "lib/prb-proxy"]
   branch = "main"
   path = "lib/prb-proxy"

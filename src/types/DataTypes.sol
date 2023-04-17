@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19;
 
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { Broker, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
+import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
 library Batch {
     /// @notice Struct encapsulating the lockup contract's address and the stream ids to cancel.
@@ -12,45 +12,46 @@ library Batch {
         uint256[] streamIds;
     }
 
-    /// @notice Struct encapsulating a subset of the parameters of {SablierV2LockupDynamic.createWithDelta}.
+    /// @notice Struct encapsulating all parameters of {SablierV2LockupDynamic.createWithDelta} except for the asset.
     struct CreateWithDeltas {
-        uint128 amount;
         Broker broker;
-        bool cancelable;
         address recipient;
         LockupDynamic.SegmentWithDelta[] segments;
         address sender;
+        uint128 totalAmount;
+        bool cancelable;
     }
 
-    /// @notice Struct encapsulating a subset of the parameters of {SablierV2LockupLinear.createWithDurations}.
+    /// @notice Struct encapsulating all parameters of {SablierV2LockupLinear.createWithDurations} except for the asset.
     struct CreateWithDurations {
-        uint128 amount;
         Broker broker;
-        bool cancelable;
         LockupLinear.Durations durations;
         address recipient;
         address sender;
+        uint128 totalAmount;
+        bool cancelable;
     }
 
-    /// @notice Struct encapsulating a subset of the parameters of {SablierV2LockupDynamic.createWithMilestones}.
+    /// @notice Struct encapsulating all parameters of {SablierV2LockupDynamic.createWithMilestones} except for the
+    /// asset.
     struct CreateWithMilestones {
-        uint128 amount;
         Broker broker;
-        bool cancelable;
         address recipient;
         LockupDynamic.Segment[] segments;
         address sender;
+        uint128 totalAmount;
         uint40 startTime;
+        bool cancelable;
     }
 
-    /// @notice Struct encapsulating a subset of the parameters of {SablierV2LockupLinear.createWithRange}.
+    /// @notice Struct encapsulating all parameters of {SablierV2LockupLinear.createWithRange} except for the asset.
     struct CreateWithRange {
-        uint128 amount;
         Broker broker;
-        bool cancelable;
         LockupLinear.Range range;
         address recipient;
         address sender;
+        uint128 totalAmount;
+        bool cancelable;
     }
 }
 

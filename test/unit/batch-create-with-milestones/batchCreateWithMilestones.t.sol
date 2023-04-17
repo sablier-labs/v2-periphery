@@ -4,96 +4,37 @@ pragma solidity >=0.8.19 <0.9.0;
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Unit_Test } from "../Unit.t.sol";
-import { DefaultParams } from "../../helpers/DefaultParams.t.sol";
+import { Base_Test } from "../../Base.t.sol";
+import { Defaults } from "../../helpers/Defaults.t.sol";
 
-contract BatchCreateWithMilestones_Test is Unit_Test {
-    function setUp() public virtual override {
-        Unit_Test.setUp();
-
-        changePrank(users.sender);
-    }
-
-    /// @dev it should revert.
-    function test_RevertWhen_TotalAmountZero() external {
-        uint128 totalAmountZero = 0;
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones,
-            (
-                dynamic,
-                asset,
-                totalAmountZero,
-                DefaultParams.batchCreateWithMilestones(users, address(proxy)),
-                permit2Params(totalAmountZero)
-            )
-        );
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyTarget_FullAmountZero.selector));
-        proxy.execute(address(target), data);
-    }
-
-    modifier whenTotalAmountNotZero() {
-        _;
-    }
-
-    /// @dev it should revert.
-    function test_RevertWhen_ParamsCountZero() external whenTotalAmountNotZero {
+contract BatchCreateWithMilestones_Unit_Test is Base_Test {
+    function test_RevertWhen_BatchEmpty() external {
         Batch.CreateWithMilestones[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones,
-            (dynamic, asset, DefaultParams.TOTAL_AMOUNT, params, permit2Params(DefaultParams.TOTAL_AMOUNT))
+            target.batchCreateWithMilestones, (dynamic, dai, params, permit2Params(Defaults.TRANSFER_AMOUNT))
         );
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Errors.SablierV2ProxyTarget_FullAmountNotEqualToAmountsSum.selector, DefaultParams.TOTAL_AMOUNT, 0
-            )
-        );
+        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchEmpty.selector);
         proxy.execute(address(target), data);
     }
 
-    modifier whenParamsCountNotZero() {
+    modifier whenBatchNotEmpty() {
         _;
     }
 
-    /// @dev it should revert.
-    function test_RevertWhen_TotalAmountNotEqualToAmountsSum() external whenTotalAmountNotZero whenParamsCountNotZero {
-        uint128 totalAmount = DefaultParams.TOTAL_AMOUNT - 1;
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones,
-            (
-                dynamic,
-                asset,
-                totalAmount,
-                DefaultParams.batchCreateWithMilestones(users, address(proxy)),
-                permit2Params(totalAmount)
-            )
-        );
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                Errors.SablierV2ProxyTarget_FullAmountNotEqualToAmountsSum.selector,
-                totalAmount,
-                DefaultParams.TOTAL_AMOUNT
-            )
-        );
-        proxy.execute(address(target), data);
-    }
+    function test_BatchCreateWithMilestones() external whenBatchNotEmpty {
+        // Asset flow: proxy owner → proxy → Sablier
+        // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
+        expectCallToTransferFrom({ from: users.sender.addr, to: address(proxy), amount: Defaults.TRANSFER_AMOUNT });
+        expectMultipleCallsToCreateWithMilestones({ params: Defaults.createWithMilestones(users, proxy, dai) });
+        expectMultipleCallsToTransferFrom({
+            from: address(proxy),
+            to: address(dynamic),
+            amount: Defaults.PER_STREAM_AMOUNT
+        });
 
-    modifier whenTotalAmountEqualToAmountsSum() {
-        _;
-    }
-
-    /// @dev it should create multiple streams.
-    function test_BatchCreateWithMilestones()
-        external
-        whenTotalAmountNotZero
-        whenParamsCountNotZero
-        whenTotalAmountEqualToAmountsSum
-    {
-        // Asset flow: sender -> proxy -> dynamic
-        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
-        expectMultipleCreateWithMilestonesCalls(DefaultParams.createWithMilestones(users, address(proxy), asset));
-        expectMultipleTransferCalls(address(proxy), address(dynamic), DefaultParams.AMOUNT);
-
-        uint256[] memory streamIds = batchCreateWithMilestonesDefault();
-        assertEq(streamIds, DefaultParams.streamIds());
+        // Assert that the batch of streams has been created successfully.
+        uint256[] memory actualStreamIds = batchCreateWithMilestones();
+        uint256[] memory expectedStreamIds = Defaults.streamIds();
+        assertEq(actualStreamIds, expectedStreamIds, "stream ids do not match");
     }
 }
