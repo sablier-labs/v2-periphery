@@ -9,7 +9,7 @@ import { Defaults } from "../../helpers/Defaults.t.sol";
 
 contract BatchCreateWithDeltas_Unit_Test is Base_Test {
     function test_RevertWhen_BatchSizeZero() external {
-        Batch.CreateWithDeltas[] memory params;
+        Batch.CreateWithDeltas[] memory params = new Batch.CreateWithDeltas[](0);
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas, (dynamic, dai, params, permit2Params(Defaults.TRANSFER_AMOUNT))
         );

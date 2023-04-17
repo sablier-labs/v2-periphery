@@ -9,7 +9,17 @@ import { Base_Test } from "../../Base.t.sol";
 import { Defaults } from "../../helpers/Defaults.t.sol";
 
 contract BatchCancelMultiple_Unit_Test is Base_Test {
-    function test_BatchCancelMultiple() external {
+    function test_BatchCancelMultiple_BatchSizeZero() external {
+        Batch.CancelMultiple[] memory params = new Batch.CancelMultiple[](0);
+        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, Defaults.assets(dai)));
+        proxy.execute(address(target), data);
+    }
+
+    modifier batchSizeNotZero() {
+        _;
+    }
+
+    function test_BatchCancelMultiple() external batchSizeNotZero {
         // Create two batches of streams due to be canceled.
         uint256[] memory dynamicStreamIds = batchCreateWithMilestones({ nonce: 0 });
         uint256[] memory linearStreamIds = batchCreateWithRange({ nonce: 1 });
