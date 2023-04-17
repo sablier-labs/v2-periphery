@@ -17,7 +17,7 @@ contract BatchCreateWithMilestones_Test is Unit_Test {
     function test_RevertWhen_BatchEmpty() external {
         Batch.CreateWithMilestones[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones, (dynamic, asset, params, permit2Params(DefaultParams.TOTAL_AMOUNT))
+            target.batchCreateWithMilestones, (dynamic, asset, params, permit2Params(DefaultParams.TRANSFER_AMOUNT))
         );
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchEmpty.selector);
         proxy.execute(address(target), data);
@@ -29,9 +29,9 @@ contract BatchCreateWithMilestones_Test is Unit_Test {
 
     function test_BatchCreateWithMilestones() external whenBatchNotEmpty {
         // Asset flow: sender -> proxy -> dynamic
-        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
+        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TRANSFER_AMOUNT);
         expectMultipleCreateWithMilestonesCalls(DefaultParams.createWithMilestones(users, address(proxy), asset));
-        expectMultipleTransferCalls(address(proxy), address(dynamic), DefaultParams.AMOUNT);
+        expectMultipleTransferCalls(address(proxy), address(dynamic), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
 
         uint256[] memory streamIds = batchCreateWithMilestonesDefault();
         assertEq(streamIds, DefaultParams.streamIds());

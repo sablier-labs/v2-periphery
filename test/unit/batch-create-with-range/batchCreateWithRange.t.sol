@@ -17,7 +17,7 @@ contract BatchCreateWithRange_Test is Unit_Test {
     function test_RevertWhen_BatchEmpty() external {
         Batch.CreateWithRange[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithRange, (linear, asset, params, permit2Params(DefaultParams.TOTAL_AMOUNT))
+            target.batchCreateWithRange, (linear, asset, params, permit2Params(DefaultParams.TRANSFER_AMOUNT))
         );
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchEmpty.selector);
         proxy.execute(address(target), data);
@@ -29,9 +29,9 @@ contract BatchCreateWithRange_Test is Unit_Test {
 
     function test_BatchCreateWithRange() external whenBatchNotEmpty {
         // Asset flow: sender -> proxy -> linear
-        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
+        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TRANSFER_AMOUNT);
         expectMultipleCreateWithRangeCalls(DefaultParams.createWithRange(users, address(proxy), asset));
-        expectMultipleTransferCalls(address(proxy), address(linear), DefaultParams.AMOUNT);
+        expectMultipleTransferCalls(address(proxy), address(linear), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
 
         uint256[] memory streamIds = batchCreateWithRangeDefault();
         assertEq(streamIds, DefaultParams.streamIds());

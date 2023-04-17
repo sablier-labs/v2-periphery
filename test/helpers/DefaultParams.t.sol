@@ -4,7 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { ud2x18, UD60x18 } from "@sablier/v2-core/types/Math.sol";
-import { Broker, Lockup, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
+import { Broker, Lockup, LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
@@ -31,7 +31,6 @@ library DefaultParams {
                                      GENERIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint128 internal constant AMOUNT = 10_000e18;
     uint256 internal constant BATCH_COUNT = 10;
     UD60x18 internal constant BROKER_FEE = UD60x18.wrap(0);
     uint40 internal constant CLIFF_DURATION = 2500 seconds;
@@ -40,11 +39,12 @@ library DefaultParams {
     uint256 internal constant ETHER_AMOUNT = 10_000 ether;
     UD60x18 internal constant MAX_FEE = UD60x18.wrap(0.1e18); // 10%
     uint256 internal constant MAX_SEGMENT_COUNT = 1000;
+    uint128 internal constant PER_STREAM_TOTAL_AMOUNT = 10_000e18;
     uint128 internal constant REFUND_AMOUNT = 7500e18;
     uint40 internal constant START_TIME = 100;
     uint40 internal constant TIME_WARP = 2600 seconds;
-    uint128 internal constant TOTAL_AMOUNT = 100_000e18;
     uint40 internal constant TOTAL_DURATION = 10_000 seconds;
+    uint128 internal constant TRANSFER_AMOUNT = 100_000e18;
     uint128 internal constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ library DefaultParams {
         params = LockupDynamic.CreateWithDeltas({
             sender: proxy,
             recipient: users.recipient,
-            totalAmount: AMOUNT,
+            totalAmount: PER_STREAM_TOTAL_AMOUNT,
             asset: asset,
             cancelable: true,
             segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
@@ -162,7 +162,7 @@ library DefaultParams {
         params = LockupDynamic.CreateWithMilestones({
             sender: proxy,
             recipient: user.recipient,
-            totalAmount: AMOUNT,
+            totalAmount: PER_STREAM_TOTAL_AMOUNT,
             asset: asset,
             cancelable: true,
             segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
@@ -233,7 +233,7 @@ library DefaultParams {
         params = LockupLinear.CreateWithDurations({
             sender: proxy,
             recipient: users.recipient,
-            totalAmount: AMOUNT,
+            totalAmount: PER_STREAM_TOTAL_AMOUNT,
             asset: asset,
             cancelable: true,
             durations: durations(),
@@ -253,7 +253,7 @@ library DefaultParams {
         params = LockupLinear.CreateWithRange({
             sender: proxy,
             recipient: users.recipient,
-            totalAmount: AMOUNT,
+            totalAmount: PER_STREAM_TOTAL_AMOUNT,
             asset: asset,
             cancelable: true,
             range: linearRange(),
@@ -286,7 +286,7 @@ library DefaultParams {
                 recipient: users.recipient,
                 segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
                 sender: proxy,
-                totalAmount: AMOUNT
+                totalAmount: PER_STREAM_TOTAL_AMOUNT
             });
         }
     }
@@ -308,7 +308,7 @@ library DefaultParams {
                 durations: durations(),
                 recipient: users.recipient,
                 sender: proxy,
-                totalAmount: AMOUNT
+                totalAmount: PER_STREAM_TOTAL_AMOUNT
             });
         }
     }
@@ -331,7 +331,7 @@ library DefaultParams {
                 segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
                 sender: proxy,
                 startTime: START_TIME,
-                totalAmount: AMOUNT
+                totalAmount: PER_STREAM_TOTAL_AMOUNT
             });
         }
     }
@@ -353,7 +353,7 @@ library DefaultParams {
                 range: linearRange(),
                 recipient: users.recipient,
                 sender: proxy,
-                totalAmount: AMOUNT
+                totalAmount: PER_STREAM_TOTAL_AMOUNT
             });
         }
     }

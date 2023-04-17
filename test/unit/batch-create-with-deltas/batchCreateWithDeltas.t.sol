@@ -17,7 +17,7 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
     function test_RevertWhen_BatchEmpty() external {
         Batch.CreateWithDeltas[] memory params;
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithDeltas, (dynamic, asset, params, permit2Params(DefaultParams.TOTAL_AMOUNT))
+            target.batchCreateWithDeltas, (dynamic, asset, params, permit2Params(DefaultParams.TRANSFER_AMOUNT))
         );
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchEmpty.selector);
         proxy.execute(address(target), data);
@@ -29,9 +29,9 @@ contract BatchCreateWithDeltas_Test is Unit_Test {
 
     function test_BatchCreateWithDeltas() external whenBatchNotEmpty {
         // Asset flow: sender -> proxy -> dynamic
-        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TOTAL_AMOUNT);
+        expectTransferFromCall(users.sender, address(proxy), DefaultParams.TRANSFER_AMOUNT);
         expectMultipleCreateWithDeltasCalls(DefaultParams.createWithDeltas(users, address(proxy), asset));
-        expectMultipleTransferCalls(address(proxy), address(dynamic), DefaultParams.AMOUNT);
+        expectMultipleTransferCalls(address(proxy), address(dynamic), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
 
         uint256[] memory streamIds = batchCreateWithDeltasDefault();
         assertEq(streamIds, DefaultParams.streamIds());

@@ -13,10 +13,10 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
 
     function expectCancelAndTransferCalls(address cancelLockup, address createLockup, uint256 streamId) internal {
         expectCancelCall(cancelLockup, streamId);
-        expectTransferCall(address(proxy), DefaultParams.AMOUNT);
-        expectTransferCall(users.sender, DefaultParams.AMOUNT);
-        expectTransferFromCall(users.sender, address(proxy), DefaultParams.AMOUNT);
-        expectTransferFromCall(address(proxy), createLockup, DefaultParams.AMOUNT);
+        expectTransferCall(address(proxy), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
+        expectTransferCall(users.sender, DefaultParams.PER_STREAM_TOTAL_AMOUNT);
+        expectTransferFromCall(users.sender, address(proxy), DefaultParams.PER_STREAM_TOTAL_AMOUNT);
+        expectTransferFromCall(address(proxy), createLockup, DefaultParams.PER_STREAM_TOTAL_AMOUNT);
     }
 
     function test_CancelAndCreateWithDeltas() external {
@@ -33,7 +33,7 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
                 dynamic,
                 streamId,
                 DefaultParams.createWithDeltas(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.AMOUNT, 1)
+                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -56,7 +56,7 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
                 dynamic,
                 streamId,
                 DefaultParams.createWithDeltas(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.AMOUNT, 1)
+                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -79,7 +79,7 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
                 linear,
                 streamId,
                 DefaultParams.createWithDurations(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.AMOUNT, 1)
+                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -102,7 +102,7 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
                 linear,
                 streamId,
                 DefaultParams.createWithDurations(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.AMOUNT, 1)
+                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -125,7 +125,7 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
                 dynamic,
                 streamId,
                 DefaultParams.createWithMilestones(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.AMOUNT, 1)
+                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -148,7 +148,7 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
                 dynamic,
                 streamId,
                 DefaultParams.createWithMilestones(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.AMOUNT, 1)
+                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -171,7 +171,7 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
                 linear,
                 streamId,
                 DefaultParams.createWithRange(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.AMOUNT, 1)
+                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -194,7 +194,7 @@ contract CancelAndCreateWithRange_Test is Unit_Test {
                 linear,
                 streamId,
                 DefaultParams.createWithRange(users, address(proxy), asset),
-                permit2ParamsWithNonce(DefaultParams.AMOUNT, 1)
+                permit2ParamsWithNonce(DefaultParams.PER_STREAM_TOTAL_AMOUNT, 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
