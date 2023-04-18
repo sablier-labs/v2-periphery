@@ -9,7 +9,7 @@
 [license]: https://www.gnu.org/licenses/lgpl-3.0
 [license-badge]: https://img.shields.io/badge/License-LGPL_v3-blue.svg
 
-This repository contains the periphery smart contracts of the Sablier V2 Protocol. For lower-level logic, see the
+This repository contains the peripheral smart contracts of the Sablier V2 Protocol. For lower-level logic, see the
 [sablierhq/v2-core](https://github.com/sablierhq/v2-core) repository.
 
 ## Install
@@ -19,7 +19,7 @@ This repository contains the periphery smart contracts of the Sablier V2 Protoco
 First, run the install step:
 
 ```sh
-forge install --no-commit sablierhq/v2-periphery
+forge install sablierhq/v2-periphery
 ```
 
 Then, add the following line to your `remappings.txt` file:

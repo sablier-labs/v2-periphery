@@ -11,6 +11,7 @@ import { SablierV2LockupDynamic } from "@sablier/v2-core/SablierV2LockupDynamic.
 import { SablierV2Lockup } from "@sablier/v2-core/abstracts/SablierV2Lockup.sol";
 import { SablierV2NFTDescriptor } from "@sablier/v2-core/SablierV2NFTDescriptor.sol";
 import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
+import { DeployProtocol as DeployCoreContracts } from "@sablier/v2-core-script/deploy/DeployProtocol.s.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 import { AllowanceTransfer } from "permit2/AllowanceTransfer.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
@@ -43,18 +44,16 @@ abstract contract Base_Test is Assertions, StdCheats {
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    IERC20 internal dai = new ERC20("Dai Stablecoin", "DAI");
-    AllowanceTransfer internal permit2 = new AllowanceTransfer();
-    WETH internal weth = new WETH();
-
-    PRBProxyRegistry internal registry = new PRBProxyRegistry();
-    IPRBProxy internal proxy;
-
     SablierV2Comptroller internal comptroller;
-    SablierV2NFTDescriptor internal descriptor = new SablierV2NFTDescriptor();
+    IERC20 internal dai = new ERC20("Dai Stablecoin", "DAI");
+    Defaults internal defaults;
     SablierV2LockupDynamic internal dynamic;
+    SablierV2NFTDescriptor internal nftDescriptor = new SablierV2NFTDescriptor();
+    AllowanceTransfer internal permit2 = new AllowanceTransfer();
+    IPRBProxy internal proxy;
     SablierV2LockupLinear internal linear;
     SablierV2ProxyTarget internal target = new SablierV2ProxyTarget();
+    WETH internal weth = new WETH();
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
@@ -75,24 +74,33 @@ abstract contract Base_Test is Assertions, StdCheats {
         users.recipient = createUser("Recipient");
         users.sender = createUser("Sender");
 
-        // Deploy the Sablier V2 Core contracts.
-        deployCore();
-
         // Deploy the sender's proxy contract.
-        proxy = registry.deployFor(users.sender.addr);
+        proxy = new PRBProxyRegistry().deployFor(users.sender.addr);
 
-        // Label all deployed contracts.
+        // Deploy the defaults contract.
+        defaults = new Defaults(users, proxy, dai);
+
+        // Deploy the Sablier V2 Core contracts.
+        (comptroller, linear, dynamic) = new DeployCoreContracts().run({
+            initialAdmin: users.admin.addr,
+            initialNFTDescriptor: nftDescriptor,
+            maxSegmentCount: defaults.MAX_SEGMENT_COUNT()
+        });
+
+        // Label the contracts most relevant for testing.
+        vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(dai), newLabel: "Dai" });
+        vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
+        vm.label({ account: address(linear), newLabel: "LockupLinear" });
         vm.label({ account: address(permit2), newLabel: "Permit2" });
         vm.label({ account: address(proxy), newLabel: "Proxy" });
-        vm.label({ account: address(registry), newLabel: "ProxyRegistry" });
-        vm.label({ account: address(target), newLabel: "Target" });
+        vm.label({ account: address(target), newLabel: "Proxy Target" });
 
         // Approve Permit2 to spend funds from the recipient.
         vm.startPrank({ msgSender: users.recipient.addr });
         dai.approve({ spender: address(permit2), amount: MAX_UINT256 });
 
-        // Make the sender the default caller in the rest of test suite.
+        // Make the sender the default caller.
         changePrank({ msgSender: users.sender.addr });
 
         // Approve Permit2 to spend funds from the sender.
@@ -110,25 +118,6 @@ abstract contract Base_Test is Assertions, StdCheats {
         deal({ token: address(dai), to: user.addr, give: 1_000_000e18 });
     }
 
-    /// @dev Deploys and labels the Sablier V2 Core contracts.
-    function deployCore() internal {
-        comptroller = new SablierV2Comptroller({ initialAdmin: users.admin.addr });
-        linear = new SablierV2LockupLinear({
-            initialAdmin: users.admin.addr,
-            initialComptroller: comptroller,
-            initialNFTDescriptor: descriptor
-        });
-        dynamic = new SablierV2LockupDynamic({
-            initialAdmin: users.admin.addr,
-            initialComptroller: comptroller,
-            initialNFTDescriptor: descriptor,
-            maxSegmentCount: Defaults.MAX_SEGMENT_COUNT
-        });
-        vm.label({ account: address(comptroller), newLabel: "Comptroller" });
-        vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
-        vm.label({ account: address(linear), newLabel: "LockupLinear" });
-    }
-
     /*//////////////////////////////////////////////////////////////////////////
                                        CREATE
     //////////////////////////////////////////////////////////////////////////*/
@@ -136,7 +125,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithDeltas() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
-            (dynamic, dai, Defaults.batchCreateWithDeltas(users, proxy), permit2Params(Defaults.TRANSFER_AMOUNT))
+            (dynamic, dai, defaults.batchCreateWithDeltas(), permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -145,7 +134,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithDurations() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDurations,
-            (linear, dai, Defaults.batchCreateWithDurations(users, proxy), permit2Params(Defaults.TRANSFER_AMOUNT))
+            (linear, dai, defaults.batchCreateWithDurations(), permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -154,7 +143,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithMilestones() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (dynamic, dai, Defaults.batchCreateWithMilestones(users, proxy), permit2Params(Defaults.TRANSFER_AMOUNT))
+            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -163,12 +152,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithMilestones(uint48 nonce) internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (
-                dynamic,
-                dai,
-                Defaults.batchCreateWithMilestones(users, proxy),
-                permit2Params(Defaults.TRANSFER_AMOUNT, nonce)
-            )
+            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -177,7 +161,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithRange() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, dai, Defaults.batchCreateWithRange(users, proxy), permit2Params(Defaults.TRANSFER_AMOUNT))
+            (linear, dai, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -186,7 +170,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithRange(uint48 nonce) internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, dai, Defaults.batchCreateWithRange(users, proxy), permit2Params(Defaults.TRANSFER_AMOUNT, nonce))
+            (linear, dai, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -194,8 +178,7 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     function createWithDeltas() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
-            target.createWithDeltas,
-            (dynamic, Defaults.createWithDeltas(users, proxy, dai), permit2Params(Defaults.PER_STREAM_AMOUNT))
+            target.createWithDeltas, (dynamic, defaults.createWithDeltas(), permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -204,7 +187,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function createWithDurations() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithDurations,
-            (linear, Defaults.createWithDurations(users, proxy, dai), permit2Params(Defaults.PER_STREAM_AMOUNT))
+            (linear, defaults.createWithDurations(), permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -213,7 +196,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function createWithMilestones() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithMilestones,
-            (dynamic, Defaults.createWithMilestones(users, proxy, dai), permit2Params(Defaults.PER_STREAM_AMOUNT))
+            (dynamic, defaults.createWithMilestones(), permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -221,8 +204,7 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     function createWithRange() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
-            target.createWithRange,
-            (linear, Defaults.createWithRange(users, proxy, dai), permit2Params(Defaults.PER_STREAM_AMOUNT))
+            target.createWithRange, (linear, defaults.createWithRange(), permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -273,42 +255,42 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Expects multiple calls to {SablierV2LockupDynamic.createWithMilestones}.
     function expectMultipleCallsToCreateWithDeltas(LockupDynamic.CreateWithDeltas memory params) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
+        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             expectCallToCreateWithDeltas(params);
         }
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupLinear.createWithDurations}.
     function expectMultipleCallsToCreateWithDurations(LockupLinear.CreateWithDurations memory params) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
+        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             expectCallToCreateWithDurations(params);
         }
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupDynamic.createWithMilestones}.
     function expectMultipleCallsToCreateWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
+        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             expectCallToCreateWithMilestones(params);
         }
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupLinear.createWithRange}.
     function expectMultipleCallsToCreateWithRange(LockupLinear.CreateWithRange memory params) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
+        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             expectCallToCreateWithRange(params);
         }
     }
 
     /// @dev Expects multiple calls to the `transfer` function of the default ERC-20 contract.
     function expectMultipleCallsToTransfer(address to, uint256 amount) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
+        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             expectCallToTransfer(to, amount);
         }
     }
 
     /// @dev Expects multiple calls to the `transferFrom` function of the default ERC-20 contract.
     function expectMultipleCallsToTransferFrom(address from, address to, uint256 amount) internal {
-        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
+        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             expectCallToTransferFrom(from, to, amount);
         }
     }
@@ -331,7 +313,6 @@ abstract contract Base_Test is Assertions, StdCheats {
                                       PERMIT2
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function to get the signature.
     function getPermit2Signature(
         IAllowanceTransfer.PermitDetails memory details,
         uint256 privateKey,
@@ -347,7 +328,7 @@ abstract contract Base_Test is Assertions, StdCheats {
                 "\x19\x01",
                 DOMAIN_SEPARATOR,
                 keccak256(
-                    abi.encode(PermitHash._PERMIT_SINGLE_TYPEHASH, permitHash, spender, Defaults.PERMIT2_SIG_DEADLINE)
+                    abi.encode(PermitHash._PERMIT_SINGLE_TYPEHASH, permitHash, spender, defaults.PERMIT2_SIG_DEADLINE())
                 )
             )
         );
@@ -357,11 +338,11 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     function permit2Params(uint160 amount) internal view returns (Permit2Params memory) {
         return Permit2Params({
-            expiration: Defaults.PERMIT2_EXPIRATION,
+            expiration: defaults.PERMIT2_EXPIRATION(),
             permit2: permit2,
-            sigDeadline: Defaults.PERMIT2_SIG_DEADLINE,
+            sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
             signature: getPermit2Signature({
-                details: Defaults.permitDetails(dai, amount),
+                details: defaults.permitDetails(amount),
                 privateKey: users.sender.key,
                 spender: address(proxy)
             })
@@ -370,11 +351,11 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     function permit2Params(uint160 amount, uint48 nonce) internal view returns (Permit2Params memory) {
         return Permit2Params({
-            expiration: Defaults.PERMIT2_EXPIRATION,
+            expiration: defaults.PERMIT2_EXPIRATION(),
             permit2: permit2,
-            sigDeadline: Defaults.PERMIT2_SIG_DEADLINE,
+            sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
             signature: getPermit2Signature({
-                details: Defaults.permitDetails(dai, amount, nonce),
+                details: defaults.permitDetails(amount, nonce),
                 privateKey: users.sender.key,
                 spender: address(proxy)
             })

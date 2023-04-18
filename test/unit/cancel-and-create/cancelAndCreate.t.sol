@@ -14,7 +14,7 @@ contract CancelAndCreate_Unit_Test is Base_Test {
                                  CREATE WITH DELTAS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_CancelAndCreateWithDeltas() external {
+    function test_CancelAndCreateWithDeltas_SameSablierContract() external {
         // Create the stream due to be canceled.
         uint256 streamId = createWithDeltas();
 
@@ -24,18 +24,12 @@ contract CancelAndCreate_Unit_Test is Base_Test {
             createContract: address(dynamic),
             streamId: streamId
         });
-        expectCallToCreateWithDeltas({ params: Defaults.createWithDeltas(users, proxy, dai) });
+        expectCallToCreateWithDeltas({ params: defaults.createWithDeltas() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDeltas,
-            (
-                dynamic,
-                dynamic,
-                streamId,
-                Defaults.createWithDeltas(users, proxy, dai),
-                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
-            )
+            (dynamic, dynamic, streamId, defaults.createWithDeltas(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -55,18 +49,12 @@ contract CancelAndCreate_Unit_Test is Base_Test {
             createContract: address(dynamic),
             streamId: streamId
         });
-        expectCallToCreateWithDeltas({ params: Defaults.createWithDeltas(users, proxy, dai) });
+        expectCallToCreateWithDeltas({ params: defaults.createWithDeltas() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDeltas,
-            (
-                linear,
-                dynamic,
-                streamId,
-                Defaults.createWithDeltas(users, proxy, dai),
-                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
-            )
+            (linear, dynamic, streamId, defaults.createWithDeltas(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -90,18 +78,12 @@ contract CancelAndCreate_Unit_Test is Base_Test {
             createContract: address(linear),
             streamId: streamId
         });
-        expectCallToCreateWithDurations({ params: Defaults.createWithDurations(users, proxy, dai) });
+        expectCallToCreateWithDurations({ params: defaults.createWithDurations() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDurations,
-            (
-                linear,
-                linear,
-                streamId,
-                Defaults.createWithDurations(users, proxy, dai),
-                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
-            )
+            (linear, linear, streamId, defaults.createWithDurations(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -121,18 +103,12 @@ contract CancelAndCreate_Unit_Test is Base_Test {
             createContract: address(linear),
             streamId: streamId
         });
-        expectCallToCreateWithDurations({ params: Defaults.createWithDurations(users, proxy, dai) });
+        expectCallToCreateWithDurations({ params: defaults.createWithDurations() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDurations,
-            (
-                dynamic,
-                linear,
-                streamId,
-                Defaults.createWithDurations(users, proxy, dai),
-                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
-            )
+            (dynamic, linear, streamId, defaults.createWithDurations(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -156,7 +132,7 @@ contract CancelAndCreate_Unit_Test is Base_Test {
             createContract: address(dynamic),
             streamId: streamId
         });
-        expectCallToCreateWithMilestones({ params: Defaults.createWithMilestones(users, proxy, dai) });
+        expectCallToCreateWithMilestones({ params: defaults.createWithMilestones() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
@@ -165,8 +141,8 @@ contract CancelAndCreate_Unit_Test is Base_Test {
                 dynamic,
                 dynamic,
                 streamId,
-                Defaults.createWithMilestones(users, proxy, dai),
-                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
+                defaults.createWithMilestones(),
+                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -187,18 +163,12 @@ contract CancelAndCreate_Unit_Test is Base_Test {
             createContract: address(dynamic),
             streamId: streamId
         });
-        expectCallToCreateWithMilestones({ params: Defaults.createWithMilestones(users, proxy, dai) });
+        expectCallToCreateWithMilestones({ params: defaults.createWithMilestones() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithMilestones,
-            (
-                linear,
-                dynamic,
-                streamId,
-                Defaults.createWithMilestones(users, proxy, dai),
-                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
-            )
+            (linear, dynamic, streamId, defaults.createWithMilestones(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -222,18 +192,12 @@ contract CancelAndCreate_Unit_Test is Base_Test {
             createContract: address(linear),
             streamId: streamId
         });
-        expectCallToCreateWithRange({ params: Defaults.createWithRange(users, proxy, dai) });
+        expectCallToCreateWithRange({ params: defaults.createWithRange() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithRange,
-            (
-                linear,
-                linear,
-                streamId,
-                Defaults.createWithRange(users, proxy, dai),
-                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
-            )
+            (linear, linear, streamId, defaults.createWithRange(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -253,18 +217,12 @@ contract CancelAndCreate_Unit_Test is Base_Test {
             createContract: address(linear),
             streamId: streamId
         });
-        expectCallToCreateWithRange({ params: Defaults.createWithRange(users, proxy, dai) });
+        expectCallToCreateWithRange({ params: defaults.createWithRange() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithRange,
-            (
-                dynamic,
-                linear,
-                streamId,
-                Defaults.createWithRange(users, proxy, dai),
-                permit2Params(Defaults.PER_STREAM_AMOUNT, 1)
-            )
+            (dynamic, linear, streamId, defaults.createWithRange(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -284,12 +242,12 @@ contract CancelAndCreate_Unit_Test is Base_Test {
 
         // Asset flow: Sablier → proxy → proxy owner
         // Expect transfers from Sablier to the proxy, and then from the proxy to the proxy owner.
-        expectCallToTransfer({ to: address(proxy), amount: Defaults.PER_STREAM_AMOUNT });
-        expectCallToTransfer({ to: users.sender.addr, amount: Defaults.PER_STREAM_AMOUNT });
+        expectCallToTransfer({ to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
+        expectCallToTransfer({ to: users.sender.addr, amount: defaults.PER_STREAM_AMOUNT() });
 
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({ from: users.sender.addr, to: address(proxy), amount: Defaults.PER_STREAM_AMOUNT });
-        expectCallToTransferFrom({ from: address(proxy), to: createContract, amount: Defaults.PER_STREAM_AMOUNT });
+        expectCallToTransferFrom({ from: users.sender.addr, to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
+        expectCallToTransferFrom({ from: address(proxy), to: createContract, amount: defaults.PER_STREAM_AMOUNT() });
     }
 }

@@ -19,13 +19,12 @@ contract WrapAndCreate_Unit_Test is Base_Test {
             asset: address(weth),
             from: address(proxy),
             to: address(dynamic),
-            amount: Defaults.ETHER_AMOUNT
+            amount: defaults.ETHER_AMOUNT()
         });
 
         // ABI encode the parameters and call the function via the proxy.
-        bytes memory data =
-            abi.encodeCall(target.wrapAndCreateWithDeltas, (dynamic, Defaults.createWithDeltas(users, proxy, weth)));
-        bytes memory response = proxy.execute{ value: Defaults.ETHER_AMOUNT }(address(target), data);
+        bytes memory data = abi.encodeCall(target.wrapAndCreateWithDeltas, (dynamic, defaults.createWithDeltas(weth)));
+        bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -40,14 +39,13 @@ contract WrapAndCreate_Unit_Test is Base_Test {
             asset: address(weth),
             from: address(proxy),
             to: address(linear),
-            amount: Defaults.ETHER_AMOUNT
+            amount: defaults.ETHER_AMOUNT()
         });
 
         // ABI encode the parameters and call the function via the proxy.
-        bytes memory data = abi.encodeCall(
-            target.wrapAndCreateWithDurations, (linear, Defaults.createWithDurations(users, proxy, weth))
-        );
-        bytes memory response = proxy.execute{ value: Defaults.ETHER_AMOUNT }(address(target), data);
+        bytes memory data =
+            abi.encodeCall(target.wrapAndCreateWithDurations, (linear, defaults.createWithDurations(weth)));
+        bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -62,14 +60,13 @@ contract WrapAndCreate_Unit_Test is Base_Test {
             asset: address(weth),
             from: address(proxy),
             to: address(dynamic),
-            amount: Defaults.ETHER_AMOUNT
+            amount: defaults.ETHER_AMOUNT()
         });
 
         // ABI encode the parameters and call the function via the proxy.
-        bytes memory data = abi.encodeCall(
-            target.wrapAndCreateWithMilestones, (dynamic, Defaults.createWithMilestones(users, proxy, weth))
-        );
-        bytes memory response = proxy.execute{ value: Defaults.ETHER_AMOUNT }(address(target), data);
+        bytes memory data =
+            abi.encodeCall(target.wrapAndCreateWithMilestones, (dynamic, defaults.createWithMilestones(weth)));
+        bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -84,13 +81,12 @@ contract WrapAndCreate_Unit_Test is Base_Test {
             asset: address(weth),
             from: address(proxy),
             to: address(linear),
-            amount: Defaults.ETHER_AMOUNT
+            amount: defaults.ETHER_AMOUNT()
         });
 
         // ABI encode the parameters and call the function via the proxy.
-        bytes memory data =
-            abi.encodeCall(target.wrapAndCreateWithRange, (linear, Defaults.createWithRange(users, proxy, weth)));
-        bytes memory response = proxy.execute{ value: Defaults.ETHER_AMOUNT }(address(target), data);
+        bytes memory data = abi.encodeCall(target.wrapAndCreateWithRange, (linear, defaults.createWithRange(weth)));
+        bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));

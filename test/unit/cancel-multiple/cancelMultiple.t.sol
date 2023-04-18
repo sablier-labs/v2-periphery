@@ -28,18 +28,18 @@ contract CancelMultiple_Unit_Test is Base_Test {
 
     function test_CancelMultiple(uint256[] memory streamIds, ISablierV2Lockup lockup) internal {
         // Warp into the future.
-        vm.warp(Defaults.WARP_26_PERCENT);
+        vm.warp(defaults.WARP_26_PERCENT());
 
         // Asset flow: proxy owner → proxy → sender
-        expectMultipleCallsToTransfer({ to: address(proxy), amount: Defaults.REFUND_AMOUNT });
-        expectCallToTransfer({ to: users.sender.addr, amount: Defaults.REFUND_AMOUNT * Defaults.BATCH_SIZE });
+        expectMultipleCallsToTransfer({ to: address(proxy), amount: defaults.REFUND_AMOUNT() });
+        expectCallToTransfer({ to: users.sender.addr, amount: defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
 
-        bytes memory data = abi.encodeCall(target.cancelMultiple, (lockup, Defaults.assets(dai), streamIds));
+        bytes memory data = abi.encodeCall(target.cancelMultiple, (lockup, defaults.assets(), streamIds));
         proxy.execute(address(target), data);
 
         // Assert that all streams have been marked as canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
-        for (uint256 i = 0; i < Defaults.BATCH_SIZE; ++i) {
+        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             Lockup.Status actualStatus = lockup.getStatus(streamIds[i]);
             assertEq(actualStatus, expectedStatus, "stream status not canceled");
         }
