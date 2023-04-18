@@ -42,9 +42,9 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function batchCancelMultiple(Batch.CancelMultiple[] calldata params, IERC20[] calldata assets) external {
+    function batchCancelMultiple(Batch.CancelMultiple[] calldata batch, IERC20[] calldata assets) external {
         // Check that the batch size is not zero.
-        uint256 batchSize = params.length;
+        uint256 batchSize = batch.length;
         if (batchSize == 0) {
             revert Errors.SablierV2ProxyTarget_BatchSizeZero();
         }
@@ -54,7 +54,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
         for (uint256 i = 0; i < batchSize;) {
             // Cancel the streams.
-            params[i].lockup.cancelMultiple(params[i].streamIds);
+            batch[i].lockup.cancelMultiple(batch[i].streamIds);
 
             // Increment the for loop iterator.
             unchecked {
@@ -117,7 +117,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     function batchCreateWithDurations(
         ISablierV2LockupLinear linear,
         IERC20 asset,
-        Batch.CreateWithDurations[] calldata params,
+        Batch.CreateWithDurations[] calldata batch,
         Permit2Params calldata permit2Params
     )
         external
@@ -125,7 +125,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256[] memory streamIds)
     {
         // Check that the batch size is not zero.
-        uint256 batchSize = params.length;
+        uint256 batchSize = batch.length;
         if (batchSize == 0) {
             revert Errors.SablierV2ProxyTarget_BatchSizeZero();
         }
@@ -136,7 +136,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint128 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
-                transferAmount += params[i].totalAmount;
+                transferAmount += batch[i].totalAmount;
                 i += 1;
             }
         }
@@ -151,12 +151,12 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             streamIds[i] = linear.createWithDurations(
                 LockupLinear.CreateWithDurations({
                     asset: asset,
-                    broker: params[i].broker,
-                    cancelable: params[i].cancelable,
-                    durations: params[i].durations,
-                    recipient: params[i].recipient,
-                    sender: params[i].sender,
-                    totalAmount: params[i].totalAmount
+                    broker: batch[i].broker,
+                    cancelable: batch[i].cancelable,
+                    durations: batch[i].durations,
+                    recipient: batch[i].recipient,
+                    sender: batch[i].sender,
+                    totalAmount: batch[i].totalAmount
                 })
             );
 
@@ -171,7 +171,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     function batchCreateWithRange(
         ISablierV2LockupLinear linear,
         IERC20 asset,
-        Batch.CreateWithRange[] calldata params,
+        Batch.CreateWithRange[] calldata batch,
         Permit2Params calldata permit2Params
     )
         external
@@ -179,7 +179,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256[] memory streamIds)
     {
         // Check that the batch is not empty.
-        uint256 batchSize = params.length;
+        uint256 batchSize = batch.length;
         if (batchSize == 0) {
             revert Errors.SablierV2ProxyTarget_BatchSizeZero();
         }
@@ -190,7 +190,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint128 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
-                transferAmount += params[i].totalAmount;
+                transferAmount += batch[i].totalAmount;
                 i += 1;
             }
         }
@@ -205,12 +205,12 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             streamIds[i] = linear.createWithRange(
                 LockupLinear.CreateWithRange({
                     asset: asset,
-                    broker: params[i].broker,
-                    cancelable: params[i].cancelable,
-                    range: params[i].range,
-                    recipient: params[i].recipient,
-                    sender: params[i].sender,
-                    totalAmount: params[i].totalAmount
+                    broker: batch[i].broker,
+                    cancelable: batch[i].cancelable,
+                    range: batch[i].range,
+                    recipient: batch[i].recipient,
+                    sender: batch[i].sender,
+                    totalAmount: batch[i].totalAmount
                 })
             );
 
@@ -335,7 +335,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     function batchCreateWithDeltas(
         ISablierV2LockupDynamic dynamic,
         IERC20 asset,
-        Batch.CreateWithDeltas[] calldata params,
+        Batch.CreateWithDeltas[] calldata batch,
         Permit2Params calldata permit2Params
     )
         external
@@ -343,7 +343,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256[] memory streamIds)
     {
         // Check that the batch size is not zero.
-        uint256 batchSize = params.length;
+        uint256 batchSize = batch.length;
         if (batchSize == 0) {
             revert Errors.SablierV2ProxyTarget_BatchSizeZero();
         }
@@ -354,7 +354,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint128 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
-                transferAmount += params[i].totalAmount;
+                transferAmount += batch[i].totalAmount;
                 i += 1;
             }
         }
@@ -369,12 +369,12 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             streamIds[i] = dynamic.createWithDeltas(
                 LockupDynamic.CreateWithDeltas({
                     asset: asset,
-                    broker: params[i].broker,
-                    cancelable: params[i].cancelable,
-                    recipient: params[i].recipient,
-                    segments: params[i].segments,
-                    sender: params[i].sender,
-                    totalAmount: params[i].totalAmount
+                    broker: batch[i].broker,
+                    cancelable: batch[i].cancelable,
+                    recipient: batch[i].recipient,
+                    segments: batch[i].segments,
+                    sender: batch[i].sender,
+                    totalAmount: batch[i].totalAmount
                 })
             );
 
@@ -389,7 +389,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     function batchCreateWithMilestones(
         ISablierV2LockupDynamic dynamic,
         IERC20 asset,
-        Batch.CreateWithMilestones[] calldata params,
+        Batch.CreateWithMilestones[] calldata batch,
         Permit2Params calldata permit2Params
     )
         external
@@ -397,7 +397,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         returns (uint256[] memory streamIds)
     {
         // Check that the batch size is not zero.
-        uint256 batchSize = params.length;
+        uint256 batchSize = batch.length;
         if (batchSize == 0) {
             revert Errors.SablierV2ProxyTarget_BatchSizeZero();
         }
@@ -408,7 +408,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         uint128 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
-                transferAmount += params[i].totalAmount;
+                transferAmount += batch[i].totalAmount;
                 i += 1;
             }
         }
@@ -423,13 +423,13 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             streamIds[i] = dynamic.createWithMilestones(
                 LockupDynamic.CreateWithMilestones({
                     asset: asset,
-                    broker: params[i].broker,
-                    cancelable: params[i].cancelable,
-                    recipient: params[i].recipient,
-                    segments: params[i].segments,
-                    sender: params[i].sender,
-                    startTime: params[i].startTime,
-                    totalAmount: params[i].totalAmount
+                    broker: batch[i].broker,
+                    cancelable: batch[i].cancelable,
+                    recipient: batch[i].recipient,
+                    segments: batch[i].segments,
+                    sender: batch[i].sender,
+                    startTime: batch[i].startTime,
+                    totalAmount: batch[i].totalAmount
                 })
             );
 

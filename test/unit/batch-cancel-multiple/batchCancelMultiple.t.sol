@@ -11,9 +11,9 @@ import { Defaults } from "../../helpers/Defaults.t.sol";
 
 contract BatchCancelMultiple_Unit_Test is Base_Test {
     function test_RevertWhen_BatchSizeZero() external {
-        Batch.CancelMultiple[] memory params = new Batch.CancelMultiple[](0);
+        Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](0);
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
-        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, Defaults.assets(dai)));
+        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, Defaults.assets(dai)));
         proxy.execute(address(target), data);
     }
 
@@ -40,10 +40,10 @@ contract BatchCancelMultiple_Unit_Test is Base_Test {
         expectCallToTransfer({ to: users.sender.addr, amount: 2 * Defaults.BATCH_SIZE * Defaults.REFUND_AMOUNT });
 
         // ABI encode the parameters and call the function via the proxy.
-        Batch.CancelMultiple[] memory params = new Batch.CancelMultiple[](2);
-        params[0] = Batch.CancelMultiple(dynamic, dynamicStreamIds);
-        params[1] = Batch.CancelMultiple(linear, linearStreamIds);
-        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (params, Defaults.assets(dai)));
+        Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](2);
+        batch[0] = Batch.CancelMultiple(dynamic, dynamicStreamIds);
+        batch[1] = Batch.CancelMultiple(linear, linearStreamIds);
+        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, Defaults.assets(dai)));
         proxy.execute(address(target), data);
 
         // Assert that all streams have been marked as canceled.
