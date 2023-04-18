@@ -239,11 +239,11 @@ library Defaults {
     )
         internal
         pure
-        returns (Batch.CreateWithDeltas[] memory params)
+        returns (Batch.CreateWithDeltas[] memory batch)
     {
-        params = new Batch.CreateWithDeltas[](BATCH_SIZE);
+        batch = new Batch.CreateWithDeltas[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
-            params[i] = Batch.CreateWithDeltas({
+            batch[i] = Batch.CreateWithDeltas({
                 broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
                 recipient: users.recipient.addr,
@@ -261,11 +261,11 @@ library Defaults {
     )
         internal
         pure
-        returns (Batch.CreateWithDurations[] memory params)
+        returns (Batch.CreateWithDurations[] memory batch)
     {
-        params = new Batch.CreateWithDurations[](BATCH_SIZE);
+        batch = new Batch.CreateWithDurations[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
-            params[i] = Batch.CreateWithDurations({
+            batch[i] = Batch.CreateWithDurations({
                 broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
                 durations: durations(),
@@ -283,11 +283,11 @@ library Defaults {
     )
         internal
         pure
-        returns (Batch.CreateWithMilestones[] memory params)
+        returns (Batch.CreateWithMilestones[] memory batch)
     {
-        params = new Batch.CreateWithMilestones[](BATCH_SIZE);
+        batch = new Batch.CreateWithMilestones[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
-            params[i] = Batch.CreateWithMilestones({
+            batch[i] = Batch.CreateWithMilestones({
                 broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
                 recipient: users.recipient.addr,
@@ -306,11 +306,11 @@ library Defaults {
     )
         internal
         pure
-        returns (Batch.CreateWithRange[] memory params)
+        returns (Batch.CreateWithRange[] memory batch)
     {
-        params = new Batch.CreateWithRange[](BATCH_SIZE);
+        batch = new Batch.CreateWithRange[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
-            params[i] = Batch.CreateWithRange({
+            batch[i] = Batch.CreateWithRange({
                 broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
                 cancelable: true,
                 range: linearRange(),

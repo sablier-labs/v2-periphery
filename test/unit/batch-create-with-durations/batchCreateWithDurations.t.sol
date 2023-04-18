@@ -9,10 +9,10 @@ import { Defaults } from "../../helpers/Defaults.t.sol";
 
 contract BatchCreateWithDurations_Unit_Test is Base_Test {
     function test_RevertWhen_BatchSizeZero() external {
-        Batch.CreateWithDurations[] memory params = new Batch.CreateWithDurations[](0);
+        Batch.CreateWithDurations[] memory batch = new Batch.CreateWithDurations[](0);
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithDurations, (linear, dai, params, permit2Params(Defaults.TRANSFER_AMOUNT))
+            target.batchCreateWithDurations, (linear, dai, batch, permit2Params(Defaults.TRANSFER_AMOUNT))
         );
         proxy.execute(address(target), data);
     }

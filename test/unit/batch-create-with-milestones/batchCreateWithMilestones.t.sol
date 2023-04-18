@@ -9,10 +9,10 @@ import { Defaults } from "../../helpers/Defaults.t.sol";
 
 contract BatchCreateWithMilestones_Unit_Test is Base_Test {
     function test_RevertWhen_BatchSizeZero() external {
-        Batch.CreateWithMilestones[] memory params = new Batch.CreateWithMilestones[](0);
+        Batch.CreateWithMilestones[] memory batch = new Batch.CreateWithMilestones[](0);
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones, (dynamic, dai, params, permit2Params(Defaults.TRANSFER_AMOUNT))
+            target.batchCreateWithMilestones, (dynamic, dai, batch, permit2Params(Defaults.TRANSFER_AMOUNT))
         );
         proxy.execute(address(target), data);
     }
