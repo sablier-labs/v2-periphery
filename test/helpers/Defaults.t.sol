@@ -11,65 +11,82 @@ import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
 import { Users } from "./Types.t.sol";
 
-/// @notice This library contains default values for testing.
-library Defaults {
+/// @notice Contract with default values for testing.
+contract Defaults {
     /*//////////////////////////////////////////////////////////////////////////
-                                     GENERIC
+                                 GENERIC CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint256 internal constant BATCH_SIZE = 10;
-    UD60x18 internal constant BROKER_FEE = UD60x18.wrap(0);
-    uint40 internal constant CLIFF_DURATION = 2500 seconds;
-    uint40 internal constant CLIFF_TIME = START_TIME + CLIFF_DURATION;
-    uint40 internal constant END_TIME = START_TIME + TOTAL_DURATION;
-    uint256 internal constant ETHER_AMOUNT = 10_000 ether;
-    uint256 internal constant MAX_SEGMENT_COUNT = 1000;
-    uint128 internal constant PER_STREAM_AMOUNT = 10_000e18;
-    uint128 internal constant REFUND_AMOUNT = 7500e18;
-    uint40 internal constant START_TIME = 100 seconds;
-    uint40 internal constant TOTAL_DURATION = 10_000 seconds;
-    uint128 internal constant TRANSFER_AMOUNT = 100_000e18;
-    uint40 internal constant WARP_26_PERCENT = 2600 seconds;
-    uint128 internal constant WITHDRAW_AMOUNT = 2500e18;
+    uint256 public constant BATCH_SIZE = 10;
+    Broker public BROKER;
+    UD60x18 public constant BROKER_FEE = UD60x18.wrap(0);
+    uint40 public constant CLIFF_DURATION = 2500 seconds;
+    uint40 public constant CLIFF_TIME = START_TIME + CLIFF_DURATION;
+    uint40 public constant END_TIME = START_TIME + TOTAL_DURATION;
+    uint256 public constant ETHER_AMOUNT = 10_000 ether;
+    uint256 public constant MAX_SEGMENT_COUNT = 1000;
+    uint128 public constant PER_STREAM_AMOUNT = 10_000e18;
+    uint128 public constant REFUND_AMOUNT = 7500e18;
+    uint40 public constant START_TIME = 100 seconds;
+    uint40 public constant TOTAL_DURATION = 10_000 seconds;
+    uint128 public constant TRANSFER_AMOUNT = 100_000e18;
+    uint40 public constant WARP_26_PERCENT = 2600 seconds;
+    uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
-                                      PERMIT2
+                                 PERMIT2 CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint48 internal constant PERMIT2_EXPIRATION = type(uint48).max;
-    uint48 internal constant PERMIT2_NONCE = 0;
-    uint256 internal constant PERMIT2_SIG_DEADLINE = 100;
+    uint48 public constant PERMIT2_EXPIRATION = type(uint48).max;
+    uint48 public constant PERMIT2_NONCE = 0;
+    uint256 public constant PERMIT2_SIG_DEADLINE = 100;
 
-    function permitDetails(
-        IERC20 asset,
-        uint160 amount
-    )
-        internal
-        pure
-        returns (IAllowanceTransfer.PermitDetails memory details)
-    {
+    /*//////////////////////////////////////////////////////////////////////////
+                                     VARIABLES
+    //////////////////////////////////////////////////////////////////////////*/
+
+    IERC20 private dai;
+    IPRBProxy private proxy;
+    Users private users;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    constructor(Users memory users_, IPRBProxy proxy_, IERC20 dai_) {
+        users = users_;
+        proxy = proxy_;
+        dai = dai_;
+
+        // Initialize the complex constants.
+        BROKER = Broker({ account: users.broker.addr, fee: BROKER_FEE });
+    }
+    /*//////////////////////////////////////////////////////////////////////////
+                                       PARAMS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function permitDetails(uint160 amount) external view returns (IAllowanceTransfer.PermitDetails memory details) {
         details = IAllowanceTransfer.PermitDetails({
             amount: amount,
             expiration: PERMIT2_EXPIRATION,
             nonce: PERMIT2_NONCE,
-            token: address(asset)
+            token: address(dai)
         });
     }
 
     function permitDetails(
-        IERC20 asset,
         uint160 amount,
         uint48 nonce
     )
-        internal
-        pure
+        external
+        view
         returns (IAllowanceTransfer.PermitDetails memory details)
     {
         details = IAllowanceTransfer.PermitDetails({
             amount: amount,
             expiration: PERMIT2_EXPIRATION,
             nonce: nonce,
-            token: address(asset)
+            token: address(dai)
         });
     }
 
@@ -77,15 +94,15 @@ library Defaults {
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    function assets(IERC20 asset) internal pure returns (IERC20[] memory assets_) {
+    function assets() external view returns (IERC20[] memory assets_) {
         assets_ = new IERC20[](1);
-        assets_[0] = asset;
+        assets_[0] = dai;
     }
 
-    function streamIds() internal pure returns (uint256[] memory streamIds_) {
-        streamIds_ = new uint256[](BATCH_SIZE);
+    function incrementalStreamIds() external pure returns (uint256[] memory streamIds) {
+        streamIds = new uint256[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
-            streamIds_[i] = i + 1;
+            streamIds[i] = i + 1;
         }
     }
 
@@ -93,18 +110,14 @@ library Defaults {
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    function createWithDeltas(
-        Users memory users,
-        IPRBProxy proxy,
-        IERC20 asset
-    )
-        internal
-        pure
-        returns (LockupDynamic.CreateWithDeltas memory params)
-    {
+    function createWithDeltas() external view returns (LockupDynamic.CreateWithDeltas memory params) {
+        params = createWithDeltas(dai);
+    }
+
+    function createWithDeltas(IERC20 asset) public view returns (LockupDynamic.CreateWithDeltas memory params) {
         params = LockupDynamic.CreateWithDeltas({
             asset: asset,
-            broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
+            broker: BROKER,
             cancelable: true,
             recipient: users.recipient.addr,
             segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
@@ -113,20 +126,20 @@ library Defaults {
         });
     }
 
-    function createWithMilestones(
-        Users memory user,
-        IPRBProxy proxy,
-        IERC20 asset
-    )
-        internal
-        pure
+    function createWithMilestones() external view returns (LockupDynamic.CreateWithMilestones memory params) {
+        params = createWithMilestones(dai);
+    }
+
+    function createWithMilestones(IERC20 asset)
+        public
+        view
         returns (LockupDynamic.CreateWithMilestones memory params)
     {
         params = LockupDynamic.CreateWithMilestones({
             asset: asset,
-            broker: Broker({ account: user.broker.addr, fee: BROKER_FEE }),
+            broker: BROKER,
             cancelable: true,
-            recipient: user.recipient.addr,
+            recipient: users.recipient.addr,
             segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
             sender: address(proxy),
             startTime: START_TIME,
@@ -134,16 +147,16 @@ library Defaults {
         });
     }
 
-    function dynamicRange() internal pure returns (LockupDynamic.Range memory) {
+    function dynamicRange() external pure returns (LockupDynamic.Range memory) {
         return LockupDynamic.Range({ start: START_TIME, end: END_TIME });
     }
 
-    /// @dev Helper function to return an array of `LockupDynamic.Segment`.
+    /// @dev Helper function to return a batch of `LockupDynamic.Segment` parameters.
     function segments(
         uint128 amount0,
         uint128 amount1
     )
-        internal
+        private
         pure
         returns (LockupDynamic.Segment[] memory segments_)
     {
@@ -160,12 +173,12 @@ library Defaults {
         });
     }
 
-    /// @dev Helper function to return an array of `LockupDynamic.SegmentWithDelta`.
+    /// @dev Helper function to return a batch of `LockupDynamic.SegmentWithDelta` parameters.
     function segmentsWithDeltas(
         uint128 amount0,
         uint128 amount1
     )
-        internal
+        private
         pure
         returns (LockupDynamic.SegmentWithDelta[] memory segments_)
     {
@@ -180,22 +193,14 @@ library Defaults {
                              SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
-    function durations() internal pure returns (LockupLinear.Durations memory) {
-        return LockupLinear.Durations({ cliff: CLIFF_DURATION, total: TOTAL_DURATION });
+    function createWithDurations() external view returns (LockupLinear.CreateWithDurations memory params) {
+        params = createWithDurations(dai);
     }
 
-    function createWithDurations(
-        Users memory users,
-        IPRBProxy proxy,
-        IERC20 asset
-    )
-        internal
-        pure
-        returns (LockupLinear.CreateWithDurations memory params)
-    {
+    function createWithDurations(IERC20 asset) public view returns (LockupLinear.CreateWithDurations memory params) {
         params = LockupLinear.CreateWithDurations({
             asset: asset,
-            broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
+            broker: BROKER,
             durations: durations(),
             cancelable: true,
             recipient: users.recipient.addr,
@@ -204,18 +209,14 @@ library Defaults {
         });
     }
 
-    function createWithRange(
-        Users memory users,
-        IPRBProxy proxy,
-        IERC20 asset
-    )
-        internal
-        pure
-        returns (LockupLinear.CreateWithRange memory params)
-    {
+    function createWithRange() external view returns (LockupLinear.CreateWithRange memory params) {
+        params = createWithRange(dai);
+    }
+
+    function createWithRange(IERC20 asset) public view returns (LockupLinear.CreateWithRange memory params) {
         params = LockupLinear.CreateWithRange({
             asset: asset,
-            broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
+            broker: BROKER,
             cancelable: true,
             range: linearRange(),
             recipient: users.recipient.addr,
@@ -224,7 +225,11 @@ library Defaults {
         });
     }
 
-    function linearRange() internal pure returns (LockupLinear.Range memory) {
+    function durations() private pure returns (LockupLinear.Durations memory) {
+        return LockupLinear.Durations({ cliff: CLIFF_DURATION, total: TOTAL_DURATION });
+    }
+
+    function linearRange() private pure returns (LockupLinear.Range memory) {
         return LockupLinear.Range({ start: START_TIME, cliff: CLIFF_TIME, end: END_TIME });
     }
 
@@ -232,19 +237,12 @@ library Defaults {
                               SABLIER-V2-PROXY-TARGET
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function to return an array of `Batch.CreateWithDeltas`.
-    function batchCreateWithDeltas(
-        Users memory users,
-        IPRBProxy proxy
-    )
-        internal
-        pure
-        returns (Batch.CreateWithDeltas[] memory batch)
-    {
+    /// @dev Helper function to return a batch of `Batch.CreateWithDeltas` parameters.
+    function batchCreateWithDeltas() external view returns (Batch.CreateWithDeltas[] memory batch) {
         batch = new Batch.CreateWithDeltas[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             batch[i] = Batch.CreateWithDeltas({
-                broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
+                broker: BROKER,
                 cancelable: true,
                 recipient: users.recipient.addr,
                 segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
@@ -254,19 +252,12 @@ library Defaults {
         }
     }
 
-    /// @dev Helper function to return an array of `Batch.CreateWithDurations`.
-    function batchCreateWithDurations(
-        Users memory users,
-        IPRBProxy proxy
-    )
-        internal
-        pure
-        returns (Batch.CreateWithDurations[] memory batch)
-    {
+    /// @dev Helper function to return a batch of `Batch.CreateWithDurations` parameters.
+    function batchCreateWithDurations() external view returns (Batch.CreateWithDurations[] memory batch) {
         batch = new Batch.CreateWithDurations[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             batch[i] = Batch.CreateWithDurations({
-                broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
+                broker: BROKER,
                 cancelable: true,
                 durations: durations(),
                 recipient: users.recipient.addr,
@@ -276,19 +267,12 @@ library Defaults {
         }
     }
 
-    /// @dev Helper function to return an array of `Batch.CreateWithMilestones`.
-    function batchCreateWithMilestones(
-        Users memory users,
-        IPRBProxy proxy
-    )
-        internal
-        pure
-        returns (Batch.CreateWithMilestones[] memory batch)
-    {
+    /// @dev Helper function to return a batch of `Batch.CreateWithMilestones` parameters.
+    function batchCreateWithMilestones() external view returns (Batch.CreateWithMilestones[] memory batch) {
         batch = new Batch.CreateWithMilestones[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             batch[i] = Batch.CreateWithMilestones({
-                broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
+                broker: BROKER,
                 cancelable: true,
                 recipient: users.recipient.addr,
                 segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
@@ -299,19 +283,12 @@ library Defaults {
         }
     }
 
-    /// @dev Helper function to return an array of `Batch.CreateWithRange`.
-    function batchCreateWithRange(
-        Users memory users,
-        IPRBProxy proxy
-    )
-        internal
-        pure
-        returns (Batch.CreateWithRange[] memory batch)
-    {
+    /// @dev Helper function to return a batch of `Batch.CreateWithRange` parameters.
+    function batchCreateWithRange() external view returns (Batch.CreateWithRange[] memory batch) {
         batch = new Batch.CreateWithRange[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             batch[i] = Batch.CreateWithRange({
-                broker: Broker({ account: users.broker.addr, fee: BROKER_FEE }),
+                broker: BROKER,
                 cancelable: true,
                 range: linearRange(),
                 recipient: users.recipient.addr,
