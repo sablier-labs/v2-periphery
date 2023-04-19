@@ -3,7 +3,7 @@ pragma solidity >=0.8.19 <=0.9.0;
 
 import { BaseScript } from "@sablier/v2-core-script/shared/Base.s.sol";
 
-import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
+import { SablierV2ProxyTarget } from "../src/SablierV2ProxyTarget.sol";
 
 /// @dev Deploys {SablierV2ProxyTarget} at a deterministic address across all chains. Reverts if the contract
 /// has already been deployed.
