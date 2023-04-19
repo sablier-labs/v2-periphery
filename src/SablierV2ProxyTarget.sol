@@ -3,9 +3,12 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
+import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
+import { IPRBProxyPlugin } from "@prb/proxy/interfaces/IPRBProxyPlugin.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
+import { ISablierV2LockupSender } from "@sablier/v2-core/interfaces/hooks/ISablierV2LockupSender.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
@@ -34,7 +37,7 @@ import { Batch, Permit2Params } from "./types/DataTypes.sol";
 
 /// @title SablierV2ProxyTarget
 /// @notice Implements the {ISablierV2ProxyTarget} interface.
-contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
+contract SablierV2ProxyTarget is ISablierV2ProxyTarget, IPRBProxyPlugin, ISablierV2LockupSender {
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -122,6 +125,21 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /// @inheritdoc ISablierV2ProxyTarget
     function withdrawMax(ISablierV2Lockup lockup, uint256 streamId, address to) external {
         lockup.withdrawMax(streamId, to);
+    }
+
+    /// @inheritdoc ISablierV2LockupSender
+    function onStreamCanceled(
+        ISablierV2Lockup lockup,
+        uint256 streamId,
+        uint128 senderAmount,
+        uint128 recipientAmount
+    )
+        external
+    {
+        recipientAmount; // silence the warning
+        IERC20 asset = lockup.getAsset(streamId);
+        address proxyOwner = IPRBProxy(msg.sender).owner();
+        asset.safeTransfer({ to: proxyOwner, value: senderAmount });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -559,6 +577,16 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
         // Create the stream.
         streamId = dynamic.createWithMilestones(params);
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    PROXY-PLUGIN
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function methodList() external pure returns (bytes4[] memory methods) {
+        bytes4[] memory functionSig = new bytes4[](1);
+        functionSig[0] = this.onStreamCanceled.selector;
+        methods = functionSig;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
