@@ -4,6 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
+import { PRBProxyHelpers } from "@prb/proxy/PRBProxyHelpers.sol";
 import { PRBProxyRegistry } from "@prb/proxy/PRBProxyRegistry.sol";
 import { SablierV2Comptroller } from "@sablier/v2-core/SablierV2Comptroller.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.sol";
@@ -33,6 +34,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     bytes32 internal immutable DOMAIN_SEPARATOR;
+    bytes onStreamCanceledData;
 
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
@@ -48,10 +50,11 @@ abstract contract Base_Test is Assertions, StdCheats {
     IERC20 internal dai = new ERC20("Dai Stablecoin", "DAI");
     Defaults internal defaults;
     SablierV2LockupDynamic internal dynamic;
+    SablierV2LockupLinear internal linear;
     SablierV2NFTDescriptor internal nftDescriptor = new SablierV2NFTDescriptor();
     AllowanceTransfer internal permit2 = new AllowanceTransfer();
     IPRBProxy internal proxy;
-    SablierV2LockupLinear internal linear;
+    PRBProxyHelpers internal proxyHelpers = new PRBProxyHelpers();
     SablierV2ProxyTarget internal target = new SablierV2ProxyTarget(permit2);
     WETH internal weth = new WETH();
 
@@ -61,6 +64,7 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     constructor() {
         DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();
+        onStreamCanceledData = abi.encodeCall(proxyHelpers.installPlugin, (target));
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -75,7 +79,7 @@ abstract contract Base_Test is Assertions, StdCheats {
         users.sender = createUser("Sender");
 
         // Deploy the sender's proxy contract.
-        proxy = new PRBProxyRegistry().deployFor(users.sender.addr);
+        (proxy,) = new PRBProxyRegistry().deployAndExecuteFor(users.sender.addr, address(proxyHelpers), onStreamCanceledData);
 
         // Deploy the defaults contract.
         defaults = new Defaults(users, proxy, dai);
