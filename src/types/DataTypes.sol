@@ -2,8 +2,7 @@
 pragma solidity >=0.8.19;
 
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
-import { Broker, LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
+import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
 library Batch {
     /// @notice Struct encapsulating the lockup contract's address and the stream ids to cancel.
@@ -58,7 +57,6 @@ library Batch {
 /// @notice Struct encapsulating the user parameters needed for Permit2.
 struct Permit2Params {
     uint48 expiration;
-    IAllowanceTransfer permit2;
     uint256 sigDeadline;
     bytes signature;
 }
