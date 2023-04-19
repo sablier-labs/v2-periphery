@@ -52,7 +52,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     AllowanceTransfer internal permit2 = new AllowanceTransfer();
     IPRBProxy internal proxy;
     SablierV2LockupLinear internal linear;
-    SablierV2ProxyTarget internal target = new SablierV2ProxyTarget();
+    SablierV2ProxyTarget internal target = new SablierV2ProxyTarget(permit2);
     WETH internal weth = new WETH();
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -339,7 +339,6 @@ abstract contract Base_Test is Assertions, StdCheats {
     function permit2Params(uint160 amount) internal view returns (Permit2Params memory) {
         return Permit2Params({
             expiration: defaults.PERMIT2_EXPIRATION(),
-            permit2: permit2,
             sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
             signature: getPermit2Signature({
                 details: defaults.permitDetails(amount),
@@ -352,7 +351,6 @@ abstract contract Base_Test is Assertions, StdCheats {
     function permit2Params(uint160 amount, uint48 nonce) internal view returns (Permit2Params memory) {
         return Permit2Params({
             expiration: defaults.PERMIT2_EXPIRATION(),
-            permit2: permit2,
             sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
             signature: getPermit2Signature({
                 details: defaults.permitDetails(amount, nonce),

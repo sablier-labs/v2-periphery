@@ -38,6 +38,21 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
+                                     CONSTANTS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Permit2 address.
+    IAllowanceTransfer internal immutable PERMIT2;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    constructor(IAllowanceTransfer permit2) {
+        PERMIT2 = permit2;
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -604,7 +619,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         internal
     {
         // Retrieve the proxy owner's nonce. The parameters are (user,token,spender).
-        (,, uint48 nonce) = permit2Params.permit2.allowance(msg.sender, address(asset), address(this));
+        (,, uint48 nonce) = PERMIT2.allowance(msg.sender, address(asset), address(this));
 
         // Declare the single permit struct.
         IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
@@ -619,14 +634,10 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         });
 
         // Permit the proxy to spend funds from the proxy owner.
-        permit2Params.permit2.permit({
-            owner: msg.sender,
-            permitSingle: permitSingle,
-            signature: permit2Params.signature
-        });
+        PERMIT2.permit({ owner: msg.sender, permitSingle: permitSingle, signature: permit2Params.signature });
 
         // Transfer funds from the proxy owner to the proxy.
-        permit2Params.permit2.transferFrom({ from: msg.sender, to: address(this), amount: amount, token: address(asset) });
+        PERMIT2.transferFrom({ from: msg.sender, to: address(this), amount: amount, token: address(asset) });
 
         // Approve the Sablier contract to spend funds.
         _approve(sablierContract, asset, amount);

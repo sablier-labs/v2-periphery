@@ -11,9 +11,13 @@ on:
         default: "goerli"
         description: 'Chain name. Defaults to "goerli" if unspecified'
         required: false
+      permit2:
+        default: "0x000000000022D473030F116dDEE9F6B43aC78BA3"
+        description: 'Permit2 address. Defaults to (0x0000...8BA3)'
+        required: false
 
 jobs:
-  deploy-target:
+  deploy-proxy-target:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
@@ -30,8 +34,9 @@ jobs:
           forge script script/DeployProxyTarget.s.sol
           --broadcast
           --rpc-url "${{ github.event.inputs.chain }}"
-          --sig "run()"
+          --sig "run(address)"
           -vvvv
+          "${{ github.event.inputs.permit2 }}"
       - name: "Add summary"
         run: |
           echo "## Deployment result" >> $GITHUB_STEP_SUMMARY
