@@ -16,8 +16,7 @@ contract OnStreamCanceled_Unit_Test is Base_Test {
         uint256 balanceBefore = dai.balanceOf(users.sender.addr);
 
         // Asset flow: Sablier contract → proxy → proxy owner
-        // Expect transfers from the Sablier contract to the proxy, and then from the proxy to the
-        // proxy owner.
+        // Expect transfers from the Sablier contract to the proxy, and then from the proxy to the proxy owner.
         expectCallToTransfer({ to: address(proxy), amount: defaults.REFUND_AMOUNT() });
         expectCallToTransfer({ to: users.sender.addr, amount: defaults.REFUND_AMOUNT() });
 

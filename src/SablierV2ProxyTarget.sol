@@ -118,11 +118,13 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget, IPRBProxyPlugin, ISablie
     function onStreamCanceled(
         ISablierV2Lockup lockup,
         uint256 streamId,
+        address recipient,
         uint128 senderAmount,
         uint128 recipientAmount
     )
         external
     {
+        recipient; // silence the warning
         recipientAmount; // silence the warning
 
         IERC20 asset = lockup.getAsset(streamId);
