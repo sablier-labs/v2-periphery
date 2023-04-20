@@ -19,6 +19,6 @@
   path = "lib/prb-test"
   url = "https://github.com/PaulRBerg/prb-test"
 [submodule "lib/v2-core"]
-  branch = "fix-hooks"
+  branch = "main"
   path = "lib/v2-core"
   url = "https://github.com/sablierhq/v2-core"
