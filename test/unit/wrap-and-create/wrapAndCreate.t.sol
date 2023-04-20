@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { IWrappedNativeAsset } from "src/interfaces/external/IWrappedNativeAsset.sol";
+import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 
-import { Base_Test } from "../../Base.t.sol";
-import { Defaults } from "../../helpers/Defaults.t.sol";
+import { Defaults } from "../../shared/Defaults.t.sol";
+import { Unit_Test } from "../Unit.t.sol";
 
 /// @dev This contracts tests the following functions:
 /// - `wrapEtherAndCreateWithDeltas`
 /// - `wrapEtherAndCreateWithDurations`
 /// - `wrapEtherAndCreateWithMilestones`
 /// - `wrapEtherAndCreateWithRange`
-contract WrapAndCreate_Unit_Test is Base_Test {
+contract WrapAndCreate_Unit_Test is Unit_Test {
     function test_WrapAndCreateWithDeltas() external {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));

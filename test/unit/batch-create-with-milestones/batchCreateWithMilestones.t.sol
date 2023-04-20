@@ -4,10 +4,10 @@ pragma solidity >=0.8.19 <0.9.0;
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Base_Test } from "../../Base.t.sol";
-import { Defaults } from "../../helpers/Defaults.t.sol";
+import { Defaults } from "../../shared/Defaults.t.sol";
+import { Unit_Test } from "../Unit.t.sol";
 
-contract BatchCreateWithMilestones_Unit_Test is Base_Test {
+contract BatchCreateWithMilestones_Unit_Test is Unit_Test {
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithMilestones[] memory batch = new Batch.CreateWithMilestones[](0);
         bytes memory data = abi.encodeCall(

@@ -31,7 +31,6 @@
 [profile.test-optimized]
   fuzz = { runs = 5_000 }
   src = "test"
-  verbosity = 4
 
 [doc]
   ignore = ["**/*.t.sol"]
@@ -52,5 +51,5 @@
   wrap_comments = true
 
 [rpc_endpoints]
-  goerli = "https://goerli.infura.io/v3/${API_KEY_INFURA}"
+  goerli = "${RPC_URL_GOERLI}"
   localhost = "http://localhost:8545"

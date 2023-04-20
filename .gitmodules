@@ -9,7 +9,7 @@
 [submodule "lib/permit2"]
   branch = "main"
   path = "lib/permit2"
-  url = "https://github.com/andreivladbrg/permit2"
+  url = "https://github.com/sablierhq/permit2"
 [submodule "lib/prb-proxy"]
   branch = "main"
   path = "lib/prb-proxy"

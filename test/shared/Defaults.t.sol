@@ -53,7 +53,7 @@ contract Defaults {
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
-    constructor(Users memory users_, IPRBProxy proxy_, IERC20 dai_) {
+    constructor(Users memory users_, IERC20 dai_, IPRBProxy proxy_) {
         users = users_;
         proxy = proxy_;
         dai = dai_;
@@ -61,6 +61,7 @@ contract Defaults {
         // Initialize the complex constants.
         BROKER = Broker({ account: users.broker.addr, fee: BROKER_FEE });
     }
+
     /*//////////////////////////////////////////////////////////////////////////
                                        PARAMS
     //////////////////////////////////////////////////////////////////////////*/
