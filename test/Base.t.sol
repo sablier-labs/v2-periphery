@@ -79,7 +79,11 @@ abstract contract Base_Test is Assertions, StdCheats {
         users.sender = createUser("Sender");
 
         // Deploy the sender's proxy contract.
-        (proxy,) = new PRBProxyRegistry().deployAndExecuteFor(users.sender.addr, address(proxyHelpers), onStreamCanceledData);
+        (proxy,) = new PRBProxyRegistry().deployAndExecuteFor({ 
+            owner: users.sender.addr,
+            target: address(proxyHelpers),
+            data: onStreamCanceledData
+        });
 
         // Deploy the defaults contract.
         defaults = new Defaults(users, proxy, dai);

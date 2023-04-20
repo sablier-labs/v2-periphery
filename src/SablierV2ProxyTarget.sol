@@ -112,6 +112,29 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget, IPRBProxyPlugin, ISablie
         _postCancelMultiple(initialBalances, assets);
     }
 
+    /// @inheritdoc ISablierV2LockupSender
+    /// @dev This function is necessary to automatically redirect the funds to the sender, i.e. the proxy owner, when
+    /// recipients trigger cancellations.
+    function onStreamCanceled(
+        ISablierV2Lockup lockup,
+        uint256 streamId,
+        uint128 senderAmount,
+        uint128 recipientAmount
+    )
+        external
+    {
+        recipientAmount; // silence the warning
+
+        IERC20 asset = lockup.getAsset(streamId);
+
+        // The `lockup` contract will have the proxy contract set as the sender.
+        address proxy = lockup.getSender(streamId);
+        address owner = IPRBProxy(proxy).owner();
+
+        // Transfer the funds from the proxy contract to the sender.
+        asset.safeTransfer({ to: owner, value: senderAmount });
+    }
+
     /// @inheritdoc ISablierV2ProxyTarget
     function renounce(ISablierV2Lockup lockup, uint256 streamId) external {
         lockup.renounce(streamId);
@@ -125,21 +148,6 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget, IPRBProxyPlugin, ISablie
     /// @inheritdoc ISablierV2ProxyTarget
     function withdrawMax(ISablierV2Lockup lockup, uint256 streamId, address to) external {
         lockup.withdrawMax(streamId, to);
-    }
-
-    /// @inheritdoc ISablierV2LockupSender
-    function onStreamCanceled(
-        ISablierV2Lockup lockup,
-        uint256 streamId,
-        uint128 senderAmount,
-        uint128 recipientAmount
-    )
-        external
-    {
-        recipientAmount; // silence the warning
-        IERC20 asset = lockup.getAsset(streamId);
-        address proxyOwner = IPRBProxy(msg.sender).owner();
-        asset.safeTransfer({ to: proxyOwner, value: senderAmount });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -583,6 +591,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget, IPRBProxyPlugin, ISablie
                                     PROXY-PLUGIN
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @inheritdoc IPRBProxyPlugin
     function methodList() external pure returns (bytes4[] memory methods) {
         bytes4[] memory functionSig = new bytes4[](1);
         functionSig[0] = this.onStreamCanceled.selector;
