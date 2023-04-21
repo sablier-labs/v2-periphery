@@ -7,7 +7,7 @@ import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Defaults } from "../../shared/Defaults.t.sol";
+import { Defaults } from "../../utils/Defaults.sol";
 import { Unit_Test } from "../Unit.t.sol";
 
 contract BatchCancelMultiple_Unit_Test is Unit_Test {

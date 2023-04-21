@@ -9,7 +9,7 @@ import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
-import { Users } from "./Types.t.sol";
+import { Users } from "./Types.sol";
 
 /// @notice Contract with default values for testing.
 contract Defaults {

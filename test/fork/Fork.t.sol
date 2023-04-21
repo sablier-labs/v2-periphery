@@ -8,7 +8,7 @@ import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 
-import { Defaults } from "../shared/Defaults.t.sol";
+import { Defaults } from "../utils/Defaults.sol";
 import { Base_Test } from "../Base.t.sol";
 
 /// @title Fork_Test

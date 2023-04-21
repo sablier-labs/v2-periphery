@@ -22,9 +22,9 @@ import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol"
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { Permit2Params } from "src/types/DataTypes.sol";
 
-import { Assertions } from "./shared/Assertions.t.sol";
-import { Defaults } from "./shared/Defaults.t.sol";
-import { Users } from "./shared/Types.t.sol";
+import { Assertions } from "./utils/Assertions.sol";
+import { Defaults } from "./utils/Defaults.sol";
+import { Users } from "./utils/Types.sol";
 
 /// @title Base_Test
 /// @notice Base test contract with common logic needed by all test contracts.

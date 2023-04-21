@@ -8,8 +8,8 @@ import { Precompiles as PRBProxyPrecompiles } from "@prb/proxy-test/utils/Precom
 import { Precompiles as V2CorePrecompiles } from "@sablier/v2-core-test/utils/Precompiles.sol";
 import { DeployPermit2 } from "permit2-test/utils/DeployPermit2.sol";
 
-import { Defaults } from "../shared/Defaults.t.sol";
-import { WETH } from "../shared/mockups/WETH.t.sol";
+import { Defaults } from "../utils/Defaults.sol";
+import { WETH } from "../mocks/WETH.sol";
 import { Base_Test } from "../Base.t.sol";
 
 /// @title Unit_Test
