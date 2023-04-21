@@ -49,8 +49,10 @@ abstract contract Fork_Test is Base_Test {
         // Load WETH.
         weth = IWrappedNativeAsset(0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6);
 
-        // Load the proxy registry and deploy a proxy for the sender.
+        // Load the proxy registry.
         registry = IPRBProxyRegistry(0x842b72D8521E9a09D229434e4E9517DB1a4fAA71);
+
+        // Deploy a proxy for the sender.
         proxy = registry.deployFor(users.sender.addr);
 
         // Load Permit2.
