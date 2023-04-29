@@ -55,6 +55,7 @@ library Batch {
 }
 
 /// @notice Struct encapsulating the user parameters needed for Permit2.
+/// @dev See the full documentation at https://github.com/Uniswap/permit2.
 struct Permit2Params {
     uint48 expiration;
     uint256 sigDeadline;
