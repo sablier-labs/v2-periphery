@@ -36,8 +36,16 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
 
         // Asset flow: Sablier → proxy → proxy owner
         // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.
-        expectMultipleCallsToTransfer({ to: address(proxy), amount: defaults.REFUND_AMOUNT() });
-        expectMultipleCallsToTransfer({ to: address(proxy), amount: defaults.REFUND_AMOUNT() });
+        expectMultipleCallsToTransfer({
+            count: defaults.BATCH_SIZE(),
+            to: address(proxy),
+            amount: defaults.REFUND_AMOUNT()
+        });
+        expectMultipleCallsToTransfer({
+            count: defaults.BATCH_SIZE(),
+            to: address(proxy),
+            amount: defaults.REFUND_AMOUNT()
+        });
         expectCallToTransfer({ to: users.sender.addr, amount: 2 * defaults.BATCH_SIZE() * defaults.REFUND_AMOUNT() });
 
         // ABI encode the parameters and call the function via the proxy.

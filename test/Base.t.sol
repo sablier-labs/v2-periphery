@@ -213,18 +213,23 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Expects a call to {ISablierV2Lockup.cancel}.
     function expectCallToCancel(address lockup, uint256 streamId) internal {
-        vm.expectCall({ callee: lockup, data: abi.encodeCall(ISablierV2Lockup.cancel, (streamId)) });
+        vm.expectCall({ callee: lockup, count: uint64(1), data: abi.encodeCall(ISablierV2Lockup.cancel, (streamId)) });
     }
 
     /// @dev Expects a call to {ISablierV2Lockup.cancelMultiple}.
     function expectCallToCancelMultiple(address lockup, uint256[] memory streamIds) internal {
-        vm.expectCall({ callee: lockup, data: abi.encodeCall(ISablierV2Lockup.cancelMultiple, (streamIds)) });
+        vm.expectCall({
+            callee: lockup,
+            count: uint64(1),
+            data: abi.encodeCall(ISablierV2Lockup.cancelMultiple, (streamIds))
+        });
     }
 
     /// @dev Expects a call to {ISablierV2LockupDynamic.createWithDeltas}.
     function expectCallToCreateWithDeltas(LockupDynamic.CreateWithDeltas memory params) internal {
         vm.expectCall({
             callee: address(dynamic),
+            count: uint64(1),
             data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
         });
     }
@@ -233,6 +238,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function expectCallToCreateWithDurations(LockupLinear.CreateWithDurations memory params) internal {
         vm.expectCall({
             callee: address(linear),
+            count: uint64(1),
             data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
         });
     }
@@ -241,71 +247,104 @@ abstract contract Base_Test is Assertions, StdCheats {
     function expectCallToCreateWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal {
         vm.expectCall({
             callee: address(dynamic),
+            count: uint64(1),
             data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
         });
     }
 
     /// @dev Expects a call to {ISablierV2LockupLinear.createWithRange}.
     function expectCallToCreateWithRange(LockupLinear.CreateWithRange memory params) internal {
-        vm.expectCall({ callee: address(linear), data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params)) });
+        vm.expectCall({
+            callee: address(linear),
+            count: uint64(1),
+            data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
+        });
+    }
+
+    /// @dev Expects a call to {IERC20.transfer}.
+    function expectCallToTransfer(address to, uint256 amount) internal {
+        vm.expectCall({ callee: address(dai), count: uint64(1), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+    }
+
+    /// @dev Expects a call to {IERC20.transferFrom}.
+    function expectCallToTransferFrom(address from, address to, uint256 amount) internal {
+        vm.expectCall({
+            callee: address(dai),
+            count: uint64(1),
+            data: abi.encodeCall(IERC20.transferFrom, (from, to, amount))
+        });
+    }
+
+    /// @dev Expects a call to {IERC20.transferFrom}.
+    function expectCallToTransferFrom(address asset, address from, address to, uint256 amount) internal {
+        vm.expectCall({ callee: asset, count: uint64(1), data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupDynamic.createWithMilestones}.
-    function expectMultipleCallsToCreateWithDeltas(LockupDynamic.CreateWithDeltas memory params) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToCreateWithDeltas(params);
-        }
+    function expectMultipleCallsToCreateWithDeltas(
+        uint256 count,
+        LockupDynamic.CreateWithDeltas memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(dynamic),
+            count: uint64(count),
+            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
+        });
     }
 
     /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithDurations}.
-    function expectMultipleCallsToCreateWithDurations(LockupLinear.CreateWithDurations memory params) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToCreateWithDurations(params);
-        }
+    function expectMultipleCallsToCreateWithDurations(
+        uint256 count,
+        LockupLinear.CreateWithDurations memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(linear),
+            count: uint64(count),
+            data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
+        });
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupDynamic.createWithMilestones}.
-    function expectMultipleCallsToCreateWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToCreateWithMilestones(params);
-        }
+    function expectMultipleCallsToCreateWithMilestones(
+        uint256 count,
+        LockupDynamic.CreateWithMilestones memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(dynamic),
+            count: uint64(count),
+            data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
+        });
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupLinear.createWithRange}.
-    function expectMultipleCallsToCreateWithRange(LockupLinear.CreateWithRange memory params) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToCreateWithRange(params);
-        }
+    function expectMultipleCallsToCreateWithRange(uint256 count, LockupLinear.CreateWithRange memory params) internal {
+        vm.expectCall({
+            callee: address(linear),
+            count: uint64(count),
+            data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
+        });
     }
 
-    /// @dev Expects multiple calls to the `transfer` function of the default ERC-20 contract.
-    function expectMultipleCallsToTransfer(address to, uint256 amount) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToTransfer(to, amount);
-        }
+    /// @dev Expects multiple calls to {IERC20.transfer}.
+    function expectMultipleCallsToTransfer(uint256 count, address to, uint256 amount) internal {
+        vm.expectCall({ callee: address(dai), count: uint64(count), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
-    /// @dev Expects multiple calls to the `transferFrom` function of the default ERC-20 contract.
-    function expectMultipleCallsToTransferFrom(address from, address to, uint256 amount) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToTransferFrom(from, to, amount);
-        }
+    /// @dev Expects multiple calls to {IERC20.transferFrom}.
+    function expectMultipleCallsToTransferFrom(uint256 count, address from, address to, uint256 amount) internal {
+        vm.expectCall({
+            callee: address(dai),
+            count: uint64(count),
+            data: abi.encodeCall(IERC20.transferFrom, (from, to, amount))
+        });
     }
 
-    /// @dev Expects a call to the `transfer` function of the default ERC-20 contract.
-    function expectCallToTransfer(address to, uint256 amount) internal {
-        vm.expectCall({ callee: address(dai), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
-    }
-
-    /// @dev Expects a call to the `transferFrom` function of the default ERC-20 contract.
-    function expectCallToTransferFrom(address from, address to, uint256 amount) internal {
-        vm.expectCall({ callee: address(dai), data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
-    }
-
-    /// @dev Expects a call to the `transferFrom` function of the provided ERC-20 contract.
-    function expectCallToTransferFrom(address asset, address from, address to, uint256 amount) internal {
-        vm.expectCall({ callee: asset, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
-    }
     /*//////////////////////////////////////////////////////////////////////////
                                       PERMIT2
     //////////////////////////////////////////////////////////////////////////*/
