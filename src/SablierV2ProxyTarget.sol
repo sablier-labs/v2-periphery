@@ -64,7 +64,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             revert Errors.SablierV2ProxyTarget_BatchSizeZero();
         }
 
-        // Load the balances before the cancellation.
+        // Load the balances before the cancellations.
         uint256[] memory initialBalances = _getBalances(assets);
 
         for (uint256 i = 0; i < batchSize;) {
@@ -77,8 +77,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             }
         }
 
-        // Load the balances after the cancellation, and transfer the differences to the proxy owner.
-        _postCancelMultiple(initialBalances, assets);
+        // Transfer the balance differences to the proxy owner.
+        _postMultipleCancellations(initialBalances, assets);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -99,14 +99,14 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
 
     /// @inheritdoc ISablierV2ProxyTarget
     function cancelMultiple(ISablierV2Lockup lockup, IERC20[] calldata assets, uint256[] calldata streamIds) external {
-        // Load the balances before the cancellation.
+        // Load the balances before the cancellations.
         uint256[] memory initialBalances = _getBalances(assets);
 
         // Cancel the streams.
         lockup.cancelMultiple(streamIds);
 
-        // Load the balances after the cancellation, and transfer the differences to the proxy owner.
-        _postCancelMultiple(initialBalances, assets);
+        // Transfer the balance differences to the proxy owner.
+        _postMultipleCancellations(initialBalances, assets);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -588,7 +588,7 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     }
 
     /// @dev Shared logic between {cancelMultiple} and {batchCancelMultiple}.
-    function _postCancelMultiple(uint256[] memory initialBalances, IERC20[] calldata assets) internal {
+    function _postMultipleCancellations(uint256[] memory initialBalances, IERC20[] calldata assets) internal {
         uint256 assetCount = assets.length;
         uint256 balanceFinal;
         uint256 balanceDelta;
