@@ -51,7 +51,7 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
         for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             Lockup.Status actualDynamicStatus = dynamic.getStatus(dynamicStreamIds[i]);
-            Lockup.Status actualLinearStatus = linear.getStatus(dynamicStreamIds[i]);
+            Lockup.Status actualLinearStatus = linear.getStatus(linearStreamIds[i]);
             assertEq(actualDynamicStatus, expectedStatus, "dynamic stream status not canceled");
             assertEq(actualLinearStatus, expectedStatus, "linear stream status not canceled");
         }
