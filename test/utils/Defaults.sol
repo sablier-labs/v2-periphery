@@ -9,7 +9,7 @@ import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
-import { Users } from "./Types.t.sol";
+import { Users } from "./Types.sol";
 
 /// @notice Contract with default values for testing.
 contract Defaults {
@@ -21,13 +21,13 @@ contract Defaults {
     Broker public BROKER;
     UD60x18 public constant BROKER_FEE = UD60x18.wrap(0);
     uint40 public constant CLIFF_DURATION = 2500 seconds;
-    uint40 public constant CLIFF_TIME = START_TIME + CLIFF_DURATION;
-    uint40 public constant END_TIME = START_TIME + TOTAL_DURATION;
+    uint40 public immutable CLIFF_TIME;
+    uint40 public immutable END_TIME;
     uint256 public constant ETHER_AMOUNT = 10_000 ether;
     uint256 public constant MAX_SEGMENT_COUNT = 1000;
     uint128 public constant PER_STREAM_AMOUNT = 10_000e18;
     uint128 public constant REFUND_AMOUNT = 7500e18;
-    uint40 public constant START_TIME = 100 seconds;
+    uint40 public immutable START_TIME;
     uint40 public constant TOTAL_DURATION = 10_000 seconds;
     uint128 public constant TRANSFER_AMOUNT = 100_000e18;
     uint40 public constant WARP_26_PERCENT = 2600 seconds;
@@ -39,7 +39,7 @@ contract Defaults {
 
     uint48 public constant PERMIT2_EXPIRATION = type(uint48).max;
     uint48 public constant PERMIT2_NONCE = 0;
-    uint256 public constant PERMIT2_SIG_DEADLINE = 100;
+    uint256 public immutable PERMIT2_SIG_DEADLINE;
 
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
@@ -53,14 +53,21 @@ contract Defaults {
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
-    constructor(Users memory users_, IPRBProxy proxy_, IERC20 dai_) {
+    constructor(Users memory users_, IERC20 dai_, IPRBProxy proxy_) {
         users = users_;
         proxy = proxy_;
         dai = dai_;
 
+        // Initialize the immutables.
+        START_TIME = uint40(block.timestamp) + 100 seconds;
+        CLIFF_TIME = START_TIME + CLIFF_DURATION;
+        END_TIME = START_TIME + TOTAL_DURATION;
+        PERMIT2_SIG_DEADLINE = START_TIME;
+
         // Initialize the complex constants.
         BROKER = Broker({ account: users.broker.addr, fee: BROKER_FEE });
     }
+
     /*//////////////////////////////////////////////////////////////////////////
                                        PARAMS
     //////////////////////////////////////////////////////////////////////////*/
@@ -147,7 +154,7 @@ contract Defaults {
         });
     }
 
-    function dynamicRange() external pure returns (LockupDynamic.Range memory) {
+    function dynamicRange() external view returns (LockupDynamic.Range memory) {
         return LockupDynamic.Range({ start: START_TIME, end: END_TIME });
     }
 
@@ -157,7 +164,7 @@ contract Defaults {
         uint128 amount1
     )
         private
-        pure
+        view
         returns (LockupDynamic.Segment[] memory segments_)
     {
         segments_ = new LockupDynamic.Segment[](2);
@@ -229,7 +236,7 @@ contract Defaults {
         return LockupLinear.Durations({ cliff: CLIFF_DURATION, total: TOTAL_DURATION });
     }
 
-    function linearRange() private pure returns (LockupLinear.Range memory) {
+    function linearRange() private view returns (LockupLinear.Range memory) {
         return LockupLinear.Range({ start: START_TIME, cliff: CLIFF_TIME, end: END_TIME });
     }
 

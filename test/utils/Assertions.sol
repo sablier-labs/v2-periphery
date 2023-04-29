@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { PRBTest } from "@prb/test/PRBTest.sol";
 import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
+
+import { PRBTest } from "@prb/test/PRBTest.sol";
 
 abstract contract Assertions is PRBTest {
     event LogArray(Lockup.Status[] value);

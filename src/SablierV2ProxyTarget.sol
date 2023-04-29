@@ -9,7 +9,7 @@ import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2L
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
-import { IWrappedNativeAsset } from "./interfaces/external/IWrappedNativeAsset.sol";
+import { IWrappedNativeAsset } from "./interfaces/IWrappedNativeAsset.sol";
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
 import { Errors } from "./libraries/Errors.sol";
 import { Batch, Permit2Params } from "./types/DataTypes.sol";

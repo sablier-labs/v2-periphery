@@ -1,9 +1,9 @@
 [profile.default]
   auto_detect_solc = false
+  block_timestamp = 1_680_220_800        # March 31, 2023 at 00:00 GMT
   bytecode_hash = "none"
   cbor_metadata = false
-  fs_permissions = [{ access = "read", path = "optimized-out" }]
-  gas_reports = ["*"]
+  gas_reports = ["SablierV2ProxyTarget"]
   libs = ["lib"]
   optimizer = true
   optimizer_runs = 5_000
@@ -12,6 +12,10 @@
   solc = "0.8.19"
   src = "src"
   test = "test"
+
+[[profile.default.fs_permissions]]
+  access = "read"
+  path = "optimized-out"
 
 [profile.default.fuzz]
   max_test_rejects = 1_000_000 # Number of times `vm.assume` can fail
@@ -31,7 +35,6 @@
 [profile.test-optimized]
   fuzz = { runs = 5_000 }
   src = "test"
-  verbosity = 4
 
 [doc]
   ignore = ["**/*.t.sol"]
@@ -52,5 +55,5 @@
   wrap_comments = true
 
 [rpc_endpoints]
-  goerli = "https://goerli.infura.io/v3/${API_KEY_INFURA}"
+  goerli = "${RPC_URL_GOERLI}"
   localhost = "http://localhost:8545"
