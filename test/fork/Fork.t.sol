@@ -27,17 +27,17 @@ abstract contract Fork_Test is Base_Test {
         // Load the dependencies.
         loadDependencies();
 
-        // Deploy the contract containing the default values used for testing.
+        // Deploy the defaults contract.
         defaults = new Defaults(users, dai, proxy);
 
         // Deploy V2 Periphery.
         deployProtocolConditionally();
 
-        // Approve Permit2 to spend funds.
-        approvePermit2();
-
         // Label the contracts.
         labelContracts();
+
+        // Approve Permit2 to spend funds.
+        approvePermit2();
     }
 
     /*//////////////////////////////////////////////////////////////////////////

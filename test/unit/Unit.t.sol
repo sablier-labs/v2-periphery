@@ -22,20 +22,20 @@ abstract contract Unit_Test is Base_Test {
     function setUp() public virtual override {
         Base_Test.setUp();
 
-        // Deploy the unit test contracts.
+        // Deploy the external dependencies.
         deployDependencies();
 
-        // Deploy the contract containing the default values used for testing.
+        // Deploy the defaults contract.
         defaults = new Defaults(users, dai, proxy);
 
         // Deploy V2 Periphery.
         deployProtocolConditionally();
 
-        // Approve Permit2 to spend funds.
-        approvePermit2();
-
         // Label the contracts.
         labelContracts();
+
+        // Approve Permit2 to spend funds.
+        approvePermit2();
     }
 
     /*//////////////////////////////////////////////////////////////////////////

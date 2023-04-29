@@ -104,7 +104,7 @@ abstract contract Base_Test is Assertions, StdCheats {
         result = eqString(profile, "test-optimized");
     }
 
-    /// @dev Labels the contracts most relevant for testing.
+    /// @dev Labels the most relevant contracts.
     function labelContracts() internal {
         vm.label({ account: address(dai), newLabel: "Dai" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
