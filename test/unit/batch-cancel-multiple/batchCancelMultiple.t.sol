@@ -28,7 +28,7 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
         uint256[] memory linearStreamIds = batchCreateWithRange({ nonce: 1 });
 
         // Simulate the passage of time.
-        vm.warp({ timestamp: defaults.WARP_26_PERCENT() });
+        vm.warp({ timestamp: defaults.CLIFF_TIME() });
 
         // Expects calls to cancel multiple streams.
         expectCallToCancelMultiple({ lockup: address(dynamic), streamIds: dynamicStreamIds });
@@ -37,16 +37,11 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
         // Asset flow: Sablier → proxy → proxy owner
         // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.
         expectMultipleCallsToTransfer({
-            count: defaults.BATCH_SIZE(),
+            count: 2 * defaults.BATCH_SIZE(),
             to: address(proxy),
             amount: defaults.REFUND_AMOUNT()
         });
-        expectMultipleCallsToTransfer({
-            count: defaults.BATCH_SIZE(),
-            to: address(proxy),
-            amount: defaults.REFUND_AMOUNT()
-        });
-        expectCallToTransfer({ to: users.sender.addr, amount: 2 * defaults.BATCH_SIZE() * defaults.REFUND_AMOUNT() });
+        expectCallToTransfer({ to: users.sender.addr, amount: 2 * defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
 
         // ABI encode the parameters and call the function via the proxy.
         Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](2);
