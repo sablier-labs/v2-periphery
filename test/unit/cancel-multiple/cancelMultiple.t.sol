@@ -27,7 +27,7 @@ contract CancelMultiple_Unit_Test is Unit_Test {
     }
 
     function test_CancelMultiple(uint256[] memory streamIds, ISablierV2Lockup lockup) internal {
-        // Warp into the future.
+        // Simulate the passage of time.
         vm.warp(defaults.WARP_26_PERCENT());
 
         // Asset flow: proxy owner → proxy → sender

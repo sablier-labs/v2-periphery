@@ -27,7 +27,7 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
         uint256[] memory dynamicStreamIds = batchCreateWithMilestones({ nonce: 0 });
         uint256[] memory linearStreamIds = batchCreateWithRange({ nonce: 1 });
 
-        // Warp into the future.
+        // Simulate the passage of time.
         vm.warp({ timestamp: defaults.WARP_26_PERCENT() });
 
         // Expects calls to cancel multiple streams.
