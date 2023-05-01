@@ -6,8 +6,8 @@ import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Defaults } from "../../utils/Defaults.sol";
-import { Unit_Test } from "../Unit.t.sol";
+import { Defaults } from "../../../utils/Defaults.sol";
+import { Unit_Test } from "../../Unit.t.sol";
 
 contract CancelMultiple_Unit_Test is Unit_Test {
     function test_CancelMultiple_Linear() internal {
