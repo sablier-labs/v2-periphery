@@ -30,7 +30,6 @@ contract Defaults {
     uint40 public immutable START_TIME;
     uint40 public constant TOTAL_DURATION = 10_000 seconds;
     uint128 public constant TRANSFER_AMOUNT = PER_STREAM_AMOUNT * uint128(BATCH_SIZE);
-    uint40 public immutable WARP_26_PERCENT;
     uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -63,7 +62,6 @@ contract Defaults {
         CLIFF_TIME = START_TIME + CLIFF_DURATION;
         END_TIME = START_TIME + TOTAL_DURATION;
         PERMIT2_SIG_DEADLINE = START_TIME;
-        WARP_26_PERCENT = START_TIME + CLIFF_DURATION + 100 seconds;
 
         // Initialize the complex constants.
         BROKER = Broker({ account: users.broker.addr, fee: BROKER_FEE });
