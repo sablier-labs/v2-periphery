@@ -274,65 +274,65 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Expects multiple calls to {SablierV2LockupDynamic.createWithMilestones}.
     function expectMultipleCallsToCreateWithDeltas(
-        uint256 count,
+        uint64 count,
         LockupDynamic.CreateWithDeltas memory params
     )
         internal
     {
         vm.expectCall({
             callee: address(dynamic),
-            count: uint64(count),
+            count: count,
             data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
         });
     }
 
     /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithDurations}.
     function expectMultipleCallsToCreateWithDurations(
-        uint256 count,
+        uint64 count,
         LockupLinear.CreateWithDurations memory params
     )
         internal
     {
         vm.expectCall({
             callee: address(linear),
-            count: uint64(count),
+            count: count,
             data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
         });
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupDynamic.createWithMilestones}.
     function expectMultipleCallsToCreateWithMilestones(
-        uint256 count,
+        uint64 count,
         LockupDynamic.CreateWithMilestones memory params
     )
         internal
     {
         vm.expectCall({
             callee: address(dynamic),
-            count: uint64(count),
+            count: count,
             data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
         });
     }
 
     /// @dev Expects multiple calls to {SablierV2LockupLinear.createWithRange}.
-    function expectMultipleCallsToCreateWithRange(uint256 count, LockupLinear.CreateWithRange memory params) internal {
+    function expectMultipleCallsToCreateWithRange(uint64 count, LockupLinear.CreateWithRange memory params) internal {
         vm.expectCall({
             callee: address(linear),
-            count: uint64(count),
+            count: count,
             data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
         });
     }
 
     /// @dev Expects multiple calls to {IERC20.transfer}.
-    function expectMultipleCallsToTransfer(uint256 count, address to, uint256 amount) internal {
-        vm.expectCall({ callee: address(dai), count: uint64(count), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+    function expectMultipleCallsToTransfer(uint64 count, address to, uint256 amount) internal {
+        vm.expectCall({ callee: address(dai), count: count, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
-    function expectMultipleCallsToTransferFrom(uint256 count, address from, address to, uint256 amount) internal {
+    function expectMultipleCallsToTransferFrom(uint64 count, address from, address to, uint256 amount) internal {
         vm.expectCall({
             callee: address(dai),
-            count: uint64(count),
+            count: count,
             data: abi.encodeCall(IERC20.transferFrom, (from, to, amount))
         });
     }

@@ -17,7 +17,7 @@ contract Defaults {
                                  GENERIC CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint256 public constant BATCH_SIZE = 10;
+    uint64 public constant BATCH_SIZE = 10;
     Broker public BROKER;
     UD60x18 public constant BROKER_FEE = UD60x18.wrap(0);
     uint40 public constant CLIFF_DURATION = 2500 seconds;
