@@ -12,7 +12,7 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
     function test_OnStreamCanceled() external {
         uint256 streamId = createWithRange();
 
-        // Warp into the future.
+        // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 
         // Make the `recipient` the caller.
