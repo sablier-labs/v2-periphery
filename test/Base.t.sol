@@ -4,6 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
+import { IPRBProxyHelpers } from "@prb/proxy/interfaces/IPRBProxyHelpers.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
@@ -17,9 +18,11 @@ import { PermitHash } from "permit2/libraries/PermitHash.sol";
 import { eqString } from "@prb/test/Helpers.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
+import { DeployProxyPlugin } from "script/DeployProxyPlugin.s.sol";
 import { DeployProxyTarget } from "script/DeployProxyTarget.s.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
+import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
 import { Permit2Params } from "src/types/DataTypes.sol";
 
 import { Assertions } from "./utils/Assertions.sol";
@@ -45,7 +48,9 @@ abstract contract Base_Test is Assertions, StdCheats {
     ISablierV2LockupLinear internal linear;
     ISablierV2NFTDescriptor internal nftDescriptor = new SablierV2NFTDescriptor();
     IAllowanceTransfer internal permit2;
+    SablierV2ProxyPlugin internal plugin;
     IPRBProxy internal proxy;
+    IPRBProxyHelpers internal proxyHelpers;
     IPRBProxyRegistry internal registry;
     ISablierV2ProxyTarget internal target;
     IWrappedNativeAsset internal weth;
@@ -85,6 +90,8 @@ abstract contract Base_Test is Assertions, StdCheats {
     function deployProtocolConditionally() internal {
         // We deploy from precompiled source if the Foundry profile is "test-optimized".
         if (isTestOptimizedProfile()) {
+            plugin =
+                SablierV2ProxyPlugin(deployCode("optimized-out/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json"));
             target = ISablierV2ProxyTarget(
                 deployCode(
                     "optimized-out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json", abi.encode(address(permit2))
@@ -93,6 +100,7 @@ abstract contract Base_Test is Assertions, StdCheats {
         }
         // We deploy normally for all other profiles.
         else {
+            plugin = new DeployProxyPlugin().run();
             target = new DeployProxyTarget().run(permit2);
         }
     }
@@ -378,5 +386,14 @@ abstract contract Base_Test is Assertions, StdCheats {
                 spender: address(proxy)
             })
         });
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                       PLUGIN
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function installPlugin() internal {
+        bytes memory data = abi.encodeCall(proxyHelpers.installPlugin, (plugin));
+        proxy.execute(address(proxyHelpers), data);
     }
 }

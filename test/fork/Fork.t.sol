@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { IPRBProxyHelpers } from "@prb/proxy/interfaces/IPRBProxyHelpers.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
@@ -51,6 +52,9 @@ abstract contract Fork_Test is Base_Test {
 
         // Load the proxy registry.
         registry = IPRBProxyRegistry(0x842b72D8521E9a09D229434e4E9517DB1a4fAA71);
+
+        // Load the proxy helpers.
+        proxyHelpers = IPRBProxyHelpers(0x8afE5fE3BAfA1FbC941a50b630AA966F3A7815A0);
 
         // Deploy a proxy for the sender.
         proxy = registry.deployFor(users.sender.addr);
