@@ -266,7 +266,7 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithMilestones}.
     function expectMultipleCallsToCreateWithDeltas(
-        uint256 count,
+        uint64 count,
         LockupDynamic.CreateWithDeltas memory params
     )
         internal
@@ -280,7 +280,7 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithDurations}.
     function expectMultipleCallsToCreateWithDurations(
-        uint256 count,
+        uint64 count,
         LockupLinear.CreateWithDurations memory params
     )
         internal
@@ -294,7 +294,7 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithMilestones}.
     function expectMultipleCallsToCreateWithMilestones(
-        uint256 count,
+        uint64 count,
         LockupDynamic.CreateWithMilestones memory params
     )
         internal
@@ -307,7 +307,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     }
 
     /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithRange}.
-    function expectMultipleCallsToCreateWithRange(uint256 count, LockupLinear.CreateWithRange memory params) internal {
+    function expectMultipleCallsToCreateWithRange(uint64 count, LockupLinear.CreateWithRange memory params) internal {
         vm.expectCall({
             callee: address(linear),
             count: uint64(count),
@@ -316,12 +316,12 @@ abstract contract Base_Test is Assertions, StdCheats {
     }
 
     /// @dev Expects multiple calls to {IERC20.transfer}.
-    function expectMultipleCallsToTransfer(uint256 count, address to, uint256 amount) internal {
+    function expectMultipleCallsToTransfer(uint64 count, address to, uint256 amount) internal {
         vm.expectCall({ callee: address(dai), count: uint64(count), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
-    function expectMultipleCallsToTransferFrom(uint256 count, address from, address to, uint256 amount) internal {
+    function expectMultipleCallsToTransferFrom(uint64 count, address from, address to, uint256 amount) internal {
         vm.expectCall({
             callee: address(dai),
             count: uint64(count),
