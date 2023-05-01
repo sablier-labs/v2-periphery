@@ -26,11 +26,11 @@ contract Defaults {
     uint256 public constant ETHER_AMOUNT = 10_000 ether;
     uint256 public constant MAX_SEGMENT_COUNT = 1000;
     uint128 public constant PER_STREAM_AMOUNT = 10_000e18;
-    uint128 public constant REFUND_AMOUNT = 7500e18;
+    uint128 public constant REFUND_AMOUNT = 7500e18; // deposit - cliff amount
     uint40 public immutable START_TIME;
     uint40 public constant TOTAL_DURATION = 10_000 seconds;
-    uint128 public constant TRANSFER_AMOUNT = 100_000e18;
-    uint40 public constant WARP_26_PERCENT = 2600 seconds;
+    uint128 public constant TRANSFER_AMOUNT = PER_STREAM_AMOUNT * uint128(BATCH_SIZE);
+    uint40 public immutable WARP_26_PERCENT;
     uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -63,6 +63,7 @@ contract Defaults {
         CLIFF_TIME = START_TIME + CLIFF_DURATION;
         END_TIME = START_TIME + TOTAL_DURATION;
         PERMIT2_SIG_DEADLINE = START_TIME;
+        WARP_26_PERCENT = START_TIME + CLIFF_DURATION + 100 seconds;
 
         // Initialize the complex constants.
         BROKER = Broker({ account: users.broker.addr, fee: BROKER_FEE });
