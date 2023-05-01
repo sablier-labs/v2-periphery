@@ -13,7 +13,7 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         uint256 streamId = createWithRange();
 
         // Warp into the future.
-        vm.warp(defaults.WARP_26_PERCENT());
+        vm.warp(defaults.CLIFF_TIME());
 
         // Make the `recipient` the caller.
         changePrank(users.recipient.addr);

@@ -10,7 +10,7 @@ import { Defaults } from "../../../utils/Defaults.sol";
 import { Unit_Test } from "../../Unit.t.sol";
 
 contract CancelMultiple_Unit_Test is Unit_Test {
-    function test_CancelMultiple_Linear() internal {
+    function test_CancelMultiple_Linear() external {
         // Create a batch of streams due to be canceled.
         uint256[] memory streamIds = batchCreateWithRange();
 
@@ -18,7 +18,7 @@ contract CancelMultiple_Unit_Test is Unit_Test {
         test_CancelMultiple(streamIds, linear);
     }
 
-    function test_CancelMultiple_Dynamic() internal {
+    function test_CancelMultiple_Dynamic() external {
         // Create a batch of streams due to be canceled.
         uint256[] memory streamIds = batchCreateWithMilestones();
 
@@ -28,7 +28,7 @@ contract CancelMultiple_Unit_Test is Unit_Test {
 
     function test_CancelMultiple(uint256[] memory streamIds, ISablierV2Lockup lockup) internal {
         // Simulate the passage of time.
-        vm.warp(defaults.WARP_26_PERCENT());
+        vm.warp(defaults.CLIFF_TIME());
 
         // Asset flow: proxy owner → proxy → sender
         expectMultipleCallsToTransfer({
