@@ -55,7 +55,6 @@ abstract contract Base_Test is Assertions, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual {
-        // Create users for testing.
         users.admin = createUser("Admin");
         users.broker = createUser("Broker");
         users.recipient = createUser("Recipient");
@@ -250,62 +249,86 @@ abstract contract Base_Test is Assertions, StdCheats {
         vm.expectCall({ callee: address(linear), data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params)) });
     }
 
-    /// @dev Expects multiple calls to {SablierV2LockupDynamic.createWithMilestones}.
-    function expectMultipleCallsToCreateWithDeltas(LockupDynamic.CreateWithDeltas memory params) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToCreateWithDeltas(params);
-        }
-    }
-
-    /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithDurations}.
-    function expectMultipleCallsToCreateWithDurations(LockupLinear.CreateWithDurations memory params) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToCreateWithDurations(params);
-        }
-    }
-
-    /// @dev Expects multiple calls to {SablierV2LockupDynamic.createWithMilestones}.
-    function expectMultipleCallsToCreateWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToCreateWithMilestones(params);
-        }
-    }
-
-    /// @dev Expects multiple calls to {SablierV2LockupLinear.createWithRange}.
-    function expectMultipleCallsToCreateWithRange(LockupLinear.CreateWithRange memory params) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToCreateWithRange(params);
-        }
-    }
-
-    /// @dev Expects multiple calls to the `transfer` function of the default ERC-20 contract.
-    function expectMultipleCallsToTransfer(address to, uint256 amount) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToTransfer(to, amount);
-        }
-    }
-
-    /// @dev Expects multiple calls to the `transferFrom` function of the default ERC-20 contract.
-    function expectMultipleCallsToTransferFrom(address from, address to, uint256 amount) internal {
-        for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            expectCallToTransferFrom(from, to, amount);
-        }
-    }
-
-    /// @dev Expects a call to the `transfer` function of the default ERC-20 contract.
+    /// @dev Expects a call to {IERC20.transfer}.
     function expectCallToTransfer(address to, uint256 amount) internal {
         vm.expectCall({ callee: address(dai), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
-    /// @dev Expects a call to the `transferFrom` function of the default ERC-20 contract.
+    /// @dev Expects a call to {IERC20.transferFrom}.
     function expectCallToTransferFrom(address from, address to, uint256 amount) internal {
         vm.expectCall({ callee: address(dai), data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
 
-    /// @dev Expects a call to the `transferFrom` function of the provided ERC-20 contract.
+    /// @dev Expects a call to {IERC20.transferFrom}.
     function expectCallToTransferFrom(address asset, address from, address to, uint256 amount) internal {
         vm.expectCall({ callee: asset, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
+
+    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithMilestones}.
+    function expectMultipleCallsToCreateWithDeltas(
+        uint64 count,
+        LockupDynamic.CreateWithDeltas memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(dynamic),
+            count: uint64(count),
+            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
+        });
+    }
+
+    /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithDurations}.
+    function expectMultipleCallsToCreateWithDurations(
+        uint64 count,
+        LockupLinear.CreateWithDurations memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(linear),
+            count: uint64(count),
+            data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
+        });
+    }
+
+    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithMilestones}.
+    function expectMultipleCallsToCreateWithMilestones(
+        uint64 count,
+        LockupDynamic.CreateWithMilestones memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(dynamic),
+            count: uint64(count),
+            data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
+        });
+    }
+
+    /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithRange}.
+    function expectMultipleCallsToCreateWithRange(uint64 count, LockupLinear.CreateWithRange memory params) internal {
+        vm.expectCall({
+            callee: address(linear),
+            count: uint64(count),
+            data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
+        });
+    }
+
+    /// @dev Expects multiple calls to {IERC20.transfer}.
+    function expectMultipleCallsToTransfer(uint64 count, address to, uint256 amount) internal {
+        vm.expectCall({ callee: address(dai), count: uint64(count), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+    }
+
+    /// @dev Expects multiple calls to {IERC20.transferFrom}.
+    function expectMultipleCallsToTransferFrom(uint64 count, address from, address to, uint256 amount) internal {
+        vm.expectCall({
+            callee: address(dai),
+            count: uint64(count),
+            data: abi.encodeCall(IERC20.transferFrom, (from, to, amount))
+        });
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                                       PERMIT2
     //////////////////////////////////////////////////////////////////////////*/
