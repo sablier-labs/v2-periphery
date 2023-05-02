@@ -21,11 +21,11 @@ abstract contract Assertions is PRBTest {
 
     /// @dev Compares two `Lockup.Status` enum values.
     function assertEq(Lockup.Status a, Lockup.Status b) internal {
-        assertEq(uint8(a), uint8(b), "status");
+        assertEq(uint256(a), uint256(b), "status");
     }
 
     /// @dev Compares two `Lockup.Status` enum values.
     function assertEq(Lockup.Status a, Lockup.Status b, string memory err) internal {
-        assertEq(uint8(a), uint8(b), err);
+        assertEq(uint256(a), uint256(b), err);
     }
 }

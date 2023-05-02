@@ -46,7 +46,7 @@ abstract contract Unit_Test is Base_Test {
         // Deploy WETH.
         weth = new WETH();
 
-        // Deploy the proxy registry from a bytecode precompiled with via IR.
+        // Deploy the proxy system from a bytecode precompiled with via IR.
         (registry, proxyHelpers) = new PRBProxyPrecompiles().deploySystem();
 
         // Deploy a proxy for the sender.

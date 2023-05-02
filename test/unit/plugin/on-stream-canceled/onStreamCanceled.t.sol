@@ -15,21 +15,22 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 
-        // Make the `recipient` the caller.
-        changePrank(users.recipient.addr);
-
-        uint256 balanceBefore = dai.balanceOf(users.sender.addr);
+        uint256 initialBalance = dai.balanceOf(users.sender.addr);
 
         // Asset flow: Sablier contract → proxy → proxy owner
         // Expect transfers from the Sablier contract to the proxy, and then from the proxy to the proxy owner.
         expectCallToTransfer({ to: address(proxy), amount: defaults.REFUND_AMOUNT() });
         expectCallToTransfer({ to: users.sender.addr, amount: defaults.REFUND_AMOUNT() });
 
+        // Make the recipient the caller.
+        changePrank(users.recipient.addr);
+
         // Cancel the stream.
         linear.cancel(streamId);
 
+        // Assert that the balances match.
         uint256 actualBalance = dai.balanceOf(users.sender.addr);
-        uint256 expectedBalance = balanceBefore + defaults.REFUND_AMOUNT();
-        assertEq(actualBalance, expectedBalance, "balance does not match");
+        uint256 expectedBalance = initialBalance + defaults.REFUND_AMOUNT();
+        assertEq(actualBalance, expectedBalance, "balances do not match");
     }
 }
