@@ -15,7 +15,17 @@ contract SablierV2ProxyPlugin is
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
-                                HOOK-IMPLEMENTATION
+                                 CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @inheritdoc IPRBProxyPlugin
+    function methodList() external pure returns (bytes4[] memory methods) {
+        methods = new bytes4[](1);
+        methods[0] = this.onStreamCanceled.selector;
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                               NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2LockupSender
@@ -40,15 +50,5 @@ contract SablierV2ProxyPlugin is
         // Forward the refunded assets from the proxy to the proxy owner.
         IERC20 asset = lockup.getAsset(streamId);
         asset.safeTransfer({ to: owner, value: senderAmount });
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                    PROXY-PLUGIN
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @inheritdoc IPRBProxyPlugin
-    function methodList() external pure returns (bytes4[] memory methods) {
-        methods = new bytes4[](1);
-        methods[0] = this.onStreamCanceled.selector;
     }
 }
