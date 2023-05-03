@@ -243,11 +243,11 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         // Asset flow: Sablier → proxy → proxy owner
         // Expect transfers from Sablier to the proxy, and then from the proxy to the proxy owner.
         expectCallToTransfer({ to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
-        expectCallToTransfer({ to: users.sender.addr, amount: defaults.PER_STREAM_AMOUNT() });
+        expectCallToTransfer({ to: users.alice.addr, amount: defaults.PER_STREAM_AMOUNT() });
 
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({ from: users.sender.addr, to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
+        expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
         expectCallToTransferFrom({ from: address(proxy), to: createContract, amount: defaults.PER_STREAM_AMOUNT() });
     }
 }

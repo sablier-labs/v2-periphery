@@ -57,8 +57,8 @@ abstract contract Fork_Test is Base_Test {
         // Load the proxy helpers.
         proxyHelpers = IPRBProxyHelpers(0x8afE5fE3BAfA1FbC941a50b630AA966F3A7815A0);
 
-        // Deploy a proxy for the sender.
-        proxy = registry.deployFor(users.sender.addr);
+        // Deploy a proxy for Alice.
+        proxy = registry.deployFor(users.alice.addr);
 
         // Load Permit2.
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);

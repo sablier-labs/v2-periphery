@@ -41,7 +41,7 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
             to: address(proxy),
             amount: defaults.REFUND_AMOUNT()
         });
-        expectCallToTransfer({ to: users.sender.addr, amount: 2 * defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
+        expectCallToTransfer({ to: users.alice.addr, amount: 2 * defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
 
         // ABI encode the parameters and call the function via the proxy.
         Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](2);

@@ -24,7 +24,7 @@ contract BatchCreateWithDeltas_Unit_Test is Unit_Test {
     function test_BatchCreateWithDeltas() external whenBatchSizeNotZero {
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({ from: users.sender.addr, to: address(proxy), amount: defaults.TRANSFER_AMOUNT() });
+        expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.TRANSFER_AMOUNT() });
         expectMultipleCallsToCreateWithDeltas({ count: defaults.BATCH_SIZE(), params: defaults.createWithDeltas() });
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),

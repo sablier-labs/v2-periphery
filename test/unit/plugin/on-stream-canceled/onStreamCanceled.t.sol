@@ -74,7 +74,7 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         uint256 streamId = createWithRange();
 
         // Retrieve the initial asset balance of the proxy owner.
-        uint256 initialBalance = usdc.balanceOf(users.sender.addr);
+        uint256 initialBalance = usdc.balanceOf(users.alice.addr);
 
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
@@ -85,13 +85,13 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         // Asset flow: Sablier contract → proxy → proxy owner
         // Expect transfers from the Sablier contract to the proxy, and then from the proxy to the proxy owner.
         expectCallToTransfer({ to: address(proxy), amount: defaults.REFUND_AMOUNT() });
-        expectCallToTransfer({ to: users.sender.addr, amount: defaults.REFUND_AMOUNT() });
+        expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() });
 
         // Cancel the stream and trigger the plugin.
         linear.cancel(streamId);
 
         // Assert that the balances match.
-        uint256 actualBalance = usdc.balanceOf(users.sender.addr);
+        uint256 actualBalance = usdc.balanceOf(users.alice.addr);
         uint256 expectedBalance = initialBalance + defaults.REFUND_AMOUNT();
         assertEq(actualBalance, expectedBalance, "balances do not match");
     }
