@@ -396,4 +396,11 @@ abstract contract Base_Test is Assertions, StdCheats {
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
     }
+
+    function createWithRange(LockupLinear.CreateWithRange memory params) internal returns (uint256 streamId) {
+        bytes memory data =
+            abi.encodeCall(target.createWithRange, (linear, params, permit2Params(defaults.PER_STREAM_AMOUNT())));
+        bytes memory response = proxy.execute(address(target), data);
+        streamId = abi.decode(response, (uint256));
+    }
 }
