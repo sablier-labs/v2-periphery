@@ -64,22 +64,22 @@ abstract contract Base_Test is Assertions, StdCheats {
         deployBaseTestContracts();
 
         // Create users for testing.
+        users.alice = createUser("Alice");
         users.admin = createUser("Admin");
         users.broker = createUser("Broker");
         users.recipient = createUser("Recipient");
-        users.sender = createUser("Sender");
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                                      HELPERS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Approves Permit2 to spend assets from the recipient and the sender.
+    /// @dev Approves Permit2 to spend assets from the stream's recipient and Alice (the proxy owner).
     function approvePermit2() internal {
         vm.startPrank({ msgSender: users.recipient.addr });
         usdc.approve({ spender: address(permit2), amount: MAX_UINT256 });
 
-        changePrank({ msgSender: users.sender.addr });
+        changePrank({ msgSender: users.alice.addr });
         usdc.approve({ spender: address(permit2), amount: MAX_UINT256 });
     }
 
@@ -292,7 +292,7 @@ abstract contract Base_Test is Assertions, StdCheats {
             sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
             signature: getPermit2Signature({
                 details: defaults.permitDetails(amount),
-                privateKey: users.sender.key,
+                privateKey: users.alice.key,
                 spender: address(proxy)
             })
         });
@@ -304,7 +304,7 @@ abstract contract Base_Test is Assertions, StdCheats {
             sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
             signature: getPermit2Signature({
                 details: defaults.permitDetails(amount, nonce),
-                privateKey: users.sender.key,
+                privateKey: users.alice.key,
                 spender: address(proxy)
             })
         });

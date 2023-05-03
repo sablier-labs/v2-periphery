@@ -30,13 +30,13 @@ contract CancelMultiple_Unit_Test is Unit_Test {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 
-        // Asset flow: proxy owner → proxy → sender
+        // Asset flow: proxy owner → proxy → proxy owner
         expectMultipleCallsToTransfer({
             count: defaults.BATCH_SIZE(),
             to: address(proxy),
             amount: defaults.REFUND_AMOUNT()
         });
-        expectCallToTransfer({ to: users.sender.addr, amount: defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
+        expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
 
         bytes memory data = abi.encodeCall(target.cancelMultiple, (lockup, defaults.assets(), streamIds));
         proxy.execute(address(target), data);

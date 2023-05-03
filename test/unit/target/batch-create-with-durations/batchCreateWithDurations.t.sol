@@ -24,7 +24,7 @@ contract BatchCreateWithDurations_Unit_Test is Unit_Test {
     function test_BatchCreateWithDurations() external whenBatchSizeNotZero {
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({ from: users.sender.addr, to: address(proxy), amount: defaults.TRANSFER_AMOUNT() });
+        expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.TRANSFER_AMOUNT() });
         expectMultipleCallsToCreateWithDurations({ count: defaults.BATCH_SIZE(), params: defaults.createWithDurations() });
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),

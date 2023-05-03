@@ -49,8 +49,8 @@ abstract contract Unit_Test is Base_Test {
         // Deploy the proxy system from a bytecode precompiled with `--via-ir`.
         (registry, proxyHelpers) = new PRBProxyPrecompiles().deploySystem();
 
-        // Deploy a proxy for the sender.
-        proxy = registry.deployFor(users.sender.addr);
+        // Deploy a proxy for Alice.
+        proxy = registry.deployFor(users.alice.addr);
 
         // Deploy Permit2 from a bytecode precompiled with `--via-ir`.
         permit2 = IAllowanceTransfer(new DeployPermit2().run());
