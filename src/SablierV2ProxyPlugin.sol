@@ -31,7 +31,8 @@ contract SablierV2ProxyPlugin is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2LockupSender
-    /// @dev Forwards the refunded assets to the proxy owner when the recipient triggers a cancellation.
+    /// @notice Forwards the refunded assets to the proxy owner when the recipient triggers a cancellation.
+    /// @dev This function should not be called directly; it is designed to be delegate called by the proxy.
     function onStreamCanceled(
         ISablierV2Lockup lockup,
         uint256 streamId,
@@ -41,6 +42,13 @@ contract SablierV2ProxyPlugin is
     )
         external
     {
+        // Checks: this is a valid call in which the current contract is the stream's sender.
+        address sender = lockup.getSender(streamId);
+        if (sender != address(this)) {
+            revert Errors.SablierV2ProxyPlugin_InvalidCall({ context: address(this), streamSender: sender });
+        }
+
+        // Effects: transfer the assets to the proxy owner.
         IERC20 asset = lockup.getAsset(streamId);
         asset.safeTransfer({ to: owner, value: senderAmount });
     }

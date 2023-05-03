@@ -1,0 +1,8 @@
+onStreamCanceled.t.sol
+├── when the call is invalid
+│  └── it should revert
+└── when the call is valid
+   ├── when the plugin contract is the stream's sender
+   │  └── it should revert
+   └── when the plugin contract is not the stream's sender
+      └── it should forward the assets to the proxy owner
