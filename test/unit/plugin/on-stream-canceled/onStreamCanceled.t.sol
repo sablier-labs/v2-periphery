@@ -22,7 +22,7 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         expectCallToTransfer({ to: address(proxy), amount: defaults.REFUND_AMOUNT() });
         expectCallToTransfer({ to: users.sender.addr, amount: defaults.REFUND_AMOUNT() });
 
-        // Make the recipient the caller.
+        // Make the recipient the caller so that Sablier will call the hook implemented by the plugin.
         changePrank(users.recipient.addr);
 
         // Cancel the stream.
