@@ -33,16 +33,12 @@ contract SablierV2ProxyPlugin is
     function onStreamCanceled(
         ISablierV2Lockup lockup,
         uint256 streamId,
-        address recipient,
+        address, /* recipient */
         uint128 senderAmount,
-        uint128 recipientAmount
+        uint128 /* recipientAmount */
     )
         external
     {
-        // Silence the "Unused function parameter" warning.
-        recipient;
-        recipientAmount;
-
         // The proxy contract is the stream's sender in {SablierV2Lockup}.
         address proxy = lockup.getSender(streamId);
         address owner = IPRBProxy(proxy).owner();
