@@ -42,11 +42,11 @@ abstract contract Base_Test is Assertions, StdCheats {
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    IERC20 internal usdc = new ERC20("USD Coin", "USDC");
+    IERC20 internal usdc;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal dynamic;
     ISablierV2LockupLinear internal linear;
-    ISablierV2NFTDescriptor internal nftDescriptor = new SablierV2NFTDescriptor();
+    ISablierV2NFTDescriptor internal nftDescriptor;
     IAllowanceTransfer internal permit2;
     SablierV2ProxyPlugin internal plugin;
     IPRBProxy internal proxy;
@@ -60,6 +60,10 @@ abstract contract Base_Test is Assertions, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual {
+        // Deploy the base test contracts.
+        deployBaseTestContracts();
+
+        // Create users for testing.
         users.admin = createUser("Admin");
         users.broker = createUser("Broker");
         users.recipient = createUser("Recipient");
@@ -86,7 +90,13 @@ abstract contract Base_Test is Assertions, StdCheats {
         deal({ token: address(usdc), to: user.addr, give: 1_000_000e18 });
     }
 
-    /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with via IR.
+    /// @dev Deploys the base test contracts.
+    function deployBaseTestContracts() internal {
+        nftDescriptor = new SablierV2NFTDescriptor();
+        usdc = new ERC20("USD Coin", "USDC");
+    }
+
+    /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with `--via-ir`.
     function deployProtocolConditionally() internal {
         // We deploy from precompiled source if the Foundry profile is "test-optimized".
         if (isTestOptimizedProfile()) {
