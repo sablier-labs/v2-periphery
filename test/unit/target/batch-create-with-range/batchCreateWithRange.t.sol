@@ -10,8 +10,9 @@ import { Unit_Test } from "../../Unit.t.sol";
 contract BatchCreateWithRange_Unit_Test is Unit_Test {
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithRange[] memory batch = new Batch.CreateWithRange[](0);
-        bytes memory data =
-            abi.encodeCall(target.batchCreateWithRange, (linear, dai, batch, permit2Params(defaults.TRANSFER_AMOUNT())));
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithRange, (linear, usdc, batch, permit2Params(defaults.TRANSFER_AMOUNT()))
+        );
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);
     }

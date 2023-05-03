@@ -42,7 +42,7 @@ abstract contract Base_Test is Assertions, StdCheats {
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    IERC20 internal dai = new ERC20("Dai Stablecoin", "DAI");
+    IERC20 internal usdc = new ERC20("USD Coin", "USDC");
     Defaults internal defaults;
     ISablierV2LockupDynamic internal dynamic;
     ISablierV2LockupLinear internal linear;
@@ -73,17 +73,17 @@ abstract contract Base_Test is Assertions, StdCheats {
     /// @dev Approves Permit2 to spend assets from the recipient and the sender.
     function approvePermit2() internal {
         vm.startPrank({ msgSender: users.recipient.addr });
-        dai.approve({ spender: address(permit2), amount: MAX_UINT256 });
+        usdc.approve({ spender: address(permit2), amount: MAX_UINT256 });
 
         changePrank({ msgSender: users.sender.addr });
-        dai.approve({ spender: address(permit2), amount: MAX_UINT256 });
+        usdc.approve({ spender: address(permit2), amount: MAX_UINT256 });
     }
 
     /// @dev Generates a user, labels its address, and funds it with test assets.
     function createUser(string memory name) internal returns (Account memory user) {
         user = makeAccount(name);
         vm.deal({ account: user.addr, newBalance: 100_000 ether });
-        deal({ token: address(dai), to: user.addr, give: 1_000_000e18 });
+        deal({ token: address(usdc), to: user.addr, give: 1_000_000e18 });
     }
 
     /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with via IR.
@@ -113,13 +113,13 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Labels the most relevant contracts.
     function labelContracts() internal {
-        vm.label({ account: address(dai), newLabel: "Dai" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(linear), newLabel: "LockupLinear" });
         vm.label({ account: address(permit2), newLabel: "Permit2" });
         vm.label({ account: address(proxy), newLabel: "Proxy" });
         vm.label({ account: address(target), newLabel: "Proxy Target" });
+        vm.label({ account: address(usdc), newLabel: "USDC" });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -167,12 +167,12 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Expects a call to {IERC20.transfer}.
     function expectCallToTransfer(address to, uint256 amount) internal {
-        vm.expectCall({ callee: address(dai), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+        vm.expectCall({ callee: address(usdc), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
     /// @dev Expects a call to {IERC20.transferFrom}.
     function expectCallToTransferFrom(address from, address to, uint256 amount) internal {
-        vm.expectCall({ callee: address(dai), data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
+        vm.expectCall({ callee: address(usdc), data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
 
     /// @dev Expects a call to {IERC20.transferFrom}.
@@ -233,13 +233,17 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Expects multiple calls to {IERC20.transfer}.
     function expectMultipleCallsToTransfer(uint64 count, address to, uint256 amount) internal {
-        vm.expectCall({ callee: address(dai), count: uint64(count), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+        vm.expectCall({
+            callee: address(usdc),
+            count: uint64(count),
+            data: abi.encodeCall(IERC20.transfer, (to, amount))
+        });
     }
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
     function expectMultipleCallsToTransferFrom(uint64 count, address from, address to, uint256 amount) internal {
         vm.expectCall({
-            callee: address(dai),
+            callee: address(usdc),
             count: uint64(count),
             data: abi.encodeCall(IERC20.transferFrom, (from, to, amount))
         });
@@ -312,7 +316,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithDeltas() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
-            (dynamic, dai, defaults.batchCreateWithDeltas(), permit2Params(defaults.TRANSFER_AMOUNT()))
+            (dynamic, usdc, defaults.batchCreateWithDeltas(), permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -321,7 +325,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithDurations() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDurations,
-            (linear, dai, defaults.batchCreateWithDurations(), permit2Params(defaults.TRANSFER_AMOUNT()))
+            (linear, usdc, defaults.batchCreateWithDurations(), permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -330,7 +334,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithMilestones() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT()))
+            (dynamic, usdc, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -339,7 +343,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithMilestones(uint48 nonce) internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
+            (dynamic, usdc, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -348,7 +352,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithRange() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, dai, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT()))
+            (linear, usdc, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -357,7 +361,7 @@ abstract contract Base_Test is Assertions, StdCheats {
     function batchCreateWithRange(uint48 nonce) internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, dai, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
+            (linear, usdc, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));

@@ -44,7 +44,7 @@ contract Defaults {
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
-    IERC20 private dai;
+    IERC20 private usdc;
     IPRBProxy private proxy;
     Users private users;
 
@@ -52,10 +52,10 @@ contract Defaults {
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
-    constructor(Users memory users_, IERC20 dai_, IPRBProxy proxy_) {
+    constructor(Users memory users_, IERC20 usdc_, IPRBProxy proxy_) {
         users = users_;
+        usdc = usdc_;
         proxy = proxy_;
-        dai = dai_;
 
         // Initialize the immutables.
         START_TIME = uint40(block.timestamp) + 100 seconds;
@@ -76,7 +76,7 @@ contract Defaults {
             amount: amount,
             expiration: PERMIT2_EXPIRATION,
             nonce: PERMIT2_NONCE,
-            token: address(dai)
+            token: address(usdc)
         });
     }
 
@@ -92,7 +92,7 @@ contract Defaults {
             amount: amount,
             expiration: PERMIT2_EXPIRATION,
             nonce: nonce,
-            token: address(dai)
+            token: address(usdc)
         });
     }
 
@@ -102,7 +102,7 @@ contract Defaults {
 
     function assets() external view returns (IERC20[] memory assets_) {
         assets_ = new IERC20[](1);
-        assets_[0] = dai;
+        assets_[0] = usdc;
     }
 
     function incrementalStreamIds() external pure returns (uint256[] memory streamIds) {
@@ -117,7 +117,7 @@ contract Defaults {
     //////////////////////////////////////////////////////////////////////////*/
 
     function createWithDeltas() external view returns (LockupDynamic.CreateWithDeltas memory params) {
-        params = createWithDeltas(dai);
+        params = createWithDeltas(usdc);
     }
 
     function createWithDeltas(IERC20 asset) public view returns (LockupDynamic.CreateWithDeltas memory params) {
@@ -133,7 +133,7 @@ contract Defaults {
     }
 
     function createWithMilestones() external view returns (LockupDynamic.CreateWithMilestones memory params) {
-        params = createWithMilestones(dai);
+        params = createWithMilestones(usdc);
     }
 
     function createWithMilestones(IERC20 asset)
@@ -200,7 +200,7 @@ contract Defaults {
     //////////////////////////////////////////////////////////////////////////*/
 
     function createWithDurations() external view returns (LockupLinear.CreateWithDurations memory params) {
-        params = createWithDurations(dai);
+        params = createWithDurations(usdc);
     }
 
     function createWithDurations(IERC20 asset) public view returns (LockupLinear.CreateWithDurations memory params) {
@@ -216,7 +216,7 @@ contract Defaults {
     }
 
     function createWithRange() external view returns (LockupLinear.CreateWithRange memory params) {
-        params = createWithRange(dai);
+        params = createWithRange(usdc);
     }
 
     function createWithRange(IERC20 asset) public view returns (LockupLinear.CreateWithRange memory params) {
