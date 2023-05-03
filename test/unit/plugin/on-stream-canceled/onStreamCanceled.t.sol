@@ -40,7 +40,7 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         uint256 streamId = createWithRange(params);
 
         // Retrieve the initial asset balance of the plugin contract.
-        uint256 initialBalance = dai.balanceOf(address(plugin));
+        uint256 initialBalance = usdc.balanceOf(address(plugin));
 
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
@@ -60,7 +60,7 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         linear.cancel(streamId);
 
         // Assert that the balances match.
-        uint256 actualBalance = dai.balanceOf(address(plugin));
+        uint256 actualBalance = usdc.balanceOf(address(plugin));
         uint256 expectedBalance = initialBalance + defaults.REFUND_AMOUNT();
         assertEq(actualBalance, expectedBalance, "balances do not match");
     }
@@ -74,7 +74,7 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         uint256 streamId = createWithRange();
 
         // Retrieve the initial asset balance of the proxy owner.
-        uint256 initialBalance = dai.balanceOf(users.sender.addr);
+        uint256 initialBalance = usdc.balanceOf(users.sender.addr);
 
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
@@ -91,7 +91,7 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         linear.cancel(streamId);
 
         // Assert that the balances match.
-        uint256 actualBalance = dai.balanceOf(users.sender.addr);
+        uint256 actualBalance = usdc.balanceOf(users.sender.addr);
         uint256 expectedBalance = initialBalance + defaults.REFUND_AMOUNT();
         assertEq(actualBalance, expectedBalance, "balances do not match");
     }

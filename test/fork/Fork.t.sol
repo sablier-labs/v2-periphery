@@ -29,7 +29,7 @@ abstract contract Fork_Test is Base_Test {
         loadDependencies();
 
         // Deploy the defaults contract.
-        defaults = new Defaults(users, dai, proxy);
+        defaults = new Defaults(users, usdc, proxy);
 
         // Deploy V2 Periphery.
         deployProtocolConditionally();

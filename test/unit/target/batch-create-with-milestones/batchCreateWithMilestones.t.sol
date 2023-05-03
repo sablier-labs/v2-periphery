@@ -11,7 +11,7 @@ contract BatchCreateWithMilestones_Unit_Test is Unit_Test {
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithMilestones[] memory batch = new Batch.CreateWithMilestones[](0);
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones, (dynamic, dai, batch, permit2Params(defaults.TRANSFER_AMOUNT()))
+            target.batchCreateWithMilestones, (dynamic, usdc, batch, permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);
