@@ -7,5 +7,6 @@ struct Users {
     StdCheats.Account alice;
     StdCheats.Account admin;
     StdCheats.Account broker;
+    StdCheats.Account eve;
     StdCheats.Account recipient;
 }

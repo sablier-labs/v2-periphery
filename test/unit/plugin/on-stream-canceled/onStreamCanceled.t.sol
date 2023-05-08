@@ -1,78 +1,53 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { Errors } from "src/libraries/Errors.sol";
 import { LockupLinear } from "src/types/DataTypes.sol";
 
 import { Unit_Test } from "../../Unit.t.sol";
 
 contract OnStreamCanceled_Unit_Test is Unit_Test {
+    uint256 internal streamId;
+
     function setUp() public virtual override {
         Unit_Test.setUp();
-
-        // Install the plugin on the proxy.
         installPlugin();
+        streamId = createWithRange();
     }
 
-    function test_RevertWhen_InvalidCall() external {
-        // Create a standard stream.
-        uint256 streamId = createWithRange();
-
-        // Since the plugin is not meant to be called directly, the call below is invalid.
-        vm.expectRevert(
-            abi.encodeWithSelector(Errors.SablierV2ProxyPlugin_InvalidCall.selector, address(plugin), address(proxy))
-        );
-
-        // Call the plugin directly.
-        uint128 senderAmount = 100e18;
-        uint128 recipientAmount = 0;
-        plugin.onStreamCanceled(linear, streamId, users.recipient.addr, senderAmount, recipientAmount);
+    function test_RevertWhen_StandardCall() external {
+        vm.expectRevert(Errors.StandardCall.selector);
+        plugin.onStreamCanceled({
+            lockup: linear,
+            streamId: streamId,
+            recipient: users.recipient.addr,
+            senderAmount: 100e18,
+            recipientAmount: 0
+        });
     }
 
-    modifier whenValidCall() {
+    modifier whenNoStandardCall() {
         _;
     }
 
-    function test_RevertWhen_PluginContractStreamSender() external whenValidCall {
-        // Create a stream with the plugin contract as the sender.
-        LockupLinear.CreateWithRange memory params = defaults.createWithRange();
-        params.sender = address(plugin);
-        uint256 streamId = createWithRange(params);
-
-        // Retrieve the initial asset balance of the plugin contract.
-        uint256 initialBalance = dai.balanceOf(address(plugin));
-
-        // Simulate the passage of time.
-        vm.warp(defaults.CLIFF_TIME());
-
-        // Make the recipient the caller so that Sablier calls the hook implemented by the plugin.
-        changePrank({ msgSender: users.recipient.addr });
-
-        // Asset flow: Sablier contract → plugin
-        expectCallToTransfer({ to: address(plugin), amount: defaults.REFUND_AMOUNT() });
-
-        // A call is attempted to transfer the assets from the plugin to the zero address, but it reverts
-        // with error "ERC20: transfer to the zero address". Sablier does not bubble up the revert, so
-        // the funds remain in the plugin contract.
-        expectCallToTransfer({ to: address(0), amount: defaults.REFUND_AMOUNT() });
-
-        // Cancel the stream and trigger the plugin.
-        linear.cancel(streamId);
-
-        // Assert that the balances match.
-        uint256 actualBalance = dai.balanceOf(address(plugin));
-        uint256 expectedBalance = initialBalance + defaults.REFUND_AMOUNT();
-        assertEq(actualBalance, expectedBalance, "balances do not match");
+    function test_RevertWhen_CallerNotSablier() external whenNoStandardCall {
+        changePrank({ msgSender: users.eve.addr });
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyPlugin_CallerNotSablier.selector, users.eve.addr));
+        ISablierV2ProxyPlugin(address(proxy)).onStreamCanceled({
+            lockup: linear,
+            streamId: streamId,
+            recipient: users.recipient.addr,
+            senderAmount: 100e18,
+            recipientAmount: 0
+        });
     }
 
-    modifier whenPluginContractNotStreamSender() {
+    modifier whenCallerSablier() {
         _;
     }
 
-    function test_OnStreamCanceled() external whenValidCall whenPluginContractNotStreamSender {
-        // Create a standard stream.
-        uint256 streamId = createWithRange();
-
+    function test_OnStreamCanceled() external whenNoStandardCall whenCallerSablier {
         // Retrieve the initial asset balance of the proxy owner.
         uint256 initialBalance = dai.balanceOf(users.alice.addr);
 

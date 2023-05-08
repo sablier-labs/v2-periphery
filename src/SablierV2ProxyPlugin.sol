@@ -8,13 +8,32 @@ import { IPRBProxyPlugin } from "@prb/proxy/interfaces/IPRBProxyPlugin.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupSender } from "@sablier/v2-core/interfaces/hooks/ISablierV2LockupSender.sol";
 
+import { NoStandardCall } from "./abstracts/NoStandardCall.sol";
+import { ISablierV2ChainLog } from "./interfaces/ISablierV2ChainLog.sol";
+import { ISablierV2ProxyPlugin } from "./interfaces/ISablierV2ProxyPlugin.sol";
 import { Errors } from "./libraries/Errors.sol";
 
 contract SablierV2ProxyPlugin is
-    ISablierV2LockupSender, // 0 inherited components
+    ISablierV2ProxyPlugin, // 0 inherited components
+    NoStandardCall, // 0 inherited components
     PRBProxyPlugin // 3 inherited components
 {
     using SafeERC20 for IERC20;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                     CONSTANTS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @inheritdoc ISablierV2ProxyPlugin
+    ISablierV2ChainLog public immutable override chainLog;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    constructor(ISablierV2ChainLog chainLog_) {
+        chainLog = chainLog_;
+    }
 
     /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
@@ -31,24 +50,32 @@ contract SablierV2ProxyPlugin is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2LockupSender
-    /// @notice Forwards the refunded assets to the proxy owner when the recipient triggers a cancellation.
-    /// @dev This function should not be called directly; it is designed to be delegate called by the proxy.
+    /// @notice Forwards the refunded assets to the proxy owner when the recipient cancel a stream whose sender is the
+    /// proxy contract.
+    /// @dev Requirements:
+    /// - The call must not be a standard call.
+    /// - The caller must be Sablier.
     function onStreamCanceled(
-        ISablierV2Lockup lockup,
+        ISablierV2Lockup, /* lockup */
         uint256 streamId,
         address, /* recipient */
         uint128 senderAmount,
         uint128 /* recipientAmount */
     )
         external
+        noStandardCall
     {
-        // Checks: this is a valid call in which the current contract is the stream's sender.
-        address sender = lockup.getSender(streamId);
-        if (sender != address(this)) {
-            revert Errors.SablierV2ProxyPlugin_InvalidCall({ context: address(this), streamSender: sender });
+        // Checks: the caller is Sablier.
+        if (!chainLog.isListed(msg.sender)) {
+            revert Errors.SablierV2ProxyPlugin_CallerNotSablier(msg.sender);
         }
 
-        // Effects: transfer the assets to the proxy owner.
+        // This invariant should always hold but it's better to be safe than sorry.
+        ISablierV2Lockup lockup = ISablierV2Lockup(msg.sender);
+        address streamSender = lockup.getSender(streamId);
+        assert(streamSender == address(this));
+
+        // Effects: forward the refunded assets to the proxy owner.
         IERC20 asset = lockup.getAsset(streamId);
         asset.safeTransfer({ to: owner, value: senderAmount });
     }

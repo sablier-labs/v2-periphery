@@ -1,8 +1,8 @@
 onStreamCanceled.t.sol
-├── when the call is invalid
+├── when the call is a standard call
 │  └── it should revert
-└── when the call is valid
-   ├── when the plugin contract is the stream's sender
+└── when the call is not a standard call
+   ├── when the caller is not Sablier
    │  └── it should revert
-   └── when the plugin contract is not the stream's sender
+   └── when the caller is Sablier
       └── it should forward the assets to the proxy owner
