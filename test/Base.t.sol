@@ -11,8 +11,8 @@ import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2L
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2NFTDescriptor } from "@sablier/v2-core/interfaces/ISablierV2NFTDescriptor.sol";
 import { SablierV2NFTDescriptor } from "@sablier/v2-core/SablierV2NFTDescriptor.sol";
-import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
+import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { PermitHash } from "permit2/libraries/PermitHash.sol";
 
 import { eqString } from "@prb/test/Helpers.sol";
@@ -29,11 +29,12 @@ import { Permit2Params } from "src/types/DataTypes.sol";
 
 import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
+import { Events } from "./utils/Events.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @title Base_Test
 /// @notice Base test contract with common logic needed by all test contracts.
-abstract contract Base_Test is Assertions, StdCheats {
+abstract contract Base_Test is Assertions, Events, StdCheats {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
@@ -80,7 +81,7 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Approves Permit2 to spend assets from the stream's recipient and Alice (the proxy owner).
     function approvePermit2() internal {
-        changePrank({ msgSender: users.recipient.addr });
+        vm.startPrank({ msgSender: users.recipient.addr });
         dai.approve({ spender: address(permit2), amount: MAX_UINT256 });
 
         changePrank({ msgSender: users.alice.addr });
@@ -143,14 +144,6 @@ abstract contract Base_Test is Assertions, StdCheats {
         vm.label({ account: address(plugin), newLabel: "Proxy Plugin" });
         vm.label({ account: address(proxy), newLabel: "Proxy" });
         vm.label({ account: address(target), newLabel: "Proxy Target" });
-    }
-
-    /// @dev Lists the contracts in the chain log.
-    function listContracts() internal {
-        vm.startPrank({ msgSender: users.admin.addr });
-        chainLog.list(address(dynamic));
-        chainLog.list(address(linear));
-        changePrank({ msgSender: users.alice.addr });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

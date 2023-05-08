@@ -14,6 +14,11 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         Unit_Test.setUp();
         installPlugin();
         streamId = createWithRange();
+
+        // Lists the linear contract in the chain log.
+        changePrank({ msgSender: users.admin.addr });
+        chainLog.listAddress(address(linear));
+        changePrank({ msgSender: users.alice.addr });
     }
 
     function test_RevertWhen_CallNotDelegateCall() external {

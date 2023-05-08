@@ -1,0 +1,9 @@
+listAddress.t.sol
+├── when the caller is not the admin
+│  └── it should revert
+└── when the caller is the admin
+   ├── when the address is already listed
+   │  └── it should list the address
+   └── when the address is not already listed
+      ├── it should list the address
+      └── it should emit a {ListAddress} event

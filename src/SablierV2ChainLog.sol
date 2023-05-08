@@ -5,6 +5,26 @@ import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
 
 import { ISablierV2ChainLog } from "./interfaces/ISablierV2ChainLog.sol";
 
+/*
+
+███████╗ █████╗ ██████╗ ██╗     ██╗███████╗██████╗     ██╗   ██╗██████╗
+██╔════╝██╔══██╗██╔══██╗██║     ██║██╔════╝██╔══██╗    ██║   ██║╚════██╗
+███████╗███████║██████╔╝██║     ██║█████╗  ██████╔╝    ██║   ██║ █████╔╝
+╚════██║██╔══██║██╔══██╗██║     ██║██╔══╝  ██╔══██╗    ╚██╗ ██╔╝██╔═══╝
+███████║██║  ██║██████╔╝███████╗██║███████╗██║  ██║     ╚████╔╝ ███████╗
+╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝╚══════╝╚═╝  ╚═╝      ╚═══╝  ╚══════╝
+
+ ██████╗██╗  ██╗ █████╗ ██╗███╗   ██╗    ██╗      ██████╗  ██████╗
+██╔════╝██║  ██║██╔══██╗██║████╗  ██║    ██║     ██╔═══██╗██╔════╝
+██║     ███████║███████║██║██╔██╗ ██║    ██║     ██║   ██║██║  ███╗
+██║     ██╔══██║██╔══██║██║██║╚██╗██║    ██║     ██║   ██║██║   ██║
+╚██████╗██║  ██║██║  ██║██║██║ ╚████║    ███████╗╚██████╔╝╚██████╔╝
+ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝    ╚══════╝ ╚═════╝  ╚═════╝
+
+*/
+
+/// @title SablierV2ChainLog
+/// @dev See the documentation in {ISablierV2ChainLog}.
 contract SablierV2ChainLog is
     ISablierV2ChainLog, // 1 inherited component
     Adminable // 1 inherited component
@@ -29,8 +49,8 @@ contract SablierV2ChainLog is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2ChainLog
-    function list(address addr) external onlyAdmin {
+    function listAddress(address addr) external onlyAdmin {
         isListed[addr] = true;
-        emit List({ admin: msg.sender, addr: addr });
+        emit ListAddress({ admin: msg.sender, addr: addr });
     }
 }
