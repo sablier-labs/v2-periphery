@@ -2,7 +2,7 @@ onStreamCanceled.t.sol
 ├── when the call is a standard call
 │  └── it should revert
 └── when the call is not a standard call
-   ├── when the caller is not Sablier
+   ├── when the caller is not listed
    │  └── it should revert
-   └── when the caller is Sablier
+   └── when the caller is listed
       └── it should forward the assets to the proxy owner

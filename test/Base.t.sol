@@ -25,8 +25,6 @@ import { ISablierV2ChainLog } from "src/interfaces/ISablierV2ChainLog.sol";
 import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
-import { SablierV2ChainLog } from "src/SablierV2ChainLog.sol";
-import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
 import { Permit2Params } from "src/types/DataTypes.sol";
 
 import { Assertions } from "./utils/Assertions.sol";
@@ -106,10 +104,10 @@ abstract contract Base_Test is Assertions, StdCheats {
     function deployProtocolConditionally() internal {
         // We deploy from precompiled source if the Foundry profile is "test-optimized".
         if (isTestOptimizedProfile()) {
-            chainLog = SablierV2ChainLog(
+            chainLog = ISablierV2ChainLog(
                 deployCode("optimized-out/SablierV2ChainLog.sol/SablierV2ChainLog.json", abi.encode(users.admin.addr))
             );
-            plugin = SablierV2ProxyPlugin(
+            plugin = ISablierV2ProxyPlugin(
                 deployCode(
                     "optimized-out/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(address(chainLog))
                 )

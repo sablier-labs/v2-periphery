@@ -4,7 +4,7 @@ pragma solidity >=0.8.19;
 import { IAdminable } from "@sablier/v2-core/interfaces/IAdminable.sol";
 
 /// @title ISablierV2ChainLog
-/// @notice A comprehensive registry of all Sablier V2 contract addresses.
+/// @notice An on-chain contract registry that keeps records of all Sablier V2 contracts.
 interface ISablierV2ChainLog is IAdminable {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS

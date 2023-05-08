@@ -9,14 +9,14 @@ library Errors {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Thrown when trying to perform a standard call to a function that allows only delegate calls.
-    error StandardCall();
+    error CallNotDelegateCall();
 
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-PROXY-PLUGIN
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Thrown when the caller is not Sablier.
-    error SablierV2ProxyPlugin_CallerNotSablier(address caller);
+    /// @notice Thrown when the caller is not listed.
+    error SablierV2ProxyPlugin_CallerUnlisted(address caller);
 
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-PROXY-TARGET

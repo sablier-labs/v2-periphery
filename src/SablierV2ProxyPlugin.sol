@@ -8,14 +8,14 @@ import { IPRBProxyPlugin } from "@prb/proxy/interfaces/IPRBProxyPlugin.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupSender } from "@sablier/v2-core/interfaces/hooks/ISablierV2LockupSender.sol";
 
-import { NoStandardCall } from "./abstracts/NoStandardCall.sol";
+import { OnlyDelegateCall } from "./abstracts/OnlyDelegateCall.sol";
 import { ISablierV2ChainLog } from "./interfaces/ISablierV2ChainLog.sol";
 import { ISablierV2ProxyPlugin } from "./interfaces/ISablierV2ProxyPlugin.sol";
 import { Errors } from "./libraries/Errors.sol";
 
 contract SablierV2ProxyPlugin is
     ISablierV2ProxyPlugin, // 0 inherited components
-    NoStandardCall, // 0 inherited components
+    OnlyDelegateCall, // 0 inherited components
     PRBProxyPlugin // 3 inherited components
 {
     using SafeERC20 for IERC20;
@@ -53,7 +53,7 @@ contract SablierV2ProxyPlugin is
     /// @notice Forwards the refunded assets to the proxy owner when the recipient cancel a stream whose sender is the
     /// proxy contract.
     /// @dev Requirements:
-    /// - The call must not be a standard call.
+    /// - The call must be a delegate call.
     /// - The caller must be Sablier.
     function onStreamCanceled(
         ISablierV2Lockup, /* lockup */
@@ -63,11 +63,11 @@ contract SablierV2ProxyPlugin is
         uint128 /* recipientAmount */
     )
         external
-        noStandardCall
+        onlyDelegateCall
     {
-        // Checks: the caller is Sablier.
+        // Checks: the caller is a listed contract.
         if (!chainLog.isListed(msg.sender)) {
-            revert Errors.SablierV2ProxyPlugin_CallerNotSablier(msg.sender);
+            revert Errors.SablierV2ProxyPlugin_CallerUnlisted(msg.sender);
         }
 
         // This invariant should always hold but it's better to be safe than sorry.

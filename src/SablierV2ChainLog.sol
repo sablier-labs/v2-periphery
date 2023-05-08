@@ -14,7 +14,7 @@ contract SablierV2ChainLog is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2ChainLog
-    mapping(address => bool) public override isListed;
+    mapping(address addr => bool listed) public override isListed;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
