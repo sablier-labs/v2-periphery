@@ -18,10 +18,14 @@ import { PermitHash } from "permit2/libraries/PermitHash.sol";
 import { eqString } from "@prb/test/Helpers.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
+import { DeployChainLog } from "script/DeployChainLog.s.sol";
 import { DeployProxyPlugin } from "script/DeployProxyPlugin.s.sol";
 import { DeployProxyTarget } from "script/DeployProxyTarget.s.sol";
+import { ISablierV2ChainLog } from "src/interfaces/ISablierV2ChainLog.sol";
+import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
+import { SablierV2ChainLog } from "src/SablierV2ChainLog.sol";
 import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
 import { Permit2Params } from "src/types/DataTypes.sol";
 
@@ -42,13 +46,14 @@ abstract contract Base_Test is Assertions, StdCheats {
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
+    ISablierV2ChainLog internal chainLog;
     IERC20 internal dai;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal dynamic;
     ISablierV2LockupLinear internal linear;
     ISablierV2NFTDescriptor internal nftDescriptor;
     IAllowanceTransfer internal permit2;
-    SablierV2ProxyPlugin internal plugin;
+    ISablierV2ProxyPlugin internal plugin;
     IPRBProxy internal proxy;
     IPRBProxyHelpers internal proxyHelpers;
     IPRBProxyRegistry internal registry;
@@ -67,6 +72,7 @@ abstract contract Base_Test is Assertions, StdCheats {
         users.alice = createUser("Alice");
         users.admin = createUser("Admin");
         users.broker = createUser("Broker");
+        users.eve = createUser("Eve");
         users.recipient = createUser("Recipient");
     }
 
@@ -76,7 +82,7 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Approves Permit2 to spend assets from the stream's recipient and Alice (the proxy owner).
     function approvePermit2() internal {
-        vm.startPrank({ msgSender: users.recipient.addr });
+        changePrank({ msgSender: users.recipient.addr });
         dai.approve({ spender: address(permit2), amount: MAX_UINT256 });
 
         changePrank({ msgSender: users.alice.addr });
@@ -92,16 +98,22 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Deploys the base test contracts.
     function deployBaseTestContracts() internal {
+        dai = new ERC20("DAI Stablecoin", "DAI");
         nftDescriptor = new SablierV2NFTDescriptor();
-        dai = new ERC20("USD Coin", "USDC");
     }
 
     /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with `--via-ir`.
     function deployProtocolConditionally() internal {
         // We deploy from precompiled source if the Foundry profile is "test-optimized".
         if (isTestOptimizedProfile()) {
-            plugin =
-                SablierV2ProxyPlugin(deployCode("optimized-out/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json"));
+            chainLog = SablierV2ChainLog(
+                deployCode("optimized-out/SablierV2ChainLog.sol/SablierV2ChainLog.json", abi.encode(users.admin.addr))
+            );
+            plugin = SablierV2ProxyPlugin(
+                deployCode(
+                    "optimized-out/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(address(chainLog))
+                )
+            );
             target = ISablierV2ProxyTarget(
                 deployCode(
                     "optimized-out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json", abi.encode(address(permit2))
@@ -110,7 +122,8 @@ abstract contract Base_Test is Assertions, StdCheats {
         }
         // We deploy normally for all other profiles.
         else {
-            plugin = new DeployProxyPlugin().run();
+            chainLog = new DeployChainLog().run(users.admin.addr);
+            plugin = new DeployProxyPlugin().run(chainLog);
             target = new DeployProxyTarget().run(permit2);
         }
     }
@@ -123,13 +136,23 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Labels the most relevant contracts.
     function labelContracts() internal {
+        vm.label({ account: address(chainLog), newLabel: "Chain Log" });
+        vm.label({ account: address(dai), newLabel: "Dai Stablecoin" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(linear), newLabel: "LockupLinear" });
         vm.label({ account: address(permit2), newLabel: "Permit2" });
+        vm.label({ account: address(plugin), newLabel: "Proxy Plugin" });
         vm.label({ account: address(proxy), newLabel: "Proxy" });
         vm.label({ account: address(target), newLabel: "Proxy Target" });
-        vm.label({ account: address(dai), newLabel: "USDC" });
+    }
+
+    /// @dev Lists the contracts in the chain log.
+    function listContracts() internal {
+        vm.startPrank({ msgSender: users.admin.addr });
+        chainLog.list(address(dynamic));
+        chainLog.list(address(linear));
+        changePrank({ msgSender: users.alice.addr });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

@@ -31,6 +31,9 @@ abstract contract Unit_Test is Base_Test {
         // Deploy V2 Periphery.
         deployProtocolConditionally();
 
+        // List the contracts in the chain log.
+        listContracts();
+
         // Label the contracts.
         labelContracts();
 
