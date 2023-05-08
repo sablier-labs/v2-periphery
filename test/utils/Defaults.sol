@@ -18,7 +18,6 @@ contract Defaults {
     //////////////////////////////////////////////////////////////////////////*/
 
     uint64 public constant BATCH_SIZE = 10;
-    Broker public BROKER;
     UD60x18 public constant BROKER_FEE = UD60x18.wrap(0);
     uint40 public constant CLIFF_DURATION = 2500 seconds;
     uint40 public immutable CLIFF_TIME;
@@ -62,9 +61,6 @@ contract Defaults {
         CLIFF_TIME = START_TIME + CLIFF_DURATION;
         END_TIME = START_TIME + TOTAL_DURATION;
         PERMIT2_SIG_DEADLINE = START_TIME;
-
-        // Initialize the complex constants.
-        BROKER = Broker({ account: users.broker.addr, fee: BROKER_FEE });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -105,6 +101,10 @@ contract Defaults {
         assets_[0] = dai;
     }
 
+    function broker() public view returns (Broker memory) {
+        return Broker({ account: users.broker.addr, fee: BROKER_FEE });
+    }
+
     function incrementalStreamIds() external pure returns (uint256[] memory streamIds) {
         streamIds = new uint256[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
@@ -123,7 +123,7 @@ contract Defaults {
     function createWithDeltas(IERC20 asset) public view returns (LockupDynamic.CreateWithDeltas memory params) {
         params = LockupDynamic.CreateWithDeltas({
             asset: asset,
-            broker: BROKER,
+            broker: broker(),
             cancelable: true,
             recipient: users.recipient.addr,
             segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
@@ -143,10 +143,10 @@ contract Defaults {
     {
         params = LockupDynamic.CreateWithMilestones({
             asset: asset,
-            broker: BROKER,
+            broker: broker(),
             cancelable: true,
             recipient: users.recipient.addr,
-            segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
+            segments: segments(),
             sender: address(proxy),
             startTime: START_TIME,
             totalAmount: PER_STREAM_AMOUNT
@@ -158,22 +158,15 @@ contract Defaults {
     }
 
     /// @dev Helper function to return a batch of `LockupDynamic.Segment` parameters.
-    function segments(
-        uint128 amount0,
-        uint128 amount1
-    )
-        private
-        view
-        returns (LockupDynamic.Segment[] memory segments_)
-    {
+    function segments() private view returns (LockupDynamic.Segment[] memory segments_) {
         segments_ = new LockupDynamic.Segment[](2);
         segments_[0] = LockupDynamic.Segment({
-            amount: amount0,
+            amount: 2500e18,
             exponent: ud2x18(3.14e18),
             milestone: START_TIME + CLIFF_DURATION
         });
         segments_[1] = LockupDynamic.Segment({
-            amount: amount1,
+            amount: 7500e18,
             exponent: ud2x18(3.14e18),
             milestone: START_TIME + TOTAL_DURATION
         });
@@ -206,7 +199,7 @@ contract Defaults {
     function createWithDurations(IERC20 asset) public view returns (LockupLinear.CreateWithDurations memory params) {
         params = LockupLinear.CreateWithDurations({
             asset: asset,
-            broker: BROKER,
+            broker: broker(),
             durations: durations(),
             cancelable: true,
             recipient: users.recipient.addr,
@@ -222,7 +215,7 @@ contract Defaults {
     function createWithRange(IERC20 asset) public view returns (LockupLinear.CreateWithRange memory params) {
         params = LockupLinear.CreateWithRange({
             asset: asset,
-            broker: BROKER,
+            broker: broker(),
             cancelable: true,
             range: linearRange(),
             recipient: users.recipient.addr,
@@ -248,7 +241,7 @@ contract Defaults {
         batch = new Batch.CreateWithDeltas[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             batch[i] = Batch.CreateWithDeltas({
-                broker: BROKER,
+                broker: broker(),
                 cancelable: true,
                 recipient: users.recipient.addr,
                 segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
@@ -263,7 +256,7 @@ contract Defaults {
         batch = new Batch.CreateWithDurations[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             batch[i] = Batch.CreateWithDurations({
-                broker: BROKER,
+                broker: broker(),
                 cancelable: true,
                 durations: durations(),
                 recipient: users.recipient.addr,
@@ -278,10 +271,10 @@ contract Defaults {
         batch = new Batch.CreateWithMilestones[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             batch[i] = Batch.CreateWithMilestones({
-                broker: BROKER,
+                broker: broker(),
                 cancelable: true,
                 recipient: users.recipient.addr,
-                segments: segments({ amount0: 2500e18, amount1: 7500e18 }),
+                segments: segments(),
                 sender: address(proxy),
                 startTime: START_TIME,
                 totalAmount: PER_STREAM_AMOUNT
@@ -294,7 +287,7 @@ contract Defaults {
         batch = new Batch.CreateWithRange[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
             batch[i] = Batch.CreateWithRange({
-                broker: BROKER,
+                broker: broker(),
                 cancelable: true,
                 range: linearRange(),
                 recipient: users.recipient.addr,
