@@ -32,10 +32,10 @@ jobs:
         run: >-
           forge script script/DeployProxyPlugin.s.sol
           --broadcast
-          --rpc-url "${{ github.event.inputs.chain }}"
+          --rpc-url "${{ inputs.chain }}"
           --sig "run(address)"
           -vvvv
-          "${{ github.event.inputs.archive }}"
+          "${{ inputs.archive }}"
       - name: "Add summary"
         run: |
           echo "## Deployment result" >> $GITHUB_STEP_SUMMARY

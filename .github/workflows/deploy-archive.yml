@@ -28,7 +28,7 @@ jobs:
         run: >-
           forge script script/DeployArchive.s.sol
           --broadcast
-          --rpc-url "${{ github.event.inputs.chain }}"
+          --rpc-url "${{ inputs.chain }}"
           -vvvv
       - name: "Add summary"
         run: |
