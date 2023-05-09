@@ -5,11 +5,11 @@ import { Errors } from "@sablier/v2-core/libraries/Errors.sol";
 
 import { Unit_Test } from "../../Unit.t.sol";
 
-contract ListAddress_Unit_Test is Unit_Test {
+contract Unlist_Unit_Test is Unit_Test {
     function test_RevertWhen_CallerNotAdmin() external {
         changePrank({ msgSender: users.eve.addr });
         vm.expectRevert(abi.encodeWithSelector(Errors.CallerNotAdmin.selector, users.admin.addr, users.eve.addr));
-        chainLog.listAddress(address(linear));
+        chainLog.unlist(address(linear));
     }
 
     modifier callerAdmin() {
@@ -17,20 +17,20 @@ contract ListAddress_Unit_Test is Unit_Test {
         _;
     }
 
-    function test_ListAddress_AddressListed() external callerAdmin {
-        chainLog.listAddress(address(linear));
-        chainLog.listAddress(address(linear));
+    function test_Unlist_AddressNotListed() external callerAdmin {
+        chainLog.unlist(address(linear));
+        chainLog.unlist(address(linear));
         bool isListed = chainLog.isListed(address(linear));
-        assertTrue(isListed, "isListed");
+        assertFalse(isListed, "isListed");
     }
 
-    modifier addressNotListed() {
+    modifier addressListed() {
         _;
     }
 
-    function test_ListAddress() external callerAdmin addressNotListed {
-        chainLog.listAddress(address(linear));
+    function test_Unlist() external callerAdmin addressListed {
+        chainLog.unlist(address(linear));
         bool isListed = chainLog.isListed(address(linear));
-        assertTrue(isListed, "isListed");
+        assertFalse(isListed, "isListed");
     }
 }

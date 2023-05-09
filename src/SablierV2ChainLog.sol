@@ -49,8 +49,14 @@ contract SablierV2ChainLog is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2ChainLog
-    function listAddress(address addr) external onlyAdmin {
+    function list(address addr) external onlyAdmin {
         isListed[addr] = true;
-        emit ListAddress({ admin: msg.sender, addr: addr });
+        emit List({ admin: msg.sender, addr: addr });
+    }
+
+    /// @inheritdoc ISablierV2ChainLog
+    function unlist(address addr) external onlyAdmin {
+        isListed[addr] = false;
+        emit Unlist({ admin: msg.sender, addr: addr });
     }
 }

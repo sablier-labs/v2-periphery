@@ -17,7 +17,7 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
 
         // Lists the linear contract in the chain log.
         changePrank({ msgSender: users.admin.addr });
-        chainLog.listAddress(address(linear));
+        chainLog.list(address(linear));
         changePrank({ msgSender: users.alice.addr });
     }
 
