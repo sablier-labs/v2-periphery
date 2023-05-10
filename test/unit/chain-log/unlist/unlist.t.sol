@@ -18,8 +18,6 @@ contract Unlist_Unit_Test is Unit_Test {
     }
 
     function test_Unlist_AddressNotListed() external callerAdmin {
-        chainLog.unlist(address(linear));
-        chainLog.unlist(address(linear));
         bool isListed = chainLog.isListed(address(linear));
         assertFalse(isListed, "isListed");
     }
@@ -29,6 +27,7 @@ contract Unlist_Unit_Test is Unit_Test {
     }
 
     function test_Unlist() external callerAdmin addressListed {
+        chainLog.list(address(linear));
         chainLog.unlist(address(linear));
         bool isListed = chainLog.isListed(address(linear));
         assertFalse(isListed, "isListed");
