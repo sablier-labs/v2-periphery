@@ -34,8 +34,8 @@ import { Errors } from "./libraries/Errors.sol";
 /// @title SablierV2ProxyPlugin
 /// @notice See the documentation in {ISablierV2ProxyPlugin}.
 contract SablierV2ProxyPlugin is
-    ISablierV2ProxyPlugin, // 0 inherited components
     OnlyDelegateCall, // 0 inherited components
+    ISablierV2ProxyPlugin, // 3 inherited components
     PRBProxyPlugin // 3 inherited components
 {
     using SafeERC20 for IERC20;
