@@ -568,10 +568,12 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     /// @dev Helper function to approve a Sablier contract to spend funds from the proxy. If the current allowance
     /// is insufficient, this function will approve the maximum allowable amount, eliminating the need for future
     /// approvals.
+    /// The {SafeERC20.forceApprove} function is used to handle special ERC-20 assets (e.g. USDT) that require the
+    /// current allowance to be zero before setting it to a non-zero value.
     function _approve(address sablierContract, IERC20 asset, uint256 amount) internal {
         uint256 allowance = asset.allowance({ owner: address(this), spender: sablierContract });
         if (allowance < amount) {
-            asset.approve({ spender: sablierContract, amount: type(uint256).max });
+            asset.forceApprove({ spender: sablierContract, value: type(uint256).max });
         }
     }
 
