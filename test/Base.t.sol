@@ -33,7 +33,7 @@ import { Events } from "./utils/Events.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @title Base_Test
-/// @notice Base test contract with common logic needed by all test contracts.
+/// @notice Base test contract with common logic needed by all tests.
 abstract contract Base_Test is Assertions, Events, StdCheats {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
@@ -65,7 +65,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
 
     function setUp() public virtual {
         // Deploy the base test contracts.
-        deployBaseTestContracts();
+        dai = new ERC20("DAI Stablecoin", "DAI");
+        nftDescriptor = new SablierV2NFTDescriptor();
 
         // Create users for testing.
         users.alice = createUser("Alice");
@@ -93,12 +94,6 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
         user = makeAccount(name);
         vm.deal({ account: user.addr, newBalance: 100_000 ether });
         deal({ token: address(dai), to: user.addr, give: 1_000_000e18 });
-    }
-
-    /// @dev Deploys the base test contracts.
-    function deployBaseTestContracts() internal {
-        dai = new ERC20("DAI Stablecoin", "DAI");
-        nftDescriptor = new SablierV2NFTDescriptor();
     }
 
     /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with `--via-ir`.

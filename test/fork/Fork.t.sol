@@ -13,7 +13,7 @@ import { Defaults } from "../utils/Defaults.sol";
 import { Base_Test } from "../Base.t.sol";
 
 /// @title Fork_Test
-/// @notice Tests that run against a Goerli testnet fork.
+/// @notice Common logic needed by all fork tests.
 abstract contract Fork_Test is Base_Test {
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION

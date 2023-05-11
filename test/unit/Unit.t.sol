@@ -13,7 +13,7 @@ import { WETH } from "../mocks/WETH.sol";
 import { Base_Test } from "../Base.t.sol";
 
 /// @title Unit_Test
-/// @notice Common logic needed by all unit test contracts.
+/// @notice Common logic needed by all unit tests.
 abstract contract Unit_Test is Base_Test {
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION
