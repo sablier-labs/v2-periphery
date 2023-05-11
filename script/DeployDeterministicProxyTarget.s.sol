@@ -11,7 +11,7 @@ import { SablierV2ProxyTarget } from "../src/SablierV2ProxyTarget.sol";
 contract DeployDeterministicProxyTarget is BaseScript {
     /// @dev The presence of the salt instructs Forge to deploy contracts via this deterministic CREATE2 factory:
     /// https://github.com/Arachnid/deterministic-deployment-proxy
-    function run(IAllowanceTransfer permit2) public virtual broadcaster returns (SablierV2ProxyTarget proxyTarget) {
-        proxyTarget = new SablierV2ProxyTarget{ salt: ZERO_SALT }(permit2);
+    function run(IAllowanceTransfer permit2) public virtual broadcaster returns (SablierV2ProxyTarget target) {
+        target = new SablierV2ProxyTarget{ salt: ZERO_SALT }(permit2);
     }
 }

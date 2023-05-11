@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { Defaults } from "../../utils/Defaults.sol";
-import { Unit_Test } from "../Unit.t.sol";
+import { Defaults } from "../../../utils/Defaults.sol";
+import { Unit_Test } from "../../Unit.t.sol";
 
 /// @dev This contracts tests the following functions:
 /// - `cancelAndCreateWithDeltas`
@@ -243,11 +243,11 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         // Asset flow: Sablier → proxy → proxy owner
         // Expect transfers from Sablier to the proxy, and then from the proxy to the proxy owner.
         expectCallToTransfer({ to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
-        expectCallToTransfer({ to: users.sender.addr, amount: defaults.PER_STREAM_AMOUNT() });
+        expectCallToTransfer({ to: users.alice.addr, amount: defaults.PER_STREAM_AMOUNT() });
 
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({ from: users.sender.addr, to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
+        expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
         expectCallToTransferFrom({ from: address(proxy), to: createContract, amount: defaults.PER_STREAM_AMOUNT() });
     }
 }

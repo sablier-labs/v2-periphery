@@ -2,8 +2,26 @@
 pragma solidity >=0.8.19;
 
 /// @title Errors
-/// @notice Library containing all the custom errors the protocol may revert with.
+/// @notice Library containing all custom errors the protocol may revert with.
 library Errors {
-    /// @notice Thrown when attempting to perform an action that requires the batch size to not be zero.
+    /*//////////////////////////////////////////////////////////////////////////
+                                      GENERICS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Thrown when trying to perform a standard call to a function that allows only delegate calls.
+    error CallNotDelegateCall();
+
+    /*//////////////////////////////////////////////////////////////////////////
+                              SABLIER-V2-PROXY-PLUGIN
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Thrown when the caller is not listed.
+    error SablierV2ProxyPlugin_CallerUnlisted(address caller);
+
+    /*//////////////////////////////////////////////////////////////////////////
+                              SABLIER-V2-PROXY-TARGET
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Thrown when trying to perform an action that requires the batch size to not be zero.
     error SablierV2ProxyTarget_BatchSizeZero();
 }

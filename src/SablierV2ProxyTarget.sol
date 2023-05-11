@@ -33,7 +33,7 @@ import { Batch, Permit2Params } from "./types/DataTypes.sol";
 */
 
 /// @title SablierV2ProxyTarget
-/// @notice Implements the {ISablierV2ProxyTarget} interface.
+/// @notice See the documentation in {ISablierV2ProxyTarget}.
 contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     using SafeERC20 for IERC20;
 

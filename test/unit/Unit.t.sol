@@ -46,16 +46,16 @@ abstract contract Unit_Test is Base_Test {
         // Deploy WETH.
         weth = new WETH();
 
-        // Deploy the proxy registry from a bytecode precompiled with via IR.
-        registry = new PRBProxyPrecompiles().deployRegistry();
+        // Deploy the proxy system from a bytecode precompiled with `--via-ir`.
+        (registry, proxyHelpers) = new PRBProxyPrecompiles().deploySystem();
 
-        // Deploy a proxy for the sender.
-        proxy = registry.deployFor(users.sender.addr);
+        // Deploy a proxy for Alice.
+        proxy = registry.deployFor(users.alice.addr);
 
-        // Deploy Permit2 from a bytecode precompiled with via IR.
+        // Deploy Permit2 from a bytecode precompiled with `--via-ir`.
         permit2 = IAllowanceTransfer(new DeployPermit2().run());
 
-        // Deploy V2 Core from a bytecode precompiled with via IR.
+        // Deploy V2 Core from a bytecode precompiled with `--via-ir`.
         (, dynamic, linear) = new V2CorePrecompiles().deployProtocol(users.admin.addr);
     }
 }

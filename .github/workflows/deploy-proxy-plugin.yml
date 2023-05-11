@@ -1,0 +1,42 @@
+name: "Deploy Proxy Plugin"
+
+env:
+  API_KEY_INFURA: ${{ secrets.API_KEY_INFURA }}
+  MNEMONIC: ${{ secrets.MNEMONIC }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      chain:
+        default: "goerli"
+        description: 'Chain name. Defaults to "goerli" if unspecified'
+        required: false
+      chainLogAddress:
+        description: 'ChainLog contract address'
+        required: true
+
+jobs:
+  deploy-proxy-plugin:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v3"
+        with:
+          submodules: "recursive"
+          token: ${{ secrets.CI_TOKEN }}
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Deploy the SablierV2ProxyPlugin contract"
+        run: >-
+          forge script script/DeployProxyPlugin.s.sol
+          --broadcast
+          --rpc-url "${{ github.event.inputs.chain }}"
+          --sig "run(address)"
+          -vvvv
+          "${{ github.event.inputs.chainLogAddress }}"
+      - name: "Add summary"
+        run: |
+          echo "## Deployment result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY

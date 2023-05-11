@@ -1,0 +1,8 @@
+onStreamCanceled.t.sol
+├── when the call is not a delegate call
+│  └── it should revert
+└── when the call is a delegate call
+   ├── when the caller is not listed
+   │  └── it should revert
+   └── when the caller is listed
+      └── it should forward the assets to the proxy owner

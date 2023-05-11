@@ -7,8 +7,8 @@ import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Defaults } from "../../utils/Defaults.sol";
-import { Unit_Test } from "../Unit.t.sol";
+import { Defaults } from "../../../utils/Defaults.sol";
+import { Unit_Test } from "../../Unit.t.sol";
 
 contract BatchCancelMultiple_Unit_Test is Unit_Test {
     function test_RevertWhen_BatchSizeZero() external {
@@ -41,7 +41,7 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
             to: address(proxy),
             amount: defaults.REFUND_AMOUNT()
         });
-        expectCallToTransfer({ to: users.sender.addr, amount: 2 * defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
+        expectCallToTransfer({ to: users.alice.addr, amount: 2 * defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
 
         // ABI encode the parameters and call the function via the proxy.
         Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](2);

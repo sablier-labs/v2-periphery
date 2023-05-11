@@ -3,8 +3,8 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 
-import { Defaults } from "../../utils/Defaults.sol";
-import { Unit_Test } from "../Unit.t.sol";
+import { Defaults } from "../../../utils/Defaults.sol";
+import { Unit_Test } from "../../Unit.t.sol";
 
 /// @dev This contracts tests the following functions:
 /// - `wrapEtherAndCreateWithDeltas`

@@ -4,31 +4,37 @@ pragma solidity >=0.8.19 <0.9.0;
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
+import { IPRBProxyHelpers } from "@prb/proxy/interfaces/IPRBProxyHelpers.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2NFTDescriptor } from "@sablier/v2-core/interfaces/ISablierV2NFTDescriptor.sol";
 import { SablierV2NFTDescriptor } from "@sablier/v2-core/SablierV2NFTDescriptor.sol";
-import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
+import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { PermitHash } from "permit2/libraries/PermitHash.sol";
 
 import { eqString } from "@prb/test/Helpers.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
+import { DeployChainLog } from "script/DeployChainLog.s.sol";
+import { DeployProxyPlugin } from "script/DeployProxyPlugin.s.sol";
 import { DeployProxyTarget } from "script/DeployProxyTarget.s.sol";
+import { ISablierV2ChainLog } from "src/interfaces/ISablierV2ChainLog.sol";
+import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { Permit2Params } from "src/types/DataTypes.sol";
 
 import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
+import { Events } from "./utils/Events.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @title Base_Test
 /// @notice Base test contract with common logic needed by all test contracts.
-abstract contract Base_Test is Assertions, StdCheats {
+abstract contract Base_Test is Assertions, Events, StdCheats {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
@@ -39,13 +45,16 @@ abstract contract Base_Test is Assertions, StdCheats {
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    IERC20 internal dai = new ERC20("Dai Stablecoin", "DAI");
+    ISablierV2ChainLog internal chainLog;
+    IERC20 internal dai;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal dynamic;
     ISablierV2LockupLinear internal linear;
-    ISablierV2NFTDescriptor internal nftDescriptor = new SablierV2NFTDescriptor();
+    ISablierV2NFTDescriptor internal nftDescriptor;
     IAllowanceTransfer internal permit2;
+    ISablierV2ProxyPlugin internal plugin;
     IPRBProxy internal proxy;
+    IPRBProxyHelpers internal proxyHelpers;
     IPRBProxyRegistry internal registry;
     ISablierV2ProxyTarget internal target;
     IWrappedNativeAsset internal weth;
@@ -55,22 +64,27 @@ abstract contract Base_Test is Assertions, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual {
+        // Deploy the base test contracts.
+        deployBaseTestContracts();
+
+        // Create users for testing.
+        users.alice = createUser("Alice");
         users.admin = createUser("Admin");
         users.broker = createUser("Broker");
+        users.eve = createUser("Eve");
         users.recipient = createUser("Recipient");
-        users.sender = createUser("Sender");
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                                      HELPERS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Approves Permit2 to spend assets from the recipient and the sender.
+    /// @dev Approves Permit2 to spend assets from the stream's recipient and Alice (the proxy owner).
     function approvePermit2() internal {
         vm.startPrank({ msgSender: users.recipient.addr });
         dai.approve({ spender: address(permit2), amount: MAX_UINT256 });
 
-        changePrank({ msgSender: users.sender.addr });
+        changePrank({ msgSender: users.alice.addr });
         dai.approve({ spender: address(permit2), amount: MAX_UINT256 });
     }
 
@@ -81,10 +95,24 @@ abstract contract Base_Test is Assertions, StdCheats {
         deal({ token: address(dai), to: user.addr, give: 1_000_000e18 });
     }
 
-    /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with via IR.
+    /// @dev Deploys the base test contracts.
+    function deployBaseTestContracts() internal {
+        dai = new ERC20("DAI Stablecoin", "DAI");
+        nftDescriptor = new SablierV2NFTDescriptor();
+    }
+
+    /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with `--via-ir`.
     function deployProtocolConditionally() internal {
         // We deploy from precompiled source if the Foundry profile is "test-optimized".
         if (isTestOptimizedProfile()) {
+            chainLog = ISablierV2ChainLog(
+                deployCode("optimized-out/SablierV2ChainLog.sol/SablierV2ChainLog.json", abi.encode(users.admin.addr))
+            );
+            plugin = ISablierV2ProxyPlugin(
+                deployCode(
+                    "optimized-out/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(address(chainLog))
+                )
+            );
             target = ISablierV2ProxyTarget(
                 deployCode(
                     "optimized-out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json", abi.encode(address(permit2))
@@ -93,6 +121,8 @@ abstract contract Base_Test is Assertions, StdCheats {
         }
         // We deploy normally for all other profiles.
         else {
+            chainLog = new DeployChainLog().run(users.admin.addr);
+            plugin = new DeployProxyPlugin().run(chainLog);
             target = new DeployProxyTarget().run(permit2);
         }
     }
@@ -105,105 +135,15 @@ abstract contract Base_Test is Assertions, StdCheats {
 
     /// @dev Labels the most relevant contracts.
     function labelContracts() internal {
-        vm.label({ account: address(dai), newLabel: "Dai" });
+        vm.label({ account: address(chainLog), newLabel: "Chain Log" });
+        vm.label({ account: address(dai), newLabel: "Dai Stablecoin" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(linear), newLabel: "LockupLinear" });
         vm.label({ account: address(permit2), newLabel: "Permit2" });
+        vm.label({ account: address(plugin), newLabel: "Proxy Plugin" });
         vm.label({ account: address(proxy), newLabel: "Proxy" });
         vm.label({ account: address(target), newLabel: "Proxy Target" });
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                  CREATE FUNCTIONS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    function batchCreateWithDeltas() internal returns (uint256[] memory streamIds) {
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithDeltas,
-            (dynamic, dai, defaults.batchCreateWithDeltas(), permit2Params(defaults.TRANSFER_AMOUNT()))
-        );
-        bytes memory response = proxy.execute(address(target), data);
-        streamIds = abi.decode(response, (uint256[]));
-    }
-
-    function batchCreateWithDurations() internal returns (uint256[] memory streamIds) {
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithDurations,
-            (linear, dai, defaults.batchCreateWithDurations(), permit2Params(defaults.TRANSFER_AMOUNT()))
-        );
-        bytes memory response = proxy.execute(address(target), data);
-        streamIds = abi.decode(response, (uint256[]));
-    }
-
-    function batchCreateWithMilestones() internal returns (uint256[] memory streamIds) {
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones,
-            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT()))
-        );
-        bytes memory response = proxy.execute(address(target), data);
-        streamIds = abi.decode(response, (uint256[]));
-    }
-
-    function batchCreateWithMilestones(uint48 nonce) internal returns (uint256[] memory streamIds) {
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones,
-            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
-        );
-        bytes memory response = proxy.execute(address(target), data);
-        streamIds = abi.decode(response, (uint256[]));
-    }
-
-    function batchCreateWithRange() internal returns (uint256[] memory streamIds) {
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithRange,
-            (linear, dai, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT()))
-        );
-        bytes memory response = proxy.execute(address(target), data);
-        streamIds = abi.decode(response, (uint256[]));
-    }
-
-    function batchCreateWithRange(uint48 nonce) internal returns (uint256[] memory streamIds) {
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithRange,
-            (linear, dai, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
-        );
-        bytes memory response = proxy.execute(address(target), data);
-        streamIds = abi.decode(response, (uint256[]));
-    }
-
-    function createWithDeltas() internal returns (uint256 streamId) {
-        bytes memory data = abi.encodeCall(
-            target.createWithDeltas, (dynamic, defaults.createWithDeltas(), permit2Params(defaults.PER_STREAM_AMOUNT()))
-        );
-        bytes memory response = proxy.execute(address(target), data);
-        streamId = abi.decode(response, (uint256));
-    }
-
-    function createWithDurations() internal returns (uint256 streamId) {
-        bytes memory data = abi.encodeCall(
-            target.createWithDurations,
-            (linear, defaults.createWithDurations(), permit2Params(defaults.PER_STREAM_AMOUNT()))
-        );
-        bytes memory response = proxy.execute(address(target), data);
-        streamId = abi.decode(response, (uint256));
-    }
-
-    function createWithMilestones() internal returns (uint256 streamId) {
-        bytes memory data = abi.encodeCall(
-            target.createWithMilestones,
-            (dynamic, defaults.createWithMilestones(), permit2Params(defaults.PER_STREAM_AMOUNT()))
-        );
-        bytes memory response = proxy.execute(address(target), data);
-        streamId = abi.decode(response, (uint256));
-    }
-
-    function createWithRange() internal returns (uint256 streamId) {
-        bytes memory data = abi.encodeCall(
-            target.createWithRange, (linear, defaults.createWithRange(), permit2Params(defaults.PER_STREAM_AMOUNT()))
-        );
-        bytes memory response = proxy.execute(address(target), data);
-        streamId = abi.decode(response, (uint256));
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -362,7 +302,7 @@ abstract contract Base_Test is Assertions, StdCheats {
             sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
             signature: getPermit2Signature({
                 details: defaults.permitDetails(amount),
-                privateKey: users.sender.key,
+                privateKey: users.alice.key,
                 spender: address(proxy)
             })
         });
@@ -374,9 +314,117 @@ abstract contract Base_Test is Assertions, StdCheats {
             sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
             signature: getPermit2Signature({
                 details: defaults.permitDetails(amount, nonce),
-                privateKey: users.sender.key,
+                privateKey: users.alice.key,
                 spender: address(proxy)
             })
         });
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                       PLUGIN
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function installPlugin() internal {
+        bytes memory data = abi.encodeCall(proxyHelpers.installPlugin, (plugin));
+        proxy.execute(address(proxyHelpers), data);
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                       TARGET
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function batchCreateWithDeltas() internal returns (uint256[] memory streamIds) {
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithDeltas,
+            (dynamic, dai, defaults.batchCreateWithDeltas(), permit2Params(defaults.TRANSFER_AMOUNT()))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamIds = abi.decode(response, (uint256[]));
+    }
+
+    function batchCreateWithDurations() internal returns (uint256[] memory streamIds) {
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithDurations,
+            (linear, dai, defaults.batchCreateWithDurations(), permit2Params(defaults.TRANSFER_AMOUNT()))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamIds = abi.decode(response, (uint256[]));
+    }
+
+    function batchCreateWithMilestones() internal returns (uint256[] memory streamIds) {
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithMilestones,
+            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT()))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamIds = abi.decode(response, (uint256[]));
+    }
+
+    function batchCreateWithMilestones(uint48 nonce) internal returns (uint256[] memory streamIds) {
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithMilestones,
+            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamIds = abi.decode(response, (uint256[]));
+    }
+
+    function batchCreateWithRange() internal returns (uint256[] memory streamIds) {
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithRange,
+            (linear, dai, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT()))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamIds = abi.decode(response, (uint256[]));
+    }
+
+    function batchCreateWithRange(uint48 nonce) internal returns (uint256[] memory streamIds) {
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithRange,
+            (linear, dai, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamIds = abi.decode(response, (uint256[]));
+    }
+
+    function createWithDeltas() internal returns (uint256 streamId) {
+        bytes memory data = abi.encodeCall(
+            target.createWithDeltas, (dynamic, defaults.createWithDeltas(), permit2Params(defaults.PER_STREAM_AMOUNT()))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamId = abi.decode(response, (uint256));
+    }
+
+    function createWithDurations() internal returns (uint256 streamId) {
+        bytes memory data = abi.encodeCall(
+            target.createWithDurations,
+            (linear, defaults.createWithDurations(), permit2Params(defaults.PER_STREAM_AMOUNT()))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamId = abi.decode(response, (uint256));
+    }
+
+    function createWithMilestones() internal returns (uint256 streamId) {
+        bytes memory data = abi.encodeCall(
+            target.createWithMilestones,
+            (dynamic, defaults.createWithMilestones(), permit2Params(defaults.PER_STREAM_AMOUNT()))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamId = abi.decode(response, (uint256));
+    }
+
+    function createWithRange() internal returns (uint256 streamId) {
+        bytes memory data = abi.encodeCall(
+            target.createWithRange, (linear, defaults.createWithRange(), permit2Params(defaults.PER_STREAM_AMOUNT()))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        streamId = abi.decode(response, (uint256));
+    }
+
+    function createWithRange(LockupLinear.CreateWithRange memory params) internal returns (uint256 streamId) {
+        bytes memory data =
+            abi.encodeCall(target.createWithRange, (linear, params, permit2Params(defaults.PER_STREAM_AMOUNT())));
+        bytes memory response = proxy.execute(address(target), data);
+        streamId = abi.decode(response, (uint256));
     }
 }

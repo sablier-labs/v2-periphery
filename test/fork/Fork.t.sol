@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { IPRBProxyHelpers } from "@prb/proxy/interfaces/IPRBProxyHelpers.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
@@ -19,10 +20,11 @@ abstract contract Fork_Test is Base_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual override {
-        Base_Test.setUp();
-
         // Fork the Goerli testnet.
         vm.createSelectFork({ blockNumber: 8_856_000, urlOrAlias: "goerli" });
+
+        // The base is set up after the fork is selected so that the base test contracts are deployed on the fork.
+        Base_Test.setUp();
 
         // Load the dependencies.
         loadDependencies();
@@ -52,8 +54,11 @@ abstract contract Fork_Test is Base_Test {
         // Load the proxy registry.
         registry = IPRBProxyRegistry(0x842b72D8521E9a09D229434e4E9517DB1a4fAA71);
 
-        // Deploy a proxy for the sender.
-        proxy = registry.deployFor(users.sender.addr);
+        // Load the proxy helpers.
+        proxyHelpers = IPRBProxyHelpers(0x8afE5fE3BAfA1FbC941a50b630AA966F3A7815A0);
+
+        // Deploy a proxy for Alice.
+        proxy = registry.deployFor(users.alice.addr);
 
         // Load Permit2.
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);

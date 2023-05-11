@@ -1,0 +1,36 @@
+name: "Deploy Chain Log"
+
+env:
+  API_KEY_INFURA: ${{ secrets.API_KEY_INFURA }}
+  MNEMONIC: ${{ secrets.MNEMONIC }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      chain:
+        default: "goerli"
+        description: 'Chain name. Defaults to "goerli" if unspecified'
+        required: false
+jobs:
+  deploy-chain-log:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v3"
+        with:
+          submodules: "recursive"
+          token: ${{ secrets.CI_TOKEN }}
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Deploy the SablierV2ChainLog contract"
+        run: >-
+          forge script script/DeployChainLog.s.sol
+          --broadcast
+          --rpc-url "${{ github.event.inputs.chain }}"
+          -vvvv
+      - name: "Add summary"
+        run: |
+          echo "## Deployment result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY

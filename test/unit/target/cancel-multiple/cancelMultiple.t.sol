@@ -6,11 +6,11 @@ import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Defaults } from "../../utils/Defaults.sol";
-import { Unit_Test } from "../Unit.t.sol";
+import { Defaults } from "../../../utils/Defaults.sol";
+import { Unit_Test } from "../../Unit.t.sol";
 
 contract CancelMultiple_Unit_Test is Unit_Test {
-    function test_CancelMultiple_Linear() internal {
+    function test_CancelMultiple_Linear() external {
         // Create a batch of streams due to be canceled.
         uint256[] memory streamIds = batchCreateWithRange();
 
@@ -18,7 +18,7 @@ contract CancelMultiple_Unit_Test is Unit_Test {
         test_CancelMultiple(streamIds, linear);
     }
 
-    function test_CancelMultiple_Dynamic() internal {
+    function test_CancelMultiple_Dynamic() external {
         // Create a batch of streams due to be canceled.
         uint256[] memory streamIds = batchCreateWithMilestones();
 
@@ -28,15 +28,15 @@ contract CancelMultiple_Unit_Test is Unit_Test {
 
     function test_CancelMultiple(uint256[] memory streamIds, ISablierV2Lockup lockup) internal {
         // Simulate the passage of time.
-        vm.warp(defaults.WARP_26_PERCENT());
+        vm.warp(defaults.CLIFF_TIME());
 
-        // Asset flow: proxy owner → proxy → sender
+        // Asset flow: proxy owner → proxy → proxy owner
         expectMultipleCallsToTransfer({
             count: defaults.BATCH_SIZE(),
             to: address(proxy),
             amount: defaults.REFUND_AMOUNT()
         });
-        expectCallToTransfer({ to: users.sender.addr, amount: defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
+        expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
 
         bytes memory data = abi.encodeCall(target.cancelMultiple, (lockup, defaults.assets(), streamIds));
         proxy.execute(address(target), data);
