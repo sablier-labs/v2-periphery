@@ -620,8 +620,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
     )
         internal
     {
-        // Retrieve the proxy owner's nonce. The parameters are (user,token,spender).
-        (,, uint48 nonce) = PERMIT2.allowance(msg.sender, address(asset), address(this));
+        // Retrieve the proxy owner's nonce.
+        (,, uint48 nonce) = PERMIT2.allowance({ user: msg.sender, token: address(asset), spender: address(this) });
 
         // Declare the single permit struct.
         IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
