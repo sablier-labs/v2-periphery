@@ -11,7 +11,7 @@ contract BatchCreateWithDurations_Unit_Test is Unit_Test {
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithDurations[] memory batch = new Batch.CreateWithDurations[](0);
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithDurations, (linear, dai, batch, permit2Params(defaults.TRANSFER_AMOUNT()))
+            target.batchCreateWithDurations, (linear, dai, batch, permit2, permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);

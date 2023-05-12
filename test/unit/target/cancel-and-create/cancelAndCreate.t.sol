@@ -29,7 +29,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDeltas,
-            (dynamic, dynamic, streamId, defaults.createWithDeltas(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
+            (
+                dynamic,
+                dynamic,
+                streamId,
+                defaults.createWithDeltas(),
+                permit2,
+                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -54,7 +61,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDeltas,
-            (linear, dynamic, streamId, defaults.createWithDeltas(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
+            (
+                linear,
+                dynamic,
+                streamId,
+                defaults.createWithDeltas(),
+                permit2,
+                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -83,7 +97,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDurations,
-            (linear, linear, streamId, defaults.createWithDurations(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
+            (
+                linear,
+                linear,
+                streamId,
+                defaults.createWithDurations(),
+                permit2,
+                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -108,7 +129,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDurations,
-            (dynamic, linear, streamId, defaults.createWithDurations(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
+            (
+                dynamic,
+                linear,
+                streamId,
+                defaults.createWithDurations(),
+                permit2,
+                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -142,6 +170,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                 dynamic,
                 streamId,
                 defaults.createWithMilestones(),
+                permit2,
                 permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
             )
         );
@@ -168,7 +197,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithMilestones,
-            (linear, dynamic, streamId, defaults.createWithMilestones(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
+            (
+                linear,
+                dynamic,
+                streamId,
+                defaults.createWithMilestones(),
+                permit2,
+                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -197,7 +233,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithRange,
-            (linear, linear, streamId, defaults.createWithRange(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
+            (
+                linear,
+                linear,
+                streamId,
+                defaults.createWithRange(),
+                permit2,
+                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
 
@@ -222,7 +265,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithRange,
-            (dynamic, linear, streamId, defaults.createWithRange(), permit2Params(defaults.PER_STREAM_AMOUNT(), 1))
+            (
+                dynamic,
+                linear,
+                streamId,
+                defaults.createWithRange(),
+                permit2,
+                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
 

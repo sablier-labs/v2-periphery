@@ -11,7 +11,7 @@ contract BatchCreateWithDeltas_Unit_Test is Unit_Test {
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithDeltas[] memory batch = new Batch.CreateWithDeltas[](0);
         bytes memory data = abi.encodeCall(
-            target.batchCreateWithDeltas, (dynamic, dai, batch, permit2Params(defaults.TRANSFER_AMOUNT()))
+            target.batchCreateWithDeltas, (dynamic, dai, batch, permit2, permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);

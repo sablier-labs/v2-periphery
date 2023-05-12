@@ -108,17 +108,14 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
                     "optimized-out/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(address(chainLog))
                 )
             );
-            target = ISablierV2ProxyTarget(
-                deployCode(
-                    "optimized-out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json", abi.encode(address(permit2))
-                )
-            );
+            target =
+                ISablierV2ProxyTarget(deployCode("optimized-out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json"));
         }
         // We deploy normally for all other profiles.
         else {
             chainLog = new DeployChainLog().run(users.admin.addr);
             plugin = new DeployProxyPlugin().run(chainLog);
-            target = new DeployProxyTarget().run(permit2);
+            target = new DeployProxyTarget().run();
         }
     }
 
@@ -331,7 +328,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function batchCreateWithDeltas() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
-            (dynamic, dai, defaults.batchCreateWithDeltas(), permit2Params(defaults.TRANSFER_AMOUNT()))
+            (dynamic, dai, defaults.batchCreateWithDeltas(), permit2, permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -340,7 +337,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function batchCreateWithDurations() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDurations,
-            (linear, dai, defaults.batchCreateWithDurations(), permit2Params(defaults.TRANSFER_AMOUNT()))
+            (linear, dai, defaults.batchCreateWithDurations(), permit2, permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -349,7 +346,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function batchCreateWithMilestones() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT()))
+            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2, permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -358,7 +355,13 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function batchCreateWithMilestones(uint48 nonce) internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (dynamic, dai, defaults.batchCreateWithMilestones(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
+            (
+                dynamic,
+                dai,
+                defaults.batchCreateWithMilestones(),
+                permit2,
+                permit2Params(defaults.TRANSFER_AMOUNT(), nonce)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -367,7 +370,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function batchCreateWithRange() internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, dai, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT()))
+            (linear, dai, defaults.batchCreateWithRange(), permit2, permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -376,7 +379,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function batchCreateWithRange(uint48 nonce) internal returns (uint256[] memory streamIds) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, dai, defaults.batchCreateWithRange(), permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
+            (linear, dai, defaults.batchCreateWithRange(), permit2, permit2Params(defaults.TRANSFER_AMOUNT(), nonce))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamIds = abi.decode(response, (uint256[]));
@@ -384,7 +387,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
 
     function createWithDeltas() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
-            target.createWithDeltas, (dynamic, defaults.createWithDeltas(), permit2Params(defaults.PER_STREAM_AMOUNT()))
+            target.createWithDeltas,
+            (dynamic, defaults.createWithDeltas(), permit2, permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -393,7 +397,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function createWithDurations() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithDurations,
-            (linear, defaults.createWithDurations(), permit2Params(defaults.PER_STREAM_AMOUNT()))
+            (linear, defaults.createWithDurations(), permit2, permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -402,7 +406,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function createWithMilestones() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
             target.createWithMilestones,
-            (dynamic, defaults.createWithMilestones(), permit2Params(defaults.PER_STREAM_AMOUNT()))
+            (dynamic, defaults.createWithMilestones(), permit2, permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
@@ -410,15 +414,17 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
 
     function createWithRange() internal returns (uint256 streamId) {
         bytes memory data = abi.encodeCall(
-            target.createWithRange, (linear, defaults.createWithRange(), permit2Params(defaults.PER_STREAM_AMOUNT()))
+            target.createWithRange,
+            (linear, defaults.createWithRange(), permit2, permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
     }
 
     function createWithRange(LockupLinear.CreateWithRange memory params) internal returns (uint256 streamId) {
-        bytes memory data =
-            abi.encodeCall(target.createWithRange, (linear, params, permit2Params(defaults.PER_STREAM_AMOUNT())));
+        bytes memory data = abi.encodeCall(
+            target.createWithRange, (linear, params, permit2, permit2Params(defaults.PER_STREAM_AMOUNT()))
+        );
         bytes memory response = proxy.execute(address(target), data);
         streamId = abi.decode(response, (uint256));
     }
