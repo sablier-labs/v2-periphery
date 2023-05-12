@@ -15,7 +15,7 @@ import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { PermitHash } from "permit2/libraries/PermitHash.sol";
 
-import { eqString } from "@prb/test/Helpers.sol";
+import { Strings } from "@openzeppelin/utils/Strings.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { DeployChainLog } from "script/DeployChainLog.s.sol";
@@ -125,7 +125,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     /// @dev Checks if the Foundry profile is "test-optimized".
     function isTestOptimizedProfile() internal returns (bool result) {
         string memory profile = vm.envOr("FOUNDRY_PROFILE", string(""));
-        result = eqString(profile, "test-optimized");
+        result = Strings.equal(profile, "test-optimized");
     }
 
     /// @dev Labels the most relevant contracts.
