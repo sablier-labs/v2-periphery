@@ -9,7 +9,7 @@ contract List_Unit_Test is Unit_Test {
     function test_RevertWhen_CallerNotAdmin() external {
         changePrank({ msgSender: users.eve.addr });
         vm.expectRevert(abi.encodeWithSelector(Errors.CallerNotAdmin.selector, users.admin.addr, users.eve.addr));
-        chainLog.list(address(linear));
+        archive.list(address(linear));
     }
 
     modifier callerAdmin() {
@@ -18,9 +18,9 @@ contract List_Unit_Test is Unit_Test {
     }
 
     function test_List_AddressListed() external callerAdmin {
-        chainLog.list(address(linear));
-        chainLog.list(address(linear));
-        bool isListed = chainLog.isListed(address(linear));
+        archive.list(address(linear));
+        archive.list(address(linear));
+        bool isListed = archive.isListed(address(linear));
         assertTrue(isListed, "isListed");
     }
 
@@ -29,8 +29,8 @@ contract List_Unit_Test is Unit_Test {
     }
 
     function test_List() external callerAdmin addressNotListed {
-        chainLog.list(address(linear));
-        bool isListed = chainLog.isListed(address(linear));
+        archive.list(address(linear));
+        bool isListed = archive.isListed(address(linear));
         assertTrue(isListed, "isListed");
     }
 }

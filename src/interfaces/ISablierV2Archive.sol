@@ -3,31 +3,31 @@ pragma solidity >=0.8.19;
 
 import { IAdminable } from "@sablier/v2-core/interfaces/IAdminable.sol";
 
-/// @title ISablierV2ChainLog
+/// @title ISablierV2Archive
 /// @notice An on-chain contract registry that keeps a record of all Sablier V2 contracts, including old deployments.
-interface ISablierV2ChainLog is IAdminable {
+interface ISablierV2Archive is IAdminable {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Emitted when an address is listed in the chain log.
+    /// @notice Emitted when an address is listed in the archive.
     event List(address indexed admin, address indexed addr);
 
-    /// @notice Emitted when an address is unlisted from the chain log.
+    /// @notice Emitted when an address is unlisted from the archive.
     event Unlist(address indexed admin, address indexed addr);
 
     /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice A boolean flag that indicates whether the provided address is part of the chain log.
+    /// @notice A boolean flag that indicates whether the provided address is part of the archive.
     function isListed(address addr) external returns (bool result);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Lists an address in the chain log.
+    /// @notice Lists an address in the archive.
     /// @dev Emits a {List} event.
     ///
     /// Notes:
@@ -36,10 +36,10 @@ interface ISablierV2ChainLog is IAdminable {
     /// Requirements:
     /// - The caller must be the admin.
     ///
-    /// @param addr The address to list in the chain log, which is usually a contract address.
+    /// @param addr The address to list in the archive, which is usually a contract address.
     function list(address addr) external;
 
-    /// @notice Unlists an address from the chain log.
+    /// @notice Unlists an address from the archive.
     /// @dev Emits an {Unlist} event.
     ///
     /// Notes:
@@ -48,6 +48,6 @@ interface ISablierV2ChainLog is IAdminable {
     /// Requirements:
     /// - The caller must be the admin.
     ///
-    /// @param addr The address to unlist from the chain log, which is usually a contract address.
+    /// @param addr The address to unlist from the archive, which is usually a contract address.
     function unlist(address addr) external;
 }

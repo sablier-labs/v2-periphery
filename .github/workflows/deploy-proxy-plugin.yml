@@ -7,13 +7,13 @@ env:
 on:
   workflow_dispatch:
     inputs:
+      archive:
+        description: 'Archive contract address'
+        required: true
       chain:
         default: "goerli"
         description: 'Chain name. Defaults to "goerli" if unspecified'
         required: false
-      chainLogAddress:
-        description: 'ChainLog contract address'
-        required: true
 
 jobs:
   deploy-proxy-plugin:
@@ -35,7 +35,7 @@ jobs:
           --rpc-url "${{ github.event.inputs.chain }}"
           --sig "run(address)"
           -vvvv
-          "${{ github.event.inputs.chainLogAddress }}"
+          "${{ github.event.inputs.archive }}"
       - name: "Add summary"
         run: |
           echo "## Deployment result" >> $GITHUB_STEP_SUMMARY
