@@ -24,8 +24,8 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
 
     function test_BatchCancelMultiple() external batchSizeNotZero {
         // Create two batches of streams due to be canceled.
-        uint256[] memory dynamicStreamIds = batchCreateWithMilestones({ nonce: 0 });
-        uint256[] memory linearStreamIds = batchCreateWithRange({ nonce: 1 });
+        uint256[] memory dynamicStreamIds = batchCreateWithMilestones();
+        uint256[] memory linearStreamIds = batchCreateWithRange();
 
         // Simulate the passage of time.
         vm.warp({ timestamp: defaults.CLIFF_TIME() });

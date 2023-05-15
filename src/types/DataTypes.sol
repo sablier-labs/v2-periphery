@@ -3,6 +3,7 @@ pragma solidity >=0.8.19;
 
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
 library Batch {
     /// @notice A struct encapsulating the lockup contract's address and the stream ids to cancel.
@@ -55,10 +56,13 @@ library Batch {
     }
 }
 
-/// @notice A struct encapsulating the parameters needed for Permit2, most importantly the signature.
+/// @notice A struct encapsulating the parameters needed for Permit2.
 /// @dev See the full documentation at https://github.com/Uniswap/permit2.
+/// @param permit2 The address of the Permit2 contract.
+/// @param permitSingle The permit message signed for a single token allowance.
+/// @param signature The ECDSA signature of the permit, which contains the three parameters (r,s,v).
 struct Permit2Params {
-    uint48 expiration;
-    uint256 sigDeadline;
+    IAllowanceTransfer permit2;
+    IAllowanceTransfer.PermitSingle permitSingle;
     bytes signature;
 }

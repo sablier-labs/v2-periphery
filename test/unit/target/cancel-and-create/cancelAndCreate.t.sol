@@ -36,8 +36,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                 createContract,
                 streamId,
                 defaults.createWithDeltas(),
-                permit2,
-                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -66,8 +65,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                 createContract,
                 streamId,
                 defaults.createWithDeltas(),
-                permit2,
-                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -100,8 +98,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                 createContract,
                 streamId,
                 defaults.createWithDurations(),
-                permit2,
-                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -130,8 +127,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                 createContract,
                 streamId,
                 defaults.createWithDurations(),
-                permit2,
-                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -164,8 +160,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                 createContract,
                 streamId,
                 defaults.createWithMilestones(),
-                permit2,
-                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -194,8 +189,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                 createContract,
                 streamId,
                 defaults.createWithMilestones(),
-                permit2,
-                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -228,8 +222,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                 createContract,
                 streamId,
                 defaults.createWithRange(),
-                permit2,
-                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = proxy.execute(address(target), data);
@@ -258,8 +251,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                 createContract,
                 streamId,
                 defaults.createWithRange(),
-                permit2,
-                permit2Params(defaults.PER_STREAM_AMOUNT(), 1)
+                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = proxy.execute(address(target), data);

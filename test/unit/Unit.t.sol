@@ -26,7 +26,7 @@ abstract contract Unit_Test is Base_Test {
         deployDependencies();
 
         // Deploy the defaults contract.
-        defaults = new Defaults(users, dai, proxy);
+        defaults = new Defaults(users, dai, permit2, proxy);
 
         // Deploy V2 Periphery.
         deployProtocolConditionally();
