@@ -1,7 +1,7 @@
 onStreamCanceled.t.sol
-├── when the call is not a delegate call
+├── when not delegate calling
 │  └── it should revert
-└── when the call is a delegate call
+└── when delegate calling
    ├── when the caller is not listed
    │  └── it should revert
    └── when the caller is listed

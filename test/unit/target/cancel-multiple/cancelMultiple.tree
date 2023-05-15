@@ -1,0 +1,5 @@
+cancelMultiple.t.sol
+├── when not delegate calling
+│  └── it should revert
+└── when delegate calling
+   └── it should cancel multiple streams

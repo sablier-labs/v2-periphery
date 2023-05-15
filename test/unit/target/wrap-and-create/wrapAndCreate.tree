@@ -1,0 +1,5 @@
+wrapAndCreate.t.sol
+├── when not delegate calling
+│  └── it should revert
+└── when delegate calling
+   └── it should wrap the native asset payment and create the stream

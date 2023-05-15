@@ -10,6 +10,7 @@ import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2L
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
+import { OnlyDelegateCall } from "./abstracts/OnlyDelegateCall.sol";
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "./interfaces/IWrappedNativeAsset.sol";
 import { Errors } from "./libraries/Errors.sol";
@@ -37,6 +38,7 @@ import { Batch, Permit2Params } from "./types/DataTypes.sol";
 /// @notice See the documentation in {ISablierV2ProxyTarget}.
 contract SablierV2ProxyTarget is
     ISablierV2ProxyTarget, // 0 inherited components
+    OnlyDelegateCall, // 0 inherited components
     PRBProxyStorage // 1 inherited component
 {
     using SafeERC20 for IERC20;
@@ -46,7 +48,13 @@ contract SablierV2ProxyTarget is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function batchCancelMultiple(Batch.CancelMultiple[] calldata batch, IERC20[] calldata assets) external {
+    function batchCancelMultiple(
+        Batch.CancelMultiple[] calldata batch,
+        IERC20[] calldata assets
+    )
+        external
+        onlyDelegateCall
+    {
         // Check that the batch size is not zero.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
@@ -71,7 +79,7 @@ contract SablierV2ProxyTarget is
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function cancel(ISablierV2Lockup lockup, uint256 streamId) public {
+    function cancel(ISablierV2Lockup lockup, uint256 streamId) public onlyDelegateCall {
         // Retrieve the asset used for streaming.
         IERC20 asset = lockup.getAsset(streamId);
 
@@ -87,7 +95,14 @@ contract SablierV2ProxyTarget is
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function cancelMultiple(ISablierV2Lockup lockup, IERC20[] calldata assets, uint256[] calldata streamIds) external {
+    function cancelMultiple(
+        ISablierV2Lockup lockup,
+        IERC20[] calldata assets,
+        uint256[] calldata streamIds
+    )
+        external
+        onlyDelegateCall
+    {
         // Load the balances before the cancellations.
         uint256[] memory initialBalances = _getBalances(assets);
 
@@ -99,17 +114,25 @@ contract SablierV2ProxyTarget is
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function renounce(ISablierV2Lockup lockup, uint256 streamId) external {
+    function renounce(ISablierV2Lockup lockup, uint256 streamId) external onlyDelegateCall {
         lockup.renounce(streamId);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function withdraw(ISablierV2Lockup lockup, uint256 streamId, address to, uint128 amount) external {
+    function withdraw(
+        ISablierV2Lockup lockup,
+        uint256 streamId,
+        address to,
+        uint128 amount
+    )
+        external
+        onlyDelegateCall
+    {
         lockup.withdraw(streamId, to, amount);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function withdrawMax(ISablierV2Lockup lockup, uint256 streamId, address to) external {
+    function withdrawMax(ISablierV2Lockup lockup, uint256 streamId, address to) external onlyDelegateCall {
         lockup.withdrawMax(streamId, to);
     }
 
@@ -126,6 +149,7 @@ contract SablierV2ProxyTarget is
     )
         external
         override
+        onlyDelegateCall
         returns (uint256[] memory streamIds)
     {
         // Check that the batch size is not zero.
@@ -180,6 +204,7 @@ contract SablierV2ProxyTarget is
     )
         external
         override
+        onlyDelegateCall
         returns (uint256[] memory streamIds)
     {
         // Check that the batch is not empty.
@@ -235,6 +260,7 @@ contract SablierV2ProxyTarget is
     )
         external
         override
+        onlyDelegateCall
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
@@ -251,6 +277,7 @@ contract SablierV2ProxyTarget is
     )
         external
         override
+        onlyDelegateCall
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
@@ -265,6 +292,7 @@ contract SablierV2ProxyTarget is
     )
         public
         override
+        onlyDelegateCall
         returns (uint256 streamId)
     {
         _transferAndApprove(address(linear), createParams.asset, createParams.totalAmount, permit2Params);
@@ -279,6 +307,7 @@ contract SablierV2ProxyTarget is
     )
         public
         override
+        onlyDelegateCall
         returns (uint256 streamId)
     {
         _transferAndApprove(address(linear), createParams.asset, createParams.totalAmount, permit2Params);
@@ -293,6 +322,7 @@ contract SablierV2ProxyTarget is
         external
         payable
         override
+        onlyDelegateCall
         returns (uint256 streamId)
     {
         // All production chains have a native asset with a circulating supply much smaller than 2^128.
@@ -316,6 +346,7 @@ contract SablierV2ProxyTarget is
         external
         payable
         override
+        onlyDelegateCall
         returns (uint256 streamId)
     {
         // All production chains have a native asset with a circulating supply much smaller than 2^128.
@@ -344,6 +375,7 @@ contract SablierV2ProxyTarget is
     )
         external
         override
+        onlyDelegateCall
         returns (uint256[] memory streamIds)
     {
         // Check that the batch size is not zero.
@@ -398,6 +430,7 @@ contract SablierV2ProxyTarget is
     )
         external
         override
+        onlyDelegateCall
         returns (uint256[] memory streamIds)
     {
         // Check that the batch size is not zero.
@@ -454,6 +487,7 @@ contract SablierV2ProxyTarget is
     )
         external
         override
+        onlyDelegateCall
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
@@ -470,6 +504,7 @@ contract SablierV2ProxyTarget is
     )
         external
         override
+        onlyDelegateCall
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
@@ -484,6 +519,7 @@ contract SablierV2ProxyTarget is
     )
         public
         override
+        onlyDelegateCall
         returns (uint256 streamId)
     {
         _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, permit2Params);
@@ -498,6 +534,7 @@ contract SablierV2ProxyTarget is
     )
         public
         override
+        onlyDelegateCall
         returns (uint256 streamId)
     {
         _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, permit2Params);
@@ -512,6 +549,7 @@ contract SablierV2ProxyTarget is
         external
         payable
         override
+        onlyDelegateCall
         returns (uint256 streamId)
     {
         // All production chains have a native asset with a circulating supply much smaller than 2^128.
@@ -535,6 +573,7 @@ contract SablierV2ProxyTarget is
         external
         payable
         override
+        onlyDelegateCall
         returns (uint256 streamId)
     {
         // All production chains have a native asset with a circulating supply much smaller than 2^128.

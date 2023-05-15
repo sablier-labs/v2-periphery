@@ -1,32 +1,38 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
+import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Defaults } from "../../../utils/Defaults.sol";
 import { Unit_Test } from "../../Unit.t.sol";
 
 contract CancelMultiple_Unit_Test is Unit_Test {
-    function test_CancelMultiple_Linear() external {
-        // Create a batch of streams due to be canceled.
+    function test_RevertWhen_CallNotDelegateCall() external {
+        IERC20[] memory assets = defaults.assets();
         uint256[] memory streamIds = batchCreateWithRange();
-
-        // Run the test.
-        test_CancelMultiple(streamIds, linear);
+        vm.expectRevert(Errors.CallNotDelegateCall.selector);
+        target.cancelMultiple(linear, assets, streamIds);
     }
 
-    function test_CancelMultiple_Dynamic() external {
-        // Create a batch of streams due to be canceled.
+    modifier whenDelegateCall() {
+        _;
+    }
+
+    function test_CancelMultiple_Linear() external whenDelegateCall {
+        uint256[] memory streamIds = batchCreateWithRange();
+        test_CancelMultiple(linear, streamIds);
+    }
+
+    function test_CancelMultiple_Dynamic() external whenDelegateCall {
         uint256[] memory streamIds = batchCreateWithMilestones();
-
-        // Run the test.
-        test_CancelMultiple(streamIds, dynamic);
+        test_CancelMultiple(dynamic, streamIds);
     }
 
-    function test_CancelMultiple(uint256[] memory streamIds, ISablierV2Lockup lockup) internal {
+    function test_CancelMultiple(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 

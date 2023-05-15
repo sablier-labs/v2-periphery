@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+
 import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { Errors } from "src/libraries/Errors.sol";
-import { LockupLinear } from "src/types/DataTypes.sol";
 
 import { Unit_Test } from "../../Unit.t.sol";
 

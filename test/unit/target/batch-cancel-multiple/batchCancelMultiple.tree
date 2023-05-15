@@ -1,6 +1,9 @@
 batchCancelMultiple.t.sol
-├── when the batch size is zero
+├── when not delegate calling
 │  └── it should revert
-└── when the batch size is not zero
-   ├── it should batch cancel multiple
-   └── it should perform the ERC-20 transfers
+└── when delegate calling
+   ├── when the batch size is zero
+   │  └── it should revert
+   └── when the batch size is not zero
+      ├── it should batch cancel multiple
+      └── it should perform the ERC-20 transfers

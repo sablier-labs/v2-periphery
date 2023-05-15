@@ -4,8 +4,11 @@ pragma solidity >=0.8.19 <0.9.0;
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
+import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { Defaults } from "../../../utils/Defaults.sol";
+import { Errors } from "src/libraries/Errors.sol";
+import { Permit2Params } from "src/types/DataTypes.sol";
+
 import { Unit_Test } from "../../Unit.t.sol";
 
 /// @dev This contracts tests the following functions:
@@ -14,11 +17,22 @@ import { Unit_Test } from "../../Unit.t.sol";
 /// - `cancelAndCreateWithMilestones`
 /// - `cancelAndCreateWithRange`
 contract CancelAndCreate_Unit_Test is Unit_Test {
+    modifier whenDelegateCall() {
+        _;
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                                  CREATE WITH DELTAS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_CancelAndCreateWithDeltas_SameSablierContract() external {
+    function test_RevertWhen_CancelAndCreateWithDeltas_CallNotDelegateCall() external {
+        LockupDynamic.CreateWithDeltas memory createParams;
+        Permit2Params memory permit2Params;
+        vm.expectRevert(Errors.CallNotDelegateCall.selector);
+        target.cancelAndCreateWithDeltas(dynamic, dynamic, 0, createParams, permit2Params);
+    }
+
+    function test_CancelAndCreateWithDeltas_SameSablierContract() external whenDelegateCall {
         // Create the stream due to be canceled.
         uint256 streamId = createWithDeltas();
 
@@ -80,7 +94,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                                CREATE WITH DURATIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_CancelAndCreateWithDurations_SameSablierContract() external {
+    function test_RevertWhen_CancelAndCreateWithDurations_CallNotDelegateCall() external {
+        LockupLinear.CreateWithDurations memory createParams;
+        Permit2Params memory permit2Params;
+        vm.expectRevert(Errors.CallNotDelegateCall.selector);
+        target.cancelAndCreateWithDurations(linear, linear, 0, createParams, permit2Params);
+    }
+
+    function test_CancelAndCreateWithDurations_SameSablierContract() external whenDelegateCall {
         // Create the stream due to be canceled.
         uint256 streamId = createWithDurations();
 
@@ -142,7 +163,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                                CREATE WITH MILESTONES
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_CancelAndCreateWithMilestones_SameSablierContract() external {
+    function test_RevertWhen_CancelAndCreateWithMilestones_CallNotDelegateCall() external {
+        LockupDynamic.CreateWithMilestones memory createParams;
+        Permit2Params memory permit2Params;
+        vm.expectRevert(Errors.CallNotDelegateCall.selector);
+        target.cancelAndCreateWithMilestones(dynamic, dynamic, 0, createParams, permit2Params);
+    }
+
+    function test_CancelAndCreateWithMilestones_SameSablierContract() external whenDelegateCall {
         // Create the stream due to be canceled.
         uint256 streamId = createWithMilestones();
 
@@ -204,7 +232,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                                  CREATE WITH RANGE
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_CancelAndCreateWithRange_SameSablierContract() external {
+    function test_RevertWhen_CancelAndCreateWithRange_CallNotDelegateCall() external {
+        LockupLinear.CreateWithRange memory createParams;
+        Permit2Params memory permit2Params;
+        vm.expectRevert(Errors.CallNotDelegateCall.selector);
+        target.cancelAndCreateWithRange(linear, linear, 0, createParams, permit2Params);
+    }
+
+    function test_CancelAndCreateWithRange_SameSablierContract() external whenDelegateCall {
         // Create the stream due to be canceled.
         uint256 streamId = createWithRange();
 

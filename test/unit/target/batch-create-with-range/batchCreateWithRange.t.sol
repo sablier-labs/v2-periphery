@@ -4,11 +4,21 @@ pragma solidity >=0.8.19 <0.9.0;
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
-import { Defaults } from "../../../utils/Defaults.sol";
 import { Unit_Test } from "../../Unit.t.sol";
 
 contract BatchCreateWithRange_Unit_Test is Unit_Test {
-    function test_RevertWhen_BatchSizeZero() external {
+    function test_RevertWhen_CallNotDelegateCall() external {
+        Batch.CreateWithDurations[] memory batch;
+        Permit2Params memory permit2Params;
+        vm.expectRevert(Errors.CallNotDelegateCall.selector);
+        target.batchCreateWithDurations(linear, dai, batch, permit2Params);
+    }
+
+    modifier whenDelegateCall() {
+        _;
+    }
+
+    function test_RevertWhen_BatchSizeZero() external whenDelegateCall {
         Batch.CreateWithRange[] memory batch = new Batch.CreateWithRange[](0);
         Permit2Params memory permit2Params;
         bytes memory data = abi.encodeCall(target.batchCreateWithRange, (linear, dai, batch, permit2Params));
@@ -20,7 +30,7 @@ contract BatchCreateWithRange_Unit_Test is Unit_Test {
         _;
     }
 
-    function test_BatchCreateWithRange() external whenBatchSizeNotZero {
+    function test_BatchCreateWithRange() external whenBatchSizeNotZero whenDelegateCall {
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
         expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.TRANSFER_AMOUNT() });
