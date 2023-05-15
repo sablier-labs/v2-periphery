@@ -3,6 +3,7 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
+import { PRBProxyStorage } from "@prb/proxy/abstracts/PRBProxyStorage.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
@@ -34,7 +35,10 @@ import { Batch, Permit2Params } from "./types/DataTypes.sol";
 
 /// @title SablierV2ProxyTarget
 /// @notice See the documentation in {ISablierV2ProxyTarget}.
-contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
+contract SablierV2ProxyTarget is
+    ISablierV2ProxyTarget, // 0 inherited components
+    PRBProxyStorage // 1 inherited component
+{
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -77,9 +81,9 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         // Cancel the stream.
         lockup.cancel(streamId);
 
-        // Forward the refunded amount to the proxy owner. We know this is not zero because settled streams cannot
-        // be canceled.
-        asset.safeTransfer({ to: msg.sender, value: refundedAmount });
+        // Forward the refunded amount to the proxy owner. This cannot be zero because settled streams cannot be
+        // canceled.
+        asset.safeTransfer({ to: owner, value: refundedAmount });
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -596,9 +600,9 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
             balanceFinal = assets[i].balanceOf(address(this));
             balanceDelta = balanceFinal - initialBalances[i];
 
-            // Forward the balance delta to the proxy owner. We know this is not zero because settled streams cannot
-            // be canceled.
-            assets[i].safeTransfer({ to: msg.sender, value: balanceDelta });
+            // Forward the balance delta to the proxy owner. This cannot be zero because settled streams cannot be
+            // canceled.
+            assets[i].safeTransfer({ to: owner, value: balanceDelta });
 
             // Increment the for loop iterator.
             unchecked {
@@ -619,7 +623,8 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         internal
     {
         // Retrieve the proxy owner's nonce.
-        (,, uint48 nonce) = permit2.allowance({ user: msg.sender, token: address(asset), spender: address(this) });
+        address owner_ = owner;
+        (,, uint48 nonce) = permit2.allowance({ user: owner_, token: address(asset), spender: address(this) });
 
         // Declare the single permit struct.
         IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
@@ -634,10 +639,10 @@ contract SablierV2ProxyTarget is ISablierV2ProxyTarget {
         });
 
         // Permit the proxy to spend funds from the proxy owner.
-        permit2.permit({ owner: msg.sender, permitSingle: permitSingle, signature: permit2Params.signature });
+        permit2.permit({ owner: owner_, permitSingle: permitSingle, signature: permit2Params.signature });
 
         // Transfer funds from the proxy owner to the proxy.
-        permit2.transferFrom({ from: msg.sender, to: address(this), amount: amount, token: address(asset) });
+        permit2.transferFrom({ from: owner_, to: address(this), amount: amount, token: address(asset) });
 
         // Approve the Sablier contract to spend funds.
         _approve(sablierContract, asset, amount);
