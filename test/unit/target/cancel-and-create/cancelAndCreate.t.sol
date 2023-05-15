@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
+import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
+import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
+
 import { Defaults } from "../../../utils/Defaults.sol";
 import { Unit_Test } from "../../Unit.t.sol";
 
@@ -19,19 +23,17 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         uint256 streamId = createWithDeltas();
 
         // Expect the correct calls to be made.
-        expectCancelAndTransferCalls({
-            cancelContract: address(dynamic),
-            createContract: address(dynamic),
-            streamId: streamId
-        });
+        ISablierV2Lockup cancelContract = dynamic;
+        ISablierV2LockupDynamic createContract = dynamic;
+        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
         expectCallToCreateWithDeltas({ params: defaults.createWithDeltas() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDeltas,
             (
-                dynamic,
-                dynamic,
+                cancelContract,
+                createContract,
                 streamId,
                 defaults.createWithDeltas(),
                 permit2,
@@ -42,7 +44,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
-        uint256 expectedNewStreamId = dynamic.nextStreamId() - 1;
+        uint256 expectedNewStreamId = createContract.nextStreamId() - 1;
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
@@ -51,19 +53,17 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         uint256 streamId = createWithRange();
 
         // Expect the correct calls to be made.
-        expectCancelAndTransferCalls({
-            cancelContract: address(linear),
-            createContract: address(dynamic),
-            streamId: streamId
-        });
+        ISablierV2Lockup cancelContract = linear;
+        ISablierV2LockupDynamic createContract = dynamic;
+        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
         expectCallToCreateWithDeltas({ params: defaults.createWithDeltas() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDeltas,
             (
-                linear,
-                dynamic,
+                cancelContract,
+                createContract,
                 streamId,
                 defaults.createWithDeltas(),
                 permit2,
@@ -74,7 +74,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
-        uint256 expectedNewStreamId = dynamic.nextStreamId() - 1;
+        uint256 expectedNewStreamId = createContract.nextStreamId() - 1;
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
@@ -87,19 +87,17 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         uint256 streamId = createWithDurations();
 
         // Expect the correct calls to be made.
-        expectCancelAndTransferCalls({
-            cancelContract: address(linear),
-            createContract: address(linear),
-            streamId: streamId
-        });
+        ISablierV2Lockup cancelContract = linear;
+        ISablierV2LockupLinear createContract = linear;
+        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
         expectCallToCreateWithDurations({ params: defaults.createWithDurations() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDurations,
             (
-                linear,
-                linear,
+                cancelContract,
+                createContract,
                 streamId,
                 defaults.createWithDurations(),
                 permit2,
@@ -110,7 +108,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
-        uint256 expectedNewStreamId = linear.nextStreamId() - 1;
+        uint256 expectedNewStreamId = createContract.nextStreamId() - 1;
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
@@ -119,19 +117,17 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         uint256 streamId = createWithMilestones();
 
         // Expect the correct calls to be made.
-        expectCancelAndTransferCalls({
-            cancelContract: address(dynamic),
-            createContract: address(linear),
-            streamId: streamId
-        });
+        ISablierV2Lockup cancelContract = dynamic;
+        ISablierV2LockupLinear createContract = linear;
+        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
         expectCallToCreateWithDurations({ params: defaults.createWithDurations() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithDurations,
             (
-                dynamic,
-                linear,
+                cancelContract,
+                createContract,
                 streamId,
                 defaults.createWithDurations(),
                 permit2,
@@ -142,7 +138,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
-        uint256 expectedNewStreamId = linear.nextStreamId() - 1;
+        uint256 expectedNewStreamId = createContract.nextStreamId() - 1;
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
@@ -155,19 +151,17 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         uint256 streamId = createWithMilestones();
 
         // Expect the correct calls to be made.
-        expectCancelAndTransferCalls({
-            cancelContract: address(dynamic),
-            createContract: address(dynamic),
-            streamId: streamId
-        });
+        ISablierV2Lockup cancelContract = dynamic;
+        ISablierV2LockupDynamic createContract = dynamic;
+        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
         expectCallToCreateWithMilestones({ params: defaults.createWithMilestones() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithMilestones,
             (
-                dynamic,
-                dynamic,
+                cancelContract,
+                createContract,
                 streamId,
                 defaults.createWithMilestones(),
                 permit2,
@@ -178,7 +172,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
-        uint256 expectedNewStreamId = dynamic.nextStreamId() - 1;
+        uint256 expectedNewStreamId = createContract.nextStreamId() - 1;
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
@@ -187,19 +181,17 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         uint256 streamId = createWithRange();
 
         // Expect the correct calls to be made.
-        expectCancelAndTransferCalls({
-            cancelContract: address(linear),
-            createContract: address(dynamic),
-            streamId: streamId
-        });
+        ISablierV2Lockup cancelContract = linear;
+        ISablierV2LockupDynamic createContract = dynamic;
+        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
         expectCallToCreateWithMilestones({ params: defaults.createWithMilestones() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithMilestones,
             (
-                linear,
-                dynamic,
+                cancelContract,
+                createContract,
                 streamId,
                 defaults.createWithMilestones(),
                 permit2,
@@ -210,7 +202,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
-        uint256 expectedNewStreamId = dynamic.nextStreamId() - 1;
+        uint256 expectedNewStreamId = createContract.nextStreamId() - 1;
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
@@ -223,19 +215,17 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         uint256 streamId = createWithRange();
 
         // Expect the correct calls to be made.
-        expectCancelAndTransferCalls({
-            cancelContract: address(linear),
-            createContract: address(linear),
-            streamId: streamId
-        });
+        ISablierV2Lockup cancelContract = linear;
+        ISablierV2LockupLinear createContract = linear;
+        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
         expectCallToCreateWithRange({ params: defaults.createWithRange() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithRange,
             (
-                linear,
-                linear,
+                cancelContract,
+                createContract,
                 streamId,
                 defaults.createWithRange(),
                 permit2,
@@ -246,7 +236,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
-        uint256 expectedNewStreamId = linear.nextStreamId() - 1;
+        uint256 expectedNewStreamId = createContract.nextStreamId() - 1;
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
@@ -255,19 +245,17 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         uint256 streamId = createWithMilestones();
 
         // Expect the correct calls to be made.
-        expectCancelAndTransferCalls({
-            cancelContract: address(dynamic),
-            createContract: address(linear),
-            streamId: streamId
-        });
+        ISablierV2Lockup cancelContract = dynamic;
+        ISablierV2LockupLinear createContract = linear;
+        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
         expectCallToCreateWithRange({ params: defaults.createWithRange() });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(
             target.cancelAndCreateWithRange,
             (
-                dynamic,
-                linear,
+                cancelContract,
+                createContract,
                 streamId,
                 defaults.createWithRange(),
                 permit2,
@@ -278,7 +266,7 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
-        uint256 expectedNewStreamId = linear.nextStreamId() - 1;
+        uint256 expectedNewStreamId = createContract.nextStreamId() - 1;
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
@@ -287,7 +275,13 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Logic shared between all tests.
-    function expectCancelAndTransferCalls(address cancelContract, address createContract, uint256 streamId) internal {
+    function expectCancelAndTransferCalls(
+        ISablierV2Lockup cancelContract,
+        ISablierV2Lockup createContract,
+        uint256 streamId
+    )
+        internal
+    {
         expectCallToCancel(cancelContract, streamId);
 
         // Asset flow: Sablier → proxy → proxy owner
@@ -298,6 +292,10 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
         expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
-        expectCallToTransferFrom({ from: address(proxy), to: createContract, amount: defaults.PER_STREAM_AMOUNT() });
+        expectCallToTransferFrom({
+            from: address(proxy),
+            to: address(createContract),
+            amount: defaults.PER_STREAM_AMOUNT()
+        });
     }
 }

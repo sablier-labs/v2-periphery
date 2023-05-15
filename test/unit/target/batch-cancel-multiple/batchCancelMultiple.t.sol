@@ -31,8 +31,8 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
         vm.warp({ timestamp: defaults.CLIFF_TIME() });
 
         // Expects calls to cancel multiple streams.
-        expectCallToCancelMultiple({ lockup: address(dynamic), streamIds: dynamicStreamIds });
-        expectCallToCancelMultiple({ lockup: address(linear), streamIds: linearStreamIds });
+        expectCallToCancelMultiple({ lockup: dynamic, streamIds: dynamicStreamIds });
+        expectCallToCancelMultiple({ lockup: linear, streamIds: linearStreamIds });
 
         // Asset flow: Sablier → proxy → proxy owner
         // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.

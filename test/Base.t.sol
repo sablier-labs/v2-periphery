@@ -143,13 +143,13 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Expects a call to {ISablierV2Lockup.cancel}.
-    function expectCallToCancel(address lockup, uint256 streamId) internal {
-        vm.expectCall({ callee: lockup, data: abi.encodeCall(ISablierV2Lockup.cancel, (streamId)) });
+    function expectCallToCancel(ISablierV2Lockup lockup, uint256 streamId) internal {
+        vm.expectCall({ callee: address(lockup), data: abi.encodeCall(ISablierV2Lockup.cancel, (streamId)) });
     }
 
     /// @dev Expects a call to {ISablierV2Lockup.cancelMultiple}.
-    function expectCallToCancelMultiple(address lockup, uint256[] memory streamIds) internal {
-        vm.expectCall({ callee: lockup, data: abi.encodeCall(ISablierV2Lockup.cancelMultiple, (streamIds)) });
+    function expectCallToCancelMultiple(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {
+        vm.expectCall({ callee: address(lockup), data: abi.encodeCall(ISablierV2Lockup.cancelMultiple, (streamIds)) });
     }
 
     /// @dev Expects a call to {ISablierV2LockupDynamic.createWithDeltas}.
