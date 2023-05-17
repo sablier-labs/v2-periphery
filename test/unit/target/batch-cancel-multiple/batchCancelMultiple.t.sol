@@ -12,7 +12,7 @@ import { Unit_Test } from "../../Unit.t.sol";
 contract BatchCancelMultiple_Unit_Test is Unit_Test {
     function test_RevertWhen_NotDelegateCalled() external {
         Batch.CancelMultiple[] memory batch;
-        IERC20[] memory assets = defaults.assets();
+        IERC20[] memory assets;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.batchCancelMultiple(batch, assets);
     }
@@ -65,8 +65,8 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
         for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             Lockup.Status actualDynamicStatus = dynamic.getStatus(dynamicStreamIds[i]);
             Lockup.Status actualLinearStatus = linear.getStatus(linearStreamIds[i]);
-            assertEq(actualDynamicStatus, expectedStatus, "dynamic stream status not canceled");
-            assertEq(actualLinearStatus, expectedStatus, "linear stream status not canceled");
+            assertEq(actualDynamicStatus, expectedStatus, "dynamic status not canceled");
+            assertEq(actualLinearStatus, expectedStatus, "linear status not canceled");
         }
     }
 }

@@ -11,7 +11,7 @@ contract BatchCreateWithDeltas_Unit_Test is Unit_Test {
         Batch.CreateWithDeltas[] memory batch;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithDeltas(dynamic, dai, batch, permit2Params);
+        target.batchCreateWithDeltas({ dynamic: dynamic, asset: dai, batch: batch, permit2Params: permit2Params });
     }
 
     modifier whenDelegateCalled() {

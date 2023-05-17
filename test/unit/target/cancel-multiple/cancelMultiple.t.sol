@@ -12,10 +12,10 @@ import { Unit_Test } from "../../Unit.t.sol";
 
 contract CancelMultiple_Unit_Test is Unit_Test {
     function test_RevertWhen_NotDelegateCalled() external {
-        IERC20[] memory assets = defaults.assets();
-        uint256[] memory streamIds = batchCreateWithRange();
+        IERC20[] memory assets;
+        uint256[] memory streamIds;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelMultiple(linear, assets, streamIds);
+        target.cancelMultiple({ lockup: linear, assets: assets, streamIds: streamIds });
     }
 
     modifier whenDelegateCalled() {
@@ -44,6 +44,7 @@ contract CancelMultiple_Unit_Test is Unit_Test {
         });
         expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
 
+        // Cancel the streams.
         bytes memory data = abi.encodeCall(target.cancelMultiple, (lockup, defaults.assets(), streamIds));
         proxy.execute(address(target), data);
 

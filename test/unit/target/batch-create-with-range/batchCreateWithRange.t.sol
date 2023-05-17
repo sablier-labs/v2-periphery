@@ -11,7 +11,7 @@ contract BatchCreateWithRange_Unit_Test is Unit_Test {
         Batch.CreateWithDurations[] memory batch;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithDurations(linear, dai, batch, permit2Params);
+        target.batchCreateWithDurations({ linear: linear, asset: dai, batch: batch, permit2Params: permit2Params });
     }
 
     modifier whenDelegateCalled() {

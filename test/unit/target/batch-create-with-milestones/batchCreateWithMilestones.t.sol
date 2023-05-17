@@ -11,7 +11,7 @@ contract BatchCreateWithMilestones_Unit_Test is Unit_Test {
         Batch.CreateWithMilestones[] memory batch;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithMilestones(dynamic, dai, batch, permit2Params);
+        target.batchCreateWithMilestones({ dynamic: dynamic, asset: dai, batch: batch, permit2Params: permit2Params });
     }
 
     modifier whenDelegateCalled() {
