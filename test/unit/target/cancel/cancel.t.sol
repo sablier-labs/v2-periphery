@@ -5,7 +5,6 @@ import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.s
 import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
-import { Permit2Params } from "src/types/DataTypes.sol";
 
 import { Unit_Test } from "../../Unit.t.sol";
 
@@ -41,7 +40,7 @@ contract Cancel_Unit_Test is Unit_Test {
         bytes memory data = abi.encodeCall(target.cancel, (lockup, streamId));
         proxy.execute(address(target), data);
 
-        // Assert that the stream has been marked as canceled.
+        // Assert that the stream has been canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
         Lockup.Status actualStatus = lockup.getStatus(streamId);
         assertEq(actualStatus, expectedStatus, "stream not canceled");

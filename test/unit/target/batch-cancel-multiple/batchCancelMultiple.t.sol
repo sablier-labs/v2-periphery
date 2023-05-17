@@ -60,7 +60,7 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
         proxy.execute(address(target), data);
 
-        // Assert that all streams have been marked as canceled.
+        // Assert that all streams have been canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
         for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             Lockup.Status actualDynamicStatus = dynamic.getStatus(dynamicStreamIds[i]);
