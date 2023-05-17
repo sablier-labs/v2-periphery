@@ -18,21 +18,21 @@ contract Cancel_Unit_Test is Unit_Test {
         _;
     }
 
-    function test_Cancel_Linear() external whenDelegateCalled {
-        uint256 streamId = createWithRange();
-        test_Cancel(linear, streamId);
-    }
-
     function test_Cancel_Dynamic() external whenDelegateCalled {
         uint256 streamId = createWithMilestones();
         test_Cancel(dynamic, streamId);
+    }
+
+    function test_Cancel_Linear() external whenDelegateCalled {
+        uint256 streamId = createWithRange();
+        test_Cancel(linear, streamId);
     }
 
     function test_Cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 
-        // Asset flow: proxy owner → proxy → proxy owner
+        // Asset flow: Sablier → proxy → proxy owner
         expectCallToTransfer({ to: address(proxy), amount: defaults.REFUND_AMOUNT() });
         expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() });
 

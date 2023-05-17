@@ -22,21 +22,21 @@ contract CancelMultiple_Unit_Test is Unit_Test {
         _;
     }
 
-    function test_CancelMultiple_Linear() external whenDelegateCalled {
-        uint256[] memory streamIds = batchCreateWithRange();
-        test_CancelMultiple(linear, streamIds);
-    }
-
     function test_CancelMultiple_Dynamic() external whenDelegateCalled {
         uint256[] memory streamIds = batchCreateWithMilestones();
         test_CancelMultiple(dynamic, streamIds);
+    }
+
+    function test_CancelMultiple_Linear() external whenDelegateCalled {
+        uint256[] memory streamIds = batchCreateWithRange();
+        test_CancelMultiple(linear, streamIds);
     }
 
     function test_CancelMultiple(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 
-        // Asset flow: proxy owner → proxy → proxy owner
+        // Asset flow: Sablier → proxy → proxy owner
         expectMultipleCallsToTransfer({
             count: defaults.BATCH_SIZE(),
             to: address(proxy),
