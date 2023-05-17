@@ -22,7 +22,7 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         changePrank({ msgSender: users.alice.addr });
     }
 
-    function test_RevertWhen_CallNotDelegateCall() external {
+    function test_RevertWhen_NotDelegateCalled() external {
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         plugin.onStreamCanceled({
             lockup: linear,
@@ -33,11 +33,11 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         });
     }
 
-    modifier whenDelegateCall() {
+    modifier whenDelegateCalled() {
         _;
     }
 
-    function test_RevertWhen_CallerNotSablier() external whenDelegateCall {
+    function test_RevertWhen_CallerNotListed() external whenDelegateCalled {
         changePrank({ msgSender: users.eve.addr });
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyPlugin_CallerUnlisted.selector, users.eve.addr));
         ISablierV2ProxyPlugin(address(proxy)).onStreamCanceled({
@@ -49,11 +49,11 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         });
     }
 
-    modifier whenCallerSablier() {
+    modifier whenCallerListed() {
         _;
     }
 
-    function test_OnStreamCanceled() external whenDelegateCall whenCallerSablier {
+    function test_OnStreamCanceled() external whenDelegateCalled whenCallerListed {
         // Retrieve the initial asset balance of the proxy owner.
         uint256 initialBalance = dai.balanceOf(users.alice.addr);
 

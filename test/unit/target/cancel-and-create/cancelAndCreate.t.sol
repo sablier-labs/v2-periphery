@@ -17,7 +17,7 @@ import { Unit_Test } from "../../Unit.t.sol";
 /// - `cancelAndCreateWithMilestones`
 /// - `cancelAndCreateWithRange`
 contract CancelAndCreate_Unit_Test is Unit_Test {
-    modifier whenDelegateCall() {
+    modifier whenDelegateCalled() {
         _;
     }
 
@@ -25,14 +25,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                                  CREATE WITH DELTAS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_RevertWhen_CancelAndCreateWithDeltas_CallNotDelegateCall() external {
+    function test_RevertWhen_CancelAndCreateWithDeltas_NotDelegateCalled() external {
         LockupDynamic.CreateWithDeltas memory createParams;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.cancelAndCreateWithDeltas(dynamic, dynamic, 0, createParams, permit2Params);
     }
 
-    function test_CancelAndCreateWithDeltas_SameSablierContract() external whenDelegateCall {
+    function test_CancelAndCreateWithDeltas_SameSablierContract() external whenDelegateCalled {
         // Create the stream due to be canceled.
         uint256 streamId = createWithDeltas();
 
@@ -94,14 +94,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                                CREATE WITH DURATIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_RevertWhen_CancelAndCreateWithDurations_CallNotDelegateCall() external {
+    function test_RevertWhen_CancelAndCreateWithDurations_NotDelegateCalled() external {
         LockupLinear.CreateWithDurations memory createParams;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.cancelAndCreateWithDurations(linear, linear, 0, createParams, permit2Params);
     }
 
-    function test_CancelAndCreateWithDurations_SameSablierContract() external whenDelegateCall {
+    function test_CancelAndCreateWithDurations_SameSablierContract() external whenDelegateCalled {
         // Create the stream due to be canceled.
         uint256 streamId = createWithDurations();
 
@@ -163,14 +163,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                                CREATE WITH MILESTONES
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_RevertWhen_CancelAndCreateWithMilestones_CallNotDelegateCall() external {
+    function test_RevertWhen_CancelAndCreateWithMilestones_NotDelegateCalled() external {
         LockupDynamic.CreateWithMilestones memory createParams;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.cancelAndCreateWithMilestones(dynamic, dynamic, 0, createParams, permit2Params);
     }
 
-    function test_CancelAndCreateWithMilestones_SameSablierContract() external whenDelegateCall {
+    function test_CancelAndCreateWithMilestones_SameSablierContract() external whenDelegateCalled {
         // Create the stream due to be canceled.
         uint256 streamId = createWithMilestones();
 
@@ -232,14 +232,14 @@ contract CancelAndCreate_Unit_Test is Unit_Test {
                                  CREATE WITH RANGE
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_RevertWhen_CancelAndCreateWithRange_CallNotDelegateCall() external {
+    function test_RevertWhen_CancelAndCreateWithRange_NotDelegateCalled() external {
         LockupLinear.CreateWithRange memory createParams;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.cancelAndCreateWithRange(linear, linear, 0, createParams, permit2Params);
     }
 
-    function test_CancelAndCreateWithRange_SameSablierContract() external whenDelegateCall {
+    function test_CancelAndCreateWithRange_SameSablierContract() external whenDelegateCalled {
         // Create the stream due to be canceled.
         uint256 streamId = createWithRange();
 

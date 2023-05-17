@@ -14,7 +14,7 @@ import { Unit_Test } from "../../Unit.t.sol";
 /// - `wrapEtherAndCreateWithMilestones`
 /// - `wrapEtherAndCreateWithRange`
 contract WrapAndCreate_Unit_Test is Unit_Test {
-    modifier whenDelegateCall() {
+    modifier whenDelegateCalled() {
         _;
     }
 
@@ -22,13 +22,13 @@ contract WrapAndCreate_Unit_Test is Unit_Test {
                                  CREATE WITH DELTAS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_RevertWhen_WrapAndCreateWithDeltas_CallNotDelegateCall() external {
+    function test_RevertWhen_WrapAndCreateWithDeltas_NotDelegateCalled() external {
         LockupDynamic.CreateWithDeltas memory createParams = defaults.createWithDeltas(weth);
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.wrapAndCreateWithDeltas(dynamic, createParams);
     }
 
-    function test_WrapAndCreateWithDeltas() external whenDelegateCall {
+    function test_WrapAndCreateWithDeltas() external whenDelegateCalled {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
@@ -52,13 +52,13 @@ contract WrapAndCreate_Unit_Test is Unit_Test {
                                CREATE WITH DURATIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_RevertWhen_WrapAndCreateWithDurations_CallNotDelegateCall() external {
+    function test_RevertWhen_WrapAndCreateWithDurations_NotDelegateCalled() external {
         LockupLinear.CreateWithDurations memory createParams = defaults.createWithDurations(weth);
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.wrapAndCreateWithDurations(linear, createParams);
     }
 
-    function test_WrapAndCreateWithDurations() external whenDelegateCall {
+    function test_WrapAndCreateWithDurations() external whenDelegateCalled {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
@@ -83,13 +83,13 @@ contract WrapAndCreate_Unit_Test is Unit_Test {
                                CREATE WITH MILESTONES
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_RevertWhen_WrapAndCreateWithMilestones_CallNotDelegateCall() external {
+    function test_RevertWhen_WrapAndCreateWithMilestones_NotDelegateCalled() external {
         LockupDynamic.CreateWithMilestones memory createParams = defaults.createWithMilestones(weth);
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.wrapAndCreateWithMilestones(dynamic, createParams);
     }
 
-    function test_WrapAndCreateWithMilestones() external whenDelegateCall {
+    function test_WrapAndCreateWithMilestones() external whenDelegateCalled {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
@@ -113,13 +113,13 @@ contract WrapAndCreate_Unit_Test is Unit_Test {
                                  CREATE WITH RANGE
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_RevertWhen_WrapAndCreateWithRange_CallNotDelegateCall() external {
+    function test_RevertWhen_WrapAndCreateWithRange_NotDelegateCalled() external {
         LockupLinear.CreateWithDurations memory createParams = defaults.createWithDurations(weth);
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.wrapAndCreateWithDurations(linear, createParams);
     }
 
-    function test_WrapAndCreateWithRange() external whenDelegateCall {
+    function test_WrapAndCreateWithRange() external whenDelegateCalled {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({

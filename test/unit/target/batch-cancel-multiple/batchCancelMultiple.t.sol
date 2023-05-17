@@ -10,18 +10,18 @@ import { Batch } from "src/types/DataTypes.sol";
 import { Unit_Test } from "../../Unit.t.sol";
 
 contract BatchCancelMultiple_Unit_Test is Unit_Test {
-    function test_RevertWhen_CallNotDelegateCall() external {
+    function test_RevertWhen_NotDelegateCalled() external {
         Batch.CancelMultiple[] memory batch;
         IERC20[] memory assets = defaults.assets();
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.batchCancelMultiple(batch, assets);
     }
 
-    modifier whenDelegateCall() {
+    modifier whenDelegateCalled() {
         _;
     }
 
-    function test_RevertWhen_BatchSizeZero() external whenDelegateCall {
+    function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
         Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](0);
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
@@ -32,7 +32,7 @@ contract BatchCancelMultiple_Unit_Test is Unit_Test {
         _;
     }
 
-    function test_BatchCancelMultiple() external batchSizeNotZero whenDelegateCall {
+    function test_BatchCancelMultiple() external batchSizeNotZero whenDelegateCalled {
         // Create two batches of streams due to be canceled.
         uint256[] memory dynamicStreamIds = batchCreateWithMilestones();
         uint256[] memory linearStreamIds = batchCreateWithRange();

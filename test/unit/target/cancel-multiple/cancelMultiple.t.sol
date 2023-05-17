@@ -11,23 +11,23 @@ import { Batch } from "src/types/DataTypes.sol";
 import { Unit_Test } from "../../Unit.t.sol";
 
 contract CancelMultiple_Unit_Test is Unit_Test {
-    function test_RevertWhen_CallNotDelegateCall() external {
+    function test_RevertWhen_NotDelegateCalled() external {
         IERC20[] memory assets = defaults.assets();
         uint256[] memory streamIds = batchCreateWithRange();
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.cancelMultiple(linear, assets, streamIds);
     }
 
-    modifier whenDelegateCall() {
+    modifier whenDelegateCalled() {
         _;
     }
 
-    function test_CancelMultiple_Linear() external whenDelegateCall {
+    function test_CancelMultiple_Linear() external whenDelegateCalled {
         uint256[] memory streamIds = batchCreateWithRange();
         test_CancelMultiple(linear, streamIds);
     }
 
-    function test_CancelMultiple_Dynamic() external whenDelegateCall {
+    function test_CancelMultiple_Dynamic() external whenDelegateCalled {
         uint256[] memory streamIds = batchCreateWithMilestones();
         test_CancelMultiple(dynamic, streamIds);
     }

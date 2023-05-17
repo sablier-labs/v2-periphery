@@ -1,7 +1,7 @@
 batchCreateWithRange.t.sol
-├── when not delegate calling
+├── when not delegate called
 │  └── it should revert
-└── when delegate calling
+└── when delegate called
    ├── when the batch size is zero
    │  └── it should revert
    └── when the batch size is not zero

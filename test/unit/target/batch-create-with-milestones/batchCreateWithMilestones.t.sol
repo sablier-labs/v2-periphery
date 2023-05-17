@@ -7,18 +7,18 @@ import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 import { Unit_Test } from "../../Unit.t.sol";
 
 contract BatchCreateWithMilestones_Unit_Test is Unit_Test {
-    function test_RevertWhen_CallNotDelegateCall() external {
+    function test_RevertWhen_NotDelegateCalled() external {
         Batch.CreateWithMilestones[] memory batch;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.batchCreateWithMilestones(dynamic, dai, batch, permit2Params);
     }
 
-    modifier whenDelegateCall() {
+    modifier whenDelegateCalled() {
         _;
     }
 
-    function test_RevertWhen_BatchSizeZero() external whenDelegateCall {
+    function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
         Batch.CreateWithMilestones[] memory batch = new Batch.CreateWithMilestones[](0);
         Permit2Params memory permit2Params;
         bytes memory data = abi.encodeCall(target.batchCreateWithMilestones, (dynamic, dai, batch, permit2Params));
@@ -30,7 +30,7 @@ contract BatchCreateWithMilestones_Unit_Test is Unit_Test {
         _;
     }
 
-    function test_BatchCreateWithMilestones() external whenBatchSizeNotZero whenDelegateCall {
+    function test_BatchCreateWithMilestones() external whenBatchSizeNotZero whenDelegateCalled {
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
         expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.TRANSFER_AMOUNT() });

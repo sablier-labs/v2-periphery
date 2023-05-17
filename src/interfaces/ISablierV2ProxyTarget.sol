@@ -21,11 +21,13 @@ interface ISablierV2ProxyTarget {
     /// @notice Cancels multiple streams across different lockup contracts.
     ///
     /// @dev Notes:
-    /// - Must be delegate called.
-    /// - At least one set of streams must be canceled.
     /// - All refunded assets are forwarded to the proxy owner.
     /// - It is assumed that `assets` includes all assets associated with the stream ids in `batch`. If any asset
     /// is missing, the refunded amount will be left in the proxy.
+    ///
+    /// Requirements:
+    /// - Must be delegate called.
+    /// - There must be at least one element in `batch`.
     ///
     /// @param batch An array of structs, each encapsulating the lockup contract's address and the stream id to cancel.
     /// @param assets The contract addresses of the ERC-20 assets used for streaming.
@@ -68,14 +70,13 @@ interface ISablierV2ProxyTarget {
     ///
     /// @dev Requirements:
     /// - Must be delegate called.
-    /// - At least one stream must be created.
+    /// - There must be at least one element in `batch`.
     /// - All requirements from {ISablierV2LockupLinear.createWithDurations} must be met for each stream.
     ///
     /// @param linear The address of the {SablierV2LockupLinear} contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithDurations}.
-    /// @param batch Struct encapsulating a subset of the parameters of {SablierV2LockupLinear.createWithDurations}.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithDurations(
@@ -91,7 +92,7 @@ interface ISablierV2ProxyTarget {
     ///
     /// @dev Requirements:
     /// - Must be delegate called.
-    /// - At least one stream must be created.
+    /// - There must be at least one element in `batch`.
     /// - All requirements from {ISablierV2LockupLinear.createWithRange} must be met for each stream.
     ///
     /// @param linear The address of the {SablierV2LockupLinear} contract.
@@ -223,7 +224,7 @@ interface ISablierV2ProxyTarget {
     ///
     /// @dev Requirements:
     /// - Must be delegate called.
-    /// - At least one stream must be created.
+    /// - There must be at least one element in `batch`.
     /// - All requirements from {ISablierV2LockupDynamic.createWithDeltas} must be met for each stream.
     ///
     /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
@@ -245,7 +246,7 @@ interface ISablierV2ProxyTarget {
     ///
     /// @dev Requirements:
     /// - Must be delegate called.
-    /// - At least one stream must be created.
+    /// - There must be at least one element in `batch`.
     /// - All requirements from {ISablierV2LockupDynamic.createWithMilestones} must be met for each stream.
     ///
     /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
