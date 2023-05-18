@@ -8,9 +8,9 @@ import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Unit_Test } from "../../Unit.t.sol";
+import { Integration_Test } from "../../Integration.t.sol";
 
-contract CancelMultiple_Unit_Test is Unit_Test {
+contract CancelMultiple_Integration_Test is Integration_Test {
     function test_RevertWhen_NotDelegateCalled() external {
         IERC20[] memory assets = defaults.assets();
         uint256[] memory streamIds = batchCreateWithRange();
