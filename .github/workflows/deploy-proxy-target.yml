@@ -12,6 +12,7 @@ on:
         default: "goerli"
         description: 'Chain name. Defaults to "goerli" if unspecified'
         required: false
+
 jobs:
   deploy-proxy-target:
     runs-on: "ubuntu-latest"
