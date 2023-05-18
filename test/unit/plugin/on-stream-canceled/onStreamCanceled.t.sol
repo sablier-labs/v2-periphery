@@ -16,9 +16,9 @@ contract OnStreamCanceled_Unit_Test is Unit_Test {
         installPlugin();
         streamId = createWithRange();
 
-        // Lists the linear contract in the chain log.
+        // Lists the linear contract in the archive.
         changePrank({ msgSender: users.admin.addr });
-        chainLog.list(address(linear));
+        archive.list(address(linear));
         changePrank({ msgSender: users.alice.addr });
     }
 

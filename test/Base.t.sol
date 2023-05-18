@@ -17,10 +17,10 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 import { Strings } from "@openzeppelin/utils/Strings.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
-import { DeployChainLog } from "script/DeployChainLog.s.sol";
+import { DeployArchive } from "script/DeployArchive.s.sol";
 import { DeployProxyPlugin } from "script/DeployProxyPlugin.s.sol";
 import { DeployProxyTarget } from "script/DeployProxyTarget.s.sol";
-import { ISablierV2ChainLog } from "src/interfaces/ISablierV2ChainLog.sol";
+import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
@@ -44,7 +44,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    ISablierV2ChainLog internal chainLog;
+    ISablierV2Archive internal archive;
     IERC20 internal dai;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal dynamic;
@@ -99,12 +99,12 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function deployProtocolConditionally() internal {
         // We deploy from precompiled source if the Foundry profile is "test-optimized".
         if (isTestOptimizedProfile()) {
-            chainLog = ISablierV2ChainLog(
-                deployCode("optimized-out/SablierV2ChainLog.sol/SablierV2ChainLog.json", abi.encode(users.admin.addr))
+            archive = ISablierV2Archive(
+                deployCode("optimized-out/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(users.admin.addr))
             );
             plugin = ISablierV2ProxyPlugin(
                 deployCode(
-                    "optimized-out/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(address(chainLog))
+                    "optimized-out/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(address(archive))
                 )
             );
             target =
@@ -112,8 +112,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
         }
         // We deploy normally for all other profiles.
         else {
-            chainLog = new DeployChainLog().run(users.admin.addr);
-            plugin = new DeployProxyPlugin().run(chainLog);
+            archive = new DeployArchive().run(users.admin.addr);
+            plugin = new DeployProxyPlugin().run(archive);
             target = new DeployProxyTarget().run();
         }
     }
@@ -126,7 +126,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
 
     /// @dev Labels the most relevant contracts.
     function labelContracts() internal {
-        vm.label({ account: address(chainLog), newLabel: "Chain Log" });
+        vm.label({ account: address(archive), newLabel: "Archive" });
         vm.label({ account: address(dai), newLabel: "Dai Stablecoin" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });

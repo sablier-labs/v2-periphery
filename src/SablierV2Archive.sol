@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19;
 
 import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
 
-import { ISablierV2ChainLog } from "./interfaces/ISablierV2ChainLog.sol";
+import { ISablierV2Archive } from "./interfaces/ISablierV2Archive.sol";
 
 /*
 
@@ -14,26 +14,26 @@ import { ISablierV2ChainLog } from "./interfaces/ISablierV2ChainLog.sol";
 ███████║██║  ██║██████╔╝███████╗██║███████╗██║  ██║     ╚████╔╝ ███████╗
 ╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝╚══════╝╚═╝  ╚═╝      ╚═══╝  ╚══════╝
 
- ██████╗██╗  ██╗ █████╗ ██╗███╗   ██╗    ██╗      ██████╗  ██████╗
-██╔════╝██║  ██║██╔══██╗██║████╗  ██║    ██║     ██╔═══██╗██╔════╝
-██║     ███████║███████║██║██╔██╗ ██║    ██║     ██║   ██║██║  ███╗
-██║     ██╔══██║██╔══██║██║██║╚██╗██║    ██║     ██║   ██║██║   ██║
-╚██████╗██║  ██║██║  ██║██║██║ ╚████║    ███████╗╚██████╔╝╚██████╔╝
- ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝    ╚══════╝ ╚═════╝  ╚═════╝
+ █████╗ ██████╗  ██████╗██╗  ██╗██╗██╗   ██╗███████╗
+██╔══██╗██╔══██╗██╔════╝██║  ██║██║██║   ██║██╔════╝
+███████║██████╔╝██║     ███████║██║██║   ██║█████╗
+██╔══██║██╔══██╗██║     ██╔══██║██║╚██╗ ██╔╝██╔══╝
+██║  ██║██║  ██║╚██████╗██║  ██║██║ ╚████╔╝ ███████╗
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝  ╚══════╝
 
 */
 
-/// @title SablierV2ChainLog
-/// @dev See the documentation in {ISablierV2ChainLog}.
-contract SablierV2ChainLog is
-    ISablierV2ChainLog, // 1 inherited component
+/// @title SablierV2Archive
+/// @dev See the documentation in {ISablierV2Archive}.
+contract SablierV2Archive is
+    ISablierV2Archive, // 1 inherited component
     Adminable // 1 inherited component
 {
     /*//////////////////////////////////////////////////////////////////////////
                                 USER-FACING STORAGE
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2ChainLog
+    /// @inheritdoc ISablierV2Archive
     mapping(address addr => bool listed) public override isListed;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -48,13 +48,13 @@ contract SablierV2ChainLog is
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2ChainLog
+    /// @inheritdoc ISablierV2Archive
     function list(address addr) external onlyAdmin {
         isListed[addr] = true;
         emit List({ admin: msg.sender, addr: addr });
     }
 
-    /// @inheritdoc ISablierV2ChainLog
+    /// @inheritdoc ISablierV2Archive
     function unlist(address addr) external onlyAdmin {
         isListed[addr] = false;
         emit Unlist({ admin: msg.sender, addr: addr });

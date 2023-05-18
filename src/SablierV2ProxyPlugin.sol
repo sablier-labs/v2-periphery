@@ -9,7 +9,7 @@ import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.s
 import { ISablierV2LockupSender } from "@sablier/v2-core/interfaces/hooks/ISablierV2LockupSender.sol";
 
 import { OnlyDelegateCall } from "./abstracts/OnlyDelegateCall.sol";
-import { ISablierV2ChainLog } from "./interfaces/ISablierV2ChainLog.sol";
+import { ISablierV2Archive } from "./interfaces/ISablierV2Archive.sol";
 import { ISablierV2ProxyPlugin } from "./interfaces/ISablierV2ProxyPlugin.sol";
 import { Errors } from "./libraries/Errors.sol";
 
@@ -45,14 +45,14 @@ contract SablierV2ProxyPlugin is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2ProxyPlugin
-    ISablierV2ChainLog public immutable override chainLog;
+    ISablierV2Archive public immutable override archive;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
-    constructor(ISablierV2ChainLog chainLog_) {
-        chainLog = chainLog_;
+    constructor(ISablierV2Archive archive_) {
+        archive = archive_;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -85,8 +85,8 @@ contract SablierV2ProxyPlugin is
         external
         onlyDelegateCall
     {
-        // Checks: the caller is a listed contract.
-        if (!chainLog.isListed(msg.sender)) {
+        // Checks: the caller is an address listed in the archive.
+        if (!archive.isListed(msg.sender)) {
             revert Errors.SablierV2ProxyPlugin_CallerUnlisted(msg.sender);
         }
 
