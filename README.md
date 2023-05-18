@@ -1,13 +1,11 @@
-# Sablier V2 Periphery [![Github Actions][gha-badge]][gha] [![Foundry][foundry-badge]][foundry] [![Styled with Prettier][prettier-badge]][prettier] [![License: LGPL v3][license-badge]][license]
+# Sablier V2 Periphery [![Github Actions][gha-badge]][gha] [![Coverage][codecov-badge]][codecov] [![Foundry][foundry-badge]][foundry]
 
 [gha]: https://github.com/sablierhq/v2-periphery/actions
 [gha-badge]: https://github.com/sablierhq/v2-periphery/actions/workflows/ci.yml/badge.svg
+[codecov]: https://codecov.io/gh/sablierhq/v2-periphery
+[codecov-badge]: https://codecov.io/gh/sablierhq/v2-periphery/branch/main/graph/badge.svg?token=ND1LZOUF2G
 [foundry]: https://getfoundry.sh/
 [foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
-[prettier]: https://prettier.io
-[prettier-badge]: https://img.shields.io/badge/Code_Style-Prettier-ff69b4.svg
-[license]: https://www.gnu.org/licenses/lgpl-3.0
-[license-badge]: https://img.shields.io/badge/License-LGPL_v3-blue.svg
 
 This repository contains the peripheral smart contracts of the Sablier V2 Protocol. For lower-level logic, see the
 [sablierhq/v2-core](https://github.com/sablierhq/v2-core) repository.
