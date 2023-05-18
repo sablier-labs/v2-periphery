@@ -73,7 +73,7 @@ contract SablierV2ProxyPlugin is
     /// @notice Forwards the refunded assets to the proxy owner when the recipient cancel a stream whose sender is the
     /// proxy contract.
     /// @dev Requirements:
-    /// - The call must be a delegate call.
+    /// - Must be delegate called.
     /// - The caller must be Sablier.
     function onStreamCanceled(
         ISablierV2Lockup, /* lockup */

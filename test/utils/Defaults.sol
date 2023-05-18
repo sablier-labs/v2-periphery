@@ -6,13 +6,14 @@ import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
 import { ud2x18, UD60x18 } from "@sablier/v2-core/types/Math.sol";
 import { Broker, Lockup, LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
+import { PermitSignature } from "permit2-test/utils/PermitSignature.sol";
 
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
 import { Users } from "./Types.sol";
 
 /// @notice Contract with default values for testing.
-contract Defaults {
+contract Defaults is PermitSignature {
     /*//////////////////////////////////////////////////////////////////////////
                                  GENERIC CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
@@ -36,7 +37,6 @@ contract Defaults {
     //////////////////////////////////////////////////////////////////////////*/
 
     uint48 public constant PERMIT2_EXPIRATION = type(uint48).max;
-    uint48 public constant PERMIT2_NONCE = 0;
     uint256 public immutable PERMIT2_SIG_DEADLINE;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -45,15 +45,17 @@ contract Defaults {
 
     IPRBProxy private proxy;
     IERC20 private dai;
+    IAllowanceTransfer private permit2;
     Users private users;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
-    constructor(Users memory users_, IERC20 usdc_, IPRBProxy proxy_) {
+    constructor(Users memory users_, IERC20 dai_, IAllowanceTransfer permit2_, IPRBProxy proxy_) {
         users = users_;
-        dai = usdc_;
+        dai = dai_;
+        permit2 = permit2_;
         proxy = proxy_;
 
         // Initialize the immutables.
@@ -67,28 +69,26 @@ contract Defaults {
                                        PARAMS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function permitDetails(uint160 amount) external view returns (IAllowanceTransfer.PermitDetails memory details) {
-        details = IAllowanceTransfer.PermitDetails({
-            amount: amount,
-            expiration: PERMIT2_EXPIRATION,
-            nonce: PERMIT2_NONCE,
-            token: address(dai)
+    function permit2Params(uint160 amount) public view returns (Permit2Params memory permit2Params_) {
+        (,, uint48 nonce) = permit2.allowance({ user: users.alice.addr, token: address(dai), spender: address(proxy) });
+        IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
+            details: IAllowanceTransfer.PermitDetails({
+                amount: amount,
+                expiration: PERMIT2_EXPIRATION,
+                nonce: nonce,
+                token: address(dai)
+            }),
+            sigDeadline: PERMIT2_SIG_DEADLINE,
+            spender: address(proxy)
         });
-    }
-
-    function permitDetails(
-        uint160 amount,
-        uint48 nonce
-    )
-        external
-        view
-        returns (IAllowanceTransfer.PermitDetails memory details)
-    {
-        details = IAllowanceTransfer.PermitDetails({
-            amount: amount,
-            expiration: PERMIT2_EXPIRATION,
-            nonce: nonce,
-            token: address(dai)
+        permit2Params_ = Permit2Params({
+            permit2: permit2,
+            permitSingle: permitSingle,
+            signature: getPermitSignature({
+                permit: permitSingle,
+                privateKey: users.alice.key,
+                domainSeparator: permit2.DOMAIN_SEPARATOR()
+            })
         });
     }
 

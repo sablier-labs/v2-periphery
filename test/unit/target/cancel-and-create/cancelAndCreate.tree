@@ -1,0 +1,5 @@
+cancelAndCreate.t.sol
+├── when not delegate called
+│  └── it should revert
+└── when delegate called
+   └── it should cancel the stream and create a new one
