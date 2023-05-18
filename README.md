@@ -3,7 +3,7 @@
 [gha]: https://github.com/sablierhq/v2-periphery/actions
 [gha-badge]: https://github.com/sablierhq/v2-periphery/actions/workflows/ci.yml/badge.svg
 [codecov]: https://codecov.io/gh/sablierhq/v2-periphery
-[codecov-badge]: https://codecov.io/gh/sablierhq/v2-periphery/branch/main/graph/badge.svg?token=ND1LZOUF2G
+[codecov-badge]: https://codecov.io/gh/sablierhq/v2-periphery/branch/main/graph/badge.svg?token=8RAKSWLIC1
 [foundry]: https://getfoundry.sh/
 [foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
 
