@@ -50,7 +50,7 @@ contract CancelMultiple_Integration_Test is Integration_Test {
         // Assert that all streams have been marked as canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
         for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            Lockup.Status actualStatus = lockup.getStatus(streamIds[i]);
+            Lockup.Status actualStatus = lockup.statusOf(streamIds[i]);
             assertEq(actualStatus, expectedStatus, "stream status not canceled");
         }
     }

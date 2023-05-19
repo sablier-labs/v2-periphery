@@ -63,8 +63,8 @@ contract BatchCancelMultiple_Integration_Test is Integration_Test {
         // Assert that all streams have been marked as canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
         for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            Lockup.Status actualDynamicStatus = dynamic.getStatus(dynamicStreamIds[i]);
-            Lockup.Status actualLinearStatus = linear.getStatus(linearStreamIds[i]);
+            Lockup.Status actualDynamicStatus = dynamic.statusOf(dynamicStreamIds[i]);
+            Lockup.Status actualLinearStatus = linear.statusOf(linearStreamIds[i]);
             assertEq(actualDynamicStatus, expectedStatus, "dynamic stream status not canceled");
             assertEq(actualLinearStatus, expectedStatus, "linear stream status not canceled");
         }

@@ -76,7 +76,6 @@ contract SablierV2ProxyPlugin is
     /// - Must be delegate called.
     /// - The caller must be Sablier.
     function onStreamCanceled(
-        ISablierV2Lockup, /* lockup */
         uint256 streamId,
         address, /* recipient */
         uint128 senderAmount,
