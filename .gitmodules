@@ -9,7 +9,7 @@
 [submodule "lib/permit2"]
   branch = "main"
   path = "lib/permit2"
-  url = "https://github.com/sablierhq/permit2"
+  url = "https://github.com/sablier-labs/permit2"
 [submodule "lib/prb-proxy"]
   branch = "main"
   path = "lib/prb-proxy"
@@ -19,6 +19,6 @@
   path = "lib/prb-test"
   url = "https://github.com/PaulRBerg/prb-test"
 [submodule "lib/v2-core"]
-  branch = "main"
+  branch = "fix/update-precompiles"
   path = "lib/v2-core"
-  url = "https://github.com/sablierhq/v2-core"
+  url = "https://github.com/sablier-labs/v2-core"
