@@ -15,8 +15,8 @@ library Errors {
                               SABLIER-V2-PROXY-PLUGIN
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Thrown when the caller is not a contract listed in the archive.
-    error SablierV2ProxyPlugin_CallerUnlisted(address caller);
+    /// @notice Thrown when the caller is an unknown address, which is not listed in the archive.
+    error SablierV2ProxyPlugin_UnknownCaller(address caller);
 
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-PROXY-TARGET
