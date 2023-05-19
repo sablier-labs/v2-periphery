@@ -204,7 +204,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     {
         vm.expectCall({
             callee: address(dynamic),
-            count: uint64(count),
+            count: count,
             data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
         });
     }
@@ -218,7 +218,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     {
         vm.expectCall({
             callee: address(linear),
-            count: uint64(count),
+            count: count,
             data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
         });
     }
@@ -232,7 +232,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     {
         vm.expectCall({
             callee: address(dynamic),
-            count: uint64(count),
+            count: count,
             data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
         });
     }
@@ -241,21 +241,21 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function expectMultipleCallsToCreateWithRange(uint64 count, LockupLinear.CreateWithRange memory params) internal {
         vm.expectCall({
             callee: address(linear),
-            count: uint64(count),
+            count: count,
             data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
         });
     }
 
     /// @dev Expects multiple calls to {IERC20.transfer}.
     function expectMultipleCallsToTransfer(uint64 count, address to, uint256 amount) internal {
-        vm.expectCall({ callee: address(dai), count: uint64(count), data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+        vm.expectCall({ callee: address(dai), count: count, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
     function expectMultipleCallsToTransferFrom(uint64 count, address from, address to, uint256 amount) internal {
         vm.expectCall({
             callee: address(dai),
-            count: uint64(count),
+            count: count,
             data: abi.encodeCall(IERC20.transferFrom, (from, to, amount))
         });
     }
