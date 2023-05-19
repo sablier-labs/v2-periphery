@@ -52,10 +52,10 @@ abstract contract Fork_Test is Base_Test {
         weth = IWrappedNativeAsset(0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6);
 
         // Load the proxy registry.
-        registry = IPRBProxyRegistry(0x842b72D8521E9a09D229434e4E9517DB1a4fAA71);
+        registry = IPRBProxyRegistry(0x8afE5fE3BAfA1FbC941a50b630AA966F3A7815A0);
 
         // Load the proxy helpers.
-        proxyHelpers = IPRBProxyHelpers(0x8afE5fE3BAfA1FbC941a50b630AA966F3A7815A0);
+        proxyHelpers = IPRBProxyHelpers(0x842b72D8521E9a09D229434e4E9517DB1a4fAA71);
 
         // Deploy a proxy for Alice.
         proxy = registry.deployFor(users.alice.addr);
