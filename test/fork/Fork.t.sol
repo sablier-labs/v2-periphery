@@ -21,7 +21,7 @@ abstract contract Fork_Test is Base_Test {
 
     function setUp() public virtual override {
         // Fork the Goerli testnet.
-        vm.createSelectFork({ blockNumber: 8_856_000, urlOrAlias: "goerli" });
+        vm.createSelectFork({ blockNumber: 8_857_000, urlOrAlias: "goerli" });
 
         // The base is set up after the fork is selected so that the base test contracts are deployed on the fork.
         Base_Test.setUp();
