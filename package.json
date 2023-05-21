@@ -7,7 +7,7 @@
     "url": "https://sablier.com"
   },
   "bugs": {
-    "url": "https://github.com/sablierhq/v2-periphery/issues"
+    "url": "https://github.com/sablier-labs/v2-periphery/issues"
   },
   "devDependencies": {
     "prettier": "^2.8.7",
@@ -17,7 +17,7 @@
     "src",
     "CHANGELOG.md"
   ],
-  "homepage": "https://github.com/sablierhq/v2-periphery#readme",
+  "homepage": "https://github.com/sablier-labs/v2-periphery#readme",
   "keywords": [
     "asset-streaming",
     "blockchain",
@@ -38,7 +38,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sablierhq/v2-periphery"
+    "url": "https://github.com/sablier-labs/v2-periphery"
   },
   "scripts": {
     "build": "forge build",

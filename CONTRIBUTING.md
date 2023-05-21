@@ -1,7 +1,7 @@
 # Contributing
 
-Feel free to dive in! [Open](https://github.com/sablierhq/v2-periphery/issues/new) an issue,
-[start](https://github.com/sablierhq/v2-periphery/discussions/new) a discussion or submit a PR. For any informal
+Feel free to dive in! [Open](https://github.com/sablier-labs/v2-periphery/issues/new) an issue,
+[start](https://github.com/sablier-labs/v2-periphery/discussions/new) a discussion or submit a PR. For any informal
 concerns or feedback, please join our [Discord server](https://discord.gg/bSwRCwWRsT).
 
 Contributions to Sablier V2 Periphery are welcome by anyone interested in writing more tests, improving readability,
@@ -23,7 +23,7 @@ In addition, familiarity with [Solidity](https://soliditylang.org/) is requisite
 Clone this repository including submodules:
 
 ```shell
-$ git clone --recurse-submodules -j8 git@github.com:sablierhq/v2-periphery.git
+$ git clone --recurse-submodules -j8 git@github.com:sablier-labs/v2-periphery.git
 ```
 
 Then, inside the project's directory, run this to install the Node.js dependencies:

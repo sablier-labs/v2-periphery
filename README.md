@@ -1,14 +1,14 @@
 # Sablier V2 Periphery [![Github Actions][gha-badge]][gha] [![Coverage][codecov-badge]][codecov] [![Foundry][foundry-badge]][foundry]
 
-[gha]: https://github.com/sablierhq/v2-periphery/actions
-[gha-badge]: https://github.com/sablierhq/v2-periphery/actions/workflows/ci.yml/badge.svg
-[codecov]: https://codecov.io/gh/sablierhq/v2-periphery
-[codecov-badge]: https://codecov.io/gh/sablierhq/v2-periphery/branch/main/graph/badge.svg?token=8RAKSWLIC1
+[gha]: https://github.com/sablier-labs/v2-periphery/actions
+[gha-badge]: https://github.com/sablier-labs/v2-periphery/actions/workflows/ci.yml/badge.svg
+[codecov]: https://codecov.io/gh/sablier-labs/v2-periphery
+[codecov-badge]: https://codecov.io/gh/sablier-labs/v2-periphery/branch/main/graph/badge.svg?token=8RAKSWLIC1
 [foundry]: https://getfoundry.sh/
 [foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
 
 This repository contains the peripheral smart contracts of the Sablier V2 Protocol. For lower-level logic, see the
-[sablierhq/v2-core](https://github.com/sablierhq/v2-core) repository.
+[sablier-labs/v2-core](https://github.com/sablier-labs/v2-core) repository.
 
 ## Install
 
@@ -17,7 +17,7 @@ This repository contains the peripheral smart contracts of the Sablier V2 Protoc
 First, run the install step:
 
 ```sh
-forge install sablierhq/v2-periphery
+forge install sablier-labs/v2-periphery
 ```
 
 Then, add the following line to your `remappings.txt` file:
@@ -29,8 +29,8 @@ Then, add the following line to your `remappings.txt` file:
 ## Security
 
 This repository does not fall under our bug bounty program, but
-[sablierhq/v2-core](https://github.com/sablierhq/v2-core) does. For any security-related concerns, please refer to the
-terms specified in that repository.
+[sablier-labs/v2-core](https://github.com/sablier-labs/v2-core) does. For any security-related concerns, please refer to
+the terms specified in that repository.
 
 ### Hardhat
 
