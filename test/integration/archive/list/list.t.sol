@@ -3,13 +3,13 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { Errors } from "@sablier/v2-core/libraries/Errors.sol";
 
-import { Unit_Test } from "../../Unit.t.sol";
+import { Integration_Test } from "../../Integration.t.sol";
 
-contract Unlist_Unit_Test is Unit_Test {
+contract List_Integration_Test is Integration_Test {
     function test_RevertWhen_CallerNotAdmin() external {
         changePrank({ msgSender: users.eve.addr });
         vm.expectRevert(abi.encodeWithSelector(Errors.CallerNotAdmin.selector, users.admin.addr, users.eve.addr));
-        archive.unlist(address(linear));
+        archive.list(address(linear));
     }
 
     modifier callerAdmin() {
@@ -17,19 +17,20 @@ contract Unlist_Unit_Test is Unit_Test {
         _;
     }
 
-    function test_Unlist_AddressNotListed() external callerAdmin {
+    function test_List_AddressListed() external callerAdmin {
+        archive.list(address(linear));
+        archive.list(address(linear));
         bool isListed = archive.isListed(address(linear));
-        assertFalse(isListed, "isListed");
+        assertTrue(isListed, "isListed");
     }
 
-    modifier addressListed() {
+    modifier addressNotListed() {
         _;
     }
 
-    function test_Unlist() external callerAdmin addressListed {
+    function test_List() external callerAdmin addressNotListed {
         archive.list(address(linear));
-        archive.unlist(address(linear));
         bool isListed = archive.isListed(address(linear));
-        assertFalse(isListed, "isListed");
+        assertTrue(isListed, "isListed");
     }
 }

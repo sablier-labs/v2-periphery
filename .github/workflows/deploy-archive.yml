@@ -11,6 +11,7 @@ on:
         default: "goerli"
         description: 'Chain name. Defaults to "goerli" if unspecified'
         required: false
+
 jobs:
   deploy-archive:
     runs-on: "ubuntu-latest"

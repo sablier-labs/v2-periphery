@@ -4,9 +4,9 @@ pragma solidity >=0.8.19 <0.9.0;
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
-import { Unit_Test } from "../../Unit.t.sol";
+import { Integration_Test } from "../../Integration.t.sol";
 
-contract BatchCreateWithDurations_Unit_Test is Unit_Test {
+contract BatchCreateWithRange_Integration_Test is Integration_Test {
     function test_RevertWhen_NotDelegateCalled() external {
         Batch.CreateWithDurations[] memory batch;
         Permit2Params memory permit2Params;
@@ -19,9 +19,9 @@ contract BatchCreateWithDurations_Unit_Test is Unit_Test {
     }
 
     function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
-        Batch.CreateWithDurations[] memory batch = new Batch.CreateWithDurations[](0);
+        Batch.CreateWithRange[] memory batch = new Batch.CreateWithRange[](0);
         Permit2Params memory permit2Params;
-        bytes memory data = abi.encodeCall(target.batchCreateWithDurations, (linear, dai, batch, permit2Params));
+        bytes memory data = abi.encodeCall(target.batchCreateWithRange, (linear, dai, batch, permit2Params));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);
     }
@@ -30,11 +30,11 @@ contract BatchCreateWithDurations_Unit_Test is Unit_Test {
         _;
     }
 
-    function test_BatchCreateWithDurations() external whenBatchSizeNotZero whenDelegateCalled {
+    function test_BatchCreateWithRange() external whenBatchSizeNotZero whenDelegateCalled {
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
         expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.TRANSFER_AMOUNT() });
-        expectMultipleCallsToCreateWithDurations({ count: defaults.BATCH_SIZE(), params: defaults.createWithDurations() });
+        expectMultipleCallsToCreateWithRange({ count: defaults.BATCH_SIZE(), params: defaults.createWithRange() });
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),
             from: address(proxy),
@@ -43,7 +43,7 @@ contract BatchCreateWithDurations_Unit_Test is Unit_Test {
         });
 
         // Assert that the batch of streams has been created successfully.
-        uint256[] memory actualStreamIds = batchCreateWithDurations();
+        uint256[] memory actualStreamIds = batchCreateWithRange();
         uint256[] memory expectedStreamIds = defaults.incrementalStreamIds();
         assertEq(actualStreamIds, expectedStreamIds, "stream ids do not match");
     }

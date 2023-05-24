@@ -4,9 +4,9 @@ pragma solidity >=0.8.19 <0.9.0;
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
-import { Unit_Test } from "../../Unit.t.sol";
+import { Integration_Test } from "../../Integration.t.sol";
 
-contract BatchCreateWithMilestones_Unit_Test is Unit_Test {
+contract BatchCreateWithMilestones_Integration_Test is Integration_Test {
     function test_RevertWhen_NotDelegateCalled() external {
         Batch.CreateWithMilestones[] memory batch;
         Permit2Params memory permit2Params;

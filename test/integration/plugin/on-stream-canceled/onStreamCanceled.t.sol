@@ -6,13 +6,13 @@ import { LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { Errors } from "src/libraries/Errors.sol";
 
-import { Unit_Test } from "../../Unit.t.sol";
+import { Integration_Test } from "../../Integration.t.sol";
 
-contract OnStreamCanceled_Unit_Test is Unit_Test {
+contract OnStreamCanceled_Integration_Test is Integration_Test {
     uint256 internal streamId;
 
     function setUp() public virtual override {
-        Unit_Test.setUp();
+        Integration_Test.setUp();
         installPlugin();
         streamId = createWithRange();
 

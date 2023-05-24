@@ -6,14 +6,14 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { Errors } from "src/libraries/Errors.sol";
 
-import { Unit_Test } from "../../Unit.t.sol";
+import { Integration_Test } from "../../Integration.t.sol";
 
 /// @dev This contracts tests the following functions:
 /// - `wrapEtherAndCreateWithDeltas`
 /// - `wrapEtherAndCreateWithDurations`
 /// - `wrapEtherAndCreateWithMilestones`
 /// - `wrapEtherAndCreateWithRange`
-contract WrapAndCreate_Unit_Test is Unit_Test {
+contract WrapAndCreate_Integration_Test is Integration_Test {
     modifier whenDelegateCalled() {
         _;
     }

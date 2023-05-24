@@ -9,14 +9,14 @@ import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.so
 import { Errors } from "src/libraries/Errors.sol";
 import { Permit2Params } from "src/types/DataTypes.sol";
 
-import { Unit_Test } from "../../Unit.t.sol";
+import { Integration_Test } from "../../Integration.t.sol";
 
 /// @dev This contracts tests the following functions:
 /// - `cancelAndCreateWithDeltas`
 /// - `cancelAndCreateWithDurations`
 /// - `cancelAndCreateWithMilestones`
 /// - `cancelAndCreateWithRange`
-contract CancelAndCreate_Unit_Test is Unit_Test {
+contract CancelAndCreate_Integration_Test is Integration_Test {
     modifier whenDelegateCalled() {
         _;
     }

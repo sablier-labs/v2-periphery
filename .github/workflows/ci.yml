@@ -81,7 +81,7 @@ jobs:
           echo "## Build result" >> $GITHUB_STEP_SUMMARY
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
 
-  test-unit:
+  test-integration:
     needs: ["lint", "build"]
     runs-on: "ubuntu-latest"
     steps:
@@ -101,10 +101,36 @@ jobs:
           key: "foundry-build-${{ github.sha }}"
           path: "optimized-out"
 
-      - name: "Run the unit tests against the optimized build"
-        run: "FOUNDRY_PROFILE=test-optimized forge test --match-path \"test/unit/**/*.sol\""
+      - name: "Run the integration tests against the optimized build"
+        run: "FOUNDRY_PROFILE=test-optimized forge test --match-path \"test/integration/**/*.sol\""
 
       - name: "Add test summary"
         run: |
-          echo "## Unit tests result" >> $GITHUB_STEP_SUMMARY
+          echo "## Integration tests result" >> $GITHUB_STEP_SUMMARY
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+
+  coverage:
+    needs: ["lint", "build"]
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v3"
+        with:
+          submodules: "recursive"
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Run the integration tests and generate the coverage report"
+        run: "forge coverage --match-path \"test/integration/**/*.sol\" --report lcov"
+
+      - name: "Upload coverage report to Codecov"
+        uses: "codecov/codecov-action@v3"
+        with:
+          files: "./lcov.info"
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: "Add coverage summary"
+        run: |
+          echo "## Coverage result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Uploaded to Codecov" >> $GITHUB_STEP_SUMMARY
