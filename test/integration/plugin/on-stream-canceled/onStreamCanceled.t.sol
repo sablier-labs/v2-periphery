@@ -38,7 +38,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
 
     function test_RevertWhen_CallerNotListed() external whenDelegateCalled {
         changePrank({ msgSender: users.eve.addr });
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyPlugin_CallerUnlisted.selector, users.eve.addr));
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyPlugin_UnknownCaller.selector, users.eve.addr));
         ISablierV2ProxyPlugin(address(proxy)).onStreamCanceled({
             streamId: streamId,
             recipient: users.recipient.addr,

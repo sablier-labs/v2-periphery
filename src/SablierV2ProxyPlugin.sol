@@ -74,7 +74,7 @@ contract SablierV2ProxyPlugin is
     /// proxy contract.
     /// @dev Requirements:
     /// - Must be delegate called.
-    /// - The caller must be Sablier.
+    /// - The caller must be an address listed in the archive.
     function onStreamCanceled(
         uint256 streamId,
         address, /* recipient */
@@ -86,7 +86,7 @@ contract SablierV2ProxyPlugin is
     {
         // Checks: the caller is an address listed in the archive.
         if (!archive.isListed(msg.sender)) {
-            revert Errors.SablierV2ProxyPlugin_CallerUnlisted(msg.sender);
+            revert Errors.SablierV2ProxyPlugin_UnknownCaller(msg.sender);
         }
 
         // This invariant should always hold but it's better to be safe than sorry.
