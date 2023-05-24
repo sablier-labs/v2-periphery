@@ -11,7 +11,7 @@
   path = "lib/permit2"
   url = "https://github.com/sablier-labs/permit2"
 [submodule "lib/prb-proxy"]
-  branch = "main"
+  branch = "v4"
   path = "lib/prb-proxy"
   url = "https://github.com/PaulRBerg/prb-proxy"
 [submodule "lib/prb-test"]

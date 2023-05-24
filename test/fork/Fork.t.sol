@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { IPRBProxyHelpers } from "@prb/proxy/interfaces/IPRBProxyHelpers.sol";
+import { IPRBProxyAnnex } from "@prb/proxy/interfaces/IPRBProxyAnnex.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
@@ -51,14 +51,14 @@ abstract contract Fork_Test is Base_Test {
         // Load WETH.
         weth = IWrappedNativeAsset(0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6);
 
-        // Load the proxy registry.
-        registry = IPRBProxyRegistry(0x8afE5fE3BAfA1FbC941a50b630AA966F3A7815A0);
+        // Load the proxy annex.
+        proxyAnnex = IPRBProxyAnnex(0x842b72D8521E9a09D229434e4E9517DB1a4fAA71);
 
-        // Load the proxy helpers.
-        proxyHelpers = IPRBProxyHelpers(0x842b72D8521E9a09D229434e4E9517DB1a4fAA71);
+        // Load the proxy registry.
+        proxyRegistry = IPRBProxyRegistry(0x8afE5fE3BAfA1FbC941a50b630AA966F3A7815A0);
 
         // Deploy a proxy for Alice.
-        proxy = registry.deployFor(users.alice.addr);
+        proxy = proxyRegistry.deployFor(users.alice.addr);
 
         // Load Permit2.
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);
