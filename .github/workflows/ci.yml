@@ -44,42 +44,53 @@ jobs:
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
 
   build:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: "Check out the repo"
-        uses: "actions/checkout@v3"
-        with:
-          submodules: "recursive"
-          token: "${{ secrets.CI_TOKEN }}"
+      runs-on: "ubuntu-latest"
+      steps:
+        - name: "Check out the repo"
+          uses: "actions/checkout@v3"
+          with:
+            submodules: "recursive"
+            token: "${{ secrets.CI_TOKEN }}"
 
-      - name: "Install Foundry"
-        uses: "foundry-rs/foundry-toolchain@v1"
+        - name: "Install Foundry"
+          uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Show the Foundry config"
-        run: "forge config"
+        - name: "Install Pnpm"
+          uses: "pnpm/action-setup@v2"
+          with:
+            version: "8"
 
-      - name: "Produce an optimized build with --via-ir"
-        run: "FOUNDRY_PROFILE=optimized forge build"
+        - name: "Install Node.js"
+          uses: "actions/setup-node@v3"
+          with:
+            cache: "pnpm"
+            node-version: "lts/*"
 
-      - name: "Cache the build so that it can be re-used by the other jobs"
-        uses: "actions/cache/save@v3"
-        with:
-          path: "optimized-out"
-          key: "foundry-build-${{ github.sha }}"
+        - name: "Install the Node.js dependencies"
+          run: "pnpm install"
 
-      - name: "Store contract ABIs as artifacts"
-        uses: "actions/upload-artifact@v3"
-        with:
-          name: contract-abis
-          path: |
-            optimized-out/Errors.sol/Errors.json
-            optimized-out/ISablierV2ProxyTarget.sol/ISablierV2ProxyTarget.json
-            optimized-out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json
+        - name: "Show the Foundry config"
+          run: "forge config"
 
-      - name: "Add build summary"
-        run: |
-          echo "## Build result" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+        - name: "Generate and prepare the contract artifacts"
+          run: "./shell/prepare-artifacts.sh"
+
+        - name: "Cache the build so that it can be re-used by the other jobs"
+          uses: "actions/cache/save@v3"
+          with:
+            path: "optimized-out"
+            key: "foundry-build-${{ github.sha }}"
+
+        - name: "Store the contract artifacts in CI"
+          uses: "actions/upload-artifact@v3"
+          with:
+            name: "contract-artifacts"
+            path: "artifacts"
+
+        - name: "Add build summary"
+          run: |
+            echo "## Build result" >> $GITHUB_STEP_SUMMARY
+            echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
 
   test-integration:
     needs: ["lint", "build"]

@@ -4,7 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
-import { IPRBProxyHelpers } from "@prb/proxy/interfaces/IPRBProxyHelpers.sol";
+import { IPRBProxyAnnex } from "@prb/proxy/interfaces/IPRBProxyAnnex.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
@@ -53,8 +53,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     IAllowanceTransfer internal permit2;
     ISablierV2ProxyPlugin internal plugin;
     IPRBProxy internal proxy;
-    IPRBProxyHelpers internal proxyHelpers;
-    IPRBProxyRegistry internal registry;
+    IPRBProxyAnnex internal proxyAnnex;
+    IPRBProxyRegistry internal proxyRegistry;
     ISablierV2ProxyTarget internal target;
     IWrappedNativeAsset internal weth;
 
@@ -265,8 +265,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     //////////////////////////////////////////////////////////////////////////*/
 
     function installPlugin() internal {
-        bytes memory data = abi.encodeCall(proxyHelpers.installPlugin, (plugin));
-        proxy.execute(address(proxyHelpers), data);
+        bytes memory data = abi.encodeCall(proxyAnnex.installPlugin, (plugin));
+        proxy.execute(address(proxyAnnex), data);
     }
 
     /*//////////////////////////////////////////////////////////////////////////

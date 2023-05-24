@@ -47,10 +47,10 @@ abstract contract Integration_Test is Base_Test {
         weth = new WETH();
 
         // Deploy the proxy system from a bytecode precompiled with `--via-ir`.
-        (registry, proxyHelpers) = new PRBProxyPrecompiles().deploySystem();
+        (proxyAnnex, proxyRegistry) = new PRBProxyPrecompiles().deploySystem();
 
         // Deploy a proxy for Alice.
-        proxy = registry.deployFor(users.alice.addr);
+        proxy = proxyRegistry.deployFor(users.alice.addr);
 
         // Deploy Permit2 from a bytecode precompiled with `--via-ir`.
         permit2 = IAllowanceTransfer(new DeployPermit2().run());
