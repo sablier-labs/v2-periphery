@@ -33,9 +33,9 @@ jobs:
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Deploy the Sablier V2 Periphery contracts"
+      - name: "List an address on the archive contract"
         run: >-
-          forge script script/DeployPeriphery.s.sol
+          forge script script/ListAddressOnArchive.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
           --sig "run(address,address)"
