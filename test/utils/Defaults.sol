@@ -26,6 +26,7 @@ contract Defaults is PermitSignature {
     uint256 public constant ETHER_AMOUNT = 10_000 ether;
     uint256 public constant MAX_SEGMENT_COUNT = 1000;
     uint128 public constant PER_STREAM_AMOUNT = 10_000e18;
+    UD60x18 public constant PROTOCOL_FEE = UD60x18.wrap(0);
     uint128 public constant REFUND_AMOUNT = 7500e18; // deposit - cliff amount
     uint40 public immutable START_TIME;
     uint40 public constant TOTAL_DURATION = 10_000 seconds;

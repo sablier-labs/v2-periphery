@@ -249,11 +249,20 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
     function expectMultipleCallsToTransferFrom(uint64 count, address from, address to, uint256 amount) internal {
-        vm.expectCall({
-            callee: address(dai),
-            count: count,
-            data: abi.encodeCall(IERC20.transferFrom, (from, to, amount))
-        });
+        expectMultipleCallsToTransferFrom(address(dai), count, from, to, amount);
+    }
+
+    /// @dev Expects multiple calls to {IERC20.transferFrom}.
+    function expectMultipleCallsToTransferFrom(
+        address asset,
+        uint64 count,
+        address from,
+        address to,
+        uint256 amount
+    )
+        internal
+    {
+        vm.expectCall({ callee: asset, count: count, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
