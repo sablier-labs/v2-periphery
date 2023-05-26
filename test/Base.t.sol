@@ -17,9 +17,7 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 import { Strings } from "@openzeppelin/utils/Strings.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
-import { DeployArchive } from "script/DeployArchive.s.sol";
-import { DeployProxyPlugin } from "script/DeployProxyPlugin.s.sol";
-import { DeployProxyTarget } from "script/DeployProxyTarget.s.sol";
+import { DeployPeriphery } from "script/DeployPeriphery.s.sol";
 import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
@@ -112,9 +110,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
         }
         // We deploy normally for all other profiles.
         else {
-            archive = new DeployArchive().run(users.admin.addr);
-            plugin = new DeployProxyPlugin().run(archive);
-            target = new DeployProxyTarget().run();
+            (archive, plugin, target) = new DeployPeriphery().run(users.admin.addr);
         }
     }
 
