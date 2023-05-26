@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 import { IPRBProxyAnnex } from "@prb/proxy/interfaces/IPRBProxyAnnex.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
@@ -15,13 +16,15 @@ import { Base_Test } from "../Base.t.sol";
 /// @title Fork_Test
 /// @notice Common logic needed by all fork tests.
 abstract contract Fork_Test is Base_Test {
+    IERC20 internal asset;
+
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual override {
         // Fork the Goerli testnet.
-        vm.createSelectFork({ blockNumber: 8_857_000, urlOrAlias: "goerli" });
+        vm.createSelectFork({ blockNumber: 9_056_572, urlOrAlias: "goerli" });
 
         // The base is set up after the fork is selected so that the base test contracts are deployed on the fork.
         Base_Test.setUp();
@@ -30,21 +33,30 @@ abstract contract Fork_Test is Base_Test {
         loadDependencies();
 
         // Deploy the defaults contract.
-        defaults = new Defaults(users, dai, permit2, proxy);
+        defaults = new Defaults(users, asset, permit2, proxy);
 
         // Deploy V2 Periphery.
         deployProtocolConditionally();
 
         // Label the contracts.
         labelContracts();
-
-        // Approve Permit2 to spend funds.
-        approvePermit2();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                                       HELPERS
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Checks the user assumptions.
+    function checkUsers(address sender, address recipient) internal virtual {
+        // The protocol does not allow the zero address to interact with it.
+        vm.assume(sender != address(0) && recipient != address(0));
+
+        // The goal is to not have overlapping users because the token balance tests would fail otherwise.
+        vm.assume(sender != recipient && sender != users.broker.addr && recipient != users.broker.addr);
+        vm.assume(sender != address(proxy) && recipient != address(proxy));
+        vm.assume(sender != address(dynamic) && recipient != address(dynamic));
+        vm.assume(sender != address(linear) && recipient != address(linear));
+    }
 
     /// @dev Loads all dependencies pre-deployed on Goerli.
     function loadDependencies() private {
@@ -57,14 +69,11 @@ abstract contract Fork_Test is Base_Test {
         // Load the proxy registry.
         proxyRegistry = IPRBProxyRegistry(0x8afE5fE3BAfA1FbC941a50b630AA966F3A7815A0);
 
-        // Deploy a proxy for Alice.
-        proxy = proxyRegistry.deployFor(users.alice.addr);
-
         // Load Permit2.
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);
 
         // Load V2 Core.
-        dynamic = ISablierV2LockupDynamic(0xD65332c5D63e93Ef6a9F4c0b5cda894E5809F9f6);
-        linear = ISablierV2LockupLinear(0x93369c09b52449b4F888292b09cc8e9cEb7643Df);
+        dynamic = ISablierV2LockupDynamic(0x4a57C183333a0a81300259d1795836fA0F4863BB);
+        linear = ISablierV2LockupLinear(0xd78D4FE35779342d5FE2E8206d886D57139d6abB);
     }
 }
