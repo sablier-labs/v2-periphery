@@ -36,9 +36,8 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers {
         uint256 batchSize = defaults.BATCH_SIZE();
         batchCancelSize = _bound(batchCancelSize, 1, batchSize);
         dynamicBatchFrom =
-            _bound(dynamicBatchFrom, nextStreamIdDynamic, nextStreamIdDynamic + batchSize - batchCancelSize - 1);
-        linearBatchFrom =
-            _bound(linearBatchFrom, nextStreamIdLinear, nextStreamIdLinear + batchSize - batchCancelSize - 1);
+            _bound(dynamicBatchFrom, nextStreamIdDynamic, nextStreamIdDynamic + batchSize - batchCancelSize);
+        linearBatchFrom = _bound(linearBatchFrom, nextStreamIdLinear, nextStreamIdLinear + batchSize - batchCancelSize);
 
         uint256[] memory dynamicStreamIds = new uint256[](batchCancelSize);
         uint256[] memory linearStreamIds = new uint256[](batchCancelSize);
