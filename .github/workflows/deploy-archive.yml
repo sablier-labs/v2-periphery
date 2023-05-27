@@ -9,9 +9,8 @@ on:
     inputs:
       admin:
         default: "0x0E109f35926575FC64Ec73735101966d434Ed591"
-        description: 'Contract admin. Defaults to 0x0E10...d591'
+        description: "Contract admin. Defaults to 0x0E10...d591"
         required: false
-      
       chain:
         default: "goerli"
         description: 'Chain name. Defaults to "goerli" if unspecified'
@@ -38,7 +37,7 @@ jobs:
           --sig "run(address)"
           -vvvv
           "${{ inputs.admin }}"
-          
+
       - name: "Add summary"
         run: |
           echo "## Deployment result" >> $GITHUB_STEP_SUMMARY

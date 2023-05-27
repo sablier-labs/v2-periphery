@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       archive:
-        description: 'Archive contract address'
+        description: "Archive contract address"
         required: true
       chain:
         default: "goerli"
