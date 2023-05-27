@@ -120,6 +120,40 @@ jobs:
           echo "## Integration tests result" >> $GITHUB_STEP_SUMMARY
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
 
+  test-fork:
+    needs: ["lint", "build"]
+    env:
+      FOUNDRY_FUZZ_RUNS: "100"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v3"
+        with:
+          submodules: "recursive"
+          token: "${{ secrets.CI_TOKEN }}"
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Restore the cached build"
+        uses: "actions/cache/restore@v3"
+        with:
+          fail-on-cache-miss: true
+          key: "foundry-build-${{ github.sha }}"
+          path: "optimized-out"
+
+      - name: "Generate fuzz seed that changes weekly to avoid burning through RPC allowance"
+        run: |
+          echo "FOUNDRY_FUZZ_SEED=$(echo $(($EPOCHSECONDS / 604800)))" >> $GITHUB_ENV
+
+      - name: "Run the fork tests against the optimized build"
+        run: "FOUNDRY_PROFILE=test-optimized forge test --match-path \"test/fork/**/*.sol\""
+
+      - name: "Add test summary"
+        run: |
+          echo "## Fork tests result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+        
   coverage:
     needs: ["lint", "build"]
     runs-on: "ubuntu-latest"
