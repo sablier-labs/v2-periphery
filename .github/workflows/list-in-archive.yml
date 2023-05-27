@@ -8,14 +8,14 @@ on:
   workflow_dispatch:
     inputs:
       address:
-        description: "The address to list in the archive."
+        description: "Address to list in the archive."
         required: true
       archive:
-        description: 'The address of the archive contract.'
+        description: "Address of the archive contract."
         required: true
       chain:
         default: "goerli"
-        description: 'Chain name. Defaults to "goerli" if unspecified'
+        description: "Chain name as defined in the Foundry config."
         required: false
 
 jobs:
