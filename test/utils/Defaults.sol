@@ -38,7 +38,7 @@ contract Defaults is PermitSignature {
     //////////////////////////////////////////////////////////////////////////*/
 
     uint48 public constant PERMIT2_EXPIRATION = type(uint48).max;
-    uint256 public immutable PERMIT2_SIG_DEADLINE;
+    uint256 public constant PERMIT2_SIG_DEADLINE = type(uint48).max;
 
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
@@ -63,7 +63,6 @@ contract Defaults is PermitSignature {
         START_TIME = uint40(block.timestamp) + 100 seconds;
         CLIFF_TIME = START_TIME + CLIFF_DURATION;
         END_TIME = START_TIME + TOTAL_DURATION;
-        PERMIT2_SIG_DEADLINE = START_TIME;
     }
 
     /*//////////////////////////////////////////////////////////////////////////

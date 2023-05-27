@@ -307,7 +307,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
                 nonce: nonce,
                 token: address(asset)
             }),
-            sigDeadline: defaults.PERMIT2_EXPIRATION(),
+            sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
             spender: address(proxy)
         });
         permit2Params = Permit2Params({

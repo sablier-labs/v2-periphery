@@ -45,13 +45,16 @@ abstract contract Fork_Test is Base_Test {
         loadDependencies();
 
         // Deploy the defaults contract.
-        defaults = new Defaults(users, asset, permit2, proxy);
+        defaults = new Defaults(users, dai, permit2, proxy);
 
         // Deploy V2 Periphery.
         deployProtocolConditionally();
 
         // Label the contracts.
         labelContracts();
+
+        // Approve Permit2 to spend funds.
+        approvePermit2();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -80,6 +83,9 @@ abstract contract Fork_Test is Base_Test {
 
         // Load the proxy registry.
         proxyRegistry = IPRBProxyRegistry(0x8afE5fE3BAfA1FbC941a50b630AA966F3A7815A0);
+
+        // Deploy a proxy for Alice.
+        proxy = proxyRegistry.deployFor(users.alice.addr);
 
         // Load Permit2.
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);
