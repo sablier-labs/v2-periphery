@@ -56,7 +56,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         uint256[] expectedLinearStreamIds;
     }
 
-    function testForkFuzz_BatchCreateCancel(Params memory params) external {
+    function testForkFuzz_BatchCreate(Params memory params) external {
         Vars memory vars;
         params.senderPrivateKey = boundPrivateKey(params.senderPrivateKey);
         vars.sender = vm.addr(params.senderPrivateKey);
