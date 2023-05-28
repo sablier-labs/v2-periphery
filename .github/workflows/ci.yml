@@ -4,6 +4,9 @@ concurrency:
   cancel-in-progress: true
   group: ${{github.workflow}}-${{github.ref}}
 
+env:
+  RPC_URL_GOERLI: ${{ secrets.RPC_URL_GOERLI }}
+
 on:
   workflow_dispatch:
   pull_request:
