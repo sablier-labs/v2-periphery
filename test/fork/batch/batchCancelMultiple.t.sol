@@ -32,13 +32,14 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers {
         batchCreateWithMilestones();
         batchCreateWithRange();
 
-        // Bound the stream ids so that they are in the range of the ones just created.
+        // Bound the variables so that they are in valid range.
         uint256 batchSize = defaults.BATCH_SIZE();
         batchCancelSize = _bound(batchCancelSize, 1, batchSize);
         dynamicBatchFrom =
             _bound(dynamicBatchFrom, nextStreamIdDynamic, nextStreamIdDynamic + batchSize - batchCancelSize);
         linearBatchFrom = _bound(linearBatchFrom, nextStreamIdLinear, nextStreamIdLinear + batchSize - batchCancelSize);
 
+        // Declare the stream ids to cancel.
         uint256[] memory dynamicStreamIds = new uint256[](batchCancelSize);
         uint256[] memory linearStreamIds = new uint256[](batchCancelSize);
         for (uint256 i = 0; i < batchCancelSize; ++i) {

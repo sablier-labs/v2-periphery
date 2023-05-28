@@ -26,13 +26,13 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         uint64 batchSize;
         LockupLinear.Range range;
         address recipient;
-        uint256 senderPrivateKey;
+        uint256 userPrivateKey;
         uint128 linearPerStreamAmount;
         LockupDynamic.Segment[] segments;
     }
 
     struct Vars {
-        address sender;
+        address user;
         uint128 upperBoundPerStreamAmount;
         Permit2Params permit2Params;
         // Batch create dynamic vars
@@ -58,11 +58,11 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
 
     function testForkFuzz_BatchCreate(Params memory params) external {
         Vars memory vars;
-        params.senderPrivateKey = boundPrivateKey(params.senderPrivateKey);
-        vars.sender = vm.addr(params.senderPrivateKey);
-        proxy = proxyRegistry.deployFor(vars.sender);
+        params.userPrivateKey = boundPrivateKey(params.userPrivateKey);
+        vars.user = vm.addr(params.userPrivateKey);
+        proxy = proxyRegistry.deployFor(vars.user);
 
-        checkUsers(vars.sender, params.recipient);
+        checkUsers(vars.user, params.recipient);
         vm.assume(params.segments.length != 0);
         params.batchSize = uint64(bound(params.batchSize, 1, 20));
 
@@ -99,11 +99,11 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         // `vars.dynamicTransferAmount` and `vars.linearTransferAmount`.
         deal({
             token: address(asset),
-            to: vars.sender,
+            to: vars.user,
             give: uint256(vars.dynamicTransferAmount) + uint256(vars.linearTransferAmount)
         });
 
-        vm.startPrank(vars.sender);
+        vm.startPrank(vars.user);
         asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
 
         vars.beforeBatchDynamicNextStreamId = dynamic.nextStreamId();
@@ -128,9 +128,9 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         vars.dynamicData = getBatchWithMilestonesData({
             batchSingle: vars.batchDynamicSingle,
             permit2Params: getPermit2Params({
-                user: vars.sender,
+                user: vars.user,
                 amount: vars.dynamicTransferAmount,
-                privateKey: params.senderPrivateKey
+                privateKey: params.userPrivateKey
             }),
             batchSize: params.batchSize
         });
@@ -139,7 +139,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
         expectCallToTransferFrom({
             asset: address(asset),
-            from: vars.sender,
+            from: vars.user,
             to: address(proxy),
             amount: vars.dynamicTransferAmount
         });
@@ -173,9 +173,9 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         vars.linearData = getBatchWithRangeData({
             batchSingle: vars.batchLinearSingle,
             permit2Params: getPermit2Params({
-                user: vars.sender,
+                user: vars.user,
                 amount: vars.linearTransferAmount,
-                privateKey: params.senderPrivateKey
+                privateKey: params.userPrivateKey
             }),
             batchSize: params.batchSize
         });
@@ -184,7 +184,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
         expectCallToTransferFrom({
             asset: address(asset),
-            from: vars.sender,
+            from: vars.user,
             to: address(proxy),
             amount: vars.linearTransferAmount
         });
@@ -207,6 +207,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
                                       HELPERS
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev ABI encode the parameters and return the data.
     function getBatchWithMilestonesData(
         Batch.CreateWithMilestones memory batchSingle,
         Permit2Params memory permit2Params,
@@ -225,6 +226,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         data = abi.encodeCall(target.batchCreateWithMilestones, (dynamic, asset, batch, permit2Params));
     }
 
+    /// @dev ABI encode the parameters and return the data.
     function getBatchWithRangeData(
         Batch.CreateWithRange memory batchSingle,
         Permit2Params memory permit2Params,
@@ -243,6 +245,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         data = abi.encodeCall(target.batchCreateWithRange, (linear, asset, batch, permit2Params));
     }
 
+    ///@dev Return the paramaters used in the {SablierV2LockupDynamic.createWithMilestones} function.
     function getCreateWithMilestoneParams(Batch.CreateWithMilestones memory batchSingle)
         internal
         view
@@ -260,6 +263,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         });
     }
 
+    ///@dev Return the paramaters used in the {SablierV2LockupLinear.createWithRange} function.
     function getCreateWithRangeParams(Batch.CreateWithRange memory batchSingle)
         internal
         view
@@ -276,6 +280,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         });
     }
 
+    /// @dev Return the expected stream ids.
     function getExpectedStreamIds(
         uint256 beforeNextStreamId,
         uint256 batchSize
@@ -295,7 +300,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         uint160 amount,
         uint256 privateKey
     )
-        public
+        internal
         view
         returns (Permit2Params memory permit2Params)
     {
