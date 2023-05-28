@@ -26,19 +26,19 @@ Then, add the following line to your `remappings.txt` file:
 @sablier/v2-periphery/=lib/v2-periphery/src/
 ```
 
-## Security
-
-This repository does not fall under our bug bounty program, but
-[sablier-labs/v2-core](https://github.com/sablier-labs/v2-core) does. For any security-related concerns, please refer to
-the terms specified in that repository.
-
-### Hardhat
+### Node.js
 
 Sablier V2 Periphery is available as a Node.js package:
 
 ```shell
 pnpm add @sablier/v2-periphery
 ```
+
+## Security
+
+This repository does not fall under our bug bounty program, but
+[sablier-labs/v2-core](https://github.com/sablier-labs/v2-core) does. For any security-related concerns, please refer to
+the terms specified in that repository.
 
 ## Licensing
 
