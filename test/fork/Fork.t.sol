@@ -62,15 +62,15 @@ abstract contract Fork_Test is Base_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Checks the user assumptions.
-    function checkUsers(address sender, address recipient) internal virtual {
+    function checkUsers(address user, address recipient, address proxy_) internal virtual {
         // The protocol does not allow the zero address to interact with it.
-        vm.assume(sender != address(0) && recipient != address(0));
+        vm.assume(user != address(0) && recipient != address(0));
 
         // The goal is to not have overlapping users because the token balance tests would fail otherwise.
-        vm.assume(sender != recipient && sender != users.broker.addr && recipient != users.broker.addr);
-        vm.assume(sender != address(proxy) && recipient != address(proxy));
-        vm.assume(sender != address(dynamic) && recipient != address(dynamic));
-        vm.assume(sender != address(linear) && recipient != address(linear));
+        vm.assume(user != recipient && user != users.broker.addr && recipient != users.broker.addr);
+        vm.assume(user != address(proxy_) && recipient != address(proxy_));
+        vm.assume(user != address(dynamic) && recipient != address(dynamic));
+        vm.assume(user != address(linear) && recipient != address(linear));
     }
 
     /// @dev Loads all dependencies pre-deployed on Goerli.

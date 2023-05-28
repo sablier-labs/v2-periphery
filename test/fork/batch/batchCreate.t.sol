@@ -33,6 +33,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
 
     struct Vars {
         address user;
+        IPRBProxy proxy;
         uint128 upperBoundPerStreamAmount;
         Permit2Params permit2Params;
         // Batch create dynamic vars
@@ -60,9 +61,9 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         Vars memory vars;
         params.userPrivateKey = boundPrivateKey(params.userPrivateKey);
         vars.user = vm.addr(params.userPrivateKey);
-        proxy = proxyRegistry.deployFor(vars.user);
+        vars.proxy = proxyRegistry.deployFor(vars.user);
 
-        checkUsers(vars.user, params.recipient);
+        checkUsers(vars.user, params.recipient, address(vars.proxy));
         vm.assume(params.segments.length != 0);
         params.batchSize = uint64(bound(params.batchSize, 1, 20));
 
@@ -120,7 +121,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
             cancelable: true,
             recipient: params.recipient,
             segments: params.segments,
-            sender: address(proxy),
+            sender: address(vars.proxy),
             startTime: params.range.start,
             totalAmount: vars.dynamicPerStreamAmount
         });
@@ -129,6 +130,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
             batchSingle: vars.batchDynamicSingle,
             permit2Params: getPermit2Params({
                 user: vars.user,
+                proxy_: address(vars.proxy),
                 amount: vars.dynamicTransferAmount,
                 privateKey: params.userPrivateKey
             }),
@@ -140,19 +142,19 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         expectCallToTransferFrom({
             asset: address(asset),
             from: vars.user,
-            to: address(proxy),
+            to: address(vars.proxy),
             amount: vars.dynamicTransferAmount
         });
         expectMultipleCallsToCreateWithMilestones({ count: params.batchSize, params: vars.dynamicParams });
         expectMultipleCallsToTransferFrom({
             asset: address(asset),
             count: params.batchSize,
-            from: address(proxy),
+            from: address(vars.proxy),
             to: address(dynamic),
             amount: vars.dynamicPerStreamAmount
         });
 
-        vars.dynamicResponse = proxy.execute(address(target), vars.dynamicData);
+        vars.dynamicResponse = vars.proxy.execute(address(target), vars.dynamicData);
         vars.actualDynamicStreamIds = abi.decode(vars.dynamicResponse, (uint256[]));
         vars.expectedDynamicStreamIds = getExpectedStreamIds(vars.beforeBatchDynamicNextStreamId, params.batchSize);
         assertEq(vars.actualDynamicStreamIds, vars.expectedDynamicStreamIds);
@@ -165,7 +167,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
             broker: defaults.broker(),
             cancelable: true,
             recipient: params.recipient,
-            sender: address(proxy),
+            sender: address(vars.proxy),
             range: params.range,
             totalAmount: params.linearPerStreamAmount
         });
@@ -174,6 +176,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
             batchSingle: vars.batchLinearSingle,
             permit2Params: getPermit2Params({
                 user: vars.user,
+                proxy_: address(vars.proxy),
                 amount: vars.linearTransferAmount,
                 privateKey: params.userPrivateKey
             }),
@@ -185,19 +188,19 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         expectCallToTransferFrom({
             asset: address(asset),
             from: vars.user,
-            to: address(proxy),
+            to: address(vars.proxy),
             amount: vars.linearTransferAmount
         });
         expectMultipleCallsToCreateWithRange({ count: params.batchSize, params: vars.linearParams });
         expectMultipleCallsToTransferFrom({
             asset: address(asset),
             count: params.batchSize,
-            from: address(proxy),
+            from: address(vars.proxy),
             to: address(linear),
             amount: params.linearPerStreamAmount
         });
 
-        vars.linearResponse = proxy.execute(address(target), vars.linearData);
+        vars.linearResponse = vars.proxy.execute(address(target), vars.linearData);
         vars.actualLinearStreamIds = abi.decode(vars.linearResponse, (uint256[]));
         vars.expectedLinearStreamIds = getExpectedStreamIds(vars.beforeBatchLinearNextStreamId, params.batchSize);
         assertEq(vars.actualLinearStreamIds, vars.expectedLinearStreamIds);
@@ -297,6 +300,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
 
     function getPermit2Params(
         address user,
+        address proxy_,
         uint160 amount,
         uint256 privateKey
     )
@@ -304,7 +308,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         view
         returns (Permit2Params memory permit2Params)
     {
-        (,, uint48 nonce) = permit2.allowance({ user: user, token: address(asset), spender: address(proxy) });
+        (,, uint48 nonce) = permit2.allowance({ user: user, token: address(asset), spender: proxy_ });
         IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
             details: IAllowanceTransfer.PermitDetails({
                 amount: amount,
@@ -313,7 +317,7 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
                 token: address(asset)
             }),
             sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
-            spender: address(proxy)
+            spender: proxy_
         });
         permit2Params = Permit2Params({
             permit2: permit2,
