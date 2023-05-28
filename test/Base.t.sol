@@ -98,15 +98,15 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
         // We deploy from precompiled source if the Foundry profile is "test-optimized".
         if (isTestOptimizedProfile()) {
             archive = ISablierV2Archive(
-                deployCode("optimized-out/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(users.admin.addr))
+                deployCode("out-optimized/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(users.admin.addr))
             );
             plugin = ISablierV2ProxyPlugin(
                 deployCode(
-                    "optimized-out/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(address(archive))
+                    "out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(address(archive))
                 )
             );
             target =
-                ISablierV2ProxyTarget(deployCode("optimized-out/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json"));
+                ISablierV2ProxyTarget(deployCode("out-optimized/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json"));
         }
         // We deploy normally for all other profiles.
         else {
