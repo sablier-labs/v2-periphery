@@ -13,7 +13,6 @@ import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { Defaults } from "../utils/Defaults.sol";
 import { Base_Test } from "../Base.t.sol";
 
-/// @title Fork_Test
 /// @notice Common logic needed by all fork tests.
 abstract contract Fork_Test is Base_Test {
     /*//////////////////////////////////////////////////////////////////////////

@@ -29,7 +29,6 @@ import { Defaults } from "./utils/Defaults.sol";
 import { Events } from "./utils/Events.sol";
 import { Users } from "./utils/Types.sol";
 
-/// @title Base_Test
 /// @notice Base test contract with common logic needed by all tests.
 abstract contract Base_Test is Assertions, Events, StdCheats {
     /*//////////////////////////////////////////////////////////////////////////

@@ -12,7 +12,6 @@ import { Defaults } from "../utils/Defaults.sol";
 import { WETH } from "../mocks/WETH.sol";
 import { Base_Test } from "../Base.t.sol";
 
-/// @title Integration_Test
 /// @notice Common logic needed by all integration tests.
 abstract contract Integration_Test is Base_Test {
     /*//////////////////////////////////////////////////////////////////////////
