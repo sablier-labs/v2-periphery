@@ -11,11 +11,12 @@ import { Batch, LockupDynamic, LockupLinear, Permit2Params } from "src/types/Dat
 
 import { Fork_Test } from "../Fork.t.sol";
 
-contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
+abstract contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev Runs against multiple assets.
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -105,7 +106,11 @@ contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
         });
 
         vm.startPrank(vars.user);
-        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
+
+        // Approve {Permit2} to transfer the asset user's assets.
+        // We use a low-level call to ignore reverts because the asset can have the missing return value bug.
+        (bool success,) = address(asset).call(abi.encodeCall(IERC20.approve, (address(permit2), MAX_UINT256)));
+        success;
 
         vars.beforeBatchDynamicNextStreamId = dynamic.nextStreamId();
         vars.beforeBatchLinearNextStreamId = linear.nextStreamId();

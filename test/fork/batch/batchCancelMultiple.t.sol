@@ -8,11 +8,12 @@ import { Batch } from "src/types/DataTypes.sol";
 
 import { Fork_Test } from "../Fork.t.sol";
 
-contract BatchCreate_Fork_Test is Fork_Test, Fuzzers {
+contract BatchCancelMultiple_Fork_Test is Fork_Test, Fuzzers {
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev Runs against deployed dai only.
     constructor() Fork_Test(dai) { }
 
     /*//////////////////////////////////////////////////////////////////////////

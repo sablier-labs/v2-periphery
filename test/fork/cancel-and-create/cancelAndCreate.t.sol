@@ -11,6 +11,7 @@ contract CancelAndCreate_Fork_Test is Fork_Test, Fuzzers {
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev Runs against deployed dai only.
     constructor() Fork_Test(dai) { }
 
     /*//////////////////////////////////////////////////////////////////////////

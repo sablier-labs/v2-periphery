@@ -13,6 +13,7 @@ contract WrapAndCreate_Fork_Test is Fork_Test, Fuzzers {
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev Runs against the actual wrapped native asset only.
     constructor() Fork_Test(weth) { }
 
     /*//////////////////////////////////////////////////////////////////////////

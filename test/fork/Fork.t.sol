@@ -65,7 +65,7 @@ abstract contract Fork_Test is Base_Test {
         // The protocol does not allow the zero address to interact with it.
         vm.assume(user != address(0) && recipient != address(0));
 
-        // The goal is to not have overlapping users because the token balance tests would fail otherwise.
+        // The goal is to not have overlapping users because the asset balance tests would fail otherwise.
         vm.assume(user != recipient && user != users.broker.addr && recipient != users.broker.addr);
         vm.assume(user != address(proxy_) && recipient != address(proxy_));
         vm.assume(user != address(dynamic) && recipient != address(dynamic));
