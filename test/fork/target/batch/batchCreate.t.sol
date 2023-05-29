@@ -9,7 +9,7 @@ import { PermitSignature } from "permit2-test/utils/PermitSignature.sol";
 
 import { Batch, LockupDynamic, LockupLinear, Permit2Params } from "src/types/DataTypes.sol";
 
-import { Fork_Test } from "../Fork.t.sol";
+import { Fork_Test } from "../../Fork.t.sol";
 
 abstract contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
     /*//////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
 
         vm.startPrank(vars.user);
 
-        // Approve {Permit2} to transfer the asset user's assets.
+        // Approve {Permit2} to transfer the user's assets.
         // We use a low-level call to ignore reverts because the asset can have the missing return value bug.
         (bool success,) = address(asset).call(abi.encodeCall(IERC20.approve, (address(permit2), MAX_UINT256)));
         success;

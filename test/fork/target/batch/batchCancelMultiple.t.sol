@@ -6,7 +6,7 @@ import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Fork_Test } from "../Fork.t.sol";
+import { Fork_Test } from "../../Fork.t.sol";
 
 contract BatchCancelMultiple_Fork_Test is Fork_Test, Fuzzers {
     /*//////////////////////////////////////////////////////////////////////////

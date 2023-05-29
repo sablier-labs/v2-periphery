@@ -4,7 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { Fuzzers } from "@sablier/v2-core-test/utils/Fuzzers.sol";
 
-import { Fork_Test } from "../Fork.t.sol";
+import { Fork_Test } from "../../Fork.t.sol";
 
 contract CancelAndCreate_Fork_Test is Fork_Test, Fuzzers {
     /*//////////////////////////////////////////////////////////////////////////
