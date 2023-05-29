@@ -47,7 +47,7 @@ abstract contract Fork_Test is Base_Test {
         defaults = new Defaults(users, dai, permit2, proxy);
 
         // Deploy V2 Periphery.
-        deployProtocolConditionally();
+        deployPeripheryConditionally();
 
         // Label the contracts.
         labelContracts();

@@ -93,9 +93,10 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     }
 
     /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with `--via-ir`.
-    function deployProtocolConditionally() internal {
-        // We deploy from precompiled source if the Foundry profile is "test-optimized".
-        if (isTestOptimizedProfile()) {
+    function deployPeripheryConditionally() internal {
+        if (!isTestOptimizedProfile()) {
+            (archive, plugin, target) = new DeployPeriphery().run(users.admin.addr);
+        } else {
             archive = ISablierV2Archive(
                 deployCode("out-optimized/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(users.admin.addr))
             );
@@ -107,16 +108,12 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
             target =
                 ISablierV2ProxyTarget(deployCode("out-optimized/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json"));
         }
-        // We deploy normally for all other profiles.
-        else {
-            (archive, plugin, target) = new DeployPeriphery().run(users.admin.addr);
-        }
     }
 
     /// @dev Checks if the Foundry profile is "test-optimized".
-    function isTestOptimizedProfile() internal returns (bool result) {
+    function isTestOptimizedProfile() internal returns (bool) {
         string memory profile = vm.envOr("FOUNDRY_PROFILE", string(""));
-        result = Strings.equal(profile, "test-optimized");
+        return Strings.equal(profile, "test-optimized");
     }
 
     /// @dev Labels the most relevant contracts.
@@ -277,83 +274,83 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
                                        TARGET
     //////////////////////////////////////////////////////////////////////////*/
 
-    function batchCreateWithDeltas() internal returns (uint256[] memory streamIds) {
+    function batchCreateWithDeltas() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
             (dynamic, dai, defaults.batchCreateWithDeltas(), defaults.permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
-        streamIds = abi.decode(response, (uint256[]));
+        return abi.decode(response, (uint256[]));
     }
 
-    function batchCreateWithDurations() internal returns (uint256[] memory streamIds) {
+    function batchCreateWithDurations() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDurations,
             (linear, dai, defaults.batchCreateWithDurations(), defaults.permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
-        streamIds = abi.decode(response, (uint256[]));
+        return abi.decode(response, (uint256[]));
     }
 
-    function batchCreateWithMilestones() internal returns (uint256[] memory streamIds) {
+    function batchCreateWithMilestones() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
             (dynamic, dai, defaults.batchCreateWithMilestones(), defaults.permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
-        streamIds = abi.decode(response, (uint256[]));
+        return abi.decode(response, (uint256[]));
     }
 
-    function batchCreateWithRange() internal returns (uint256[] memory streamIds) {
+    function batchCreateWithRange() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
             (linear, dai, defaults.batchCreateWithRange(), defaults.permit2Params(defaults.TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
-        streamIds = abi.decode(response, (uint256[]));
+        return abi.decode(response, (uint256[]));
     }
 
-    function createWithDeltas() internal returns (uint256 streamId) {
+    function createWithDeltas() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithDeltas,
             (dynamic, defaults.createWithDeltas(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
-        streamId = abi.decode(response, (uint256));
+        return abi.decode(response, (uint256));
     }
 
-    function createWithDurations() internal returns (uint256 streamId) {
+    function createWithDurations() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithDurations,
             (linear, defaults.createWithDurations(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
-        streamId = abi.decode(response, (uint256));
+        return abi.decode(response, (uint256));
     }
 
-    function createWithMilestones() internal returns (uint256 streamId) {
+    function createWithMilestones() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithMilestones,
             (dynamic, defaults.createWithMilestones(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
-        streamId = abi.decode(response, (uint256));
+        return abi.decode(response, (uint256));
     }
 
-    function createWithRange() internal returns (uint256 streamId) {
+    function createWithRange() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithRange,
             (linear, defaults.createWithRange(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
-        streamId = abi.decode(response, (uint256));
+        return abi.decode(response, (uint256));
     }
 
-    function createWithRange(LockupLinear.CreateWithRange memory params) internal returns (uint256 streamId) {
+    function createWithRange(LockupLinear.CreateWithRange memory params) internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithRange, (linear, params, defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
-        streamId = abi.decode(response, (uint256));
+        return abi.decode(response, (uint256));
     }
 }

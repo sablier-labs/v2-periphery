@@ -116,12 +116,12 @@ contract Defaults is PermitSignature {
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    function createWithDeltas() external view returns (LockupDynamic.CreateWithDeltas memory params) {
-        params = createWithDeltas(dai);
+    function createWithDeltas() external view returns (LockupDynamic.CreateWithDeltas memory) {
+        return createWithDeltas(dai);
     }
 
-    function createWithDeltas(IERC20 asset) public view returns (LockupDynamic.CreateWithDeltas memory params) {
-        params = LockupDynamic.CreateWithDeltas({
+    function createWithDeltas(IERC20 asset) public view returns (LockupDynamic.CreateWithDeltas memory) {
+        return LockupDynamic.CreateWithDeltas({
             asset: asset,
             broker: broker(),
             cancelable: true,
@@ -132,16 +132,12 @@ contract Defaults is PermitSignature {
         });
     }
 
-    function createWithMilestones() external view returns (LockupDynamic.CreateWithMilestones memory params) {
-        params = createWithMilestones(dai);
+    function createWithMilestones() external view returns (LockupDynamic.CreateWithMilestones memory) {
+        return createWithMilestones(dai);
     }
 
-    function createWithMilestones(IERC20 asset)
-        public
-        view
-        returns (LockupDynamic.CreateWithMilestones memory params)
-    {
-        params = LockupDynamic.CreateWithMilestones({
+    function createWithMilestones(IERC20 asset) public view returns (LockupDynamic.CreateWithMilestones memory) {
+        return LockupDynamic.CreateWithMilestones({
             asset: asset,
             broker: broker(),
             cancelable: true,
@@ -192,12 +188,12 @@ contract Defaults is PermitSignature {
                              SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
-    function createWithDurations() external view returns (LockupLinear.CreateWithDurations memory params) {
-        params = createWithDurations(dai);
+    function createWithDurations() external view returns (LockupLinear.CreateWithDurations memory) {
+        return createWithDurations(dai);
     }
 
-    function createWithDurations(IERC20 asset) public view returns (LockupLinear.CreateWithDurations memory params) {
-        params = LockupLinear.CreateWithDurations({
+    function createWithDurations(IERC20 asset) public view returns (LockupLinear.CreateWithDurations memory) {
+        return LockupLinear.CreateWithDurations({
             asset: asset,
             broker: broker(),
             durations: durations(),
@@ -208,12 +204,12 @@ contract Defaults is PermitSignature {
         });
     }
 
-    function createWithRange() external view returns (LockupLinear.CreateWithRange memory params) {
-        params = createWithRange(dai);
+    function createWithRange() external view returns (LockupLinear.CreateWithRange memory) {
+        return createWithRange(dai);
     }
 
-    function createWithRange(IERC20 asset) public view returns (LockupLinear.CreateWithRange memory params) {
-        params = LockupLinear.CreateWithRange({
+    function createWithRange(IERC20 asset) public view returns (LockupLinear.CreateWithRange memory) {
+        return LockupLinear.CreateWithRange({
             asset: asset,
             broker: broker(),
             cancelable: true,
