@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import { OnStreamCanceled_Fork_Test } from "../plugin/on-stream-canceled/onStreamCanceled.t.sol";
 import { BatchCreate_Fork_Test } from "../target/batch/batchCreate.t.sol";
