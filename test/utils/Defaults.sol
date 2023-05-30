@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19 <0.9.0;
 
-import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
 import { ud2x18, UD60x18 } from "@sablier/v2-core/types/Math.sol";
 import { Broker, Lockup, LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
