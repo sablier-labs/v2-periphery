@@ -1,4 +1,22 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  '@openzeppelin/contracts':
+    specifier: 4.9.0
+    version: 4.9.0
+  '@prb/math':
+    specifier: 4.0.1
+    version: 4.0.1
+  '@prb/proxy':
+    specifier: 4.0.0-beta.5
+    version: 4.0.0-beta.5
+  permit2:
+    specifier: github:sablier-labs/permit2#174f8b707146eb29cb41c61c1cacbae8911ff800
+    version: github.com/sablier-labs/permit2/174f8b707146eb29cb41c61c1cacbae8911ff800
 
 devDependencies:
   prettier:
@@ -30,6 +48,18 @@ packages:
       chalk: 2.4.2
       js-tokens: 4.0.0
     dev: true
+
+  /@openzeppelin/contracts@4.9.0:
+    resolution: {integrity: sha512-DUP74AFGKlic2sQb/CmgrN2aUPMFGxRrmCTUxLHsiU2RzwWqVuMPZBxiAyvlff6Pea77uylAX6B5x9W6evEbhA==}
+    dev: false
+
+  /@prb/math@4.0.1:
+    resolution: {integrity: sha512-ANTz2KMV+dMdZ57mWgDTR6jZo5uQzUczQEHCxd7CvJZZ9yafnfPhUUILHvvigIOZ85fZbTPVkC8YoRG1z5Qf7g==}
+    dev: false
+
+  /@prb/proxy@4.0.0-beta.5:
+    resolution: {integrity: sha512-ARRw4Fl6E+arvC6HT/vTLsbdeJxPSZ3apa3TweHybuL3VuPJK4YRoN4yOJ6ibDhCOpn9jh7NDLzrXhgT9edv4g==}
+    dev: false
 
   /@solidity-parser/parser@0.16.0:
     resolution: {integrity: sha512-ESipEcHyRHg4Np4SqBCfcXwyxxna1DgFVz69bgpLV8vzl/NP1DtcKsJ4dJZXWQhY/Z4J2LeKBiOkOVZn9ct33Q==}
@@ -438,3 +468,9 @@ packages:
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
     dev: true
+
+  github.com/sablier-labs/permit2/174f8b707146eb29cb41c61c1cacbae8911ff800:
+    resolution: {tarball: https://codeload.github.com/sablier-labs/permit2/tar.gz/174f8b707146eb29cb41c61c1cacbae8911ff800}
+    name: permit2#174f8b707146eb29cb41c61c1cacbae8911ff800
+    version: 0.0.0
+    dev: false
