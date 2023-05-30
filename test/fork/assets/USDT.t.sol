@@ -8,6 +8,6 @@ import { BatchCreate_Fork_Test } from "../target/batch/batchCreate.t.sol";
 
 IERC20 constant asset = IERC20(0x509Ee0d083DdF8AC028f2a56731412edD63223B9);
 
-contract USDT_Fork_Test is BatchCreate_Fork_Test(asset) { }
+contract USDT_Target_Fork_Test is BatchCreate_Fork_Test(asset) { }
 
 contract USDT_Plugin_Fork_Test is OnStreamCanceled_Fork_Test(asset) { }
