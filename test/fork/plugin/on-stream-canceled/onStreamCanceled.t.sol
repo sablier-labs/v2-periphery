@@ -35,7 +35,7 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, Fuzzers, PermitSignat
                                    TEST FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_ForkFuzz_OnStreamCanceled(uint256 balanceAmount) external {
+    function testForkFuzz_OnStreamCanceled(uint256 balanceAmount) external {
         balanceAmount = _bound(balanceAmount, defaults.PER_STREAM_AMOUNT(), MAX_UINT128 - 1);
 
         deal({ token: address(asset), to: users.alice.addr, give: balanceAmount });

@@ -20,7 +20,7 @@ contract BatchCancelMultiple_Fork_Test is Fork_Test, Fuzzers {
                                    TEST FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_ForkFuzz_BatchCancelMultiple(
+    function testForkFuzz_BatchCancelMultiple(
         uint256 batchCancelSize,
         uint256 dynamicBatchFrom,
         uint256 linearBatchFrom

@@ -20,7 +20,7 @@ contract WrapAndCreate_Fork_Test is Fork_Test, Fuzzers {
                                    TEST FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function test_ForkFuzz_WrapAndCreate(uint256 etherAmount) external {
+    function testForkFuzz_WrapAndCreate(uint256 etherAmount) external {
         // Bound the ether amount so that Alice has enough ether to create two streams.
         etherAmount = _bound(etherAmount, 1, users.alice.addr.balance / 2);
 
