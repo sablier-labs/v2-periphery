@@ -17,11 +17,13 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 import { Strings } from "@openzeppelin/utils/Strings.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
-import { DeployPeriphery } from "script/DeployPeriphery.s.sol";
 import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
+import { SablierV2Archive } from "src/SablierV2Archive.sol";
+import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
+import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
 import { Permit2Params } from "src/types/DataTypes.sol";
 
 import { Assertions } from "./utils/Assertions.sol";
@@ -95,19 +97,33 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with `--via-ir`.
     function deployPeripheryConditionally() internal {
         if (!isTestOptimizedProfile()) {
-            (archive, plugin, target) = new DeployPeriphery().run(users.admin.addr);
+            archive = new SablierV2Archive(users.admin.addr);
+            plugin = new SablierV2ProxyPlugin(archive);
+            target = new SablierV2ProxyTarget();
         } else {
-            archive = ISablierV2Archive(
-                deployCode("out-optimized/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(users.admin.addr))
-            );
-            plugin = ISablierV2ProxyPlugin(
-                deployCode(
-                    "out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(address(archive))
-                )
-            );
-            target =
-                ISablierV2ProxyTarget(deployCode("out-optimized/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json"));
+            archive = deployPrecompiledArchive(users.admin.addr);
+            plugin = deployPrecompiledPlugin(archive);
+            target = deployPrecompiledTarget();
         }
+    }
+
+    /// @dev Deploys {SablierV2Archive} from a source precompiled with `--via-ir`.
+    function deployPrecompiledArchive(address initialAdmin) internal returns (ISablierV2Archive) {
+        return ISablierV2Archive(
+            deployCode("out-optimized/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(initialAdmin))
+        );
+    }
+
+    /// @dev Deploys {SablierV2ProxyPlugin} from a source precompiled with `--via-ir`.
+    function deployPrecompiledPlugin(ISablierV2Archive archive_) internal returns (ISablierV2ProxyPlugin) {
+        return ISablierV2ProxyPlugin(
+            deployCode("out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(archive_))
+        );
+    }
+
+    /// @dev Deploys {SablierV2ProxyTarget} from a source precompiled with `--via-ir`.
+    function deployPrecompiledTarget() internal returns (ISablierV2ProxyTarget) {
+        return ISablierV2ProxyTarget(deployCode("out-optimized/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json"));
     }
 
     /// @dev Checks if the Foundry profile is "test-optimized".
