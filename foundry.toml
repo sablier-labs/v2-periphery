@@ -12,7 +12,7 @@
   ]
   libs = ["lib"]
   optimizer = true
-  optimizer_runs = 5_000
+  optimizer_runs = 10_000
   out = "out"
   script = "script"
   solc = "0.8.19"
