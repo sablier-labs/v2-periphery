@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { Fuzzers } from "@sablier/v2-core-test/utils/Fuzzers.sol";
-
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { LockupDynamic } from "src/types/DataTypes.sol";
 
 import { Fork_Test } from "../../Fork.t.sol";
 
-contract WrapAndCreate_Fork_Test is Fork_Test, Fuzzers {
+contract WrapAndCreate_Fork_Test is Fork_Test {
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/

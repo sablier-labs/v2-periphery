@@ -2,7 +2,6 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
-import { Fuzzers } from "@sablier/v2-core-test/utils/Fuzzers.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { PermitSignature } from "permit2-test/utils/PermitSignature.sol";
 
@@ -10,7 +9,7 @@ import { Fork_Test } from "../../Fork.t.sol";
 
 import { LockupLinear, Permit2Params } from "src/types/DataTypes.sol";
 
-abstract contract OnStreamCanceled_Fork_Test is Fork_Test, Fuzzers, PermitSignature {
+abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
@@ -36,7 +35,7 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, Fuzzers, PermitSignat
     //////////////////////////////////////////////////////////////////////////*/
 
     function testForkFuzz_OnStreamCanceled(uint256 balanceAmount) external {
-        balanceAmount = _bound(balanceAmount, defaults.PER_STREAM_AMOUNT(), MAX_UINT128 - 1);
+        balanceAmount = _bound(balanceAmount, defaults.PER_STREAM_AMOUNT(), MAX_UINT256 - 1);
 
         deal({ token: address(asset), to: users.alice.addr, give: balanceAmount });
 

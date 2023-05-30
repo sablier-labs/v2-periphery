@@ -9,12 +9,11 @@ import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
-import { ISablierV2NFTDescriptor } from "@sablier/v2-core/interfaces/ISablierV2NFTDescriptor.sol";
-import { SablierV2NFTDescriptor } from "@sablier/v2-core/SablierV2NFTDescriptor.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Strings } from "@openzeppelin/utils/Strings.sol";
+import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
@@ -32,7 +31,7 @@ import { Events } from "./utils/Events.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
-abstract contract Base_Test is Assertions, Events, StdCheats {
+abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
@@ -48,7 +47,6 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     Defaults internal defaults;
     ISablierV2LockupDynamic internal dynamic;
     ISablierV2LockupLinear internal linear;
-    ISablierV2NFTDescriptor internal nftDescriptor;
     IAllowanceTransfer internal permit2;
     ISablierV2ProxyPlugin internal plugin;
     IPRBProxy internal proxy;
@@ -64,7 +62,6 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     function setUp() public virtual {
         // Deploy the base test contracts.
         dai = new ERC20("DAI Stablecoin", "DAI");
-        nftDescriptor = new SablierV2NFTDescriptor();
 
         // Create users for testing.
         users.alice = createUser("Alice");
@@ -124,12 +121,6 @@ abstract contract Base_Test is Assertions, Events, StdCheats {
     /// @dev Deploys {SablierV2ProxyTarget} from a source precompiled with `--via-ir`.
     function deployPrecompiledTarget() internal returns (ISablierV2ProxyTarget) {
         return ISablierV2ProxyTarget(deployCode("out-optimized/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json"));
-    }
-
-    /// @dev Checks if the Foundry profile is "test-optimized".
-    function isTestOptimizedProfile() internal returns (bool) {
-        string memory profile = vm.envOr("FOUNDRY_PROFILE", string(""));
-        return Strings.equal(profile, "test-optimized");
     }
 
     /// @dev Labels the most relevant contracts.

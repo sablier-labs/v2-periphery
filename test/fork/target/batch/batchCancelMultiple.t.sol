@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { Fuzzers } from "@sablier/v2-core-test/utils/Fuzzers.sol";
 import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
 
 import { Fork_Test } from "../../Fork.t.sol";
 
-contract BatchCancelMultiple_Fork_Test is Fork_Test, Fuzzers {
+contract BatchCancelMultiple_Fork_Test is Fork_Test {
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
