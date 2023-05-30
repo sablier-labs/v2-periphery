@@ -35,7 +35,7 @@ abstract contract Fork_Test is Base_Test {
 
     function setUp() public virtual override {
         // Fork the Goerli testnet.
-        vm.createSelectFork({ blockNumber: 9_056_572, urlOrAlias: "goerli" });
+        vm.createSelectFork({ blockNumber: 9_091_600, urlOrAlias: "goerli" });
 
         // The base is set up after the fork is selected so that the base test contracts are deployed on the fork.
         Base_Test.setUp();
@@ -78,10 +78,10 @@ abstract contract Fork_Test is Base_Test {
         weth = IWrappedNativeAsset(0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6);
 
         // Load the proxy annex.
-        proxyAnnex = IPRBProxyAnnex(0x842b72D8521E9a09D229434e4E9517DB1a4fAA71);
+        proxyAnnex = IPRBProxyAnnex(0x0254C4467cBbdbe8d5E01e68de0DF7b20dD2A167);
 
         // Load the proxy registry.
-        proxyRegistry = IPRBProxyRegistry(0x8afE5fE3BAfA1FbC941a50b630AA966F3A7815A0);
+        proxyRegistry = IPRBProxyRegistry(0xa87bc4C1Bc54E1C1B28d2dD942A094A6B665B8C9);
 
         // Deploy a proxy for Alice.
         proxy = proxyRegistry.deployFor(users.alice.addr);
