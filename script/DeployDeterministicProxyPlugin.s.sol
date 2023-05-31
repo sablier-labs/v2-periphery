@@ -11,7 +11,15 @@ import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 contract DeployDeterministicProxyPlugin is BaseScript {
     /// @dev The presence of the salt instructs Forge to deploy contracts via this deterministic CREATE2 factory:
     /// https://github.com/Arachnid/deterministic-deployment-proxy
-    function run(ISablierV2Archive archive) public virtual broadcaster returns (SablierV2ProxyPlugin plugin) {
-        plugin = new SablierV2ProxyPlugin{ salt: ZERO_SALT }(archive);
+    function run(
+        uint256 create2Salt,
+        ISablierV2Archive archive
+    )
+        public
+        virtual
+        broadcaster
+        returns (SablierV2ProxyPlugin plugin)
+    {
+        plugin = new SablierV2ProxyPlugin{ salt: bytes32(create2Salt) }(archive);
     }
 }
