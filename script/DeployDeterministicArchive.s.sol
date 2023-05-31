@@ -10,7 +10,15 @@ import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 contract DeployDeterministicArchive is BaseScript {
     /// @dev The presence of the salt instructs Forge to deploy contracts via this deterministic CREATE2 factory:
     /// https://github.com/Arachnid/deterministic-deployment-proxy
-    function run(address initialAdmin) public virtual broadcaster returns (SablierV2Archive archive) {
-        archive = new SablierV2Archive{ salt: ZERO_SALT }(initialAdmin);
+    function run(
+        uint256 create2Salt,
+        address initialAdmin
+    )
+        public
+        virtual
+        broadcaster
+        returns (SablierV2Archive archive)
+    {
+        archive = new SablierV2Archive{ salt: bytes32(create2Salt) }(initialAdmin);
     }
 }
