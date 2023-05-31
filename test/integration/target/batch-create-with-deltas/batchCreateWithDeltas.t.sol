@@ -11,7 +11,7 @@ contract BatchCreateWithDeltas_Integration_Test is Integration_Test {
         Batch.CreateWithDeltas[] memory batch;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithDeltas(dynamic, asset, batch, permit2Params);
+        target.batchCreateWithDeltas(lockupDynamic, asset, batch, permit2Params);
     }
 
     modifier whenDelegateCalled() {
@@ -21,7 +21,7 @@ contract BatchCreateWithDeltas_Integration_Test is Integration_Test {
     function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
         Batch.CreateWithDeltas[] memory batch = new Batch.CreateWithDeltas[](0);
         Permit2Params memory permit2Params;
-        bytes memory data = abi.encodeCall(target.batchCreateWithDeltas, (dynamic, asset, batch, permit2Params));
+        bytes memory data = abi.encodeCall(target.batchCreateWithDeltas, (lockupDynamic, asset, batch, permit2Params));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);
     }
@@ -38,7 +38,7 @@ contract BatchCreateWithDeltas_Integration_Test is Integration_Test {
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),
             from: address(proxy),
-            to: address(dynamic),
+            to: address(lockupDynamic),
             amount: defaults.PER_STREAM_AMOUNT()
         });
 

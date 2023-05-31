@@ -46,8 +46,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     ISablierV2Archive internal archive;
     IERC20 internal asset;
     Defaults internal defaults;
-    ISablierV2LockupDynamic internal dynamic;
-    ISablierV2LockupLinear internal linear;
+    ISablierV2LockupDynamic internal lockupDynamic;
+    ISablierV2LockupLinear internal lockupLinear;
     IAllowanceTransfer internal permit2;
     ISablierV2ProxyPlugin internal plugin;
     IPRBProxy internal proxy;
@@ -116,8 +116,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         vm.label({ account: address(archive), newLabel: "Archive" });
         vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
-        vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
-        vm.label({ account: address(linear), newLabel: "LockupLinear" });
+        vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
+        vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
         vm.label({ account: address(permit2), newLabel: "Permit2" });
         vm.label({ account: address(plugin), newLabel: "Proxy Plugin" });
         vm.label({ account: address(proxy), newLabel: "Proxy" });
@@ -166,7 +166,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     /// @dev Expects a call to {ISablierV2LockupDynamic.createWithDeltas}.
     function expectCallToCreateWithDeltas(LockupDynamic.CreateWithDeltas memory params) internal {
         vm.expectCall({
-            callee: address(dynamic),
+            callee: address(lockupDynamic),
             data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
         });
     }
@@ -174,7 +174,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     /// @dev Expects a call to {ISablierV2LockupLinear.createWithDurations}.
     function expectCallToCreateWithDurations(LockupLinear.CreateWithDurations memory params) internal {
         vm.expectCall({
-            callee: address(linear),
+            callee: address(lockupLinear),
             data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
         });
     }
@@ -182,14 +182,17 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     /// @dev Expects a call to {ISablierV2LockupDynamic.createWithMilestones}.
     function expectCallToCreateWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal {
         vm.expectCall({
-            callee: address(dynamic),
+            callee: address(lockupDynamic),
             data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
         });
     }
 
     /// @dev Expects a call to {ISablierV2LockupLinear.createWithRange}.
     function expectCallToCreateWithRange(LockupLinear.CreateWithRange memory params) internal {
-        vm.expectCall({ callee: address(linear), data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params)) });
+        vm.expectCall({
+            callee: address(lockupLinear),
+            data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
+        });
     }
 
     /// @dev Expects a call to {IERC20.transfer}.
@@ -220,7 +223,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         internal
     {
         vm.expectCall({
-            callee: address(dynamic),
+            callee: address(lockupDynamic),
             count: count,
             data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
         });
@@ -234,7 +237,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         internal
     {
         vm.expectCall({
-            callee: address(linear),
+            callee: address(lockupLinear),
             count: count,
             data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
         });
@@ -248,7 +251,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         internal
     {
         vm.expectCall({
-            callee: address(dynamic),
+            callee: address(lockupDynamic),
             count: count,
             data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
         });
@@ -257,7 +260,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithRange}.
     function expectMultipleCallsToCreateWithRange(uint64 count, LockupLinear.CreateWithRange memory params) internal {
         vm.expectCall({
-            callee: address(linear),
+            callee: address(lockupLinear),
             count: count,
             data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
         });
@@ -302,7 +305,12 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function batchCreateWithDeltas() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
-            (dynamic, asset, defaults.batchCreateWithDeltas(), defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT()))
+            (
+                lockupDynamic,
+                asset,
+                defaults.batchCreateWithDeltas(),
+                defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT())
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -312,7 +320,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDurations,
             (
-                linear,
+                lockupLinear,
                 asset,
                 defaults.batchCreateWithDurations(),
                 defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT())
@@ -326,7 +334,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
             (
-                dynamic,
+                lockupDynamic,
                 asset,
                 defaults.batchCreateWithMilestones(),
                 defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT())
@@ -340,7 +348,12 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         uint128 totalTransferAmount = uint128(batchSize) * defaults.PER_STREAM_AMOUNT();
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (dynamic, asset, defaults.batchCreateWithMilestones(batchSize), defaults.permit2Params(totalTransferAmount))
+            (
+                lockupDynamic,
+                asset,
+                defaults.batchCreateWithMilestones(batchSize),
+                defaults.permit2Params(totalTransferAmount)
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -349,7 +362,12 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function batchCreateWithRange() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, asset, defaults.batchCreateWithRange(), defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT()))
+            (
+                lockupLinear,
+                asset,
+                defaults.batchCreateWithRange(),
+                defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT())
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -359,7 +377,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         uint128 totalTransferAmount = uint128(batchSize) * defaults.PER_STREAM_AMOUNT();
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, asset, defaults.batchCreateWithRange(batchSize), defaults.permit2Params(totalTransferAmount))
+            (lockupLinear, asset, defaults.batchCreateWithRange(batchSize), defaults.permit2Params(totalTransferAmount))
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -368,7 +386,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function createWithDeltas() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithDeltas,
-            (dynamic, defaults.createWithDeltas(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            (lockupDynamic, defaults.createWithDeltas(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256));
@@ -377,7 +395,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function createWithDurations() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithDurations,
-            (linear, defaults.createWithDurations(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            (lockupLinear, defaults.createWithDurations(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256));
@@ -386,7 +404,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function createWithMilestones() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithMilestones,
-            (dynamic, defaults.createWithMilestones(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            (lockupDynamic, defaults.createWithMilestones(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256));
@@ -395,7 +413,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function createWithRange() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithRange,
-            (linear, defaults.createWithRange(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            (lockupLinear, defaults.createWithRange(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256));
@@ -403,7 +421,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
 
     function createWithRange(LockupLinear.CreateWithRange memory params) internal returns (uint256) {
         bytes memory data = abi.encodeCall(
-            target.createWithRange, (linear, params, defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            target.createWithRange, (lockupLinear, params, defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256));

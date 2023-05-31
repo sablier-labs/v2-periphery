@@ -64,6 +64,6 @@ abstract contract Integration_Test is Base_Test {
         permit2 = IAllowanceTransfer(new DeployPermit2().run());
 
         // Deploy V2 Core from a bytecode precompiled with `--via-ir`.
-        (, dynamic, linear,) = new V2CorePrecompiles().deployCore(users.admin.addr);
+        (, lockupDynamic, lockupLinear,) = new V2CorePrecompiles().deployCore(users.admin.addr);
     }
 }

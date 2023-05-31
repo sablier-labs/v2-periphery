@@ -25,7 +25,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
     function test_RevertWhen_WrapAndCreateWithDeltas_NotDelegateCalled() external {
         LockupDynamic.CreateWithDeltas memory createParams = defaults.createWithDeltas(weth);
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.wrapAndCreateWithDeltas(dynamic, createParams);
+        target.wrapAndCreateWithDeltas(lockupDynamic, createParams);
     }
 
     function test_WrapAndCreateWithDeltas() external whenDelegateCalled {
@@ -34,17 +34,18 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         expectCallToTransferFrom({
             asset_: address(weth),
             from: address(proxy),
-            to: address(dynamic),
+            to: address(lockupDynamic),
             amount: defaults.ETHER_AMOUNT()
         });
 
         // ABI encode the parameters and call the function via the proxy.
-        bytes memory data = abi.encodeCall(target.wrapAndCreateWithDeltas, (dynamic, defaults.createWithDeltas(weth)));
+        bytes memory data =
+            abi.encodeCall(target.wrapAndCreateWithDeltas, (lockupDynamic, defaults.createWithDeltas(weth)));
         bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
-        uint256 expectedStreamId = dynamic.nextStreamId() - 1;
+        uint256 expectedStreamId = lockupDynamic.nextStreamId() - 1;
         assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
 
@@ -55,7 +56,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
     function test_RevertWhen_WrapAndCreateWithDurations_NotDelegateCalled() external {
         LockupLinear.CreateWithDurations memory createParams = defaults.createWithDurations(weth);
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.wrapAndCreateWithDurations(linear, createParams);
+        target.wrapAndCreateWithDurations(lockupLinear, createParams);
     }
 
     function test_WrapAndCreateWithDurations() external whenDelegateCalled {
@@ -64,18 +65,18 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         expectCallToTransferFrom({
             asset_: address(weth),
             from: address(proxy),
-            to: address(linear),
+            to: address(lockupLinear),
             amount: defaults.ETHER_AMOUNT()
         });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data =
-            abi.encodeCall(target.wrapAndCreateWithDurations, (linear, defaults.createWithDurations(weth)));
+            abi.encodeCall(target.wrapAndCreateWithDurations, (lockupLinear, defaults.createWithDurations(weth)));
         bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
-        uint256 expectedStreamId = linear.nextStreamId() - 1;
+        uint256 expectedStreamId = lockupLinear.nextStreamId() - 1;
         assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
 
@@ -86,7 +87,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
     function test_RevertWhen_WrapAndCreateWithMilestones_NotDelegateCalled() external {
         LockupDynamic.CreateWithMilestones memory createParams = defaults.createWithMilestones(weth);
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.wrapAndCreateWithMilestones(dynamic, createParams);
+        target.wrapAndCreateWithMilestones(lockupDynamic, createParams);
     }
 
     function test_WrapAndCreateWithMilestones() external whenDelegateCalled {
@@ -95,18 +96,18 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         expectCallToTransferFrom({
             asset_: address(weth),
             from: address(proxy),
-            to: address(dynamic),
+            to: address(lockupDynamic),
             amount: defaults.ETHER_AMOUNT()
         });
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data =
-            abi.encodeCall(target.wrapAndCreateWithMilestones, (dynamic, defaults.createWithMilestones(weth)));
+            abi.encodeCall(target.wrapAndCreateWithMilestones, (lockupDynamic, defaults.createWithMilestones(weth)));
         bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
-        uint256 expectedStreamId = dynamic.nextStreamId() - 1;
+        uint256 expectedStreamId = lockupDynamic.nextStreamId() - 1;
         assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
     /*//////////////////////////////////////////////////////////////////////////
@@ -116,7 +117,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
     function test_RevertWhen_WrapAndCreateWithRange_NotDelegateCalled() external {
         LockupLinear.CreateWithDurations memory createParams = defaults.createWithDurations(weth);
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.wrapAndCreateWithDurations(linear, createParams);
+        target.wrapAndCreateWithDurations(lockupLinear, createParams);
     }
 
     function test_WrapAndCreateWithRange() external whenDelegateCalled {
@@ -125,17 +126,18 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         expectCallToTransferFrom({
             asset_: address(weth),
             from: address(proxy),
-            to: address(linear),
+            to: address(lockupLinear),
             amount: defaults.ETHER_AMOUNT()
         });
 
         // ABI encode the parameters and call the function via the proxy.
-        bytes memory data = abi.encodeCall(target.wrapAndCreateWithRange, (linear, defaults.createWithRange(weth)));
+        bytes memory data =
+            abi.encodeCall(target.wrapAndCreateWithRange, (lockupLinear, defaults.createWithRange(weth)));
         bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
-        uint256 expectedStreamId = linear.nextStreamId() - 1;
+        uint256 expectedStreamId = lockupLinear.nextStreamId() - 1;
         assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
 }

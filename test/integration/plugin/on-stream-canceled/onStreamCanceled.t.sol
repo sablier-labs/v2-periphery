@@ -16,9 +16,9 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         installPlugin();
         streamId = createWithRange();
 
-        // Lists the linear contract in the archive.
+        // Lists the lockupLinear contract in the archive.
         changePrank({ msgSender: users.admin.addr });
-        archive.list(address(linear));
+        archive.list(address(lockupLinear));
         changePrank({ msgSender: users.alice.addr });
     }
 
@@ -67,7 +67,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() });
 
         // Cancel the stream and trigger the plugin.
-        linear.cancel(streamId);
+        lockupLinear.cancel(streamId);
 
         // Assert that the balances match.
         uint256 actualBalance = asset.balanceOf(users.alice.addr);

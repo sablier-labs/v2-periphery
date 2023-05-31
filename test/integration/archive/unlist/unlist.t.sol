@@ -9,7 +9,7 @@ contract Unlist_Integration_Test is Integration_Test {
     function test_RevertWhen_CallerNotAdmin() external {
         changePrank({ msgSender: users.eve.addr });
         vm.expectRevert(abi.encodeWithSelector(Errors.CallerNotAdmin.selector, users.admin.addr, users.eve.addr));
-        archive.unlist(address(linear));
+        archive.unlist(address(lockupLinear));
     }
 
     modifier callerAdmin() {
@@ -18,7 +18,7 @@ contract Unlist_Integration_Test is Integration_Test {
     }
 
     function test_Unlist_AddressNotListed() external callerAdmin {
-        bool isListed = archive.isListed(address(linear));
+        bool isListed = archive.isListed(address(lockupLinear));
         assertFalse(isListed, "isListed");
     }
 
@@ -27,9 +27,9 @@ contract Unlist_Integration_Test is Integration_Test {
     }
 
     function test_Unlist() external callerAdmin addressListed {
-        archive.list(address(linear));
-        archive.unlist(address(linear));
-        bool isListed = archive.isListed(address(linear));
+        archive.list(address(lockupLinear));
+        archive.unlist(address(lockupLinear));
+        bool isListed = archive.isListed(address(lockupLinear));
         assertFalse(isListed, "isListed");
     }
 }

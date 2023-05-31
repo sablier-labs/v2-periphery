@@ -142,7 +142,7 @@ contract SablierV2ProxyTarget is
 
     /// @inheritdoc ISablierV2ProxyTarget
     function batchCreateWithDurations(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithDurations[] calldata batch,
         Permit2Params calldata permit2Params
@@ -170,13 +170,13 @@ contract SablierV2ProxyTarget is
         }
 
         // Transfers the assets to the proxy and approve the Sablier contract to spend them.
-        _transferAndApprove(address(linear), asset, transferAmount, permit2Params);
+        _transferAndApprove(address(lockupLinear), asset, transferAmount, permit2Params);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
         for (i = 0; i < batchSize;) {
             // Create the stream.
-            streamIds[i] = linear.createWithDurations(
+            streamIds[i] = lockupLinear.createWithDurations(
                 LockupLinear.CreateWithDurations({
                     asset: asset,
                     broker: batch[i].broker,
@@ -197,7 +197,7 @@ contract SablierV2ProxyTarget is
 
     /// @inheritdoc ISablierV2ProxyTarget
     function batchCreateWithRange(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithRange[] calldata batch,
         Permit2Params calldata permit2Params
@@ -225,13 +225,13 @@ contract SablierV2ProxyTarget is
         }
 
         // Transfers the assets to the proxy and approve the Sablier contract to spend them.
-        _transferAndApprove(address(linear), asset, transferAmount, permit2Params);
+        _transferAndApprove(address(lockupLinear), asset, transferAmount, permit2Params);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
         for (i = 0; i < batchSize;) {
             // Create the stream.
-            streamIds[i] = linear.createWithRange(
+            streamIds[i] = lockupLinear.createWithRange(
                 LockupLinear.CreateWithRange({
                     asset: asset,
                     broker: batch[i].broker,
@@ -253,8 +253,8 @@ contract SablierV2ProxyTarget is
     /// @inheritdoc ISablierV2ProxyTarget
     function cancelAndCreateWithDurations(
         ISablierV2Lockup lockup,
-        ISablierV2LockupLinear linear,
         uint256 streamId,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations calldata createParams,
         Permit2Params calldata permit2Params
     )
@@ -264,14 +264,14 @@ contract SablierV2ProxyTarget is
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
-        newStreamId = createWithDurations(linear, createParams, permit2Params);
+        newStreamId = createWithDurations(lockupLinear, createParams, permit2Params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function cancelAndCreateWithRange(
         ISablierV2Lockup lockup,
-        ISablierV2LockupLinear linear,
         uint256 streamId,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange calldata createParams,
         Permit2Params calldata permit2Params
     )
@@ -281,12 +281,12 @@ contract SablierV2ProxyTarget is
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
-        newStreamId = createWithRange(linear, createParams, permit2Params);
+        newStreamId = createWithRange(lockupLinear, createParams, permit2Params);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithDurations(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations calldata createParams,
         Permit2Params calldata permit2Params
     )
@@ -295,13 +295,13 @@ contract SablierV2ProxyTarget is
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(linear), createParams.asset, createParams.totalAmount, permit2Params);
-        streamId = linear.createWithDurations(createParams);
+        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, permit2Params);
+        streamId = lockupLinear.createWithDurations(createParams);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithRange(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange calldata createParams,
         Permit2Params calldata permit2Params
     )
@@ -310,13 +310,13 @@ contract SablierV2ProxyTarget is
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(linear), createParams.asset, createParams.totalAmount, permit2Params);
-        streamId = linear.createWithRange(createParams);
+        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, permit2Params);
+        streamId = lockupLinear.createWithRange(createParams);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function wrapAndCreateWithDurations(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations memory createParams
     )
         external
@@ -332,15 +332,15 @@ contract SablierV2ProxyTarget is
         IWrappedNativeAsset(address(createParams.asset)).deposit{ value: msg.value }();
 
         // Approve the Sablier contract to spend funds.
-        _approve(address(linear), createParams.asset, createParams.totalAmount);
+        _approve(address(lockupLinear), createParams.asset, createParams.totalAmount);
 
         // Create the stream.
-        streamId = linear.createWithDurations(createParams);
+        streamId = lockupLinear.createWithDurations(createParams);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function wrapAndCreateWithRange(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange memory createParams
     )
         external
@@ -356,10 +356,10 @@ contract SablierV2ProxyTarget is
         IWrappedNativeAsset(address(createParams.asset)).deposit{ value: msg.value }();
 
         // Approve the Sablier contract to spend funds.
-        _approve(address(linear), createParams.asset, createParams.totalAmount);
+        _approve(address(lockupLinear), createParams.asset, createParams.totalAmount);
 
         // Create the stream.
-        streamId = linear.createWithRange(createParams);
+        streamId = lockupLinear.createWithRange(createParams);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -480,8 +480,8 @@ contract SablierV2ProxyTarget is
     /// @inheritdoc ISablierV2ProxyTarget
     function cancelAndCreateWithDeltas(
         ISablierV2Lockup lockup,
-        ISablierV2LockupDynamic dynamic,
         uint256 streamId,
+        ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithDeltas calldata createParams,
         Permit2Params calldata permit2Params
     )
@@ -497,8 +497,8 @@ contract SablierV2ProxyTarget is
     /// @inheritdoc ISablierV2ProxyTarget
     function cancelAndCreateWithMilestones(
         ISablierV2Lockup lockup,
-        ISablierV2LockupDynamic dynamic,
         uint256 streamId,
+        ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithMilestones calldata createParams,
         Permit2Params calldata permit2Params
     )

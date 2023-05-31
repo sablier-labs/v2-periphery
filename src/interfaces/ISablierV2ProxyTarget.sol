@@ -11,7 +11,8 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 import { Batch, Permit2Params } from "../types/DataTypes.sol";
 
 /// @title ISablierV2ProxyTarget
-/// @notice Proxy target contract with stateless scripts for interacting with Sablier V2 Core.
+/// @notice Proxy target with stateless scripts for interacting with Sablier V2 Core, designed to be used
+/// by stream senders.
 /// @dev Intended for use with an instance of PRBProxy through delegate calls. Any standard calls will be reverted.
 interface ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
@@ -68,21 +69,22 @@ interface ISablierV2ProxyTarget {
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Creates a batch of linear streams with durations. Assets are transferred to the proxy via Permit2.
+    /// @notice Creates a batch of Lockup Linear streams using `createWithDurations`. Assets are transferred to the
+    /// proxy via Permit2.
     ///
     /// @dev Requirements:
     /// - Must be delegate called.
     /// - There must be at least one element in `batch`.
     /// - All requirements from {ISablierV2LockupLinear.createWithDurations} must be met for each stream.
     ///
-    /// @param linear The address of the {SablierV2LockupLinear} contract.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithDurations}.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithDurations(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithDurations[] calldata batch,
         Permit2Params calldata permit2Params
@@ -90,21 +92,22 @@ interface ISablierV2ProxyTarget {
         external
         returns (uint256[] memory streamIds);
 
-    /// @notice Creates a batch of linear streams with range. Assets are transferred to the proxy via Permit2.
+    /// @notice Creates a batch of Lockup Linear streams using `createWithRange`. Assets are transferred to the proxy
+    /// via Permit2.
     ///
     /// @dev Requirements:
     /// - Must be delegate called.
     /// - There must be at least one element in `batch`.
     /// - All requirements from {ISablierV2LockupLinear.createWithRange} must be met for each stream.
     ///
-    /// @param linear The address of the {SablierV2LockupLinear} contract.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithRange}.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithRange(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithRange[] calldata batch,
         Permit2Params calldata permit2Params
@@ -112,48 +115,50 @@ interface ISablierV2ProxyTarget {
         external
         returns (uint256[] memory streamIds);
 
-    /// @notice Cancels a stream and creates a new one with durations. Assets are transferred to the proxy via Permit2.
+    /// @notice Cancels a Lockup stream and creates a new Lockup Linear stream using `createWithDurations`. Assets are
+    /// transferred to the proxy via Permit2.
     ///
     /// @dev Notes:
-    /// - `streamId` can reference either a linear or a dynamic stream.
+    /// - `streamId` can reference either a Lockup Linear or a Lockup Dynamic stream.
     /// - See {ISablierV2Lockup.cancel} and {ISablierV2LockupLinear.createWithDurations} for full documentation.
     ///
     /// Requirements:
     /// - Must be delegate called.
     ///
     /// @param lockup The address of the lockup streaming contract where the stream to cancel is.
-    /// @param linear The address of the {SablierV2LockupLinear} contract to use for creating the new stream.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract to use for creating the new stream.
     /// @param streamId The id of the stream to cancel.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithDurations(
         ISablierV2Lockup lockup,
-        ISablierV2LockupLinear linear,
         uint256 streamId,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations calldata createParams,
         Permit2Params calldata permit2Params
     )
         external
         returns (uint256 newStreamId);
 
-    /// @notice Cancels a stream and creates a new one with range. Assets are transferred to the proxy via Permit2.
+    /// @notice Cancels a Lockup stream and creates a new Lockup Linear stream using `createWithRange`. Assets are
+    /// transferred to the proxy via Permit2.
     ///
     /// @dev Notes:
-    /// - `streamId` can reference either a linear or a dynamic stream.
+    /// - `streamId` can reference either a Lockup Linear or a Lockup Dynamic stream.
     /// - See {ISablierV2Lockup.cancel} and {ISablierV2LockupLinear.createWithRange} for full documentation.
     ///
     /// Requirements:
     /// - Must be delegate called.
     ///
     /// @param lockup The address of the lockup streaming contract where the stream to cancel is.
-    /// @param linear The address of the {SablierV2LockupLinear} contract to use for creating the new stream.
     /// @param streamId The id of the stream to cancel.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract to use for creating the new stream.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithRange(
         ISablierV2Lockup lockup,
-        ISablierV2LockupLinear linear,
         uint256 streamId,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange calldata createParams,
         Permit2Params calldata permit2Params
     )
@@ -162,12 +167,12 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Mirror for {SablierV2LockupLinear.createWithDurations}. Assets are transferred to the proxy via Permit2.
     /// @dev Must be delegate called.
-    /// @param linear The address of the {SablierV2LockupLinear} contract.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return streamId The id of the newly created stream.
     function createWithDurations(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations calldata createParams,
         Permit2Params calldata permit2Params
     )
@@ -176,46 +181,48 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Mirror for {SablierV2LockupLinear.createWithRange}. Assets are transferred to the proxy via Permit2.
     /// @dev Must be delegate called.
-    /// @param linear The address of the {SablierV2LockupLinear} contract.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return streamId The id of the newly created stream.
     function createWithRange(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange calldata createParams,
         Permit2Params calldata permit2Params
     )
         external
         returns (uint256 streamId);
 
-    /// @notice Wraps the native asset payment in ERC-20 form and creates a linear stream with durations.
+    /// @notice Wraps the native asset payment in ERC-20 form and creates a Lockup Linear stream using
+    /// `createWithDurations`.
     ///
     /// @dev Notes:
     /// - Must be delegate called.
     /// - `createParams.totalAmount` is overwritten with `msg.value`.
     /// - See {ISablierV2LockupLinear.createWithDurations} for full documentation.
     ///
-    /// @param linear The address of the {SablierV2LockupLinear} contract.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
     function wrapAndCreateWithDurations(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations memory createParams
     )
         external
         payable
         returns (uint256 streamId);
 
-    /// @notice Wraps the native asset payment in ERC-20 form and creates a linear stream with range.
+    /// @notice Wraps the native asset payment in ERC-20 form and creates a Lockup Linear stream using
+    /// `createWithRange`.
     ///
     /// @dev Notes:
     /// - Must be delegate called.
     /// - `createParams.totalAmount` is overwritten with `msg.value`.
     /// - See {ISablierV2LockupLinear.createWithRange} for full documentation.
     ///
-    /// @param linear The address of the {SablierV2LockupLinear} contract.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
     function wrapAndCreateWithRange(
-        ISablierV2LockupLinear linear,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange memory createParams
     )
         external
@@ -226,21 +233,22 @@ interface ISablierV2ProxyTarget {
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Creates a batch of dynamic streams with deltas. Assets are transferred to the proxy via Permit2.
+    /// @notice Creates a batch of Lockup Dynamic streams using `createWithDeltas`. Assets are transferred to the proxy
+    /// via Permit2.
     ///
     /// @dev Requirements:
     /// - Must be delegate called.
     /// - There must be at least one element in `batch`.
     /// - All requirements from {ISablierV2LockupDynamic.createWithDeltas} must be met for each stream.
     ///
-    /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
+    /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupDynamic.createWithDeltas}.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithDeltas(
-        ISablierV2LockupDynamic dynamic,
+        ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
         Batch.CreateWithDeltas[] calldata batch,
         Permit2Params calldata permit2Params
@@ -248,21 +256,22 @@ interface ISablierV2ProxyTarget {
         external
         returns (uint256[] memory streamIds);
 
-    /// @notice Creates a batch of dynamic streams with milestones. Assets are transferred to the proxy via Permit2.
+    /// @notice Creates a batch of Lockup Dynamic streams using `createWithMilestones`. Assets are transferred to the
+    /// proxy via Permit2.
     ///
     /// @dev Requirements:
     /// - Must be delegate called.
     /// - There must be at least one element in `batch`.
     /// - All requirements from {ISablierV2LockupDynamic.createWithMilestones} must be met for each stream.
     ///
-    /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
+    /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupDynamic.createWithMilestones}.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithMilestones(
-        ISablierV2LockupDynamic dynamic,
+        ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
         Batch.CreateWithMilestones[] calldata batch,
         Permit2Params calldata permit2Params
@@ -270,50 +279,52 @@ interface ISablierV2ProxyTarget {
         external
         returns (uint256[] memory streamIds);
 
-    /// @notice Cancels a stream and creates a new one with deltas. Assets are transferred to the proxy via Permit2.
+    /// @notice Cancels a Lockup stream and creates a new Lockup Dynamic stream using `createWithDeltas`. Assets are
+    /// transferred to the proxy via Permit2.
     ///
     /// @dev Notes:
-    /// - `streamId` can reference either a linear or a dynamic stream.
+    /// - `streamId` can reference either a Lockup Linear or a Lockup Dynamic stream.
     /// - See {ISablierV2Lockup.cancel} and {ISablierV2LockupDynamic.createWithDeltas} for full documentation.
     ///
     /// Requirements:
     /// - Must be delegate called.
     ///
     /// @param lockup The address of the lockup streaming contract where the stream to cancel is.
-    /// @param dynamic The address of the {SablierV2LockupDynamic} contract to use for creating the new stream.
     /// @param streamId The id of the stream to cancel.
+    /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract to use for creating the new stream.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithDeltas(
         ISablierV2Lockup lockup,
-        ISablierV2LockupDynamic dynamic,
         uint256 streamId,
+        ISablierV2LockupDynamic lockupDynamic,
         LockupDynamic.CreateWithDeltas calldata createParams,
         Permit2Params calldata permit2Params
     )
         external
         returns (uint256 newStreamId);
 
-    /// @notice Cancels a stream and creates a new one with milestones. Assets are transferred to the proxy via Permit2.
+    /// @notice Cancels a Lockup stream and creates a new Lockup Dynamic stream using `createWithMilestones`. Assets are
+    /// transferred to the proxy via Permit2.
     ///
     /// @dev Notes:
-    /// - `streamId` can reference either a linear or a dynamic stream.
+    /// - `streamId` can reference either a Lockup Linear or a Lockup Dynamic stream.
     /// - See {ISablierV2Lockup.cancel} and {ISablierV2LockupDynamic.createWithMilestones} for full documentation.
     ///
     /// Requirements:
     /// - Must be delegate called.
     ///
     /// @param lockup The address of the lockup streaming contract where the stream to cancel is.
-    /// @param dynamic The address of the {SablierV2LockupDynamic} contract to use for creating the new stream.
     /// @param streamId The id of the stream to cancel.
+    /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract to use for creating the new stream.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithMilestones(
         ISablierV2Lockup lockup,
-        ISablierV2LockupDynamic dynamic,
         uint256 streamId,
+        ISablierV2LockupDynamic lockupDynamic,
         LockupDynamic.CreateWithMilestones calldata createParams,
         Permit2Params calldata permit2Params
     )
@@ -322,12 +333,12 @@ interface ISablierV2ProxyTarget {
 
     /// @notice Mirror for {SablierV2LockupDynamic.createWithDeltas}. Assets are transferred to the proxy via Permit2.
     /// @dev Must be delegate called.
-    /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
+    /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return streamId The id of the newly created stream.
     function createWithDeltas(
-        ISablierV2LockupDynamic dynamic,
+        ISablierV2LockupDynamic lockupDynamic,
         LockupDynamic.CreateWithDeltas calldata createParams,
         Permit2Params calldata permit2Params
     )
@@ -337,19 +348,20 @@ interface ISablierV2ProxyTarget {
     /// @notice Mirror for {SablierV2LockupDynamic.createWithMilestones}. Assets are transferred to the proxy via
     /// Permit2.
     /// @dev Must be delegate called.
-    /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
+    /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
     /// @return streamId The id of the newly created stream.
     function createWithMilestones(
-        ISablierV2LockupDynamic dynamic,
+        ISablierV2LockupDynamic lockupDynamic,
         LockupDynamic.CreateWithMilestones calldata createParams,
         Permit2Params calldata permit2Params
     )
         external
         returns (uint256 streamId);
 
-    /// @notice Wraps the native asset payment in ERC-20 form and creates a dynamic stream with deltas.
+    /// @notice Wraps the native asset payment in ERC-20 form and creates a Lockup Dynamic stream using
+    /// `createWithDeltas`.
     ///
     /// @dev Notes:
     /// - `createParams.totalAmount` is overwritten with `msg.value`.
@@ -358,18 +370,19 @@ interface ISablierV2ProxyTarget {
     /// Requirements:
     /// - Must be delegate called.
     ///
-    /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
+    /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
     /// @return streamId The id of the newly created stream.
     function wrapAndCreateWithDeltas(
-        ISablierV2LockupDynamic dynamic,
+        ISablierV2LockupDynamic lockupDynamic,
         LockupDynamic.CreateWithDeltas memory createParams
     )
         external
         payable
         returns (uint256 streamId);
 
-    /// @notice Wraps the native asset payment in ERC-20 form and creates a dynamic stream with milestones.
+    /// @notice Wraps the native asset payment in ERC-20 form and creates a Lockup Dynamic stream using
+    /// `createWithMilestones`.
     ///
     /// @dev Notes:
     /// - `createParams.totalAmount` is overwritten with `msg.value`.
@@ -378,11 +391,11 @@ interface ISablierV2ProxyTarget {
     /// Requirements:
     /// - Must be delegate called.
     ///
-    /// @param dynamic The address of the {SablierV2LockupDynamic} contract.
+    /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
     /// @return streamId The id of the newly created stream.
     function wrapAndCreateWithMilestones(
-        ISablierV2LockupDynamic dynamic,
+        ISablierV2LockupDynamic lockupDynamic,
         LockupDynamic.CreateWithMilestones memory createParams
     )
         external

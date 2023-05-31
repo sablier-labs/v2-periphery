@@ -29,7 +29,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         LockupDynamic.CreateWithDeltas memory createParams;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithDeltas(dynamic, dynamic, 0, createParams, permit2Params);
+        target.cancelAndCreateWithDeltas(lockupDynamic, 0, lockupDynamic, createParams, permit2Params);
     }
 
     function test_CancelAndCreateWithDeltas_SameSablierContract() external whenDelegateCalled {
@@ -37,8 +37,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         uint256 streamId = createWithDeltas();
 
         // Expect the correct calls to be made.
-        ISablierV2Lockup cancelContract = dynamic;
-        ISablierV2LockupDynamic createContract = dynamic;
+        ISablierV2Lockup cancelContract = lockupDynamic;
+        ISablierV2LockupDynamic createContract = lockupDynamic;
         expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithDeltas({ params: defaults.createWithDeltas() });
 
@@ -47,8 +47,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
             target.cancelAndCreateWithDeltas,
             (
                 cancelContract,
-                createContract,
                 streamId,
+                createContract,
                 defaults.createWithDeltas(),
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
@@ -66,8 +66,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         uint256 streamId = createWithRange();
 
         // Expect the correct calls to be made.
-        ISablierV2Lockup cancelContract = linear;
-        ISablierV2LockupDynamic createContract = dynamic;
+        ISablierV2Lockup cancelContract = lockupLinear;
+        ISablierV2LockupDynamic createContract = lockupDynamic;
         expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithDeltas({ params: defaults.createWithDeltas() });
 
@@ -76,8 +76,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
             target.cancelAndCreateWithDeltas,
             (
                 cancelContract,
-                createContract,
                 streamId,
+                createContract,
                 defaults.createWithDeltas(),
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
@@ -98,7 +98,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         LockupLinear.CreateWithDurations memory createParams;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithDurations(linear, linear, 0, createParams, permit2Params);
+        target.cancelAndCreateWithDurations(lockupLinear, 0, lockupLinear, createParams, permit2Params);
     }
 
     function test_CancelAndCreateWithDurations_SameSablierContract() external whenDelegateCalled {
@@ -106,8 +106,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         uint256 streamId = createWithDurations();
 
         // Expect the correct calls to be made.
-        ISablierV2Lockup cancelContract = linear;
-        ISablierV2LockupLinear createContract = linear;
+        ISablierV2Lockup cancelContract = lockupLinear;
+        ISablierV2LockupLinear createContract = lockupLinear;
         expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithDurations({ params: defaults.createWithDurations() });
 
@@ -116,8 +116,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
             target.cancelAndCreateWithDurations,
             (
                 cancelContract,
-                createContract,
                 streamId,
+                createContract,
                 defaults.createWithDurations(),
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
@@ -135,8 +135,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         uint256 streamId = createWithMilestones();
 
         // Expect the correct calls to be made.
-        ISablierV2Lockup cancelContract = dynamic;
-        ISablierV2LockupLinear createContract = linear;
+        ISablierV2Lockup cancelContract = lockupDynamic;
+        ISablierV2LockupLinear createContract = lockupLinear;
         expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithDurations({ params: defaults.createWithDurations() });
 
@@ -145,8 +145,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
             target.cancelAndCreateWithDurations,
             (
                 cancelContract,
-                createContract,
                 streamId,
+                createContract,
                 defaults.createWithDurations(),
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
@@ -167,7 +167,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         LockupDynamic.CreateWithMilestones memory createParams;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithMilestones(dynamic, dynamic, 0, createParams, permit2Params);
+        target.cancelAndCreateWithMilestones(lockupDynamic, 0, lockupDynamic, createParams, permit2Params);
     }
 
     function test_CancelAndCreateWithMilestones_SameSablierContract() external whenDelegateCalled {
@@ -175,8 +175,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         uint256 streamId = createWithMilestones();
 
         // Expect the correct calls to be made.
-        ISablierV2Lockup cancelContract = dynamic;
-        ISablierV2LockupDynamic createContract = dynamic;
+        ISablierV2Lockup cancelContract = lockupDynamic;
+        ISablierV2LockupDynamic createContract = lockupDynamic;
         expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithMilestones({ params: defaults.createWithMilestones() });
 
@@ -185,8 +185,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
             target.cancelAndCreateWithMilestones,
             (
                 cancelContract,
-                createContract,
                 streamId,
+                createContract,
                 defaults.createWithMilestones(),
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
@@ -204,8 +204,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         uint256 streamId = createWithRange();
 
         // Expect the correct calls to be made.
-        ISablierV2Lockup cancelContract = linear;
-        ISablierV2LockupDynamic createContract = dynamic;
+        ISablierV2Lockup cancelContract = lockupLinear;
+        ISablierV2LockupDynamic createContract = lockupDynamic;
         expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithMilestones({ params: defaults.createWithMilestones() });
 
@@ -214,8 +214,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
             target.cancelAndCreateWithMilestones,
             (
                 cancelContract,
-                createContract,
                 streamId,
+                createContract,
                 defaults.createWithMilestones(),
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
@@ -236,7 +236,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         LockupLinear.CreateWithRange memory createParams;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithRange(linear, linear, 0, createParams, permit2Params);
+        target.cancelAndCreateWithRange(lockupLinear, 0, lockupLinear, createParams, permit2Params);
     }
 
     function test_CancelAndCreateWithRange_SameSablierContract() external whenDelegateCalled {
@@ -244,8 +244,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         uint256 streamId = createWithRange();
 
         // Expect the correct calls to be made.
-        ISablierV2Lockup cancelContract = linear;
-        ISablierV2LockupLinear createContract = linear;
+        ISablierV2Lockup cancelContract = lockupLinear;
+        ISablierV2LockupLinear createContract = lockupLinear;
         expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithRange({ params: defaults.createWithRange() });
 
@@ -254,8 +254,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
             target.cancelAndCreateWithRange,
             (
                 cancelContract,
-                createContract,
                 streamId,
+                createContract,
                 defaults.createWithRange(),
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
@@ -273,8 +273,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         uint256 streamId = createWithMilestones();
 
         // Expect the correct calls to be made.
-        ISablierV2Lockup cancelContract = dynamic;
-        ISablierV2LockupLinear createContract = linear;
+        ISablierV2Lockup cancelContract = lockupDynamic;
+        ISablierV2LockupLinear createContract = lockupLinear;
         expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithRange({ params: defaults.createWithRange() });
 
@@ -283,8 +283,8 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
             target.cancelAndCreateWithRange,
             (
                 cancelContract,
-                createContract,
                 streamId,
+                createContract,
                 defaults.createWithRange(),
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
