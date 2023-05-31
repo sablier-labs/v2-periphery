@@ -23,7 +23,7 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
         expectCallToTransferFrom({
             asset_: address(weth),
             from: address(proxy),
-            to: address(dynamic),
+            to: address(lockupDynamic),
             amount: totalAmount
         });
 
@@ -32,12 +32,12 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
         createParams.segments[1].amount = uint128(amount1);
 
         // ABI encode the parameters and call the function via the proxy.
-        bytes memory data = abi.encodeCall(target.wrapAndCreateWithMilestones, (dynamic, createParams));
+        bytes memory data = abi.encodeCall(target.wrapAndCreateWithMilestones, (lockupDynamic, createParams));
         bytes memory response = proxy.execute{ value: totalAmount }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
-        uint256 expectedStreamId = dynamic.nextStreamId() - 1;
+        uint256 expectedStreamId = lockupDynamic.nextStreamId() - 1;
         assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
 
@@ -49,18 +49,18 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
         expectCallToTransferFrom({
             asset_: address(weth),
             from: address(proxy),
-            to: address(linear),
+            to: address(lockupLinear),
             amount: etherAmount
         });
 
         // ABI encode the parameters and call the function via the proxy.
         LockupLinear.CreateWithRange memory createParams = defaults.createWithRange(weth);
-        bytes memory data = abi.encodeCall(target.wrapAndCreateWithRange, (linear, createParams));
+        bytes memory data = abi.encodeCall(target.wrapAndCreateWithRange, (lockupLinear, createParams));
         bytes memory response = proxy.execute{ value: etherAmount }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
-        uint256 expectedStreamId = linear.nextStreamId() - 1;
+        uint256 expectedStreamId = lockupLinear.nextStreamId() - 1;
         assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
 }

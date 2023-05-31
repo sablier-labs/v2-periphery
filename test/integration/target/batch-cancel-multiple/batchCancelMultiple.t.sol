@@ -41,8 +41,8 @@ contract BatchCancelMultiple_Integration_Test is Integration_Test {
         vm.warp({ timestamp: defaults.CLIFF_TIME() });
 
         // Expects calls to cancel multiple streams.
-        expectCallToCancelMultiple({ lockup: dynamic, streamIds: dynamicStreamIds });
-        expectCallToCancelMultiple({ lockup: linear, streamIds: linearStreamIds });
+        expectCallToCancelMultiple({ lockup: lockupDynamic, streamIds: dynamicStreamIds });
+        expectCallToCancelMultiple({ lockup: lockupLinear, streamIds: linearStreamIds });
 
         // Asset flow: Sablier → proxy → proxy owner
         // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.
@@ -55,18 +55,18 @@ contract BatchCancelMultiple_Integration_Test is Integration_Test {
 
         // ABI encode the parameters and call the function via the proxy.
         Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](2);
-        batch[0] = Batch.CancelMultiple(dynamic, dynamicStreamIds);
-        batch[1] = Batch.CancelMultiple(linear, linearStreamIds);
+        batch[0] = Batch.CancelMultiple(lockupDynamic, dynamicStreamIds);
+        batch[1] = Batch.CancelMultiple(lockupLinear, linearStreamIds);
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
         proxy.execute(address(target), data);
 
         // Assert that all streams have been marked as canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
         for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
-            Lockup.Status actualDynamicStatus = dynamic.statusOf(dynamicStreamIds[i]);
-            Lockup.Status actualLinearStatus = linear.statusOf(linearStreamIds[i]);
-            assertEq(actualDynamicStatus, expectedStatus, "dynamic stream status not canceled");
-            assertEq(actualLinearStatus, expectedStatus, "linear stream status not canceled");
+            Lockup.Status actualDynamicStatus = lockupDynamic.statusOf(dynamicStreamIds[i]);
+            Lockup.Status actualLinearStatus = lockupLinear.statusOf(linearStreamIds[i]);
+            assertEq(actualDynamicStatus, expectedStatus, "lockupDynamic stream status not canceled");
+            assertEq(actualLinearStatus, expectedStatus, "lockupLinear stream status not canceled");
         }
     }
 }

@@ -15,7 +15,7 @@ contract CancelMultiple_Integration_Test is Integration_Test {
         IERC20[] memory assets = defaults.assets();
         uint256[] memory streamIds = batchCreateWithRange();
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelMultiple(linear, assets, streamIds);
+        target.cancelMultiple(lockupLinear, assets, streamIds);
     }
 
     modifier whenDelegateCalled() {
@@ -24,12 +24,12 @@ contract CancelMultiple_Integration_Test is Integration_Test {
 
     function test_CancelMultiple_Linear() external whenDelegateCalled {
         uint256[] memory streamIds = batchCreateWithRange();
-        test_CancelMultiple(linear, streamIds);
+        test_CancelMultiple(lockupLinear, streamIds);
     }
 
     function test_CancelMultiple_Dynamic() external whenDelegateCalled {
         uint256[] memory streamIds = batchCreateWithMilestones();
-        test_CancelMultiple(dynamic, streamIds);
+        test_CancelMultiple(lockupDynamic, streamIds);
     }
 
     function test_CancelMultiple(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {

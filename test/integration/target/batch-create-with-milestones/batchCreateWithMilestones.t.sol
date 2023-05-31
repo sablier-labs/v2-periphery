@@ -11,7 +11,7 @@ contract BatchCreateWithMilestones_Integration_Test is Integration_Test {
         Batch.CreateWithMilestones[] memory batch;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithMilestones(dynamic, asset, batch, permit2Params);
+        target.batchCreateWithMilestones(lockupDynamic, asset, batch, permit2Params);
     }
 
     modifier whenDelegateCalled() {
@@ -21,7 +21,8 @@ contract BatchCreateWithMilestones_Integration_Test is Integration_Test {
     function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
         Batch.CreateWithMilestones[] memory batch = new Batch.CreateWithMilestones[](0);
         Permit2Params memory permit2Params;
-        bytes memory data = abi.encodeCall(target.batchCreateWithMilestones, (dynamic, asset, batch, permit2Params));
+        bytes memory data =
+            abi.encodeCall(target.batchCreateWithMilestones, (lockupDynamic, asset, batch, permit2Params));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);
     }
@@ -41,7 +42,7 @@ contract BatchCreateWithMilestones_Integration_Test is Integration_Test {
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),
             from: address(proxy),
-            to: address(dynamic),
+            to: address(lockupDynamic),
             amount: defaults.PER_STREAM_AMOUNT()
         });
 

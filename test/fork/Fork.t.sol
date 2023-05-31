@@ -75,8 +75,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
         // The goal is to not have overlapping users because the asset balance tests would fail otherwise.
         vm.assume(user != recipient && user != address(proxy_) && recipient != address(proxy_));
-        vm.assume(user != address(dynamic) && recipient != address(dynamic));
-        vm.assume(user != address(linear) && recipient != address(linear));
+        vm.assume(user != address(lockupDynamic) && recipient != address(lockupDynamic));
+        vm.assume(user != address(lockupLinear) && recipient != address(lockupLinear));
 
         // Avoid users blacklisted by USDC or USDT.
         assumeNoBlacklisted(address(asset), user);
@@ -105,7 +105,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);
 
         // Load V2 Core.
-        dynamic = ISablierV2LockupDynamic(0xB2CF57EdDEf081b97A4F2a02f5f6DF1271d0071E);
-        linear = ISablierV2LockupLinear(0x1366C6257033e23c6736722dC2E826AfF0b13EdB);
+        lockupDynamic = ISablierV2LockupDynamic(0xB2CF57EdDEf081b97A4F2a02f5f6DF1271d0071E);
+        lockupLinear = ISablierV2LockupLinear(0x1366C6257033e23c6736722dC2E826AfF0b13EdB);
     }
 }

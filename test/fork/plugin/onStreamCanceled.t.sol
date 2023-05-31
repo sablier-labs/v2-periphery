@@ -16,10 +16,10 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
         Fork_Test.setUp();
         installPlugin();
 
-        if (!archive.isListed(address(linear))) {
+        if (!archive.isListed(address(lockupLinear))) {
             address archiveAdmin = archive.admin();
             changePrank({ msgSender: archiveAdmin });
-            archive.list(address(linear));
+            archive.list(address(lockupLinear));
             changePrank({ msgSender: users.alice.addr });
         }
     }
@@ -35,7 +35,7 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
         LockupLinear.CreateWithRange memory createParams = defaults.createWithRange(asset);
         createParams.totalAmount = amount;
         Permit2Params memory permit2Params = defaults.permit2Params(amount);
-        bytes memory data = abi.encodeCall(target.createWithRange, (linear, createParams, permit2Params));
+        bytes memory data = abi.encodeCall(target.createWithRange, (lockupLinear, createParams, permit2Params));
         bytes memory response = proxy.execute(address(target), data);
         uint256 streamId = abi.decode(response, (uint256));
 
@@ -49,7 +49,7 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
         changePrank({ msgSender: users.recipient.addr });
 
         // Retrieve the refund amount
-        uint128 refundAmount = linear.refundableAmountOf(streamId);
+        uint128 refundAmount = lockupLinear.refundableAmountOf(streamId);
 
         // Asset flow: Sablier contract → proxy → proxy owner
         // Expect transfers from the Sablier contract to the proxy, and then from the proxy to the proxy owner.
@@ -57,7 +57,7 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
         expectCallToTransfer({ asset_: address(asset), to: users.alice.addr, amount: refundAmount });
 
         // Cancel the stream and trigger the plugin.
-        linear.cancel(streamId);
+        lockupLinear.cancel(streamId);
 
         // Assert that the balances match.
         uint256 actualBalance = asset.balanceOf(users.alice.addr);
