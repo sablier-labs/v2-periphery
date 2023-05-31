@@ -1,0 +1,64 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity >=0.8.19 <0.9.0;
+
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
+
+import { Batch } from "src/types/DataTypes.sol";
+
+import { Fork_Test } from "../Fork.t.sol";
+
+/// @dev Runs against multiple assets.
+abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
+    constructor(IERC20 asset_) Fork_Test(asset_) { }
+
+    function testForkFuzz_BatchCancelMultiple(uint256 batchSize) external {
+        batchSize = _bound(batchSize, 1, 50);
+
+        // Create two batches of streams.
+        batchCreateWithMilestones(batchSize);
+        batchCreateWithRange(batchSize);
+
+        // Declare the stream ids to cancel.
+        uint256[] memory dynamicStreamIds = new uint256[](batchSize);
+        uint256[] memory linearStreamIds = new uint256[](batchSize);
+        unchecked {
+            for (uint256 i = 1; i <= batchSize; ++i) {
+                dynamicStreamIds[i - 1] = i;
+                linearStreamIds[i - 1] = i;
+            }
+        }
+
+        // Simulate the passage of time.
+        vm.warp({ timestamp: defaults.CLIFF_TIME() });
+
+        // Expects calls to cancel multiple streams.
+        expectCallToCancelMultiple({ lockup: dynamic, streamIds: dynamicStreamIds });
+        expectCallToCancelMultiple({ lockup: linear, streamIds: linearStreamIds });
+
+        // Asset flow: Sablier → proxy → proxy owner
+        // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.
+        expectMultipleCallsToTransfer({
+            count: uint64(2 * batchSize),
+            to: address(proxy),
+            amount: defaults.REFUND_AMOUNT()
+        });
+        expectCallToTransfer({ to: users.alice.addr, amount: 2 * defaults.REFUND_AMOUNT() * batchSize });
+
+        // ABI encode the parameters and call the function via the proxy.
+        Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](2);
+        batch[0] = Batch.CancelMultiple(dynamic, dynamicStreamIds);
+        batch[1] = Batch.CancelMultiple(linear, linearStreamIds);
+        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
+        proxy.execute(address(target), data);
+
+        // Assert that all streams have been marked as canceled.
+        Lockup.Status expectedStatus = Lockup.Status.CANCELED;
+        for (uint256 i = 0; i < batchSize; ++i) {
+            Lockup.Status actualDynamicStatus = dynamic.statusOf(dynamicStreamIds[i]);
+            Lockup.Status actualLinearStatus = linear.statusOf(linearStreamIds[i]);
+            assertEq(actualDynamicStatus, expectedStatus, "dynamic stream status not canceled");
+            assertEq(actualLinearStatus, expectedStatus, "linear stream status not canceled");
+        }
+    }
+}

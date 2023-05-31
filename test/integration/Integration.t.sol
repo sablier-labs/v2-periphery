@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { PRBProxyRegistry } from "@prb/proxy/PRBProxyRegistry.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
@@ -19,13 +20,17 @@ abstract contract Integration_Test is Base_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual override {
+        // Deploy the default test asset.
+        asset = new ERC20("DAI Stablecoin", "DAI");
+
+        // Set up the base test contract.
         Base_Test.setUp();
 
         // Deploy the external dependencies.
         deployDependencies();
 
         // Deploy the defaults contract.
-        defaults = new Defaults(users, dai, permit2, proxy);
+        defaults = new Defaults(users, asset, permit2, proxy);
 
         // Deploy V2 Periphery.
         deployPeripheryConditionally();
@@ -33,8 +38,12 @@ abstract contract Integration_Test is Base_Test {
         // Label the contracts.
         labelContracts();
 
-        // Approve Permit2 to spend funds.
-        approvePermit2();
+        // Approve Permit2 to spend assets from the stream's recipient and Alice (the proxy owner).
+        vm.startPrank({ msgSender: users.recipient.addr });
+        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
+
+        changePrank({ msgSender: users.alice.addr });
+        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

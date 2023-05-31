@@ -30,7 +30,7 @@ contract Defaults is PermitSignature {
     uint128 public constant REFUND_AMOUNT = 7500e18; // deposit - cliff amount
     uint40 public immutable START_TIME;
     uint40 public constant TOTAL_DURATION = 10_000 seconds;
-    uint128 public constant TRANSFER_AMOUNT = PER_STREAM_AMOUNT * uint128(BATCH_SIZE);
+    uint128 public constant TOTAL_TRANSFER_AMOUNT = PER_STREAM_AMOUNT * uint128(BATCH_SIZE);
     uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -44,8 +44,8 @@ contract Defaults is PermitSignature {
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
+    IERC20 private asset;
     IPRBProxy private proxy;
-    IERC20 private dai;
     IAllowanceTransfer private permit2;
     Users private users;
 
@@ -53,9 +53,9 @@ contract Defaults is PermitSignature {
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
-    constructor(Users memory users_, IERC20 dai_, IAllowanceTransfer permit2_, IPRBProxy proxy_) {
+    constructor(Users memory users_, IERC20 asset_, IAllowanceTransfer permit2_, IPRBProxy proxy_) {
         users = users_;
-        dai = dai_;
+        asset = asset_;
         permit2 = permit2_;
         proxy = proxy_;
 
@@ -70,13 +70,14 @@ contract Defaults is PermitSignature {
     //////////////////////////////////////////////////////////////////////////*/
 
     function permit2Params(uint160 amount) public view returns (Permit2Params memory permit2Params_) {
-        (,, uint48 nonce) = permit2.allowance({ user: users.alice.addr, token: address(dai), spender: address(proxy) });
+        (,, uint48 nonce) =
+            permit2.allowance({ user: users.alice.addr, token: address(asset), spender: address(proxy) });
         IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
             details: IAllowanceTransfer.PermitDetails({
                 amount: amount,
                 expiration: PERMIT2_EXPIRATION,
                 nonce: nonce,
-                token: address(dai)
+                token: address(asset)
             }),
             sigDeadline: PERMIT2_SIG_DEADLINE,
             spender: address(proxy)
@@ -98,7 +99,7 @@ contract Defaults is PermitSignature {
 
     function assets() external view returns (IERC20[] memory assets_) {
         assets_ = new IERC20[](1);
-        assets_[0] = dai;
+        assets_[0] = asset;
     }
 
     function broker() public view returns (Broker memory) {
@@ -117,12 +118,12 @@ contract Defaults is PermitSignature {
     //////////////////////////////////////////////////////////////////////////*/
 
     function createWithDeltas() external view returns (LockupDynamic.CreateWithDeltas memory) {
-        return createWithDeltas(dai);
+        return createWithDeltas(asset);
     }
 
-    function createWithDeltas(IERC20 asset) public view returns (LockupDynamic.CreateWithDeltas memory) {
+    function createWithDeltas(IERC20 asset_) public view returns (LockupDynamic.CreateWithDeltas memory) {
         return LockupDynamic.CreateWithDeltas({
-            asset: asset,
+            asset: asset_,
             broker: broker(),
             cancelable: true,
             recipient: users.recipient.addr,
@@ -133,12 +134,12 @@ contract Defaults is PermitSignature {
     }
 
     function createWithMilestones() external view returns (LockupDynamic.CreateWithMilestones memory) {
-        return createWithMilestones(dai);
+        return createWithMilestones(asset);
     }
 
-    function createWithMilestones(IERC20 asset) public view returns (LockupDynamic.CreateWithMilestones memory) {
+    function createWithMilestones(IERC20 asset_) public view returns (LockupDynamic.CreateWithMilestones memory) {
         return LockupDynamic.CreateWithMilestones({
-            asset: asset,
+            asset: asset_,
             broker: broker(),
             cancelable: true,
             recipient: users.recipient.addr,
@@ -189,12 +190,12 @@ contract Defaults is PermitSignature {
     //////////////////////////////////////////////////////////////////////////*/
 
     function createWithDurations() external view returns (LockupLinear.CreateWithDurations memory) {
-        return createWithDurations(dai);
+        return createWithDurations(asset);
     }
 
-    function createWithDurations(IERC20 asset) public view returns (LockupLinear.CreateWithDurations memory) {
+    function createWithDurations(IERC20 asset_) public view returns (LockupLinear.CreateWithDurations memory) {
         return LockupLinear.CreateWithDurations({
-            asset: asset,
+            asset: asset_,
             broker: broker(),
             durations: durations(),
             cancelable: true,
@@ -205,12 +206,12 @@ contract Defaults is PermitSignature {
     }
 
     function createWithRange() external view returns (LockupLinear.CreateWithRange memory) {
-        return createWithRange(dai);
+        return createWithRange(asset);
     }
 
-    function createWithRange(IERC20 asset) public view returns (LockupLinear.CreateWithRange memory) {
+    function createWithRange(IERC20 asset_) public view returns (LockupLinear.CreateWithRange memory) {
         return LockupLinear.CreateWithRange({
-            asset: asset,
+            asset: asset_,
             broker: broker(),
             cancelable: true,
             range: linearRange(),
@@ -278,10 +279,45 @@ contract Defaults is PermitSignature {
         }
     }
 
+    /// @dev Helper function to return a batch of `Batch.CreateWithMilestones` parameters.
+    function batchCreateWithMilestones(uint256 batchSize)
+        external
+        view
+        returns (Batch.CreateWithMilestones[] memory batch)
+    {
+        batch = new Batch.CreateWithMilestones[](batchSize);
+        for (uint256 i = 0; i < batchSize; ++i) {
+            batch[i] = Batch.CreateWithMilestones({
+                broker: broker(),
+                cancelable: true,
+                recipient: users.recipient.addr,
+                segments: segments(),
+                sender: address(proxy),
+                startTime: START_TIME,
+                totalAmount: PER_STREAM_AMOUNT
+            });
+        }
+    }
+
     /// @dev Helper function to return a batch of `Batch.CreateWithRange` parameters.
     function batchCreateWithRange() external view returns (Batch.CreateWithRange[] memory batch) {
         batch = new Batch.CreateWithRange[](BATCH_SIZE);
         for (uint256 i = 0; i < BATCH_SIZE; ++i) {
+            batch[i] = Batch.CreateWithRange({
+                broker: broker(),
+                cancelable: true,
+                range: linearRange(),
+                recipient: users.recipient.addr,
+                sender: address(proxy),
+                totalAmount: PER_STREAM_AMOUNT
+            });
+        }
+    }
+
+    /// @dev Helper function to return a batch of `Batch.CreateWithRange` parameters.
+    function batchCreateWithRange(uint256 batchSize) external view returns (Batch.CreateWithRange[] memory batch) {
+        batch = new Batch.CreateWithRange[](batchSize);
+        for (uint256 i = 0; i < batchSize; ++i) {
             batch[i] = Batch.CreateWithRange({
                 broker: broker(),
                 cancelable: true,

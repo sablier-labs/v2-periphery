@@ -11,7 +11,7 @@ contract BatchCreateWithDurations_Integration_Test is Integration_Test {
         Batch.CreateWithDurations[] memory batch;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithDurations(linear, dai, batch, permit2Params);
+        target.batchCreateWithDurations(linear, asset, batch, permit2Params);
     }
 
     modifier whenDelegateCalled() {
@@ -21,7 +21,7 @@ contract BatchCreateWithDurations_Integration_Test is Integration_Test {
     function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
         Batch.CreateWithDurations[] memory batch = new Batch.CreateWithDurations[](0);
         Permit2Params memory permit2Params;
-        bytes memory data = abi.encodeCall(target.batchCreateWithDurations, (linear, dai, batch, permit2Params));
+        bytes memory data = abi.encodeCall(target.batchCreateWithDurations, (linear, asset, batch, permit2Params));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         proxy.execute(address(target), data);
     }
@@ -33,7 +33,7 @@ contract BatchCreateWithDurations_Integration_Test is Integration_Test {
     function test_BatchCreateWithDurations() external whenBatchSizeNotZero whenDelegateCalled {
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.TRANSFER_AMOUNT() });
+        expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.TOTAL_TRANSFER_AMOUNT() });
         expectMultipleCallsToCreateWithDurations({ count: defaults.BATCH_SIZE(), params: defaults.createWithDurations() });
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),

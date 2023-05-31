@@ -39,7 +39,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         ISablierV2Lockup cancelContract = dynamic;
         ISablierV2LockupDynamic createContract = dynamic;
-        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
+        expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithDeltas({ params: defaults.createWithDeltas() });
 
         // ABI encode the parameters and call the function via the proxy.
@@ -68,7 +68,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         ISablierV2Lockup cancelContract = linear;
         ISablierV2LockupDynamic createContract = dynamic;
-        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
+        expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithDeltas({ params: defaults.createWithDeltas() });
 
         // ABI encode the parameters and call the function via the proxy.
@@ -108,7 +108,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         ISablierV2Lockup cancelContract = linear;
         ISablierV2LockupLinear createContract = linear;
-        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
+        expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithDurations({ params: defaults.createWithDurations() });
 
         // ABI encode the parameters and call the function via the proxy.
@@ -137,7 +137,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         ISablierV2Lockup cancelContract = dynamic;
         ISablierV2LockupLinear createContract = linear;
-        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
+        expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithDurations({ params: defaults.createWithDurations() });
 
         // ABI encode the parameters and call the function via the proxy.
@@ -177,7 +177,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         ISablierV2Lockup cancelContract = dynamic;
         ISablierV2LockupDynamic createContract = dynamic;
-        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
+        expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithMilestones({ params: defaults.createWithMilestones() });
 
         // ABI encode the parameters and call the function via the proxy.
@@ -206,7 +206,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         ISablierV2Lockup cancelContract = linear;
         ISablierV2LockupDynamic createContract = dynamic;
-        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
+        expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithMilestones({ params: defaults.createWithMilestones() });
 
         // ABI encode the parameters and call the function via the proxy.
@@ -246,7 +246,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         ISablierV2Lockup cancelContract = linear;
         ISablierV2LockupLinear createContract = linear;
-        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
+        expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithRange({ params: defaults.createWithRange() });
 
         // ABI encode the parameters and call the function via the proxy.
@@ -275,7 +275,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         ISablierV2Lockup cancelContract = dynamic;
         ISablierV2LockupLinear createContract = linear;
-        expectCancelAndTransferCalls(cancelContract, createContract, streamId);
+        expectCallsToCancelAndTransfer(cancelContract, createContract, streamId);
         expectCallToCreateWithRange({ params: defaults.createWithRange() });
 
         // ABI encode the parameters and call the function via the proxy.
@@ -295,34 +295,5 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         uint256 actualNewStreamId = abi.decode(response, (uint256));
         uint256 expectedNewStreamId = createContract.nextStreamId() - 1;
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                      HELPERS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @dev Logic shared between all tests.
-    function expectCancelAndTransferCalls(
-        ISablierV2Lockup cancelContract,
-        ISablierV2Lockup createContract,
-        uint256 streamId
-    )
-        internal
-    {
-        expectCallToCancel(cancelContract, streamId);
-
-        // Asset flow: Sablier → proxy → proxy owner
-        // Expect transfers from Sablier to the proxy, and then from the proxy to the proxy owner.
-        expectCallToTransfer({ to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
-        expectCallToTransfer({ to: users.alice.addr, amount: defaults.PER_STREAM_AMOUNT() });
-
-        // Asset flow: proxy owner → proxy → Sablier
-        // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
-        expectCallToTransferFrom({
-            from: address(proxy),
-            to: address(createContract),
-            amount: defaults.PER_STREAM_AMOUNT()
-        });
     }
 }

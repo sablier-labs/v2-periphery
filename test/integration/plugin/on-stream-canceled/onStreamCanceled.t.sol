@@ -53,7 +53,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
 
     function test_OnStreamCanceled() external whenDelegateCalled whenCallerListed {
         // Retrieve the initial asset balance of the proxy owner.
-        uint256 initialBalance = dai.balanceOf(users.alice.addr);
+        uint256 initialBalance = asset.balanceOf(users.alice.addr);
 
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
@@ -70,7 +70,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         linear.cancel(streamId);
 
         // Assert that the balances match.
-        uint256 actualBalance = dai.balanceOf(users.alice.addr);
+        uint256 actualBalance = asset.balanceOf(users.alice.addr);
         uint256 expectedBalance = initialBalance + defaults.REFUND_AMOUNT();
         assertEq(actualBalance, expectedBalance, "balances do not match");
     }

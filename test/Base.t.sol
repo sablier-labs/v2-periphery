@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
 import { IPRBProxyAnnex } from "@prb/proxy/interfaces/IPRBProxyAnnex.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
@@ -43,7 +44,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     //////////////////////////////////////////////////////////////////////////*/
 
     ISablierV2Archive internal archive;
-    IERC20 internal dai;
+    IERC20 internal asset;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal dynamic;
     ISablierV2LockupLinear internal linear;
@@ -60,10 +61,6 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual {
-        // Deploy the base test contracts.
-        dai = new ERC20("DAI Stablecoin", "DAI");
-
-        // Create users for testing.
         users.alice = createUser("Alice");
         users.admin = createUser("Admin");
         users.broker = createUser("Broker");
@@ -75,20 +72,11 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
                                      HELPERS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Approves Permit2 to spend assets from the stream's recipient and Alice (the proxy owner).
-    function approvePermit2() internal {
-        vm.startPrank({ msgSender: users.recipient.addr });
-        dai.approve({ spender: address(permit2), amount: MAX_UINT256 });
-
-        changePrank({ msgSender: users.alice.addr });
-        dai.approve({ spender: address(permit2), amount: MAX_UINT256 });
-    }
-
-    /// @dev Generates a user, labels its address, and funds it with test assets.
+    /// @dev Generates a user, labels its address, and funds it with ETH.
     function createUser(string memory name) internal returns (Account memory user) {
         user = makeAccount(name);
         vm.deal({ account: user.addr, newBalance: 100_000 ether });
-        deal({ token: address(dai), to: user.addr, give: 1_000_000e18 });
+        deal({ token: address(asset), to: user.addr, give: 1_000_000e18 });
     }
 
     /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with `--via-ir`.
@@ -126,7 +114,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     /// @dev Labels the most relevant contracts.
     function labelContracts() internal {
         vm.label({ account: address(archive), newLabel: "Archive" });
-        vm.label({ account: address(dai), newLabel: "Dai Stablecoin" });
+        vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(dynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(linear), newLabel: "LockupLinear" });
@@ -143,6 +131,31 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     /// @dev Expects a call to {ISablierV2Lockup.cancel}.
     function expectCallToCancel(ISablierV2Lockup lockup, uint256 streamId) internal {
         vm.expectCall({ callee: address(lockup), data: abi.encodeCall(ISablierV2Lockup.cancel, (streamId)) });
+    }
+
+    /// @dev Expect calls to {ISablierV2Lockup.cancel}, {IERC20.transfer}, and {IERC20.transferFrom}.
+    function expectCallsToCancelAndTransfer(
+        ISablierV2Lockup cancelContract,
+        ISablierV2Lockup createContract,
+        uint256 streamId
+    )
+        internal
+    {
+        expectCallToCancel(cancelContract, streamId);
+
+        // Asset flow: Sablier → proxy → proxy owner
+        // Expect transfers from Sablier to the proxy, and then from the proxy to the proxy owner.
+        expectCallToTransfer({ to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
+        expectCallToTransfer({ to: users.alice.addr, amount: defaults.PER_STREAM_AMOUNT() });
+
+        // Asset flow: proxy owner → proxy → Sablier
+        // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
+        expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.PER_STREAM_AMOUNT() });
+        expectCallToTransferFrom({
+            from: address(proxy),
+            to: address(createContract),
+            amount: defaults.PER_STREAM_AMOUNT()
+        });
     }
 
     /// @dev Expects a call to {ISablierV2Lockup.cancelMultiple}.
@@ -181,22 +194,22 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
 
     /// @dev Expects a call to {IERC20.transfer}.
     function expectCallToTransfer(address to, uint256 amount) internal {
-        expectCallToTransfer(address(dai), to, amount);
+        expectCallToTransfer(address(asset), to, amount);
     }
 
     /// @dev Expects a call to {IERC20.transfer}.
-    function expectCallToTransfer(address asset, address to, uint256 amount) internal {
-        vm.expectCall({ callee: asset, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+    function expectCallToTransfer(address asset_, address to, uint256 amount) internal {
+        vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
     /// @dev Expects a call to {IERC20.transferFrom}.
     function expectCallToTransferFrom(address from, address to, uint256 amount) internal {
-        expectCallToTransferFrom(address(dai), from, to, amount);
+        expectCallToTransferFrom(address(asset), from, to, amount);
     }
 
     /// @dev Expects a call to {IERC20.transferFrom}.
-    function expectCallToTransferFrom(address asset, address from, address to, uint256 amount) internal {
-        vm.expectCall({ callee: asset, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
+    function expectCallToTransferFrom(address asset_, address from, address to, uint256 amount) internal {
+        vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
 
     /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithMilestones}.
@@ -252,17 +265,17 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
 
     /// @dev Expects multiple calls to {IERC20.transfer}.
     function expectMultipleCallsToTransfer(uint64 count, address to, uint256 amount) internal {
-        vm.expectCall({ callee: address(dai), count: count, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+        vm.expectCall({ callee: address(asset), count: count, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
     function expectMultipleCallsToTransferFrom(uint64 count, address from, address to, uint256 amount) internal {
-        expectMultipleCallsToTransferFrom(address(dai), count, from, to, amount);
+        expectMultipleCallsToTransferFrom(address(asset), count, from, to, amount);
     }
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
     function expectMultipleCallsToTransferFrom(
-        address asset,
+        address asset_,
         uint64 count,
         address from,
         address to,
@@ -270,7 +283,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     )
         internal
     {
-        vm.expectCall({ callee: asset, count: count, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
+        vm.expectCall({ callee: asset_, count: count, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -289,7 +302,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function batchCreateWithDeltas() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
-            (dynamic, dai, defaults.batchCreateWithDeltas(), defaults.permit2Params(defaults.TRANSFER_AMOUNT()))
+            (dynamic, asset, defaults.batchCreateWithDeltas(), defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT()))
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -298,7 +311,12 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function batchCreateWithDurations() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDurations,
-            (linear, dai, defaults.batchCreateWithDurations(), defaults.permit2Params(defaults.TRANSFER_AMOUNT()))
+            (
+                linear,
+                asset,
+                defaults.batchCreateWithDurations(),
+                defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT())
+            )
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -307,7 +325,22 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function batchCreateWithMilestones() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (dynamic, dai, defaults.batchCreateWithMilestones(), defaults.permit2Params(defaults.TRANSFER_AMOUNT()))
+            (
+                dynamic,
+                asset,
+                defaults.batchCreateWithMilestones(),
+                defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT())
+            )
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        return abi.decode(response, (uint256[]));
+    }
+
+    function batchCreateWithMilestones(uint256 batchSize) internal returns (uint256[] memory) {
+        uint128 totalTransferAmount = uint128(batchSize) * defaults.PER_STREAM_AMOUNT();
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithMilestones,
+            (dynamic, asset, defaults.batchCreateWithMilestones(batchSize), defaults.permit2Params(totalTransferAmount))
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -316,7 +349,17 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function batchCreateWithRange() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (linear, dai, defaults.batchCreateWithRange(), defaults.permit2Params(defaults.TRANSFER_AMOUNT()))
+            (linear, asset, defaults.batchCreateWithRange(), defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT()))
+        );
+        bytes memory response = proxy.execute(address(target), data);
+        return abi.decode(response, (uint256[]));
+    }
+
+    function batchCreateWithRange(uint256 batchSize) internal returns (uint256[] memory) {
+        uint128 totalTransferAmount = uint128(batchSize) * defaults.PER_STREAM_AMOUNT();
+        bytes memory data = abi.encodeCall(
+            target.batchCreateWithRange,
+            (linear, asset, defaults.batchCreateWithRange(batchSize), defaults.permit2Params(totalTransferAmount))
         );
         bytes memory response = proxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
