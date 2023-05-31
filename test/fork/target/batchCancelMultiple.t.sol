@@ -52,7 +52,7 @@ abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
         proxy.execute(address(target), data);
 
-        // Assert that all streams have been marked as canceled.
+        // Assert that all streams have been canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
         for (uint256 i = 0; i < batchSize; ++i) {
             Lockup.Status actualDynamicStatus = lockupDynamic.statusOf(dynamicStreamIds[i]);

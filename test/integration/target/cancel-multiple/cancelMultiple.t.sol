@@ -12,8 +12,8 @@ import { Integration_Test } from "../../Integration.t.sol";
 
 contract CancelMultiple_Integration_Test is Integration_Test {
     function test_RevertWhen_NotDelegateCalled() external {
-        IERC20[] memory assets = defaults.assets();
-        uint256[] memory streamIds = batchCreateWithRange();
+        IERC20[] memory assets;
+        uint256[] memory streamIds;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.cancelMultiple(lockupLinear, assets, streamIds);
     }
@@ -22,21 +22,21 @@ contract CancelMultiple_Integration_Test is Integration_Test {
         _;
     }
 
-    function test_CancelMultiple_Linear() external whenDelegateCalled {
-        uint256[] memory streamIds = batchCreateWithRange();
-        test_CancelMultiple(lockupLinear, streamIds);
-    }
-
-    function test_CancelMultiple_Dynamic() external whenDelegateCalled {
+    function test_CancelMultiple_LockupDynamic() external whenDelegateCalled {
         uint256[] memory streamIds = batchCreateWithMilestones();
         test_CancelMultiple(lockupDynamic, streamIds);
+    }
+
+    function test_CancelMultiple_LockupLinear() external whenDelegateCalled {
+        uint256[] memory streamIds = batchCreateWithRange();
+        test_CancelMultiple(lockupLinear, streamIds);
     }
 
     function test_CancelMultiple(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 
-        // Asset flow: proxy owner → proxy → proxy owner
+        // Asset flow: Sablier → proxy → proxy owner
         expectMultipleCallsToTransfer({
             count: defaults.BATCH_SIZE(),
             to: address(proxy),
@@ -47,7 +47,7 @@ contract CancelMultiple_Integration_Test is Integration_Test {
         bytes memory data = abi.encodeCall(target.cancelMultiple, (lockup, defaults.assets(), streamIds));
         proxy.execute(address(target), data);
 
-        // Assert that all streams have been marked as canceled.
+        // Assert that all streams have been canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;
         for (uint256 i = 0; i < defaults.BATCH_SIZE(); ++i) {
             Lockup.Status actualStatus = lockup.statusOf(streamIds[i]);

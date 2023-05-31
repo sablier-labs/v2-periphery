@@ -1,0 +1,5 @@
+renounce.t.sol
+├── when not delegate called
+│  └── it should revert
+└── when delegate called
+   └── it should renounce the stream
