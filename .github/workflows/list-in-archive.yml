@@ -1,8 +1,10 @@
 name: "List in Archive"
 
 env:
+  API_KEY_ETHERSCAN: ${{ secrets.API_KEY_ETHERSCAN }}
   API_KEY_INFURA: ${{ secrets.API_KEY_INFURA }}
   MNEMONIC: ${{ secrets.MNEMONIC }}
+  RPC_URL_GOERLI: ${{ secrets.RPC_URL_GOERLI }}
 
 on:
   workflow_dispatch:
