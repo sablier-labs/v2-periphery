@@ -32,7 +32,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
-            asset: address(weth),
+            asset_: address(weth),
             from: address(proxy),
             to: address(dynamic),
             amount: defaults.ETHER_AMOUNT()
@@ -62,7 +62,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
-            asset: address(weth),
+            asset_: address(weth),
             from: address(proxy),
             to: address(linear),
             amount: defaults.ETHER_AMOUNT()
@@ -93,7 +93,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
-            asset: address(weth),
+            asset_: address(weth),
             from: address(proxy),
             to: address(dynamic),
             amount: defaults.ETHER_AMOUNT()
@@ -123,7 +123,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
-            asset: address(weth),
+            asset_: address(weth),
             from: address(proxy),
             to: address(linear),
             amount: defaults.ETHER_AMOUNT()
