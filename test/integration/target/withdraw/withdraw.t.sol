@@ -37,7 +37,7 @@ contract Withdraw_Integration_Test is Integration_Test {
         // Withdraw from the stream.
         bytes memory data =
             abi.encodeCall(target.withdraw, (lockup, streamId, users.recipient.addr, defaults.WITHDRAW_AMOUNT()));
-        proxy.execute(address(target), data);
+        aliceProxy.execute(address(target), data);
 
         // Assert that the withdrawn amount has been updated.
         uint128 actualWithdrawnAmount = lockup.getWithdrawnAmount(streamId);

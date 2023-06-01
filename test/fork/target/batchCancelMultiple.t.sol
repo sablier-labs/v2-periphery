@@ -23,9 +23,9 @@ abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
         uint256[] memory dynamicStreamIds = new uint256[](batchSize);
         uint256[] memory linearStreamIds = new uint256[](batchSize);
         unchecked {
-            for (uint256 i = 1; i <= batchSize; ++i) {
-                dynamicStreamIds[i - 1] = i;
-                linearStreamIds[i - 1] = i;
+            for (uint256 i = 0; i < batchSize; ++i) {
+                dynamicStreamIds[i] = i + 1;
+                linearStreamIds[i] = i + 1;
             }
         }
 
@@ -40,7 +40,7 @@ abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
         // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.
         expectMultipleCallsToTransfer({
             count: uint64(2 * batchSize),
-            to: address(proxy),
+            to: address(aliceProxy),
             amount: defaults.REFUND_AMOUNT()
         });
         expectCallToTransfer({ to: users.alice.addr, amount: 2 * defaults.REFUND_AMOUNT() * batchSize });
@@ -50,7 +50,7 @@ abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
         batch[0] = Batch.CancelMultiple(lockupDynamic, dynamicStreamIds);
         batch[1] = Batch.CancelMultiple(lockupLinear, linearStreamIds);
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
-        proxy.execute(address(target), data);
+        aliceProxy.execute(address(target), data);
 
         // Assert that all streams have been canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;

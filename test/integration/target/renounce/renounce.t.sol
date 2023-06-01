@@ -37,7 +37,7 @@ contract Renounce_Integration_Test is Integration_Test {
 
         // Renounce the stream.
         bytes memory data = abi.encodeCall(target.renounce, (lockup, streamId));
-        proxy.execute(address(target), data);
+        aliceProxy.execute(address(target), data);
 
         // Assert that the stream has been renounced.
         bool finalIsCancelable = lockup.isCancelable(streamId);

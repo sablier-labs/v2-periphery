@@ -36,7 +36,7 @@ contract WithdrawMax_Integration_Test is Integration_Test {
 
         // Withdraw all assets from the stream.
         bytes memory data = abi.encodeCall(target.withdrawMax, (lockup, streamId, users.recipient.addr));
-        proxy.execute(address(target), data);
+        aliceProxy.execute(address(target), data);
 
         // Assert that the withdrawn amount has been updated.
         uint128 actualWithdrawnAmount = lockup.getWithdrawnAmount(streamId);

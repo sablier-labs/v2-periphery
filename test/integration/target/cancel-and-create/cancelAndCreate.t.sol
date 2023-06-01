@@ -53,7 +53,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
-        bytes memory response = proxy.execute(address(target), data);
+        bytes memory response = aliceProxy.execute(address(target), data);
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
@@ -82,7 +82,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
-        bytes memory response = proxy.execute(address(target), data);
+        bytes memory response = aliceProxy.execute(address(target), data);
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
@@ -122,7 +122,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
-        bytes memory response = proxy.execute(address(target), data);
+        bytes memory response = aliceProxy.execute(address(target), data);
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
@@ -151,7 +151,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
-        bytes memory response = proxy.execute(address(target), data);
+        bytes memory response = aliceProxy.execute(address(target), data);
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
@@ -191,7 +191,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
-        bytes memory response = proxy.execute(address(target), data);
+        bytes memory response = aliceProxy.execute(address(target), data);
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
@@ -220,7 +220,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
-        bytes memory response = proxy.execute(address(target), data);
+        bytes memory response = aliceProxy.execute(address(target), data);
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
@@ -260,7 +260,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
-        bytes memory response = proxy.execute(address(target), data);
+        bytes memory response = aliceProxy.execute(address(target), data);
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));
@@ -289,7 +289,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
             )
         );
-        bytes memory response = proxy.execute(address(target), data);
+        bytes memory response = aliceProxy.execute(address(target), data);
 
         // Assert that the new stream has been created successfully.
         uint256 actualNewStreamId = abi.decode(response, (uint256));

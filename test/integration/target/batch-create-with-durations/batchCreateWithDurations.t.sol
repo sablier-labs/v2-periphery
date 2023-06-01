@@ -23,7 +23,7 @@ contract BatchCreateWithDurations_Integration_Test is Integration_Test {
         Permit2Params memory permit2Params;
         bytes memory data = abi.encodeCall(target.batchCreateWithDurations, (lockupLinear, asset, batch, permit2Params));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
-        proxy.execute(address(target), data);
+        aliceProxy.execute(address(target), data);
     }
 
     modifier whenBatchSizeNotZero() {
@@ -33,11 +33,15 @@ contract BatchCreateWithDurations_Integration_Test is Integration_Test {
     function test_BatchCreateWithDurations() external whenBatchSizeNotZero whenDelegateCalled {
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({ from: users.alice.addr, to: address(proxy), amount: defaults.TOTAL_TRANSFER_AMOUNT() });
+        expectCallToTransferFrom({
+            from: users.alice.addr,
+            to: address(aliceProxy),
+            amount: defaults.TOTAL_TRANSFER_AMOUNT()
+        });
         expectMultipleCallsToCreateWithDurations({ count: defaults.BATCH_SIZE(), params: defaults.createWithDurations() });
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),
-            from: address(proxy),
+            from: address(aliceProxy),
             to: address(lockupLinear),
             amount: defaults.PER_STREAM_AMOUNT()
         });
@@ -45,6 +49,6 @@ contract BatchCreateWithDurations_Integration_Test is Integration_Test {
         // Assert that the batch of streams has been created successfully.
         uint256[] memory actualStreamIds = batchCreateWithDurations();
         uint256[] memory expectedStreamIds = defaults.incrementalStreamIds();
-        assertEq(actualStreamIds, expectedStreamIds, "stream ids do not match");
+        assertEq(actualStreamIds, expectedStreamIds, "stream ids mismatch");
     }
 }
