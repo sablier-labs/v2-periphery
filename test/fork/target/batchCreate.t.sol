@@ -14,48 +14,16 @@ import { Fork_Test } from "../Fork.t.sol";
 import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
 import { ParamsBuilder } from "../../utils/ParamsBuilder.sol";
 
-/// @dev Runs against multiple assets.
+/// @dev Runs against multiple assets.s
 abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
-
-    function preparePermit2Params(
-        address user,
-        address spender,
-        uint160 amount,
-        uint256 privateKey
-    )
-        internal
-        view
-        returns (Permit2Params memory permit2Params)
-    {
-        (,, uint48 nonce) = permit2.allowance({ user: user, token: address(asset), spender: spender });
-        IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
-            details: IAllowanceTransfer.PermitDetails({
-                amount: amount,
-                expiration: defaults.PERMIT2_EXPIRATION(),
-                nonce: nonce,
-                token: address(asset)
-            }),
-            sigDeadline: defaults.PERMIT2_SIG_DEADLINE(),
-            spender: spender
-        });
-        permit2Params = Permit2Params({
-            permit2: permit2,
-            permitSingle: permitSingle,
-            signature: getPermitSignature({
-                permit: permitSingle,
-                privateKey: privateKey,
-                domainSeparator: permit2.DOMAIN_SEPARATOR()
-            })
-        });
-    }
 
     struct CreateWithRangeParams {
         uint128 batchSize;
         LockupLinear.Range range;
         address recipient;
         uint128 perStreamAmount;
-        uint256 senderPrivateKey;
+        uint256 userPrivateKey;
     }
 
     function testForkFuzz_BatchCreateWithRange(CreateWithRangeParams memory params) external {
@@ -64,33 +32,33 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         params.range.start = boundUint40(params.range.start, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
         params.range.cliff = boundUint40(params.range.cliff, params.range.start, params.range.start + 52 weeks);
         params.range.end = boundUint40(params.range.end, params.range.cliff + 1 seconds, MAX_UNIX_TIMESTAMP);
-        params.senderPrivateKey = boundPrivateKey(params.senderPrivateKey);
+        params.userPrivateKey = boundPrivateKey(params.userPrivateKey);
 
-        address sender = vm.addr(params.senderPrivateKey);
-        IPRBProxy senderProxy = loadOrDeployProxy(sender);
-        checkUsers(sender, params.recipient, address(senderProxy));
+        address user = vm.addr(params.userPrivateKey);
+        IPRBProxy userProxy = loadOrDeployProxy(user);
+        checkUsers(user, params.recipient, address(userProxy));
 
         uint256 firstStreamId = lockupLinear.nextStreamId();
         uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
 
-        deal({ token: address(asset), to: sender, give: uint256(totalTransferAmount) });
-        changePrank({ msgSender: sender });
+        deal({ token: address(asset), to: user, give: uint256(totalTransferAmount) });
+        changePrank({ msgSender: user });
         maxApprovePermit2();
 
         Batch.CreateWithRange memory batchSingle = Batch.CreateWithRange({
             broker: defaults.broker(),
             cancelable: true,
             recipient: params.recipient,
-            sender: address(senderProxy),
+            sender: address(userProxy),
             range: params.range,
             totalAmount: params.perStreamAmount
         });
         Batch.CreateWithRange[] memory batch = ArrayBuilder.fillBatch(batchSingle, params.batchSize);
-        Permit2Params memory permit2Params = preparePermit2Params({
-            user: sender,
-            spender: address(senderProxy),
+        Permit2Params memory permit2Params = defaults.permit2Params({
+            user: user,
+            spender: address(userProxy),
             amount: totalTransferAmount,
-            privateKey: params.senderPrivateKey
+            privateKey: params.userPrivateKey
         });
         bytes memory data = abi.encodeCall(target.batchCreateWithRange, (lockupLinear, asset, batch, permit2Params));
 
@@ -98,8 +66,8 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
         expectCallToTransferFrom({
             asset_: address(asset),
-            from: sender,
-            to: address(senderProxy),
+            from: user,
+            to: address(userProxy),
             amount: totalTransferAmount
         });
         expectMultipleCallsToCreateWithRange({
@@ -109,12 +77,12 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         expectMultipleCallsToTransferFrom({
             asset_: address(asset),
             count: uint64(params.batchSize),
-            from: address(senderProxy),
+            from: address(userProxy),
             to: address(lockupLinear),
             amount: params.perStreamAmount
         });
 
-        bytes memory response = senderProxy.execute(address(target), data);
+        bytes memory response = userProxy.execute(address(target), data);
         uint256[] memory actualStreamIds = abi.decode(response, (uint256[]));
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);
@@ -126,14 +94,14 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         uint128 perStreamAmount;
         uint40 startTime;
         LockupDynamic.Segment[] segments;
-        uint256 senderPrivateKey;
+        uint256 userPrivateKey;
     }
 
-    function testForkFuzz_BatchCreateWithMilestones(CreateWithMilestonesParams memory params) private {
+    function testForkFuzz_BatchCreateWithMilestones(CreateWithMilestonesParams memory params) external {
         vm.assume(params.segments.length != 0);
-        params.batchSize = boundUint128(params.batchSize, 1, 1);
+        params.batchSize = boundUint128(params.batchSize, 1, 20);
         params.startTime = boundUint40(params.startTime, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
-        params.senderPrivateKey = boundPrivateKey(params.senderPrivateKey);
+        params.userPrivateKey = boundPrivateKey(params.userPrivateKey);
         fuzzSegmentMilestones(params.segments, params.startTime);
         (params.perStreamAmount,) = fuzzDynamicStreamAmounts({
             upperBound: MAX_UINT128 / params.batchSize,
@@ -142,15 +110,15 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             brokerFee: defaults.BROKER_FEE()
         });
 
-        address sender = vm.addr(params.senderPrivateKey);
-        IPRBProxy senderProxy = loadOrDeployProxy(sender);
-        checkUsers(sender, params.recipient, address(senderProxy));
+        address user = vm.addr(params.userPrivateKey);
+        IPRBProxy userProxy = loadOrDeployProxy(user);
+        checkUsers(user, params.recipient, address(userProxy));
 
         uint256 firstStreamId = lockupDynamic.nextStreamId();
         uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
 
-        deal({ token: address(asset), to: sender, give: uint256(totalTransferAmount) });
-        changePrank({ msgSender: sender });
+        deal({ token: address(asset), to: user, give: uint256(totalTransferAmount) });
+        changePrank({ msgSender: user });
         maxApprovePermit2();
 
         Batch.CreateWithMilestones memory batchSingle = Batch.CreateWithMilestones({
@@ -158,16 +126,16 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             cancelable: true,
             recipient: params.recipient,
             segments: params.segments,
-            sender: address(senderProxy),
+            sender: address(userProxy),
             startTime: params.startTime,
             totalAmount: params.perStreamAmount
         });
         Batch.CreateWithMilestones[] memory batch = ArrayBuilder.fillBatch(batchSingle, params.batchSize);
-        Permit2Params memory permit2Params = preparePermit2Params({
-            user: sender,
-            spender: address(senderProxy),
+        Permit2Params memory permit2Params = defaults.permit2Params({
+            user: user,
+            spender: address(userProxy),
             amount: totalTransferAmount,
-            privateKey: params.senderPrivateKey
+            privateKey: params.userPrivateKey
         });
         bytes memory data =
             abi.encodeCall(target.batchCreateWithMilestones, (lockupDynamic, asset, batch, permit2Params));
@@ -176,8 +144,8 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
         expectCallToTransferFrom({
             asset_: address(asset),
-            from: sender,
-            to: address(senderProxy),
+            from: user,
+            to: address(userProxy),
             amount: totalTransferAmount
         });
         expectMultipleCallsToCreateWithMilestones({
@@ -187,12 +155,12 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         expectMultipleCallsToTransferFrom({
             asset_: address(asset),
             count: uint64(params.batchSize),
-            from: address(senderProxy),
+            from: address(userProxy),
             to: address(lockupDynamic),
             amount: params.perStreamAmount
         });
 
-        bytes memory response = senderProxy.execute(address(target), data);
+        bytes memory response = userProxy.execute(address(target), data);
         uint256[] memory actualStreamIds = abi.decode(response, (uint256[]));
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);

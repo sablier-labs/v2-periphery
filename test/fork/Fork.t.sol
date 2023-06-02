@@ -67,17 +67,17 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Checks the user assumptions.
-    function checkUsers(address sender, address recipient, address proxy_) internal virtual {
+    function checkUsers(address user, address recipient, address proxy_) internal virtual {
         // The protocol does not allow the zero address to interact with it.
-        vm.assume(sender != address(0) && recipient != address(0));
+        vm.assume(user != address(0) && recipient != address(0));
 
         // The goal is to not have overlapping users because the asset balance tests would fail otherwise.
-        vm.assume(sender != recipient && sender != address(proxy_) && recipient != address(proxy_));
-        vm.assume(sender != address(lockupDynamic) && recipient != address(lockupDynamic));
-        vm.assume(sender != address(lockupLinear) && recipient != address(lockupLinear));
+        vm.assume(user != recipient && user != address(proxy_) && recipient != address(proxy_));
+        vm.assume(user != address(lockupDynamic) && recipient != address(lockupDynamic));
+        vm.assume(user != address(lockupLinear) && recipient != address(lockupLinear));
 
         // Avoid users blacklisted by USDC or USDT.
-        assumeNoBlacklisted(address(asset), sender);
+        assumeNoBlacklisted(address(asset), user);
         assumeNoBlacklisted(address(asset), recipient);
         assumeNoBlacklisted(address(asset), proxy_);
     }
