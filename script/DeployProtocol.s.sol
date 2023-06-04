@@ -11,6 +11,7 @@ import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTarget } from "../src/SablierV2ProxyTarget.sol";
 
+/// @notice Deploys all Sablier V2 contracts and lists Lockup Dynamic and Lockup Linear in the archive.
 contract DeployProtocol is BaseScript {
     function run(
         address admin,
