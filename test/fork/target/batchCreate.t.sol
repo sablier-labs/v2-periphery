@@ -12,6 +12,7 @@ import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
 import { Fork_Test } from "../Fork.t.sol";
 import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
+import { BatchBuilder } from "../../utils/BatchBuilder.sol";
 import { ParamsBuilder } from "../../utils/ParamsBuilder.sol";
 
 /// @dev Runs against multiple assets.
@@ -45,7 +46,8 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         changePrank({ msgSender: user });
         maxApprovePermit2();
 
-        Batch.CreateWithRange memory batchSingle = Batch.CreateWithRange({
+        LockupLinear.CreateWithRange memory createParams = LockupLinear.CreateWithRange({
+            asset: asset,
             broker: defaults.broker(),
             cancelable: true,
             recipient: params.recipient,
@@ -53,7 +55,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             range: params.range,
             totalAmount: params.perStreamAmount
         });
-        Batch.CreateWithRange[] memory batch = ArrayBuilder.fillBatch(batchSingle, params.batchSize);
+        Batch.CreateWithRange[] memory batch = BatchBuilder.fillBatch(createParams, params.batchSize);
         Permit2Params memory permit2Params = defaults.permit2Params({
             user: user,
             spender: address(userProxy),
@@ -70,10 +72,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             to: address(userProxy),
             amount: totalTransferAmount
         });
-        expectMultipleCallsToCreateWithRange({
-            count: uint64(params.batchSize),
-            params: ParamsBuilder.createWithRange(batchSingle, asset)
-        });
+        expectMultipleCallsToCreateWithRange({ count: uint64(params.batchSize), params: createParams });
         expectMultipleCallsToTransferFrom({
             asset_: address(asset),
             count: uint64(params.batchSize),
@@ -121,7 +120,8 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         changePrank({ msgSender: user });
         maxApprovePermit2();
 
-        Batch.CreateWithMilestones memory batchSingle = Batch.CreateWithMilestones({
+        LockupDynamic.CreateWithMilestones memory createWithMilestones = LockupDynamic.CreateWithMilestones({
+            asset: asset,
             broker: defaults.broker(),
             cancelable: true,
             recipient: params.recipient,
@@ -130,7 +130,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             startTime: params.startTime,
             totalAmount: params.perStreamAmount
         });
-        Batch.CreateWithMilestones[] memory batch = ArrayBuilder.fillBatch(batchSingle, params.batchSize);
+        Batch.CreateWithMilestones[] memory batch = BatchBuilder.fillBatch(createWithMilestones, params.batchSize);
         Permit2Params memory permit2Params = defaults.permit2Params({
             user: user,
             spender: address(userProxy),
@@ -148,10 +148,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             to: address(userProxy),
             amount: totalTransferAmount
         });
-        expectMultipleCallsToCreateWithMilestones({
-            count: uint64(params.batchSize),
-            params: ParamsBuilder.createWithMilestones(batchSingle, asset)
-        });
+        expectMultipleCallsToCreateWithMilestones({ count: uint64(params.batchSize), params: createWithMilestones });
         expectMultipleCallsToTransferFrom({
             asset_: address(asset),
             count: uint64(params.batchSize),
