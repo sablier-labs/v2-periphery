@@ -11,7 +11,7 @@ on:
     inputs:
       admin:
         default: "0x0E109f35926575FC64Ec73735101966d434Ed591"
-        description: "Protocol admin."
+        description: "Initial protocol admin."
         required: false
       chain:
         default: "goerli"
@@ -35,7 +35,7 @@ jobs:
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Deploy the Sablier V2 Protocol protocol"
+      - name: "Deploy the Sablier V2 Protocol"
         run: >-
           forge script script/DeployProtocol.s.sol
           --broadcast

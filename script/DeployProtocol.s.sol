@@ -11,7 +11,7 @@ import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTarget } from "../src/SablierV2ProxyTarget.sol";
 
-/// @notice Deploys all Sablier V2 contracts and lists Lockup Dynamic and Lockup Linear in the archive.
+/// @notice Deploys the Sablier V2 Protocol and lists the streaming contracts in the archive.
 contract DeployProtocol is BaseScript {
     function run(
         address admin,
@@ -29,20 +29,21 @@ contract DeployProtocol is BaseScript {
             SablierV2ProxyTarget target
         )
     {
-        // Deploy the core contracts.
+        // Deploy V2 Core.
         comptroller = new SablierV2Comptroller(admin);
         nftDescriptor = new SablierV2NFTDescriptor();
         lockupDynamic = new SablierV2LockupDynamic(admin, comptroller, nftDescriptor, maxSegmentCount);
         lockupLinear = new SablierV2LockupLinear(admin, comptroller, nftDescriptor);
 
-        // Deploy the periphery contracts.
-        archive = new SablierV2Archive(address(this));
+        // Deploy V2 Periphery.
+        archive = new SablierV2Archive({ initialAdmin: address(this) });
         plugin = new SablierV2ProxyPlugin(archive);
         target = new SablierV2ProxyTarget();
 
-        // List the core contracts in the archive.
+        // List the streaming contracts.
         archive.list(address(lockupDynamic));
         archive.list(address(lockupLinear));
+        // Transfer the admin to the user-provided address
         archive.transferAdmin(admin);
     }
 }
