@@ -33,7 +33,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
             asset_: address(weth),
-            from: address(proxy),
+            from: address(aliceProxy),
             to: address(lockupDynamic),
             amount: defaults.ETHER_AMOUNT()
         });
@@ -41,7 +41,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data =
             abi.encodeCall(target.wrapAndCreateWithDeltas, (lockupDynamic, defaults.createWithDeltas(weth)));
-        bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
+        bytes memory response = aliceProxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -64,7 +64,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
             asset_: address(weth),
-            from: address(proxy),
+            from: address(aliceProxy),
             to: address(lockupLinear),
             amount: defaults.ETHER_AMOUNT()
         });
@@ -72,7 +72,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data =
             abi.encodeCall(target.wrapAndCreateWithDurations, (lockupLinear, defaults.createWithDurations(weth)));
-        bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
+        bytes memory response = aliceProxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -95,7 +95,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
             asset_: address(weth),
-            from: address(proxy),
+            from: address(aliceProxy),
             to: address(lockupDynamic),
             amount: defaults.ETHER_AMOUNT()
         });
@@ -103,7 +103,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data =
             abi.encodeCall(target.wrapAndCreateWithMilestones, (lockupDynamic, defaults.createWithMilestones(weth)));
-        bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
+        bytes memory response = aliceProxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -125,7 +125,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
             asset_: address(weth),
-            from: address(proxy),
+            from: address(aliceProxy),
             to: address(lockupLinear),
             amount: defaults.ETHER_AMOUNT()
         });
@@ -133,7 +133,7 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data =
             abi.encodeCall(target.wrapAndCreateWithRange, (lockupLinear, defaults.createWithRange(weth)));
-        bytes memory response = proxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
+        bytes memory response = aliceProxy.execute{ value: defaults.ETHER_AMOUNT() }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));

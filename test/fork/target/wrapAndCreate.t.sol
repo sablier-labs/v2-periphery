@@ -2,9 +2,9 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
-import { LockupDynamic, LockupLinear } from "src/types/DataTypes.sol";
 
 import { Fork_Test } from "../Fork.t.sol";
 
@@ -22,7 +22,7 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
             asset_: address(weth),
-            from: address(proxy),
+            from: address(aliceProxy),
             to: address(lockupDynamic),
             amount: totalAmount
         });
@@ -33,7 +33,7 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
 
         // ABI encode the parameters and call the function via the proxy.
         bytes memory data = abi.encodeCall(target.wrapAndCreateWithMilestones, (lockupDynamic, createParams));
-        bytes memory response = proxy.execute{ value: totalAmount }(address(target), data);
+        bytes memory response = aliceProxy.execute{ value: totalAmount }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -48,7 +48,7 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
             asset_: address(weth),
-            from: address(proxy),
+            from: address(aliceProxy),
             to: address(lockupLinear),
             amount: etherAmount
         });
@@ -56,7 +56,7 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
         // ABI encode the parameters and call the function via the proxy.
         LockupLinear.CreateWithRange memory createParams = defaults.createWithRange(weth);
         bytes memory data = abi.encodeCall(target.wrapAndCreateWithRange, (lockupLinear, createParams));
-        bytes memory response = proxy.execute{ value: etherAmount }(address(target), data);
+        bytes memory response = aliceProxy.execute{ value: etherAmount }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));

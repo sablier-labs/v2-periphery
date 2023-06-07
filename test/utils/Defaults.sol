@@ -10,6 +10,8 @@ import { PermitSignature } from "permit2-test/utils/PermitSignature.sol";
 
 import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
+import { ArrayBuilder } from "./ArrayBuilder.sol";
+import { BatchBuilder } from "./BatchBuilder.sol";
 import { Users } from "./Types.sol";
 
 /// @notice Contract with default values for testing.
@@ -70,8 +72,20 @@ contract Defaults is PermitSignature {
     //////////////////////////////////////////////////////////////////////////*/
 
     function permit2Params(uint160 amount) public view returns (Permit2Params memory permit2Params_) {
-        (,, uint48 nonce) =
-            permit2.allowance({ user: users.alice.addr, token: address(asset), spender: address(proxy) });
+        permit2Params_ = permit2Params(users.alice.addr, address(proxy), amount, users.alice.key);
+    }
+
+    function permit2Params(
+        address user,
+        address spender,
+        uint160 amount,
+        uint256 privateKey
+    )
+        public
+        view
+        returns (Permit2Params memory permit2Params_)
+    {
+        (,, uint48 nonce) = permit2.allowance({ user: user, token: address(asset), spender: spender });
         IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
             details: IAllowanceTransfer.PermitDetails({
                 amount: amount,
@@ -80,14 +94,14 @@ contract Defaults is PermitSignature {
                 token: address(asset)
             }),
             sigDeadline: PERMIT2_SIG_DEADLINE,
-            spender: address(proxy)
+            spender: spender
         });
         permit2Params_ = Permit2Params({
             permit2: permit2,
             permitSingle: permitSingle,
             signature: getPermitSignature({
                 permit: permitSingle,
-                privateKey: users.alice.key,
+                privateKey: privateKey,
                 domainSeparator: permit2.DOMAIN_SEPARATOR()
             })
         });
@@ -97,7 +111,7 @@ contract Defaults is PermitSignature {
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    function assets() external view returns (IERC20[] memory assets_) {
+    function assets() public view returns (IERC20[] memory assets_) {
         assets_ = new IERC20[](1);
         assets_[0] = asset;
     }
@@ -106,18 +120,15 @@ contract Defaults is PermitSignature {
         return Broker({ account: users.broker.addr, fee: BROKER_FEE });
     }
 
-    function incrementalStreamIds() external pure returns (uint256[] memory streamIds) {
-        streamIds = new uint256[](BATCH_SIZE);
-        for (uint256 i = 0; i < BATCH_SIZE; ++i) {
-            streamIds[i] = i + 1;
-        }
+    function incrementalStreamIds() public pure returns (uint256[] memory streamIds) {
+        return ArrayBuilder.fillStreamIds({ firstStreamId: 1, batchSize: BATCH_SIZE });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    function createWithDeltas() external view returns (LockupDynamic.CreateWithDeltas memory) {
+    function createWithDeltas() public view returns (LockupDynamic.CreateWithDeltas memory) {
         return createWithDeltas(asset);
     }
 
@@ -133,7 +144,7 @@ contract Defaults is PermitSignature {
         });
     }
 
-    function createWithMilestones() external view returns (LockupDynamic.CreateWithMilestones memory) {
+    function createWithMilestones() public view returns (LockupDynamic.CreateWithMilestones memory) {
         return createWithMilestones(asset);
     }
 
@@ -150,11 +161,11 @@ contract Defaults is PermitSignature {
         });
     }
 
-    function dynamicRange() external view returns (LockupDynamic.Range memory) {
+    function dynamicRange() public view returns (LockupDynamic.Range memory) {
         return LockupDynamic.Range({ start: START_TIME, end: END_TIME });
     }
 
-    /// @dev Helper function to return a batch of `LockupDynamic.Segment` parameters.
+    /// @dev Returns a batch of `LockupDynamic.Segment` parameters.
     function segments() private view returns (LockupDynamic.Segment[] memory segments_) {
         segments_ = new LockupDynamic.Segment[](2);
         segments_[0] = LockupDynamic.Segment({
@@ -169,7 +180,7 @@ contract Defaults is PermitSignature {
         });
     }
 
-    /// @dev Helper function to return a batch of `LockupDynamic.SegmentWithDelta` parameters.
+    /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
     function segmentsWithDeltas(
         uint128 amount0,
         uint128 amount1
@@ -189,7 +200,7 @@ contract Defaults is PermitSignature {
                              SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
-    function createWithDurations() external view returns (LockupLinear.CreateWithDurations memory) {
+    function createWithDurations() public view returns (LockupLinear.CreateWithDurations memory) {
         return createWithDurations(asset);
     }
 
@@ -197,15 +208,15 @@ contract Defaults is PermitSignature {
         return LockupLinear.CreateWithDurations({
             asset: asset_,
             broker: broker(),
-            durations: durations(),
             cancelable: true,
+            durations: durations(),
             recipient: users.recipient.addr,
             sender: address(proxy),
             totalAmount: PER_STREAM_AMOUNT
         });
     }
 
-    function createWithRange() external view returns (LockupLinear.CreateWithRange memory) {
+    function createWithRange() public view returns (LockupLinear.CreateWithRange memory) {
         return createWithRange(asset);
     }
 
@@ -233,99 +244,37 @@ contract Defaults is PermitSignature {
                               SABLIER-V2-PROXY-TARGET
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function to return a batch of `Batch.CreateWithDeltas` parameters.
-    function batchCreateWithDeltas() external view returns (Batch.CreateWithDeltas[] memory batch) {
-        batch = new Batch.CreateWithDeltas[](BATCH_SIZE);
-        for (uint256 i = 0; i < BATCH_SIZE; ++i) {
-            batch[i] = Batch.CreateWithDeltas({
-                broker: broker(),
-                cancelable: true,
-                recipient: users.recipient.addr,
-                segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
-                sender: address(proxy),
-                totalAmount: PER_STREAM_AMOUNT
-            });
-        }
+    /// @dev Returns a default-size batch of `Batch.CreateWithDeltas` parameters.
+    function batchCreateWithDeltas() public view returns (Batch.CreateWithDeltas[] memory batch) {
+        batch = BatchBuilder.fillBatch(createWithDeltas(), BATCH_SIZE);
     }
 
-    /// @dev Helper function to return a batch of `Batch.CreateWithDurations` parameters.
-    function batchCreateWithDurations() external view returns (Batch.CreateWithDurations[] memory batch) {
-        batch = new Batch.CreateWithDurations[](BATCH_SIZE);
-        for (uint256 i = 0; i < BATCH_SIZE; ++i) {
-            batch[i] = Batch.CreateWithDurations({
-                broker: broker(),
-                cancelable: true,
-                durations: durations(),
-                recipient: users.recipient.addr,
-                sender: address(proxy),
-                totalAmount: PER_STREAM_AMOUNT
-            });
-        }
+    /// @dev Returns a default-size batch of `Batch.CreateWithDurations` parameters.
+    function batchCreateWithDurations() public view returns (Batch.CreateWithDurations[] memory batch) {
+        batch = BatchBuilder.fillBatch(createWithDurations(), BATCH_SIZE);
     }
 
-    /// @dev Helper function to return a batch of `Batch.CreateWithMilestones` parameters.
-    function batchCreateWithMilestones() external view returns (Batch.CreateWithMilestones[] memory batch) {
-        batch = new Batch.CreateWithMilestones[](BATCH_SIZE);
-        for (uint256 i = 0; i < BATCH_SIZE; ++i) {
-            batch[i] = Batch.CreateWithMilestones({
-                broker: broker(),
-                cancelable: true,
-                recipient: users.recipient.addr,
-                segments: segments(),
-                sender: address(proxy),
-                startTime: START_TIME,
-                totalAmount: PER_STREAM_AMOUNT
-            });
-        }
+    /// @dev Returns a default-size batch of `Batch.CreateWithMilestones` parameters.
+    function batchCreateWithMilestones() public view returns (Batch.CreateWithMilestones[] memory batch) {
+        batch = batchCreateWithMilestones(BATCH_SIZE);
     }
 
-    /// @dev Helper function to return a batch of `Batch.CreateWithMilestones` parameters.
+    /// @dev Returns a batch of `Batch.CreateWithMilestones` parameters.
     function batchCreateWithMilestones(uint256 batchSize)
-        external
+        public
         view
         returns (Batch.CreateWithMilestones[] memory batch)
     {
-        batch = new Batch.CreateWithMilestones[](batchSize);
-        for (uint256 i = 0; i < batchSize; ++i) {
-            batch[i] = Batch.CreateWithMilestones({
-                broker: broker(),
-                cancelable: true,
-                recipient: users.recipient.addr,
-                segments: segments(),
-                sender: address(proxy),
-                startTime: START_TIME,
-                totalAmount: PER_STREAM_AMOUNT
-            });
-        }
+        batch = BatchBuilder.fillBatch(createWithMilestones(), batchSize);
     }
 
-    /// @dev Helper function to return a batch of `Batch.CreateWithRange` parameters.
-    function batchCreateWithRange() external view returns (Batch.CreateWithRange[] memory batch) {
-        batch = new Batch.CreateWithRange[](BATCH_SIZE);
-        for (uint256 i = 0; i < BATCH_SIZE; ++i) {
-            batch[i] = Batch.CreateWithRange({
-                broker: broker(),
-                cancelable: true,
-                range: linearRange(),
-                recipient: users.recipient.addr,
-                sender: address(proxy),
-                totalAmount: PER_STREAM_AMOUNT
-            });
-        }
+    /// @dev Returns a default-size batch of `Batch.CreateWithRange` parameters.
+    function batchCreateWithRange() public view returns (Batch.CreateWithRange[] memory batch) {
+        batch = batchCreateWithRange(BATCH_SIZE);
     }
 
-    /// @dev Helper function to return a batch of `Batch.CreateWithRange` parameters.
-    function batchCreateWithRange(uint256 batchSize) external view returns (Batch.CreateWithRange[] memory batch) {
-        batch = new Batch.CreateWithRange[](batchSize);
-        for (uint256 i = 0; i < batchSize; ++i) {
-            batch[i] = Batch.CreateWithRange({
-                broker: broker(),
-                cancelable: true,
-                range: linearRange(),
-                recipient: users.recipient.addr,
-                sender: address(proxy),
-                totalAmount: PER_STREAM_AMOUNT
-            });
-        }
+    /// @dev Returns a batch of `Batch.CreateWithRange` parameters.
+    function batchCreateWithRange(uint256 batchSize) public view returns (Batch.CreateWithRange[] memory batch) {
+        batch = BatchBuilder.fillBatch(createWithRange(), batchSize);
     }
 }

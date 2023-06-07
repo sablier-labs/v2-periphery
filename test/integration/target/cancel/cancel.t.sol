@@ -34,12 +34,12 @@ contract Cancel_Integration_Test is Integration_Test {
         vm.warp(defaults.CLIFF_TIME());
 
         // Asset flow: proxy owner → proxy → proxy owner
-        expectCallToTransfer({ to: address(proxy), amount: defaults.REFUND_AMOUNT() });
+        expectCallToTransfer({ to: address(aliceProxy), amount: defaults.REFUND_AMOUNT() });
         expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() });
 
         // Cancel the stream.
         bytes memory data = abi.encodeCall(target.cancel, (lockup, streamId));
-        proxy.execute(address(target), data);
+        aliceProxy.execute(address(target), data);
 
         // Assert that the stream has been canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;

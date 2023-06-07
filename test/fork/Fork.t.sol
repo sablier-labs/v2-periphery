@@ -47,7 +47,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         loadDependencies();
 
         // Deploy the defaults contract.
-        defaults = new Defaults(users, asset, permit2, proxy);
+        defaults = new Defaults(users, asset, permit2, aliceProxy);
 
         // Deploy V2 Periphery.
         deployPeripheryConditionally();
@@ -59,9 +59,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         vm.startPrank({ msgSender: users.alice.addr });
 
         // Approve {Permit2} to transfer Alice's assets.
-        // We use a low-level call to ignore reverts because the asset can have the missing return value bug.
-        (bool success,) = address(asset).call(abi.encodeCall(IERC20.approve, (address(permit2), MAX_UINT256)));
-        success;
+        maxApprovePermit2();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -86,26 +84,27 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     /// @dev Loads all dependencies pre-deployed on Goerli.
     function loadDependencies() private {
-        // Load WETH.
         weth = IWrappedNativeAsset(WETH_ADDRESS);
-
-        // Load the proxy annex.
         proxyAnnex = IPRBProxyAnnex(0x0254C4467cBbdbe8d5E01e68de0DF7b20dD2A167);
-
-        // Load the proxy registry.
         proxyRegistry = IPRBProxyRegistry(0xa87bc4C1Bc54E1C1B28d2dD942A094A6B665B8C9);
-
-        // Deploy a proxy for Alice if needed.
-        proxy = proxyRegistry.proxies(users.alice.addr);
-        if (address(proxy) == address(0)) {
-            proxy = proxyRegistry.deployFor(users.alice.addr);
-        }
-
-        // Load Permit2.
+        aliceProxy = loadOrDeployProxy(users.alice.addr);
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);
-
-        // Load V2 Core.
         lockupDynamic = ISablierV2LockupDynamic(0xB2CF57EdDEf081b97A4F2a02f5f6DF1271d0071E);
         lockupLinear = ISablierV2LockupLinear(0x1366C6257033e23c6736722dC2E826AfF0b13EdB);
+    }
+
+    /// @dev Retrieves the proxy and deploys one if none is found.
+    function loadOrDeployProxy(address user) internal returns (IPRBProxy proxy) {
+        proxy = proxyRegistry.proxies(user);
+        if (address(proxy) == address(0)) {
+            proxy = proxyRegistry.deployFor(user);
+        }
+    }
+
+    /// @dev Approve Permit2 to spend assets from the current pranked user. We use a low-level call to ignore reverts
+    /// because the asset contract may have the missing return value bug.
+    function maxApprovePermit2() internal {
+        (bool success,) = address(asset).call(abi.encodeCall(IERC20.approve, (address(permit2), MAX_UINT256)));
+        success;
     }
 }

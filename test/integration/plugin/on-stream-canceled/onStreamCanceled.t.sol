@@ -39,7 +39,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
     function test_RevertWhen_CallerNotListed() external whenDelegateCalled {
         changePrank({ msgSender: users.eve.addr });
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyPlugin_UnknownCaller.selector, users.eve.addr));
-        ISablierV2ProxyPlugin(address(proxy)).onStreamCanceled({
+        ISablierV2ProxyPlugin(address(aliceProxy)).onStreamCanceled({
             streamId: streamId,
             recipient: users.recipient.addr,
             senderAmount: 100e18,
@@ -63,7 +63,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
 
         // Asset flow: Sablier contract → proxy → proxy owner
         // Expect transfers from the Sablier contract to the proxy, and then from the proxy to the proxy owner.
-        expectCallToTransfer({ to: address(proxy), amount: defaults.REFUND_AMOUNT() });
+        expectCallToTransfer({ to: address(aliceProxy), amount: defaults.REFUND_AMOUNT() });
         expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() });
 
         // Cancel the stream and trigger the plugin.
@@ -72,6 +72,6 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         // Assert that the balances match.
         uint256 actualBalance = asset.balanceOf(users.alice.addr);
         uint256 expectedBalance = initialBalance + defaults.REFUND_AMOUNT();
-        assertEq(actualBalance, expectedBalance, "balances do not match");
+        assertEq(actualBalance, expectedBalance, "balances mismatch");
     }
 }

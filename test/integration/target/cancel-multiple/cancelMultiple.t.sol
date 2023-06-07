@@ -39,13 +39,13 @@ contract CancelMultiple_Integration_Test is Integration_Test {
         // Asset flow: Sablier → proxy → proxy owner
         expectMultipleCallsToTransfer({
             count: defaults.BATCH_SIZE(),
-            to: address(proxy),
+            to: address(aliceProxy),
             amount: defaults.REFUND_AMOUNT()
         });
         expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
 
         bytes memory data = abi.encodeCall(target.cancelMultiple, (lockup, defaults.assets(), streamIds));
-        proxy.execute(address(target), data);
+        aliceProxy.execute(address(target), data);
 
         // Assert that all streams have been canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;

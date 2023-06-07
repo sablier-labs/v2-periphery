@@ -25,7 +25,7 @@ contract BatchCancelMultiple_Integration_Test is Integration_Test {
         Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](0);
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
-        proxy.execute(address(target), data);
+        aliceProxy.execute(address(target), data);
     }
 
     modifier batchSizeNotZero() {
@@ -48,7 +48,7 @@ contract BatchCancelMultiple_Integration_Test is Integration_Test {
         // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.
         expectMultipleCallsToTransfer({
             count: 2 * defaults.BATCH_SIZE(),
-            to: address(proxy),
+            to: address(aliceProxy),
             amount: defaults.REFUND_AMOUNT()
         });
         expectCallToTransfer({ to: users.alice.addr, amount: 2 * defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
@@ -58,7 +58,7 @@ contract BatchCancelMultiple_Integration_Test is Integration_Test {
         batch[0] = Batch.CancelMultiple(lockupDynamic, dynamicStreamIds);
         batch[1] = Batch.CancelMultiple(lockupLinear, linearStreamIds);
         bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
-        proxy.execute(address(target), data);
+        aliceProxy.execute(address(target), data);
 
         // Assert that all streams have been canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;

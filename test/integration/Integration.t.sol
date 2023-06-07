@@ -30,7 +30,7 @@ abstract contract Integration_Test is Base_Test {
         deployDependencies();
 
         // Deploy the defaults contract.
-        defaults = new Defaults(users, asset, permit2, proxy);
+        defaults = new Defaults(users, asset, permit2, aliceProxy);
 
         // Deploy V2 Periphery.
         deployPeripheryConditionally();
@@ -51,19 +51,10 @@ abstract contract Integration_Test is Base_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     function deployDependencies() private {
-        // Deploy WETH.
         weth = new WETH();
-
-        // Deploy the proxy system from a bytecode precompiled with `--via-ir`.
         (proxyAnnex, proxyRegistry) = new PRBProxyPrecompiles().deploySystem();
-
-        // Deploy a proxy for Alice.
-        proxy = proxyRegistry.deployFor(users.alice.addr);
-
-        // Deploy Permit2 from a bytecode precompiled with `--via-ir`.
+        aliceProxy = proxyRegistry.deployFor(users.alice.addr);
         permit2 = IAllowanceTransfer(new DeployPermit2().run());
-
-        // Deploy V2 Core from a bytecode precompiled with `--via-ir`.
         (, lockupDynamic, lockupLinear,) = new V2CorePrecompiles().deployCore(users.admin.addr);
     }
 }
