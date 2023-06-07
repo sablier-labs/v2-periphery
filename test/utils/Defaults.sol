@@ -12,7 +12,6 @@ import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";
-import { ParamsBuilder } from "./ParamsBuilder.sol";
 import { Users } from "./Types.sol";
 
 /// @notice Contract with default values for testing.
@@ -245,17 +244,17 @@ contract Defaults is PermitSignature {
                               SABLIER-V2-PROXY-TARGET
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Returns a batch of `Batch.CreateWithDeltas` parameters.
+    /// @dev Returns a default-size batch of `Batch.CreateWithDeltas` parameters.
     function batchCreateWithDeltas() public view returns (Batch.CreateWithDeltas[] memory batch) {
         batch = BatchBuilder.fillBatch(createWithDeltas(), BATCH_SIZE);
     }
 
-    /// @dev Returns a single size batch of `Batch.CreateWithDurations` parameters.
+    /// @dev Returns a default-size batch of `Batch.CreateWithDurations` parameters.
     function batchCreateWithDurations() public view returns (Batch.CreateWithDurations[] memory batch) {
         batch = BatchBuilder.fillBatch(createWithDurations(), BATCH_SIZE);
     }
 
-    /// @dev Returns a batch of `Batch.CreateWithMilestones` parameters.
+    /// @dev Returns a default-size batch of `Batch.CreateWithMilestones` parameters.
     function batchCreateWithMilestones() public view returns (Batch.CreateWithMilestones[] memory batch) {
         batch = batchCreateWithMilestones(BATCH_SIZE);
     }
@@ -269,7 +268,7 @@ contract Defaults is PermitSignature {
         batch = BatchBuilder.fillBatch(createWithMilestones(), batchSize);
     }
 
-    /// @dev Returns a batch of `Batch.CreateWithRange` parameters.
+    /// @dev Returns a default-size batch of `Batch.CreateWithRange` parameters.
     function batchCreateWithRange() public view returns (Batch.CreateWithRange[] memory batch) {
         batch = batchCreateWithRange(BATCH_SIZE);
     }

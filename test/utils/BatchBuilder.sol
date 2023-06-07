@@ -41,11 +41,7 @@ library BatchBuilder {
             sender: params.sender,
             totalAmount: params.totalAmount
         });
-        unchecked {
-            for (uint256 i = 0; i < batchSize; ++i) {
-                batch[i] = batchSingle;
-            }
-        }
+        batch = fillBatch(batchSingle, batchSize);
     }
 
     /// @notice Generates an array of `batchSingle` with the specified `batchSize`.
@@ -83,11 +79,7 @@ library BatchBuilder {
             sender: params.sender,
             totalAmount: params.totalAmount
         });
-        unchecked {
-            for (uint256 i = 0; i < batchSize; ++i) {
-                batch[i] = batchSingle;
-            }
-        }
+        batch = fillBatch(batchSingle, batchSize);
     }
 
     /// @notice Generates an array of `batchSingle` with the specified `batchSize`.
@@ -126,11 +118,7 @@ library BatchBuilder {
             startTime: params.startTime,
             totalAmount: params.totalAmount
         });
-        unchecked {
-            for (uint256 i = 0; i < batchSize; ++i) {
-                batch[i] = batchSingle;
-            }
-        }
+        batch = fillBatch(batchSingle, batchSize);
     }
 
     /// @notice Generates an array of `batchSingle` with the specified `batchSize`.
@@ -168,10 +156,6 @@ library BatchBuilder {
             sender: params.sender,
             totalAmount: params.totalAmount
         });
-        unchecked {
-            for (uint256 i = 0; i < batchSize; ++i) {
-                batch[i] = batchSingle;
-            }
-        }
+        batch = fillBatch(batchSingle, batchSize);
     }
 }

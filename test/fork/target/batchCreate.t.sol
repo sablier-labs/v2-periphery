@@ -13,7 +13,6 @@ import { Batch, Permit2Params } from "src/types/DataTypes.sol";
 import { Fork_Test } from "../Fork.t.sol";
 import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
 import { BatchBuilder } from "../../utils/BatchBuilder.sol";
-import { ParamsBuilder } from "../../utils/ParamsBuilder.sol";
 
 /// @dev Runs against multiple assets.
 abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
