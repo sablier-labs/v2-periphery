@@ -43,7 +43,8 @@ contract DeployProtocol is BaseScript {
         // List the streaming contracts.
         archive.list(address(lockupDynamic));
         archive.list(address(lockupLinear));
-        // Transfer the admin to the user-provided address
+
+        // Transfer the admin to the user-provided address.
         archive.transferAdmin(admin);
     }
 }
