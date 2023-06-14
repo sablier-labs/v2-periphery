@@ -24,7 +24,6 @@ import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { SablierV2Archive } from "src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
-import { Permit2Params } from "src/types/DataTypes.sol";
 
 import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
@@ -413,6 +412,14 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         bytes memory data = abi.encodeCall(
             target.createWithMilestones,
             (lockupDynamic, defaults.createWithMilestones(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+        );
+        bytes memory response = aliceProxy.execute(address(target), data);
+        return abi.decode(response, (uint256));
+    }
+
+    function createWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal returns (uint256) {
+        bytes memory data = abi.encodeCall(
+            target.createWithMilestones, (lockupDynamic, params, defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256));
