@@ -16,7 +16,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         installPlugin();
         streamId = createWithRange();
 
-        // Lists the lockupLinear contract in the archive.
+        // List the {LockupLinear} contract in the archive.
         changePrank({ msgSender: users.admin.addr });
         archive.list(address(lockupLinear));
         changePrank({ msgSender: users.alice.addr });
