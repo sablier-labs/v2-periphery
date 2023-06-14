@@ -5,7 +5,6 @@ import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.s
 import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
-import { Permit2Params } from "src/types/DataTypes.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
@@ -19,14 +18,14 @@ contract Cancel_Integration_Test is Integration_Test {
         _;
     }
 
-    function test_Cancel_LockupLinear() external whenDelegateCalled {
-        uint256 streamId = createWithRange();
-        test_Cancel(lockupLinear, streamId);
-    }
-
     function test_Cancel_LockupDynamic() external whenDelegateCalled {
         uint256 streamId = createWithMilestones();
         test_Cancel(lockupDynamic, streamId);
+    }
+
+    function test_Cancel_LockupLinear() external whenDelegateCalled {
+        uint256 streamId = createWithRange();
+        test_Cancel(lockupLinear, streamId);
     }
 
     function test_Cancel(ISablierV2Lockup lockup, uint256 streamId) internal {

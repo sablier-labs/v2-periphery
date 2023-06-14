@@ -79,6 +79,11 @@ contract SablierV2ProxyTarget is
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
+    function burn(ISablierV2Lockup lockup, uint256 streamId) external onlyDelegateCall {
+        lockup.burn(streamId);
+    }
+
+    /// @inheritdoc ISablierV2ProxyTarget
     function cancel(ISablierV2Lockup lockup, uint256 streamId) public onlyDelegateCall {
         // Retrieve the asset used for streaming.
         IERC20 asset = lockup.getAsset(streamId);

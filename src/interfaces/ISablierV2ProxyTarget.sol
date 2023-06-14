@@ -34,6 +34,10 @@ interface ISablierV2ProxyTarget {
     /// @param assets The contract addresses of the ERC-20 assets used for streaming.
     function batchCancelMultiple(Batch.CancelMultiple[] calldata batch, IERC20[] calldata assets) external;
 
+    /// @notice Mirror for {ISablierV2Lockup.burn}.
+    /// @dev Must be delegate called.
+    function burn(ISablierV2Lockup lockup, uint256 streamId) external;
+
     /// @notice Mirror for {ISablierV2Lockup.cancel}.
     /// @dev Must be delegate called.
     function cancel(ISablierV2Lockup lockup, uint256 streamId) external;
