@@ -44,6 +44,20 @@ contract SablierV2ProxyTarget is
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
+                                     CONSTANTS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    IAllowanceTransfer internal immutable PERMIT2;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    constructor(IAllowanceTransfer permit2) {
+        PERMIT2 = permit2;
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -657,14 +671,10 @@ contract SablierV2ProxyTarget is
         address owner_ = owner;
 
         // Permit the proxy to spend funds from the proxy owner.
-        permit2Params.permit2.permit({
-            owner: owner_,
-            permitSingle: permit2Params.permitSingle,
-            signature: permit2Params.signature
-        });
+        PERMIT2.permit({ owner: owner_, permitSingle: permit2Params.permitSingle, signature: permit2Params.signature });
 
         // Transfer funds from the proxy owner to the proxy.
-        permit2Params.permit2.transferFrom({ from: owner_, to: address(this), amount: amount, token: address(asset) });
+        PERMIT2.transferFrom({ from: owner_, to: address(this), amount: amount, token: address(asset) });
 
         // Approve the Sablier contract to spend funds.
         _approve(sablierContract, asset, amount);

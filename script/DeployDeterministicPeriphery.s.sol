@@ -2,6 +2,7 @@
 pragma solidity >=0.8.19 <=0.9.0;
 
 import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
+import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
 import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
@@ -19,7 +20,8 @@ contract DeployDeterministicPeriphery is BaseScript {
     /// https://github.com/Arachnid/deterministic-deployment-proxy
     function run(
         uint256 create2Salt,
-        address initialAdmin
+        address initialAdmin,
+        IAllowanceTransfer permit2
     )
         public
         virtual
@@ -28,6 +30,6 @@ contract DeployDeterministicPeriphery is BaseScript {
     {
         archive = new SablierV2Archive{ salt: bytes32(create2Salt) }(initialAdmin);
         plugin = new SablierV2ProxyPlugin{ salt: bytes32(create2Salt) }(archive);
-        target = new SablierV2ProxyTarget{ salt: bytes32(create2Salt) }();
+        target = new SablierV2ProxyTarget{ salt: bytes32(create2Salt) }(permit2);
     }
 }

@@ -14,6 +14,10 @@ on:
         default: "goerli"
         description: "Chain name as defined in the Foundry config."
         required: false
+      permit2:
+        default: "0x000000000022d473030f116ddee9f6b43ac78ba3"
+        description: "The permit2 address."
+        required: false
 
 jobs:
   deploy-proxy-target:
@@ -33,7 +37,9 @@ jobs:
           forge script script/DeployProxyTarget.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
+          --sig "run(address)"
           -vvvv
+          "${{ inputs.permit2 }}"
 
       - name: "Add workflow summary"
         run: |

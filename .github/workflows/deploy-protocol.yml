@@ -23,6 +23,10 @@ on:
         default: "300"
         description: "Maximum number of segments allowed in a stream."
         required: false
+      permit2:
+        default: "0x000000000022d473030f116ddee9f6b43ac78ba3"
+        description: "The permit2 address."
+        required: false        
 
 jobs:
   deploy-protocol:
@@ -42,10 +46,11 @@ jobs:
           forge script script/DeployProtocol.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
-          --sig "run(address,uint256)"
+          --sig "run(address,uint256,address)"
+          -vvvv
           "${{ inputs.admin }}"
           "${{ inputs.max-segment-count }}"
-          -vvvv
+          "${{ inputs.permit2 }}"
 
       - name: "Add workflow summary"
         run: |
