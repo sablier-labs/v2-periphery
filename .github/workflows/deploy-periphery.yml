@@ -19,7 +19,7 @@ on:
         description: "Chain name as defined in the Foundry config."
         required: false
       permit2:
-        default: "0x000000000022d473030f116ddee9f6b43ac78ba3"
+        default: "0x000000000022D473030F116dDEE9F6B43aC78BA3"
         description: "The permit2 address."
         required: false
   
