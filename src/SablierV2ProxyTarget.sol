@@ -3,7 +3,7 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { PRBProxyStorage } from "@prb/proxy/abstracts/PRBProxyStorage.sol";
+import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
@@ -38,8 +38,7 @@ import { Batch, Permit2Params } from "./types/DataTypes.sol";
 /// @notice See the documentation in {ISablierV2ProxyTarget}.
 contract SablierV2ProxyTarget is
     ISablierV2ProxyTarget, // 0 inherited components
-    OnlyDelegateCall, // 0 inherited components
-    PRBProxyStorage // 1 inherited component
+    OnlyDelegateCall // 0 inherited component
 {
     using SafeERC20 for IERC20;
 
@@ -110,7 +109,7 @@ contract SablierV2ProxyTarget is
 
         // Forward the refunded amount to the proxy owner. This cannot be zero because settled streams cannot be
         // canceled.
-        asset.safeTransfer({ to: owner, value: refundedAmount });
+        asset.safeTransfer({ to: _getOwner(), value: refundedAmount });
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -636,6 +635,11 @@ contract SablierV2ProxyTarget is
         }
     }
 
+    /// @dev Helper function to retrieve the proxy's owner, which is stored as an immutable variable.
+    function _getOwner() internal view returns (address) {
+        return IPRBProxy(address(this)).owner();
+    }
+
     /// @dev Shared logic between {cancelMultiple} and {batchCancelMultiple}.
     function _postMultipleCancellations(uint256[] memory initialBalances, IERC20[] calldata assets) internal {
         uint256 assetCount = assets.length;
@@ -648,7 +652,7 @@ contract SablierV2ProxyTarget is
 
             // Forward the balance delta to the proxy owner. This cannot be zero because settled streams cannot be
             // canceled.
-            assets[i].safeTransfer({ to: owner, value: balanceDelta });
+            assets[i].safeTransfer({ to: _getOwner(), value: balanceDelta });
 
             // Increment the for loop iterator.
             unchecked {
@@ -668,13 +672,13 @@ contract SablierV2ProxyTarget is
         internal
     {
         // Retrieve the proxy owner.
-        address owner_ = owner;
+        address owner = _getOwner();
 
         // Permit the proxy to spend funds from the proxy owner.
-        PERMIT2.permit({ owner: owner_, permitSingle: permit2Params.permitSingle, signature: permit2Params.signature });
+        PERMIT2.permit({ owner: owner, permitSingle: permit2Params.permitSingle, signature: permit2Params.signature });
 
         // Transfer funds from the proxy owner to the proxy.
-        PERMIT2.transferFrom({ from: owner_, to: address(this), amount: amount, token: address(asset) });
+        PERMIT2.transferFrom({ from: owner, to: address(this), amount: amount, token: address(asset) });
 
         // Approve the Sablier contract to spend funds.
         _approve(sablierContract, asset, amount);

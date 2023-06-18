@@ -5,7 +5,6 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
-import { IPRBProxyAnnex } from "@prb/proxy/interfaces/IPRBProxyAnnex.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
@@ -13,7 +12,6 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
@@ -50,7 +48,6 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     ISablierV2LockupLinear internal lockupLinear;
     IAllowanceTransfer internal permit2;
     ISablierV2ProxyPlugin internal plugin;
-    IPRBProxyAnnex internal proxyAnnex;
     IPRBProxyRegistry internal proxyRegistry;
     ISablierV2ProxyTarget internal target;
     IWrappedNativeAsset internal weth;
@@ -296,15 +293,6 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         internal
     {
         vm.expectCall({ callee: asset_, count: count, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                       PLUGIN
-    //////////////////////////////////////////////////////////////////////////*/
-
-    function installPlugin() internal {
-        bytes memory data = abi.encodeCall(proxyAnnex.installPlugin, (plugin));
-        aliceProxy.execute(address(proxyAnnex), data);
     }
 
     /*//////////////////////////////////////////////////////////////////////////

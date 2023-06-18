@@ -3,7 +3,6 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
-import { IPRBProxyAnnex } from "@prb/proxy/interfaces/IPRBProxyAnnex.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
@@ -38,7 +37,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     function setUp() public virtual override {
         // Fork the Goerli testnet.
-        vm.createSelectFork({ blockNumber: 9_093_100, urlOrAlias: "goerli" });
+        vm.createSelectFork({ blockNumber: 9_199_385, urlOrAlias: "goerli" });
 
         // Set up the base test contract.
         Base_Test.setUp();
@@ -85,8 +84,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     /// @dev Loads all dependencies pre-deployed on Goerli.
     function loadDependencies() private {
         weth = IWrappedNativeAsset(WETH_ADDRESS);
-        proxyAnnex = IPRBProxyAnnex(0x0254C4467cBbdbe8d5E01e68de0DF7b20dD2A167);
-        proxyRegistry = IPRBProxyRegistry(0xa87bc4C1Bc54E1C1B28d2dD942A094A6B665B8C9);
+        proxyRegistry = IPRBProxyRegistry(0x804EdC31a66B8d4CAce35D64a6232EEA4cEAf6E9);
         aliceProxy = loadOrDeployProxy(users.alice.addr);
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);
         lockupDynamic = ISablierV2LockupDynamic(0xB2CF57EdDEf081b97A4F2a02f5f6DF1271d0071E);
@@ -95,7 +93,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     /// @dev Retrieves the proxy and deploys one if none is found.
     function loadOrDeployProxy(address user) internal returns (IPRBProxy proxy) {
-        proxy = proxyRegistry.proxies(user);
+        proxy = proxyRegistry.getProxy({ owner: user });
         if (address(proxy) == address(0)) {
             proxy = proxyRegistry.deployFor(user);
         }

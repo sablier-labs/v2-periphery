@@ -2,7 +2,6 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { PRBProxyRegistry } from "@prb/proxy/PRBProxyRegistry.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Precompiles as PRBProxyPrecompiles } from "@prb/proxy-test/utils/Precompiles.sol";
@@ -52,7 +51,7 @@ abstract contract Integration_Test is Base_Test {
 
     function deployDependencies() private {
         weth = new WETH();
-        (proxyAnnex, proxyRegistry) = new PRBProxyPrecompiles().deploySystem();
+        proxyRegistry = new PRBProxyPrecompiles().deployRegistry();
         aliceProxy = proxyRegistry.deployFor(users.alice.addr);
         permit2 = IAllowanceTransfer(new DeployPermit2().run());
         (, lockupDynamic, lockupLinear,) = new V2CorePrecompiles().deployCore(users.admin.addr);

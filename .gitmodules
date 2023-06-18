@@ -11,7 +11,7 @@
   path = "lib/permit2"
   url = "https://github.com/sablier-labs/permit2"
 [submodule "lib/prb-proxy"]
-  branch = "release-v4"
+  branch = "fix/create2-salt"
   path = "lib/prb-proxy"
   url = "https://github.com/PaulRBerg/prb-proxy"
 [submodule "lib/prb-test"]
