@@ -18,6 +18,10 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         _;
     }
 
+    modifier whenCreditAmountGreaterThanOrEqualToMsgValue() {
+        _;
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                                  CREATE WITH DELTAS
     //////////////////////////////////////////////////////////////////////////*/
@@ -28,7 +32,19 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         target.wrapAndCreateWithDeltas(lockupDynamic, createParams);
     }
 
-    function test_WrapAndCreateWithDeltas() external whenDelegateCalled {
+    function test_RevertWhen_WrapAndCreateWithDeltas_CreditAmountLessThanMsgValue() external whenDelegateCalled {
+        uint256 msgValue = defaults.ETHER_AMOUNT();
+        LockupDynamic.CreateWithDeltas memory createParams = defaults.createWithDeltas(wlc);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Errors.SablierV2ProxyTarget_LowCreditAmountAfterWrap.selector, msgValue, msgValue - 1 wei
+            )
+        );
+        bytes memory data = abi.encodeCall(target.wrapAndCreateWithDeltas, (lockupDynamic, createParams));
+        aliceProxy.execute{ value: msgValue }(address(target), data);
+    }
+
+    function test_WrapAndCreateWithDeltas() external whenDelegateCalled whenCreditAmountGreaterThanOrEqualToMsgValue {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
@@ -59,7 +75,23 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         target.wrapAndCreateWithDurations(lockupLinear, createParams);
     }
 
-    function test_WrapAndCreateWithDurations() external whenDelegateCalled {
+    function test_RevertWhen_WrapAndCreateWithDurations_CreditAmountLessThanMsgValue() external whenDelegateCalled {
+        uint256 msgValue = defaults.ETHER_AMOUNT();
+        LockupLinear.CreateWithDurations memory createParams = defaults.createWithDurations(wlc);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Errors.SablierV2ProxyTarget_LowCreditAmountAfterWrap.selector, msgValue, msgValue - 1 wei
+            )
+        );
+        bytes memory data = abi.encodeCall(target.wrapAndCreateWithDurations, (lockupLinear, createParams));
+        aliceProxy.execute{ value: msgValue }(address(target), data);
+    }
+
+    function test_WrapAndCreateWithDurations()
+        external
+        whenDelegateCalled
+        whenCreditAmountGreaterThanOrEqualToMsgValue
+    {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
@@ -90,7 +122,23 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         target.wrapAndCreateWithMilestones(lockupDynamic, createParams);
     }
 
-    function test_WrapAndCreateWithMilestones() external whenDelegateCalled {
+    function test_RevertWhen_WrapAndCreateWithMilestones_CreditAmountLessThanMsgValue() external whenDelegateCalled {
+        uint256 msgValue = defaults.ETHER_AMOUNT();
+        LockupDynamic.CreateWithMilestones memory createParams = defaults.createWithMilestones(wlc);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Errors.SablierV2ProxyTarget_LowCreditAmountAfterWrap.selector, msgValue, msgValue - 1 wei
+            )
+        );
+        bytes memory data = abi.encodeCall(target.wrapAndCreateWithMilestones, (lockupDynamic, createParams));
+        aliceProxy.execute{ value: msgValue }(address(target), data);
+    }
+
+    function test_WrapAndCreateWithMilestones()
+        external
+        whenDelegateCalled
+        whenCreditAmountGreaterThanOrEqualToMsgValue
+    {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({
@@ -120,7 +168,19 @@ contract WrapAndCreate_Integration_Test is Integration_Test {
         target.wrapAndCreateWithDurations(lockupLinear, createParams);
     }
 
-    function test_WrapAndCreateWithRange() external whenDelegateCalled {
+    function test_RevertWhen_WrapAndCreateWithRange_CreditAmountLessThanMsgValue() external whenDelegateCalled {
+        uint256 msgValue = defaults.ETHER_AMOUNT();
+        LockupLinear.CreateWithRange memory createParams = defaults.createWithRange(wlc);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Errors.SablierV2ProxyTarget_LowCreditAmountAfterWrap.selector, msgValue, msgValue - 1 wei
+            )
+        );
+        bytes memory data = abi.encodeCall(target.wrapAndCreateWithRange, (lockupLinear, createParams));
+        aliceProxy.execute{ value: msgValue }(address(target), data);
+    }
+
+    function test_WrapAndCreateWithRange() external whenDelegateCalled whenCreditAmountGreaterThanOrEqualToMsgValue {
         // Expect the correct calls to be made.
         vm.expectCall(address(weth), abi.encodeCall(IWrappedNativeAsset.deposit, ()));
         expectCallToTransferFrom({

@@ -24,4 +24,7 @@ library Errors {
 
     /// @notice Thrown when trying to perform an action that requires the batch size to not be zero.
     error SablierV2ProxyTarget_BatchSizeZero();
+
+    /// @notice Thrown when trying to wrap and create a stream and the credit amount is less than `msg.value`.
+    error SablierV2ProxyTarget_LowCreditAmountAfterWrap(uint256 msgValue, uint256 creditAmount);
 }

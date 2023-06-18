@@ -8,7 +8,6 @@ import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.s
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
 import { OnlyDelegateCall } from "./abstracts/OnlyDelegateCall.sol";
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
@@ -333,8 +332,8 @@ contract SablierV2ProxyTarget is
         // All production chains have a native asset with a circulating supply much smaller than 2^128.
         createParams.totalAmount = uint128(msg.value);
 
-        // Wrap the native asset payment in ERC-20 form.
-        IWrappedNativeAsset(address(createParams.asset)).deposit{ value: msg.value }();
+        // Safely wrap the native asset payment in ERC-20 form.
+        _safeWrap(createParams.asset);
 
         // Approve the Sablier contract to spend funds.
         _approve(address(lockupLinear), createParams.asset, createParams.totalAmount);
@@ -357,8 +356,8 @@ contract SablierV2ProxyTarget is
         // All production chains have a native asset with a circulating supply much smaller than 2^128.
         createParams.totalAmount = uint128(msg.value);
 
-        // Wrap the native asset payment in ERC-20 form.
-        IWrappedNativeAsset(address(createParams.asset)).deposit{ value: msg.value }();
+        // Safely wrap the native asset payment in ERC-20 form.
+        _safeWrap(createParams.asset);
 
         // Approve the Sablier contract to spend funds.
         _approve(address(lockupLinear), createParams.asset, createParams.totalAmount);
@@ -560,8 +559,8 @@ contract SablierV2ProxyTarget is
         // All production chains have a native asset with a circulating supply much smaller than 2^128.
         createParams.totalAmount = uint128(msg.value);
 
-        // Wrap the native asset payment in ERC-20 form.
-        IWrappedNativeAsset(address(createParams.asset)).deposit{ value: msg.value }();
+        // Safely wrap the native asset payment in ERC-20 form.
+        _safeWrap(createParams.asset);
 
         // Approve the Sablier contract to spend funds.
         _approve(address(dynamic), createParams.asset, createParams.totalAmount);
@@ -584,8 +583,8 @@ contract SablierV2ProxyTarget is
         // All production chains have a native asset with a circulating supply much smaller than 2^128.
         createParams.totalAmount = uint128(msg.value);
 
-        // Wrap the native asset payment in ERC-20 form.
-        IWrappedNativeAsset(address(createParams.asset)).deposit{ value: msg.value }();
+        // Safely wrap the native asset payment in ERC-20 form.
+        _safeWrap(createParams.asset);
 
         // Approve the Sablier contract to spend funds.
         _approve(address(dynamic), createParams.asset, createParams.totalAmount);
@@ -621,7 +620,7 @@ contract SablierV2ProxyTarget is
         }
     }
 
-    /// @dev Shared logic between {cancelMultiple} and {batchCancelMultiple}.
+    /// @dev Shared logic between `cancelMultiple` and `batchCancelMultiple`.
     function _postMultipleCancellations(uint256[] memory initialBalances, IERC20[] calldata assets) internal {
         uint256 assetCount = assets.length;
         uint256 balanceFinal;
@@ -639,6 +638,28 @@ contract SablierV2ProxyTarget is
             unchecked {
                 i += 1;
             }
+        }
+    }
+
+    /// @dev Safely wraps the native asset payment in ERC-20 form, checking that the credit amount is greater than or
+    /// equal to `msg.value`.
+    function _safeWrap(IERC20 asset) internal {
+        // Load the balance before the wrap.
+        uint256 initialBalance = asset.balanceOf(address(this));
+
+        // Wrap the native asset payment in ERC-20 form.
+        IWrappedNativeAsset(address(asset)).deposit{ value: msg.value }();
+
+        // Calculate the credit amount.
+        uint256 finalBalance = asset.balanceOf(address(this));
+        uint256 creditAmount = finalBalance - initialBalance;
+
+        // Check that the credit amount is greater than or equal to `msg.value`.
+        if (creditAmount < msg.value) {
+            revert Errors.SablierV2ProxyTarget_LowCreditAmountAfterWrap({
+                msgValue: msg.value,
+                creditAmount: creditAmount
+            });
         }
     }
 
