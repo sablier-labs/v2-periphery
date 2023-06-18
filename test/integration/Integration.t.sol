@@ -53,7 +53,7 @@ abstract contract Integration_Test is Base_Test {
     function deployDependencies() private {
         weth = new WETH();
         wlc = new WLC();
-        (proxyAnnex, proxyRegistry) = new PRBProxyPrecompiles().deploySystem();
+        proxyRegistry = new PRBProxyPrecompiles().deployRegistry();
         aliceProxy = proxyRegistry.deployFor(users.alice.addr);
         permit2 = IAllowanceTransfer(new DeployPermit2().run());
         (, lockupDynamic, lockupLinear,) = new V2CorePrecompiles().deployCore(users.admin.addr);

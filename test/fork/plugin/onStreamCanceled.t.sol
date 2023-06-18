@@ -15,7 +15,7 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
 
     function setUp() public virtual override {
         Fork_Test.setUp();
-        installPlugin();
+        proxyRegistry.installPlugin(plugin);
 
         if (!archive.isListed(address(lockupLinear))) {
             address archiveAdmin = archive.admin();

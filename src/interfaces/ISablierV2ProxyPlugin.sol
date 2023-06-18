@@ -7,14 +7,14 @@ import { ISablierV2LockupSender } from "@sablier/v2-core/interfaces/hooks/ISabli
 import { ISablierV2Archive } from "./ISablierV2Archive.sol";
 
 /// @title ISablierV2ProxyPlugin
-/// @notice Proxy plugin for forwarding the refunded assets to the proxy owner when the recipient cancels a stream
+/// @notice Proxy plugin that forwards the refunded assets to the proxy owner when the recipient cancels a stream
 /// whose sender is the proxy contract.
 /// @dev Requirements:
-/// - The call must not be a standard call.
+/// - The call must be a delegate call.
 /// - The caller must be Sablier.
 interface ISablierV2ProxyPlugin is
     ISablierV2LockupSender, // 0 inherited components
-    IPRBProxyPlugin // 1 inherited component
+    IPRBProxyPlugin // 0 inherited components
 {
     /// @notice Retrieves the address of the archive contract.
     function archive() external view returns (ISablierV2Archive);

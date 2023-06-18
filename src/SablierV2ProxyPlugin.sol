@@ -3,7 +3,7 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { PRBProxyPlugin } from "@prb/proxy/abstracts/PRBProxyPlugin.sol";
+import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
 import { IPRBProxyPlugin } from "@prb/proxy/interfaces/IPRBProxyPlugin.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupSender } from "@sablier/v2-core/interfaces/hooks/ISablierV2LockupSender.sol";
@@ -35,8 +35,7 @@ import { Errors } from "./libraries/Errors.sol";
 /// @notice See the documentation in {ISablierV2ProxyPlugin}.
 contract SablierV2ProxyPlugin is
     OnlyDelegateCall, // 0 inherited components
-    ISablierV2ProxyPlugin, // 3 inherited components
-    PRBProxyPlugin // 3 inherited components
+    ISablierV2ProxyPlugin // 2 inherited components
 {
     using SafeERC20 for IERC20;
 
@@ -60,7 +59,7 @@ contract SablierV2ProxyPlugin is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc IPRBProxyPlugin
-    function methodList() external pure returns (bytes4[] memory methods) {
+    function getMethods() external pure returns (bytes4[] memory methods) {
         methods = new bytes4[](1);
         methods[0] = this.onStreamCanceled.selector;
     }
@@ -96,6 +95,7 @@ contract SablierV2ProxyPlugin is
 
         // Effects: forward the refunded assets to the proxy owner.
         IERC20 asset = lockup.getAsset(streamId);
+        address owner = IPRBProxy(address(this)).owner();
         asset.safeTransfer({ to: owner, value: senderAmount });
     }
 }
