@@ -31,8 +31,8 @@ jobs:
       - name: "Check out the repo"
         uses: "actions/checkout@v3"
         with:
-            submodules: "recursive"
-            token: ${{ secrets.CI_TOKEN }}
+          submodules: "recursive"
+          token: ${{ secrets.CI_TOKEN }}
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"

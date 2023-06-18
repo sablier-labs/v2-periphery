@@ -37,7 +37,7 @@ contract DeployProtocol is BaseScript {
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
 
         // Deploy V2 Periphery.
-        archive = new SablierV2Archive({ initialAdmin: initialAdmin});
+        archive = new SablierV2Archive(initialAdmin);
         plugin = new SablierV2ProxyPlugin(archive);
         target = new SablierV2ProxyTarget();
 
