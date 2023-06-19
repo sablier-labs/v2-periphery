@@ -2,7 +2,6 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { PRBProxyRegistry } from "@prb/proxy/PRBProxyRegistry.sol";
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Precompiles as PRBProxyPrecompiles } from "@prb/proxy-test/utils/Precompiles.sol";
@@ -11,6 +10,7 @@ import { DeployPermit2 } from "permit2-test/utils/DeployPermit2.sol";
 
 import { Defaults } from "../utils/Defaults.sol";
 import { WETH } from "../mocks/WETH.sol";
+import { WLC } from "../mocks/WLC.sol";
 import { Base_Test } from "../Base.t.sol";
 
 /// @notice Common logic needed by all integration tests.
@@ -52,6 +52,7 @@ abstract contract Integration_Test is Base_Test {
 
     function deployDependencies() private {
         weth = new WETH();
+        wlc = new WLC();
         (proxyAnnex, proxyRegistry) = new PRBProxyPrecompiles().deploySystem();
         aliceProxy = proxyRegistry.deployFor(users.alice.addr);
         permit2 = IAllowanceTransfer(new DeployPermit2().run());

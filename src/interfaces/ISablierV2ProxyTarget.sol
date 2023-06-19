@@ -2,7 +2,6 @@
 pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
@@ -201,9 +200,12 @@ interface ISablierV2ProxyTarget {
     /// `createWithDurations`.
     ///
     /// @dev Notes:
-    /// - Must be delegate called.
     /// - `createParams.totalAmount` is overwritten with `msg.value`.
     /// - See {ISablierV2LockupLinear.createWithDurations} for full documentation.
+    ///
+    /// Requirements:
+    /// - Must be delegate called.
+    /// - The ERC-20 amount credited by the wrapper contract must be equal to `msg.value`.
     ///
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
@@ -219,9 +221,12 @@ interface ISablierV2ProxyTarget {
     /// `createWithRange`.
     ///
     /// @dev Notes:
-    /// - Must be delegate called.
     /// - `createParams.totalAmount` is overwritten with `msg.value`.
     /// - See {ISablierV2LockupLinear.createWithRange} for full documentation.
+    ///
+    /// Requirements:
+    /// - Must be delegate called.
+    /// - The ERC-20 amount credited by the wrapper contract must be equal to `msg.value`.
     ///
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
@@ -373,6 +378,7 @@ interface ISablierV2ProxyTarget {
     ///
     /// Requirements:
     /// - Must be delegate called.
+    /// - The ERC-20 amount credited by the wrapper contract must be equal to `msg.value`.
     ///
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
@@ -394,6 +400,7 @@ interface ISablierV2ProxyTarget {
     ///
     /// Requirements:
     /// - Must be delegate called.
+    /// - The ERC-20 amount credited by the wrapper contract must be equal to `msg.value`.
     ///
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.

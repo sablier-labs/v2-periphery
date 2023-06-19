@@ -25,6 +25,7 @@ import { SablierV2Archive } from "src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTarget } from "src/SablierV2ProxyTarget.sol";
 
+import { WLC } from "./mocks/WLC.sol";
 import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { Events } from "./utils/Events.sol";
@@ -54,6 +55,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     IPRBProxyRegistry internal proxyRegistry;
     ISablierV2ProxyTarget internal target;
     IWrappedNativeAsset internal weth;
+    WLC internal wlc;
 
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION
@@ -121,6 +123,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         vm.label({ account: address(permit2), newLabel: "Permit2" });
         vm.label({ account: address(plugin), newLabel: "Proxy Plugin" });
         vm.label({ account: address(target), newLabel: "Proxy Target" });
+        vm.label({ account: address(wlc), newLabel: "WLC" });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
