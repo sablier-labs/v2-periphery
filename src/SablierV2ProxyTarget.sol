@@ -654,12 +654,9 @@ contract SablierV2ProxyTarget is
         uint256 finalBalance = asset.balanceOf(address(this));
         uint256 creditAmount = finalBalance - initialBalance;
 
-        // Check that the credit amount is greater than or equal to `msg.value`.
-        if (creditAmount < msg.value) {
-            revert Errors.SablierV2ProxyTarget_LowCreditAmountAfterWrap({
-                msgValue: msg.value,
-                creditAmount: creditAmount
-            });
+        // Check that the credit amount is equal to `msg.value`.
+        if (creditAmount != msg.value) {
+            revert Errors.SablierV2ProxyTarget_CreditAmountMismatch({ msgValue: msg.value, creditAmount: creditAmount });
         }
     }
 
