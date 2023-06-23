@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       address:
-        description: "Address to list in the archive."
+        description: "Contract to list in the archive."
         required: true
       archive:
         description: "Address of the archive contract."
