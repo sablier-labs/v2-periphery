@@ -36,7 +36,7 @@ interface ISablierV2Archive is IAdminable {
     /// Requirements:
     /// - The caller must be the admin.
     ///
-    /// @param addr The address to list in the archive, which is usually a contract address.
+    /// @param addr The address to list in the archive, which should be a contract.
     function list(address addr) external;
 
     /// @notice Unlists an address from the archive.
