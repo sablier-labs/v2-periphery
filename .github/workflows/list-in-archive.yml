@@ -46,7 +46,7 @@ jobs:
           --rpc-url "${{ inputs.chain }}"
           --sig "run(address,address)"
           -vvvv
-          "${{ inputs.archive }}",
+          "${{ inputs.archive }}"
           "${{ inputs.address }}"
 
       - name: "Add workflow summary"
