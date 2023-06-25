@@ -39,6 +39,7 @@ jobs:
           forge script script/DeployProxyTarget.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
+          --verify
           -vvvv
 
       - name: "Add workflow summary"
