@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19;
 
-import { Batch } from "../../src/types/DataTypes.sol";
-
 library ArrayBuilder {
     /// @notice Generates an ordered array of integers which starts at `firstStreamId` and ends at `firstStreamId +
     /// batchSize - 1`.
