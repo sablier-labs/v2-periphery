@@ -10,13 +10,13 @@
     "url": "https://github.com/sablier-labs/v2-periphery/issues"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "4.9.0",
+    "@openzeppelin/contracts": "4.9.2",
     "@prb/math": "4.0.1",
-    "@prb/proxy": "4.0.0-beta.5",
-    "permit2": "github:sablier-labs/permit2#174f8b707146eb29cb41c61c1cacbae8911ff800"
+    "@prb/proxy": "2.0.0",
+    "@uniswap/permit2": "github:sablier-labs/permit2#abd5832c931ebdce2dd04e81f353d23324d341be"
   },
   "devDependencies": {
-    "prettier": "^2.8.7",
+    "prettier": "^2.8.8",
     "solhint": "^3.4.1"
   },
   "files": [
@@ -40,7 +40,7 @@
     "token-streaming"
   ],
   "peerDependencies": {
-    "@openzeppelin/contracts": "4.9.0",
+    "@openzeppelin/contracts": "4.9.2",
     "@prb/math": "4.0.1",
     "@prb/proxy": "4.0.0-beta.5"
   },
