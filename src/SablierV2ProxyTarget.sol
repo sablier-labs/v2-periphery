@@ -87,15 +87,18 @@ contract SablierV2ProxyTarget is
         // Retrieve the asset used for streaming.
         IERC20 asset = lockup.getAsset(streamId);
 
-        // Retrieve the refunded amount.
-        uint256 refundedAmount = lockup.refundableAmountOf(streamId);
+        // Load the balance before the cancellation.
+        uint256 initialBalance = asset.balanceOf(address(this));
 
         // Cancel the stream.
         lockup.cancel(streamId);
 
-        // Forward the refunded amount to the proxy owner. This cannot be zero because settled streams cannot be
-        // canceled.
-        asset.safeTransfer({ to: owner, value: refundedAmount });
+        // Calculate the difference between the final and the initial balance.
+        uint256 finalBalance = asset.balanceOf(address(this));
+        uint256 deltaBalance = finalBalance - initialBalance;
+
+        // Forward the delta to the proxy owner. This cannot be zero because settled streams cannot be canceled.
+        asset.safeTransfer({ to: owner, value: deltaBalance });
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -623,16 +626,15 @@ contract SablierV2ProxyTarget is
     /// @dev Shared logic between `cancelMultiple` and `batchCancelMultiple`.
     function _postMultipleCancellations(uint256[] memory initialBalances, IERC20[] calldata assets) internal {
         uint256 assetCount = assets.length;
-        uint256 balanceFinal;
-        uint256 balanceDelta;
+        uint256 finalBalance;
+        uint256 deltaBalance;
         for (uint256 i = 0; i < assetCount;) {
             // Calculate the difference between the final and initial balances.
-            balanceFinal = assets[i].balanceOf(address(this));
-            balanceDelta = balanceFinal - initialBalances[i];
+            finalBalance = assets[i].balanceOf(address(this));
+            deltaBalance = finalBalance - initialBalances[i];
 
-            // Forward the balance delta to the proxy owner. This cannot be zero because settled streams cannot be
-            // canceled.
-            assets[i].safeTransfer({ to: owner, value: balanceDelta });
+            // Forward the delta to the proxy owner. This cannot be zero because settled streams cannot be canceled.
+            assets[i].safeTransfer({ to: owner, value: deltaBalance });
 
             // Increment the for loop iterator.
             unchecked {
