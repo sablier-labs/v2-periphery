@@ -6,7 +6,6 @@ import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.s
 import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
-import { Batch } from "src/types/DataTypes.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
