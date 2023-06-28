@@ -58,11 +58,9 @@ library Batch {
 
 /// @notice A struct encapsulating the parameters needed for Permit2.
 /// @dev See the full documentation at https://github.com/Uniswap/permit2.
-/// @param permit2 The address of the Permit2 contract.
 /// @param permitSingle The permit message signed for a single token allowance.
 /// @param signature The ECDSA signature of the permit, which contains the three parameters (r,s,v).
 struct Permit2Params {
-    IAllowanceTransfer permit2;
     IAllowanceTransfer.PermitSingle permitSingle;
     bytes signature;
 }

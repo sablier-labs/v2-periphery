@@ -97,7 +97,6 @@ contract Defaults is PermitSignature {
             spender: spender
         });
         permit2Params_ = Permit2Params({
-            permit2: permit2,
             permitSingle: permitSingle,
             signature: getPermitSignature({
                 permit: permitSingle,

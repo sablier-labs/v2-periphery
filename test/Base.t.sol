@@ -85,11 +85,11 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         if (!isTestOptimizedProfile()) {
             archive = new SablierV2Archive(users.admin.addr);
             plugin = new SablierV2ProxyPlugin(archive);
-            target = new SablierV2ProxyTarget();
+            target = new SablierV2ProxyTarget(permit2);
         } else {
             archive = deployPrecompiledArchive(users.admin.addr);
             plugin = deployPrecompiledPlugin(archive);
-            target = deployPrecompiledTarget();
+            target = deployPrecompiledTarget(permit2);
         }
     }
 
@@ -108,8 +108,10 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     }
 
     /// @dev Deploys {SablierV2ProxyTarget} from a source precompiled with `--via-ir`.
-    function deployPrecompiledTarget() internal returns (ISablierV2ProxyTarget) {
-        return ISablierV2ProxyTarget(deployCode("out-optimized/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json"));
+    function deployPrecompiledTarget(IAllowanceTransfer permit2_) internal returns (ISablierV2ProxyTarget) {
+        return ISablierV2ProxyTarget(
+            deployCode("out-optimized/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json", abi.encode(permit2_))
+        );
     }
 
     /// @dev Labels the most relevant contracts.
