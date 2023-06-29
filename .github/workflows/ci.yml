@@ -53,7 +53,6 @@ jobs:
           uses: "actions/checkout@v3"
           with:
             submodules: "recursive"
-            token: "${{ secrets.CI_TOKEN }}"
 
         - name: "Install Foundry"
           uses: "foundry-rs/foundry-toolchain@v1"
@@ -103,7 +102,6 @@ jobs:
         uses: "actions/checkout@v3"
         with:
           submodules: "recursive"
-          token: "${{ secrets.CI_TOKEN }}"
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
@@ -133,7 +131,6 @@ jobs:
         uses: "actions/checkout@v3"
         with:
           submodules: "recursive"
-          token: "${{ secrets.CI_TOKEN }}"
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
@@ -156,7 +153,7 @@ jobs:
         run: |
           echo "## Fork tests result" >> $GITHUB_STEP_SUMMARY
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
-        
+
   coverage:
     needs: ["lint", "build"]
     runs-on: "ubuntu-latest"
@@ -165,7 +162,6 @@ jobs:
         uses: "actions/checkout@v3"
         with:
           submodules: "recursive"
-          token: "${{ secrets.CI_TOKEN }}"
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
