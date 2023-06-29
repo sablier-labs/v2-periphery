@@ -158,6 +158,18 @@ contract SablierV2ProxyTarget is
         lockup.withdrawMax(streamId, to);
     }
 
+    /// @inheritdoc ISablierV2ProxyTarget
+    function withdrawMaxAndTransfer(
+        ISablierV2Lockup lockup,
+        uint256 streamId,
+        address newRecipient
+    )
+        external
+        onlyDelegateCall
+    {
+        lockup.withdrawMaxAndTransfer(streamId, newRecipient);
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/

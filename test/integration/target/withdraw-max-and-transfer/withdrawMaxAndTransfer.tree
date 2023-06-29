@@ -1,0 +1,6 @@
+withdrawMaxAndTransfer.t.sol
+├── when not delegate called
+│  └── it should revert
+└── when delegate called
+   ├── it should make the max withdrawal
+   └── it should transfer the NFT
