@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
-import { Lockup, LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 
@@ -25,7 +25,7 @@ contract WithdrawMaxAndTransfer_Integration_Test is Integration_Test {
         test_WithdrawMaxAndTransfer(lockupDynamic, streamId);
     }
 
-    function test_WithdrawMax_Linear() external whenDelegateCalled {
+    function test_WithdrawMaxAndTransfer_LockupLinear() external whenDelegateCalled {
         LockupLinear.CreateWithRange memory params = defaults.createWithRange();
         params.recipient = address(aliceProxy);
         uint256 streamId = createWithRange(params);
@@ -39,7 +39,7 @@ contract WithdrawMaxAndTransfer_Integration_Test is Integration_Test {
         // Asset flow: Sablier → recipient
         expectCallToTransfer({ to: address(aliceProxy), amount: defaults.WITHDRAW_AMOUNT() });
 
-        // Withdraw all assets from the stream.
+        // Make the max withdrawal and transfer the NFT.
         bytes memory data = abi.encodeCall(target.withdrawMaxAndTransfer, (lockup, streamId, users.recipient.addr));
         aliceProxy.execute(address(target), data);
 
