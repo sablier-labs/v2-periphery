@@ -8,3 +8,4 @@
 forge-std/=lib/forge-std/src/
 permit2/=lib/permit2/src/
 permit2-test/=lib/permit2/test/
+solady/=lib/solady/src/
