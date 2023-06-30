@@ -125,8 +125,6 @@ jobs:
 
   test-fork:
     needs: ["lint", "build"]
-    env:
-      FOUNDRY_FUZZ_RUNS: "100"
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
@@ -156,7 +154,7 @@ jobs:
         run: |
           echo "## Fork tests result" >> $GITHUB_STEP_SUMMARY
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
-        
+
   coverage:
     needs: ["lint", "build"]
     runs-on: "ubuntu-latest"
