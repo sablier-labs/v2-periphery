@@ -12,7 +12,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "4.9.2",
     "@prb/math": "4.0.1",
-    "@prb/proxy": "2.0.0",
+    "@prb/proxy": "4.0.0-beta.6",
     "@uniswap/permit2": "github:sablier-labs/permit2#abd5832c931ebdce2dd04e81f353d23324d341be"
   },
   "devDependencies": {
@@ -42,7 +42,7 @@
   "peerDependencies": {
     "@openzeppelin/contracts": "4.9.2",
     "@prb/math": "4.0.1",
-    "@prb/proxy": "4.0.0-beta.5"
+    "@prb/proxy": "4.0.0-beta.6"
   },
   "publishConfig": {
     "access": "public"
