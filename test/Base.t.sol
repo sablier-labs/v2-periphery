@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
@@ -58,6 +59,10 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual {
+        // Deploy the default test asset.
+        asset = new ERC20("DAI Stablecoin", "DAI");
+
+        // Create users for testing.
         users.alice = createUser("Alice");
         users.admin = createUser("Admin");
         users.broker = createUser("Broker");
@@ -84,8 +89,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             target = new SablierV2ProxyTarget(permit2);
         } else {
             archive = deployPrecompiledArchive(users.admin.addr);
-            plugin = deployPrecompiledPlugin(archive);
-            target = deployPrecompiledTarget(permit2);
+            plugin = deployPrecompiledProxyPlugin(archive);
+            target = deployPrecompiledProxyTarget(permit2);
         }
     }
 
@@ -97,14 +102,14 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     }
 
     /// @dev Deploys {SablierV2ProxyPlugin} from a source precompiled with `--via-ir`.
-    function deployPrecompiledPlugin(ISablierV2Archive archive_) internal returns (ISablierV2ProxyPlugin) {
+    function deployPrecompiledProxyPlugin(ISablierV2Archive archive_) internal returns (ISablierV2ProxyPlugin) {
         return ISablierV2ProxyPlugin(
             deployCode("out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(archive_))
         );
     }
 
     /// @dev Deploys {SablierV2ProxyTarget} from a source precompiled with `--via-ir`.
-    function deployPrecompiledTarget(IAllowanceTransfer permit2_) internal returns (ISablierV2ProxyTarget) {
+    function deployPrecompiledProxyTarget(IAllowanceTransfer permit2_) internal returns (ISablierV2ProxyTarget) {
         return ISablierV2ProxyTarget(
             deployCode("out-optimized/SablierV2ProxyTarget.sol/SablierV2ProxyTarget.json", abi.encode(permit2_))
         );
