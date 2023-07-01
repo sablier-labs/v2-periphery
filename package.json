@@ -1,6 +1,6 @@
 {
   "name": "@sablier/v2-periphery",
-  "description": "Peripheral smart contracts for interacting with Sablier V2 Core",
+  "description": "Peripheral smart contracts for interacting with Sablier V2",
   "version": "1.0.0",
   "author": {
     "name": "Sablier Labs Ltd",

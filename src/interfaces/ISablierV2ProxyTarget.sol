@@ -10,8 +10,8 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 import { Batch, Permit2Params } from "../types/DataTypes.sol";
 
 /// @title ISablierV2ProxyTarget
-/// @notice Proxy target with stateless scripts for interacting with Sablier V2 Core, designed to be used
-/// by stream senders.
+/// @notice Proxy target with stateless scripts for interacting with Sablier V2, designed to be used by
+/// stream senders.
 /// @dev Intended for use with an instance of PRBProxy through delegate calls. Any standard calls will be reverted.
 interface ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
