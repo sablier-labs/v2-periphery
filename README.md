@@ -40,6 +40,7 @@ This repository does not fall under our bug bounty program, but
 [sablier-labs/v2-core](https://github.com/sablier-labs/v2-core) does. For any security-related concerns, please refer to
 the terms specified in that repository.
 
-## Licensing
+## License
 
-Sablier V2 Periphery is licensed under [GPL v3 or later](./LICENSE.md).
+Sablier V2 Periphery is licensed under [GPL v3 or later](./LICENSE.md), except for most of the files in `test/`, which
+remain unlicensed (as indicated in their SPDX headers).
