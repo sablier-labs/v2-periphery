@@ -36,9 +36,8 @@ pnpm add @sablier/v2-periphery
 
 ## Security
 
-This repository does not fall under our bug bounty program, but
-[sablier-labs/v2-core](https://github.com/sablier-labs/v2-core) does. For any security-related concerns, please refer to
-the terms specified in that repository.
+Please refer to the [SECURITY](./SECURITY.md) policy for any security-related concerns. This repository is subject to a
+bug bounty program per the terms outlined in the aforementioned policy.
 
 ## License
 
