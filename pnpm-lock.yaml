@@ -8,12 +8,12 @@ dependencies:
   '@openzeppelin/contracts':
     specifier: 4.9.2
     version: 4.9.2
-  '@prb/math':
-    specifier: 4.0.1
-    version: 4.0.1
   '@prb/proxy':
     specifier: 4.0.0-beta.6
     version: 4.0.0-beta.6
+  '@sablier/v2-core':
+    specifier: 1.0.0-rc.0
+    version: 1.0.0-rc.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1)
   '@uniswap/permit2':
     specifier: github:sablier-labs/permit2#abd5832c931ebdce2dd04e81f353d23324d341be
     version: github.com/sablier-labs/permit2/abd5832c931ebdce2dd04e81f353d23324d341be
@@ -59,6 +59,16 @@ packages:
 
   /@prb/proxy@4.0.0-beta.6:
     resolution: {integrity: sha512-RO8TleA/fAZun6GeM5eHZl5cBTr+09JMM4eLqLbAEWD0BiWkW6RsvemYtI4cwKnDB/bKJge4wI7RiywfN1lC8g==}
+    dev: false
+
+  /@sablier/v2-core@1.0.0-rc.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1):
+    resolution: {integrity: sha512-6VHl4rgvrrlmSzhZAfyWervs7jKCGpdUzbBpHeN9L59snb5BMQFKzRYtzM1MERprfU8FoZ0T0FpNEu1V26AQAQ==}
+    peerDependencies:
+      '@openzeppelin/contracts': 4.9.2
+      '@prb/math': 4.0.1
+    dependencies:
+      '@openzeppelin/contracts': 4.9.2
+      '@prb/math': 4.0.1
     dev: false
 
   /@solidity-parser/parser@0.16.0:
