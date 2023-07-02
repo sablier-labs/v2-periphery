@@ -19,7 +19,7 @@ contract DeployDeterministicPeriphery is BaseScript {
     /// @dev The presence of the salt instructs Forge to deploy the contract via a deterministic CREATE2 factory.
     /// https://github.com/Arachnid/deterministic-deployment-proxy
     function run(
-        uint256 create2Salt,
+        string memory create2Salt,
         address initialAdmin,
         IAllowanceTransfer permit2
     )
@@ -28,8 +28,8 @@ contract DeployDeterministicPeriphery is BaseScript {
         broadcaster
         returns (SablierV2Archive archive, SablierV2ProxyPlugin plugin, SablierV2ProxyTarget target)
     {
-        archive = new SablierV2Archive{ salt: bytes32(create2Salt) }(initialAdmin);
-        plugin = new SablierV2ProxyPlugin{ salt: bytes32(create2Salt) }(archive);
-        target = new SablierV2ProxyTarget{ salt: bytes32(create2Salt) }(permit2);
+        archive = new SablierV2Archive{ salt: bytes32(abi.encodePacked(create2Salt)) }(initialAdmin);
+        plugin = new SablierV2ProxyPlugin{ salt: bytes32(abi.encodePacked(create2Salt)) }(archive);
+        target = new SablierV2ProxyTarget{ salt: bytes32(abi.encodePacked(create2Salt)) }(permit2);
     }
 }
