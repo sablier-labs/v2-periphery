@@ -8,7 +8,7 @@ import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTarget } from "../src/SablierV2ProxyTarget.sol";
 
-/// @notice Deploys all V2 Core contracts at deterministic addresses across chains, in the following order:
+/// @notice Deploys all V2 Periphery contracts at deterministic addresses across chains, in the following order:
 ///
 /// 1. {SablierV2Archive}
 /// 2. {SablierV2ProxyPlugin}

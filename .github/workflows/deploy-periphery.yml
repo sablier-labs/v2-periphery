@@ -26,7 +26,7 @@ on:
         required: false
       permit2:
         default: "0x000000000022D473030F116dDEE9F6B43aC78BA3"
-        description: "The permit2 address."
+        description: "The address of the Permit2 contract."
         required: false
 
 
