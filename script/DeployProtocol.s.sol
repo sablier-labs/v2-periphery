@@ -21,7 +21,7 @@ contract DeployProtocol is BaseScript {
     )
         public
         virtual
-        broadcaster
+        broadcast
         returns (
             SablierV2Comptroller comptroller,
             SablierV2LockupDynamic lockupDynamic,

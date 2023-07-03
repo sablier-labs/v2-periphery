@@ -7,7 +7,7 @@ import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { SablierV2ProxyTarget } from "../src/SablierV2ProxyTarget.sol";
 
 contract DeployProxyTarget is BaseScript {
-    function run(IAllowanceTransfer permit2) public broadcaster returns (SablierV2ProxyTarget target) {
+    function run(IAllowanceTransfer permit2) public broadcast returns (SablierV2ProxyTarget target) {
         target = new SablierV2ProxyTarget(permit2);
     }
 }

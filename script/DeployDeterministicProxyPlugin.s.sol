@@ -17,7 +17,7 @@ contract DeployDeterministicProxyPlugin is BaseScript {
     )
         public
         virtual
-        broadcaster
+        broadcast
         returns (SablierV2ProxyPlugin plugin)
     {
         plugin = new SablierV2ProxyPlugin{ salt: bytes32(abi.encodePacked(create2Salt)) }(archive);

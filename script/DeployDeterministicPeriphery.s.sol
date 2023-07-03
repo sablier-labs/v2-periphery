@@ -25,7 +25,7 @@ contract DeployDeterministicPeriphery is BaseScript {
     )
         public
         virtual
-        broadcaster
+        broadcast
         returns (SablierV2Archive archive, SablierV2ProxyPlugin plugin, SablierV2ProxyTarget target)
     {
         archive = new SablierV2Archive{ salt: bytes32(abi.encodePacked(create2Salt)) }(initialAdmin);

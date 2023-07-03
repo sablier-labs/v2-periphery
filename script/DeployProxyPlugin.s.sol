@@ -7,7 +7,7 @@ import { ISablierV2Archive } from "../src/interfaces/ISablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 
 contract DeployProxyPlugin is BaseScript {
-    function run(ISablierV2Archive archive) public broadcaster returns (SablierV2ProxyPlugin plugin) {
+    function run(ISablierV2Archive archive) public broadcast returns (SablierV2ProxyPlugin plugin) {
         plugin = new SablierV2ProxyPlugin(archive);
     }
 }
