@@ -17,7 +17,7 @@ contract DeployDeterministicProxyTarget is BaseScript {
     )
         public
         virtual
-        broadcaster
+        broadcast
         returns (SablierV2ProxyTarget target)
     {
         target = new SablierV2ProxyTarget{ salt: bytes32(abi.encodePacked(create2Salt)) }(permit2);

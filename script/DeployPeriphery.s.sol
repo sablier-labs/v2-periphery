@@ -19,7 +19,7 @@ contract DeployPeriphery is BaseScript {
         IAllowanceTransfer permit2
     )
         public
-        broadcaster
+        broadcast
         returns (SablierV2Archive archive, SablierV2ProxyPlugin plugin, SablierV2ProxyTarget target)
     {
         archive = new SablierV2Archive(initialAdmin);

@@ -16,7 +16,7 @@ contract DeployDeterministicArchive is BaseScript {
     )
         public
         virtual
-        broadcaster
+        broadcast
         returns (SablierV2Archive archive)
     {
         archive = new SablierV2Archive{ salt: bytes32(abi.encodePacked(create2Salt)) }(initialAdmin);

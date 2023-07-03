@@ -6,7 +6,7 @@ import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
 import { ISablierV2Archive } from "../src/interfaces/ISablierV2Archive.sol";
 
 contract ListInArchive is BaseScript {
-    function run(ISablierV2Archive archive, address addr) public broadcaster {
+    function run(ISablierV2Archive archive, address addr) public broadcast {
         archive.list(addr);
     }
 }
