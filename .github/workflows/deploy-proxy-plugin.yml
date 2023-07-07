@@ -11,7 +11,6 @@ env:
   API_KEY_SNOWTRACE: ${{ secrets.API_KEY_SNOWTRACE }}
   FOUNDRY_PROFILE: "optimized"
   MNEMONIC: ${{ secrets.MNEMONIC }}
-  RPC_URL_GOERLI: ${{ secrets.RPC_URL_GOERLI }}
 
 on:
   workflow_dispatch:

@@ -12,7 +12,6 @@ env:
   FOUNDRY_OPTIMIZER_RUNS: "1000" # needed to compile V2 Core
   FOUNDRY_PROFILE: "optimized"
   MNEMONIC: ${{ secrets.MNEMONIC }}
-  RPC_URL_GOERLI: ${{ secrets.RPC_URL_GOERLI }}
 
 on:
   workflow_dispatch:
