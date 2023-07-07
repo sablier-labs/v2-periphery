@@ -8,7 +8,8 @@ import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/types/Data
 import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { PermitSignature } from "permit2-test/utils/PermitSignature.sol";
 
-import { Batch, Permit2Params } from "src/types/DataTypes.sol";
+import { Batch } from "src/types/DataTypes.sol";
+import { Permit2Params } from "src/types/Permit2.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";

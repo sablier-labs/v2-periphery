@@ -7,7 +7,7 @@ import { PermitSignature } from "permit2-test/utils/PermitSignature.sol";
 
 import { Fork_Test } from "../Fork.t.sol";
 
-import { Permit2Params } from "src/types/DataTypes.sol";
+import { Permit2Params } from "src/types/Permit2.sol";
 
 /// @dev Runs against multiple assets.
 abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {

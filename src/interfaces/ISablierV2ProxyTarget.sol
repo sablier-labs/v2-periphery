@@ -7,7 +7,8 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { Batch, Permit2Params } from "../types/DataTypes.sol";
+import { Batch } from "../types/DataTypes.sol";
+import { Permit2Params } from "../types/Permit2.sol";
 
 /// @title ISablierV2ProxyTarget
 /// @notice Proxy target with stateless scripts for interacting with Sablier V2, designed to be used by

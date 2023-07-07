@@ -7,7 +7,8 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { LockupLinear, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
-import { Permit2Params } from "src/types/DataTypes.sol";
+import { Batch } from "src/types/DataTypes.sol";
+import { Permit2Params } from "src/types/Permit2.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
