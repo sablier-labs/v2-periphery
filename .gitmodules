@@ -7,7 +7,7 @@
   path = "lib/openzeppelin-contracts"
   url = "https://github.com/OpenZeppelin/openzeppelin-contracts"
 [submodule "lib/permit2"]
-  branch = "main"
+  branch = "release"
   path = "lib/permit2"
   url = "https://github.com/sablier-labs/permit2"
 [submodule "lib/prb-proxy"]
@@ -23,6 +23,6 @@
   path = "lib/solady"
   url = "https://github.com/Vectorized/solady"
 [submodule "lib/v2-core"]
-  branch = "main"
+  branch = "release"
   path = "lib/v2-core"
   url = "https://github.com/sablier-labs/v2-core"
