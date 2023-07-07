@@ -7,7 +7,8 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 
 import { PermitSignature } from "permit2-test/utils/PermitSignature.sol";
 
-import { Batch, Permit2Params } from "src/types/DataTypes.sol";
+import { Batch } from "src/types/DataTypes.sol";
+import { Permit2Params } from "src/types/Permit2.sol";
 
 import { Fork_Test } from "../Fork.t.sol";
 import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";

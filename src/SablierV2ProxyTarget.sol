@@ -14,7 +14,8 @@ import { OnlyDelegateCall } from "./abstracts/OnlyDelegateCall.sol";
 import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "./interfaces/IWrappedNativeAsset.sol";
 import { Errors } from "./libraries/Errors.sol";
-import { Batch, Permit2Params } from "./types/DataTypes.sol";
+import { Batch } from "./types/DataTypes.sol";
+import { Permit2Params } from "./types/Permit2.sol";
 
 /*
 
