@@ -10,7 +10,6 @@ env:
   API_KEY_POLYGONSCAN: ${{ secrets.API_KEY_POLYGONSCAN }}
   API_KEY_SNOWTRACE: ${{ secrets.API_KEY_SNOWTRACE }}
   MNEMONIC: ${{ secrets.MNEMONIC }}
-  RPC_URL_GOERLI: ${{ secrets.RPC_URL_GOERLI }}
 
 on:
   workflow_dispatch:

@@ -1,7 +1,7 @@
 name: "CI Deep"
 
 env:
-  RPC_URL_GOERLI: ${{ secrets.RPC_URL_GOERLI }}
+  RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
 
 on:
   schedule:
