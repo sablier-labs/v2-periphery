@@ -21,7 +21,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Goerli address of WETH.
-    address internal constant WETH_ADDRESS = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;
+    address internal constant WETH_ADDRESS = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
@@ -36,8 +36,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual override {
-        // Fork the Goerli testnet.
-        vm.createSelectFork({ blockNumber: 9_261_300, urlOrAlias: "goerli" });
+        // Fork Ethereum Mainnet at a specific block number.
+        vm.createSelectFork({ blockNumber: 17_634_000, urlOrAlias: "mainnet" });
 
         // Set up the base test contract.
         Base_Test.setUp();
@@ -84,11 +84,11 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     /// @dev Loads all dependencies pre-deployed on Goerli.
     function loadDependencies() private {
         weth = IWrappedNativeAsset(WETH_ADDRESS);
-        proxyRegistry = IPRBProxyRegistry(0x33e200B5fb5e0C57d370d5202c26A35d07A46B98);
+        proxyRegistry = IPRBProxyRegistry(0xD42a2bB59775694c9Df4c7822BfFAb150e6c699D);
         aliceProxy = loadOrDeployProxy(users.alice.addr);
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);
-        lockupDynamic = ISablierV2LockupDynamic(0xB2CF57EdDEf081b97A4F2a02f5f6DF1271d0071E);
-        lockupLinear = ISablierV2LockupLinear(0x1366C6257033e23c6736722dC2E826AfF0b13EdB);
+        lockupDynamic = ISablierV2LockupDynamic(0x39EFdC3dbB57B2388CcC4bb40aC4CB1226Bc9E44);
+        lockupLinear = ISablierV2LockupLinear(0xB10daee1FCF62243aE27776D7a92D39dC8740f95);
     }
 
     /// @dev Retrieves the proxy and deploys one if none is found.

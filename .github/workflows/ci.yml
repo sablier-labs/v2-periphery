@@ -5,7 +5,7 @@ concurrency:
   group: ${{github.workflow}}-${{github.ref}}
 
 env:
-  RPC_URL_GOERLI: ${{ secrets.RPC_URL_GOERLI }}
+  RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
 
 on:
   workflow_dispatch:
