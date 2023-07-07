@@ -9,11 +9,11 @@ dependencies:
     specifier: 4.9.2
     version: 4.9.2
   '@prb/proxy':
-    specifier: 4.0.0-beta.6
-    version: 4.0.0-beta.6
+    specifier: 4.0.0
+    version: 4.0.0
   '@sablier/v2-core':
-    specifier: 1.0.0-rc.0
-    version: 1.0.0-rc.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1)
+    specifier: 1.0.0
+    version: 1.0.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1)
   '@uniswap/permit2':
     specifier: github:sablier-labs/permit2#abd5832c931ebdce2dd04e81f353d23324d341be
     version: github.com/sablier-labs/permit2/abd5832c931ebdce2dd04e81f353d23324d341be
@@ -57,12 +57,12 @@ packages:
     resolution: {integrity: sha512-ANTz2KMV+dMdZ57mWgDTR6jZo5uQzUczQEHCxd7CvJZZ9yafnfPhUUILHvvigIOZ85fZbTPVkC8YoRG1z5Qf7g==}
     dev: false
 
-  /@prb/proxy@4.0.0-beta.6:
-    resolution: {integrity: sha512-RO8TleA/fAZun6GeM5eHZl5cBTr+09JMM4eLqLbAEWD0BiWkW6RsvemYtI4cwKnDB/bKJge4wI7RiywfN1lC8g==}
+  /@prb/proxy@4.0.0:
+    resolution: {integrity: sha512-KL6ssNOSIOhMQnRHUOA5U6lY/WMvVmno6X4laxMUof6C8VBmt6gSuYndeofLHa7Nlb96VrXwjvY6OKhDG0pM2A==}
     dev: false
 
-  /@sablier/v2-core@1.0.0-rc.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1):
-    resolution: {integrity: sha512-6VHl4rgvrrlmSzhZAfyWervs7jKCGpdUzbBpHeN9L59snb5BMQFKzRYtzM1MERprfU8FoZ0T0FpNEu1V26AQAQ==}
+  /@sablier/v2-core@1.0.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1):
+    resolution: {integrity: sha512-3Es3T2mSrMrnR5BA332qScG+tMZMvCqnpHYwY1U6z1jBw15/W5iB9NMivzh+F2B301zO0fB6zASAU83f93WAtg==}
     peerDependencies:
       '@openzeppelin/contracts': 4.9.2
       '@prb/math': 4.0.1
