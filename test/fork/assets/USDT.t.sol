@@ -7,7 +7,7 @@ import { OnStreamCanceled_Fork_Test } from "../plugin/onStreamCanceled.t.sol";
 import { BatchCancelMultiple_Fork_Test } from "../target/batchCancelMultiple.t.sol";
 import { BatchCreate_Fork_Test } from "../target/batchCreate.t.sol";
 
-IERC20 constant asset = IERC20(0x509Ee0d083DdF8AC028f2a56731412edD63223B9);
+IERC20 constant asset = IERC20(0xdAC17F958D2ee523a2206206994597C13D831ec7);
 
 contract USDT_BatchCancelMultiple_Fork_Test is BatchCancelMultiple_Fork_Test(asset) { }
 
