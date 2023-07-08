@@ -10,6 +10,8 @@
 This repository contains the peripheral smart contracts of the Sablier V2 Protocol. For lower-level logic, see the
 [sablier-labs/v2-core](https://github.com/sablier-labs/v2-core) repository.
 
+In-depth documentation is available at [docs.sablier.com](https://docs.sablier.com).
+
 ## Install
 
 ### Foundry
