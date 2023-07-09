@@ -6,7 +6,7 @@ import { SablierV2LockupDynamic } from "@sablier/v2-core/SablierV2LockupDynamic.
 import { SablierV2LockupLinear } from "@sablier/v2-core/SablierV2LockupLinear.sol";
 import { SablierV2NFTDescriptor } from "@sablier/v2-core/SablierV2NFTDescriptor.sol";
 import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
+import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";

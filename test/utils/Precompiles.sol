@@ -2,7 +2,7 @@
 // solhint-disable max-line-length,no-inline-assembly,reason-string
 pragma solidity >=0.8.19;
 
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
+import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { ISablierV2Archive } from "../../src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2ProxyPlugin } from "../../src/interfaces/ISablierV2ProxyPlugin.sol";

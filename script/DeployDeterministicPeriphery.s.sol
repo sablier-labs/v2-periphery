@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19 <=0.9.0;
 
 import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
+import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";

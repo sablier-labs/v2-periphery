@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <=0.9.0;
 
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
-import { DeployPermit2 } from "permit2-test/utils/DeployPermit2.sol";
+import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
+import { DeployPermit2 } from "@uniswap/permit2-test/utils/DeployPermit2.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
 import { ISablierV2Archive } from "../../src/interfaces/ISablierV2Archive.sol";
