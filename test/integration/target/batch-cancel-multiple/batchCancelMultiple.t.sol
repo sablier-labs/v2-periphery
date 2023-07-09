@@ -33,7 +33,7 @@ contract BatchCancelMultiple_Integration_Test is Integration_Test {
     }
 
     function test_BatchCancelMultiple() external batchSizeNotZero whenDelegateCalled {
-        // Create two batches of streams due to be canceled.
+        // Create two batches of streams to be canceled.
         uint256[] memory dynamicStreamIds = batchCreateWithMilestones();
         uint256[] memory linearStreamIds = batchCreateWithRange();
 

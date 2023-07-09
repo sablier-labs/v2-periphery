@@ -19,15 +19,15 @@ contract WithdrawMax_Integration_Test is Integration_Test {
 
     function test_WithdrawMax_LockupDynamic() external whenDelegateCalled {
         uint256 streamId = createWithMilestones();
-        test_WithdrawMax(lockupDynamic, streamId);
+        withdrawMax(lockupDynamic, streamId);
     }
 
     function test_WithdrawMax_Linear() external whenDelegateCalled {
         uint256 streamId = createWithRange();
-        test_WithdrawMax(lockupLinear, streamId);
+        withdrawMax(lockupLinear, streamId);
     }
 
-    function test_WithdrawMax(ISablierV2Lockup lockup, uint256 streamId) internal {
+    function withdrawMax(ISablierV2Lockup lockup, uint256 streamId) internal {
         // Simulate the passage of time.
         vm.warp(defaults.END_TIME());
 

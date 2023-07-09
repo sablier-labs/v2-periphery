@@ -22,17 +22,17 @@ contract Burn_Integration_Test is Integration_Test {
         LockupDynamic.CreateWithMilestones memory params = defaults.createWithMilestones();
         params.recipient = address(aliceProxy);
         uint256 streamId = createWithMilestones(params);
-        test_Burn(lockupDynamic, streamId);
+        burn(lockupDynamic, streamId);
     }
 
     function test_Burn_LockupLinear() external whenDelegateCalled {
         LockupLinear.CreateWithRange memory params = defaults.createWithRange();
         params.recipient = address(aliceProxy);
         uint256 streamId = createWithRange(params);
-        test_Burn(lockupLinear, streamId);
+        burn(lockupLinear, streamId);
     }
 
-    function test_Burn(ISablierV2Lockup lockup, uint256 streamId) internal {
+    function burn(ISablierV2Lockup lockup, uint256 streamId) internal {
         // Simulate the passage of time.
         vm.warp(defaults.END_TIME());
 
@@ -44,7 +44,7 @@ contract Burn_Integration_Test is Integration_Test {
         data = abi.encodeCall(target.burn, (lockup, streamId));
         aliceProxy.execute(address(target), data);
 
-        // Expect the NFT owner not to exist anymore.
+        // Expect the NFT owner to not exist anymore.
         vm.expectRevert("ERC721: invalid token ID");
         lockup.getRecipient(streamId);
     }

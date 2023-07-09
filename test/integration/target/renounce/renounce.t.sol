@@ -19,15 +19,15 @@ contract Renounce_Integration_Test is Integration_Test {
 
     function test_Renounce_LockupDynamic() external whenDelegateCalled {
         uint256 streamId = createWithMilestones();
-        test_Renounce(lockupDynamic, streamId);
+        renounce(lockupDynamic, streamId);
     }
 
     function test_Renounce_LockupLinear() external whenDelegateCalled {
         uint256 streamId = createWithRange();
-        test_Renounce(lockupLinear, streamId);
+        renounce(lockupLinear, streamId);
     }
 
-    function test_Renounce(ISablierV2Lockup lockup, uint256 streamId) internal {
+    function renounce(ISablierV2Lockup lockup, uint256 streamId) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 

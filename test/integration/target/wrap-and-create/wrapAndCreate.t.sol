@@ -9,10 +9,10 @@ import { Errors } from "src/libraries/Errors.sol";
 import { Integration_Test } from "../../Integration.t.sol";
 
 /// @dev This contracts tests the following functions:
-/// - `wrapEtherAndCreateWithDeltas`
-/// - `wrapEtherAndCreateWithDurations`
-/// - `wrapEtherAndCreateWithMilestones`
-/// - `wrapEtherAndCreateWithRange`
+/// - `wrapAndCreateWithDeltas`
+/// - `wrapAndCreateWithDurations`
+/// - `wrapAndCreateWithMilestones`
+/// - `wrapAndCreateWithRange`
 contract WrapAndCreate_Integration_Test is Integration_Test {
     modifier whenDelegateCalled() {
         _;

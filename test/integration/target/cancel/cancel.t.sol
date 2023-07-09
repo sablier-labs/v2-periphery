@@ -20,19 +20,19 @@ contract Cancel_Integration_Test is Integration_Test {
 
     function test_Cancel_LockupDynamic() external whenDelegateCalled {
         uint256 streamId = createWithMilestones();
-        test_Cancel(lockupDynamic, streamId);
+        cancel(lockupDynamic, streamId);
     }
 
     function test_Cancel_LockupLinear() external whenDelegateCalled {
         uint256 streamId = createWithRange();
-        test_Cancel(lockupLinear, streamId);
+        cancel(lockupLinear, streamId);
     }
 
-    function test_Cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
+    function cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 
-        // Asset flow: proxy owner → proxy → proxy owner
+        // Asset flow: Sablier → proxy → proxy owner
         expectCallToTransfer({ to: address(aliceProxy), amount: defaults.REFUND_AMOUNT() });
         expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() });
 

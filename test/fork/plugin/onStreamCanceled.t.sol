@@ -9,7 +9,7 @@ import { Fork_Test } from "../Fork.t.sol";
 
 import { Permit2Params } from "src/types/Permit2.sol";
 
-/// @dev Runs against multiple assets.
+/// @dev Runs against the asset passed to its constructor.
 abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 

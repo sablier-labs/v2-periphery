@@ -19,15 +19,15 @@ contract Withdraw_Integration_Test is Integration_Test {
 
     function test_Withdraw_LockupDynamic() external whenDelegateCalled {
         uint256 streamId = createWithMilestones();
-        test_Withdraw(lockupDynamic, streamId);
+        withdraw(lockupDynamic, streamId);
     }
 
     function test_Withdraw_LockupLinear() external whenDelegateCalled {
         uint256 streamId = createWithRange();
-        test_Withdraw(lockupLinear, streamId);
+        withdraw(lockupLinear, streamId);
     }
 
-    function test_Withdraw(ISablierV2Lockup lockup, uint256 streamId) internal {
+    function withdraw(ISablierV2Lockup lockup, uint256 streamId) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 

@@ -14,7 +14,7 @@ import { Fork_Test } from "../Fork.t.sol";
 import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
 import { BatchBuilder } from "../../utils/BatchBuilder.sol";
 
-/// @dev Runs against multiple assets.
+/// @dev Runs against the asset passed to its constructor.
 abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 
@@ -54,7 +54,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             range: params.range,
             totalAmount: params.perStreamAmount
         });
-        Batch.CreateWithRange[] memory batch = BatchBuilder.fillBatch(createParams, params.batchSize);
+        Batch.CreateWithRange[] memory batch = BatchBuilder.generateBatchFromParams(createParams, params.batchSize);
         Permit2Params memory permit2Params = defaults.permit2Params({
             user: user,
             spender: address(userProxy),
@@ -129,7 +129,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             startTime: params.startTime,
             totalAmount: params.perStreamAmount
         });
-        Batch.CreateWithMilestones[] memory batch = BatchBuilder.fillBatch(createWithMilestones, params.batchSize);
+        Batch.CreateWithMilestones[] memory batch = BatchBuilder.generateBatchFromParams(createWithMilestones, params.batchSize);
         Permit2Params memory permit2Params = defaults.permit2Params({
             user: user,
             spender: address(userProxy),

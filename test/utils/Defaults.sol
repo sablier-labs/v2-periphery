@@ -246,12 +246,12 @@ contract Defaults is PermitSignature {
 
     /// @dev Returns a default-size batch of `Batch.CreateWithDeltas` parameters.
     function batchCreateWithDeltas() public view returns (Batch.CreateWithDeltas[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithDeltas(), BATCH_SIZE);
+        batch = BatchBuilder.generateBatchFromParams(createWithDeltas(), BATCH_SIZE);
     }
 
     /// @dev Returns a default-size batch of `Batch.CreateWithDurations` parameters.
     function batchCreateWithDurations() public view returns (Batch.CreateWithDurations[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithDurations(), BATCH_SIZE);
+        batch = BatchBuilder.generateBatchFromParams(createWithDurations(), BATCH_SIZE);
     }
 
     /// @dev Returns a default-size batch of `Batch.CreateWithMilestones` parameters.
@@ -265,7 +265,7 @@ contract Defaults is PermitSignature {
         view
         returns (Batch.CreateWithMilestones[] memory batch)
     {
-        batch = BatchBuilder.fillBatch(createWithMilestones(), batchSize);
+        batch = BatchBuilder.generateBatchFromParams(createWithMilestones(), batchSize);
     }
 
     /// @dev Returns a default-size batch of `Batch.CreateWithRange` parameters.
@@ -275,6 +275,6 @@ contract Defaults is PermitSignature {
 
     /// @dev Returns a batch of `Batch.CreateWithRange` parameters.
     function batchCreateWithRange(uint256 batchSize) public view returns (Batch.CreateWithRange[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithRange(), batchSize);
+        batch = BatchBuilder.generateBatchFromParams(createWithRange(), batchSize);
     }
 }

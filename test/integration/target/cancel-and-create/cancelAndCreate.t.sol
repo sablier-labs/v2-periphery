@@ -61,7 +61,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithDeltas_AcrossSablierContracts() external {
+    function test_CancelAndCreateWithDeltas_AcrossSablierContracts() external whenDelegateCalled {
         // Create the stream due to be canceled.
         uint256 streamId = createWithRange();
 
@@ -130,7 +130,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithDurations_AcrossSablierContracts() external {
+    function test_CancelAndCreateWithDurations_AcrossSablierContracts() external whenDelegateCalled {
         // Create the stream due to be canceled.
         uint256 streamId = createWithMilestones();
 
@@ -199,7 +199,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithMilestones_AcrossSablierContracts() external {
+    function test_CancelAndCreateWithMilestones_AcrossSablierContracts() external whenDelegateCalled {
         // Create the stream due to be canceled.
         uint256 streamId = createWithRange();
 
@@ -268,7 +268,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
         assertEq(actualNewStreamId, expectedNewStreamId, "new stream id mismatch");
     }
 
-    function test_CancelAndCreateWithRange_AcrossSablierContracts() external {
+    function test_CancelAndCreateWithRange_AcrossSablierContracts() external whenDelegateCalled {
         // Create the stream due to be canceled.
         uint256 streamId = createWithMilestones();
 

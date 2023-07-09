@@ -9,10 +9,10 @@ import { Integration_Test } from "../../Integration.t.sol";
 
 contract BatchCreateWithRange_Integration_Test is Integration_Test {
     function test_RevertWhen_NotDelegateCalled() external {
-        Batch.CreateWithDurations[] memory batch;
+        Batch.CreateWithRange[] memory batch;
         Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithDurations(lockupLinear, asset, batch, permit2Params);
+        target.batchCreateWithRange(lockupLinear, asset, batch, permit2Params);
     }
 
     modifier whenDelegateCalled() {
