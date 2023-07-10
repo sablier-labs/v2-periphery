@@ -69,7 +69,7 @@ contract SablierV2ProxyPlugin is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2LockupSender
-    /// @notice Forwards the refunded assets to the proxy owner when the recipient cancel a stream whose sender is the
+    /// @notice Forwards the refunded assets to the proxy owner when the recipient cancels a stream whose sender is the
     /// proxy contract.
     /// @dev Requirements:
     /// - Must be delegate called.

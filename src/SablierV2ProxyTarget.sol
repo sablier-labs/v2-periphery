@@ -203,7 +203,7 @@ contract SablierV2ProxyTarget is
             }
         }
 
-        // Transfers the assets to the proxy and approve the Sablier contract to spend them.
+        // Transfers the assets to the proxy and approves the Sablier contract to spend them.
         _transferAndApprove(address(lockupLinear), asset, transferAmount, permit2Params);
 
         // Create a stream for each element in the parameter array.
