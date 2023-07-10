@@ -32,7 +32,7 @@ contract Cancel_Integration_Test is Integration_Test {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 
-        // Asset flow: proxy owner → proxy → proxy owner
+        // Asset flow: Sablier → proxy → proxy owner
         expectCallToTransfer({ to: address(aliceProxy), amount: defaults.REFUND_AMOUNT() });
         expectCallToTransfer({ to: users.alice.addr, amount: defaults.REFUND_AMOUNT() });
 

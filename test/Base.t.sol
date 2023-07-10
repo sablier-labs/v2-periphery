@@ -224,7 +224,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
 
-    /// @dev Expects multiple similar calls to {ISablierV2LockupDynamic.createWithDeltas}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithDeltas}, each with the specified
     /// `params`.
     function expectMultipleCallsToCreateWithDeltas(
         uint64 count,
@@ -239,7 +239,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         });
     }
 
-    /// @dev Expects multiple similar calls to {ISablierV2LockupDynamic.createWithDurations}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithDurations}, each with the specified
     /// `params`.
     function expectMultipleCallsToCreateWithDurations(
         uint64 count,
@@ -254,7 +254,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         });
     }
 
-    /// @dev Expects multiple similar calls to {ISablierV2LockupDynamic.createWithMilestones}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithMilestones}, each with the specified
     /// `params`.
     function expectMultipleCallsToCreateWithMilestones(
         uint64 count,
@@ -269,7 +269,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         });
     }
 
-    /// @dev Expects multiple similar calls to {ISablierV2LockupDynamic.createWithRange}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithRange}, each with the specified
     /// `params`.
     function expectMultipleCallsToCreateWithRange(uint64 count, LockupLinear.CreateWithRange memory params) internal {
         vm.expectCall({

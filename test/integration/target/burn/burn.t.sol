@@ -44,7 +44,7 @@ contract Burn_Integration_Test is Integration_Test {
         data = abi.encodeCall(target.burn, (lockup, streamId));
         aliceProxy.execute(address(target), data);
 
-        // Expect the NFT owner not to exist anymore.
+        // Expect the NFT owner to not exist anymore.
         vm.expectRevert("ERC721: invalid token ID");
         lockup.getRecipient(streamId);
     }

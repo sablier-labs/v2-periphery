@@ -14,7 +14,7 @@ import { Fork_Test } from "../Fork.t.sol";
 import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
 import { BatchBuilder } from "../../utils/BatchBuilder.sol";
 
-/// @dev Runs against multiple assets.
+/// @dev Runs against multiple fork assets.
 abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 

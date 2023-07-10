@@ -6,7 +6,7 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 import { Batch } from "../../src/types/DataTypes.sol";
 
 library BatchBuilder {
-    /// @notice Generates an array of `batchSingle` with the specified `batchSize`.
+    /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
         Batch.CreateWithDeltas memory batchSingle,
         uint256 batchSize
@@ -44,7 +44,7 @@ library BatchBuilder {
         batch = fillBatch(batchSingle, batchSize);
     }
 
-    /// @notice Generates an array of `batchSingle` with the specified `batchSize`.
+    /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
         Batch.CreateWithDurations memory batchSingle,
         uint256 batchSize
@@ -82,7 +82,7 @@ library BatchBuilder {
         batch = fillBatch(batchSingle, batchSize);
     }
 
-    /// @notice Generates an array of `batchSingle` with the specified `batchSize`.
+    /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
         Batch.CreateWithMilestones memory batchSingle,
         uint256 batchSize
@@ -121,7 +121,7 @@ library BatchBuilder {
         batch = fillBatch(batchSingle, batchSize);
     }
 
-    /// @notice Generates an array of `batchSingle` with the specified `batchSize`.
+    /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
         Batch.CreateWithRange memory batchSingle,
         uint256 batchSize

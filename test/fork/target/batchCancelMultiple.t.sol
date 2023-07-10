@@ -8,7 +8,7 @@ import { Batch } from "src/types/DataTypes.sol";
 
 import { Fork_Test } from "../Fork.t.sol";
 
-/// @dev Runs against multiple assets.
+/// @dev Runs against multiple fork assets.
 abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 
