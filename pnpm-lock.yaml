@@ -9,8 +9,8 @@ dependencies:
     specifier: 4.9.2
     version: 4.9.2
   '@prb/proxy':
-    specifier: 4.0.0
-    version: 4.0.0
+    specifier: 4.0.1
+    version: 4.0.1
   '@sablier/v2-core':
     specifier: 1.0.0
     version: 1.0.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1)
@@ -57,8 +57,8 @@ packages:
     resolution: {integrity: sha512-ANTz2KMV+dMdZ57mWgDTR6jZo5uQzUczQEHCxd7CvJZZ9yafnfPhUUILHvvigIOZ85fZbTPVkC8YoRG1z5Qf7g==}
     dev: false
 
-  /@prb/proxy@4.0.0:
-    resolution: {integrity: sha512-KL6ssNOSIOhMQnRHUOA5U6lY/WMvVmno6X4laxMUof6C8VBmt6gSuYndeofLHa7Nlb96VrXwjvY6OKhDG0pM2A==}
+  /@prb/proxy@4.0.1:
+    resolution: {integrity: sha512-uphCpNzkhT3aKia5/KKJz2eHyeYGnJeiFt3IeehtylaXxfOK3iS1bsxljyR+XjtzldSA6aWtiKg0MnhEHw/IWg==}
     dev: false
 
   /@sablier/v2-core@1.0.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1):
