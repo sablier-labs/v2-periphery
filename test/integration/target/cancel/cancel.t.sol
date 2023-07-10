@@ -20,15 +20,15 @@ contract Cancel_Integration_Test is Integration_Test {
 
     function test_Cancel_LockupDynamic() external whenDelegateCalled {
         uint256 streamId = createWithMilestones();
-        cancel(lockupDynamic, streamId);
+        test_Cancel(lockupDynamic, streamId);
     }
 
     function test_Cancel_LockupLinear() external whenDelegateCalled {
         uint256 streamId = createWithRange();
-        cancel(lockupLinear, streamId);
+        test_Cancel(lockupLinear, streamId);
     }
 
-    function cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
+    function test_Cancel(ISablierV2Lockup lockup, uint256 streamId) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 

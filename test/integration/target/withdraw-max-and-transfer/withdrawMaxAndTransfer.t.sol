@@ -22,17 +22,17 @@ contract WithdrawMaxAndTransfer_Integration_Test is Integration_Test {
         LockupDynamic.CreateWithMilestones memory params = defaults.createWithMilestones();
         params.recipient = address(aliceProxy);
         uint256 streamId = createWithMilestones(params);
-        withdrawMaxAndTransfer(lockupDynamic, streamId);
+        test_WithdrawMaxAndTransfer(lockupDynamic, streamId);
     }
 
     function test_WithdrawMaxAndTransfer_LockupLinear() external whenDelegateCalled {
         LockupLinear.CreateWithRange memory params = defaults.createWithRange();
         params.recipient = address(aliceProxy);
         uint256 streamId = createWithRange(params);
-        withdrawMaxAndTransfer(lockupLinear, streamId);
+        test_WithdrawMaxAndTransfer(lockupLinear, streamId);
     }
 
-    function withdrawMaxAndTransfer(ISablierV2Lockup lockup, uint256 streamId) internal {
+    function test_WithdrawMaxAndTransfer(ISablierV2Lockup lockup, uint256 streamId) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 

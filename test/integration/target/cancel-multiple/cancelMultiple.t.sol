@@ -23,15 +23,15 @@ contract CancelMultiple_Integration_Test is Integration_Test {
 
     function test_CancelMultiple_LockupDynamic() external whenDelegateCalled {
         uint256[] memory streamIds = batchCreateWithMilestones();
-        cancelMultiple(lockupDynamic, streamIds);
+        test_CancelMultiple(lockupDynamic, streamIds);
     }
 
     function test_CancelMultiple_LockupLinear() external whenDelegateCalled {
         uint256[] memory streamIds = batchCreateWithRange();
-        cancelMultiple(lockupLinear, streamIds);
+        test_CancelMultiple(lockupLinear, streamIds);
     }
 
-    function cancelMultiple(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {
+    function test_CancelMultiple(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 

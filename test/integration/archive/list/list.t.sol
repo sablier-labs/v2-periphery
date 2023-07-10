@@ -29,11 +29,14 @@ contract List_Integration_Test is Integration_Test {
     }
 
     function test_List() external callerAdmin addressNotListed {
+        archive.list(address(lockupLinear));
+        bool isListed = archive.isListed(address(lockupLinear));
+        assertTrue(isListed, "isListed");
+    }
+
+    function test_List_Event() external callerAdmin addressNotListed {
         vm.expectEmit();
         emit List({ admin: users.admin.addr, addr: address(lockupLinear) });
         archive.list(address(lockupLinear));
-        
-        bool isListed = archive.isListed(address(lockupLinear));
-        assertTrue(isListed, "isListed");
     }
 }

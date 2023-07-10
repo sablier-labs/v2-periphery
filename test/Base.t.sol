@@ -317,7 +317,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256Array(response);
+        return abi.decode(response, (uint256[]));
     }
 
     function batchCreateWithDurations() internal returns (uint256[] memory) {
@@ -331,7 +331,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256Array(response);
+        return abi.decode(response, (uint256[]));
     }
 
     function batchCreateWithMilestones() internal returns (uint256[] memory) {
@@ -345,7 +345,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256Array(response);
+        return abi.decode(response, (uint256[]));
     }
 
     function batchCreateWithMilestones(uint256 batchSize) internal returns (uint256[] memory) {
@@ -360,7 +360,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256Array(response);
+        return abi.decode(response, (uint256[]));
     }
 
     function batchCreateWithRange() internal returns (uint256[] memory) {
@@ -374,7 +374,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256Array(response);
+        return abi.decode(response, (uint256[]));
     }
 
     function batchCreateWithRange(uint256 batchSize) internal returns (uint256[] memory) {
@@ -384,7 +384,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             (lockupLinear, asset, defaults.batchCreateWithRange(batchSize), defaults.permit2Params(totalTransferAmount))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256Array(response);
+        return abi.decode(response, (uint256[]));
     }
 
     function createWithDeltas() internal returns (uint256) {
@@ -393,7 +393,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             (lockupDynamic, defaults.createWithDeltas(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256(response);
+        return abi.decode(response, (uint256));
     }
 
     function createWithDurations() internal returns (uint256) {
@@ -402,7 +402,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             (lockupLinear, defaults.createWithDurations(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256(response);
+        return abi.decode(response, (uint256));
     }
 
     function createWithMilestones() internal returns (uint256) {
@@ -411,7 +411,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             (lockupDynamic, defaults.createWithMilestones(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256(response);
+        return abi.decode(response, (uint256));
     }
 
     function createWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal returns (uint256) {
@@ -419,7 +419,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             target.createWithMilestones, (lockupDynamic, params, defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256(response);
+        return abi.decode(response, (uint256));
     }
 
     function createWithRange() internal returns (uint256) {
@@ -428,7 +428,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             (lockupLinear, defaults.createWithRange(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256(response);
+        return abi.decode(response, (uint256));
     }
 
     function createWithRange(LockupLinear.CreateWithRange memory params) internal returns (uint256) {
@@ -436,14 +436,6 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             target.createWithRange, (lockupLinear, params, defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
-        return decodeAsUint256(response);
-    }
-
-    function decodeAsUint256(bytes memory input) private pure returns (uint256) {
-        return abi.decode(input, (uint256));
-    }
-
-    function decodeAsUint256Array(bytes memory input) private pure returns (uint256[] memory) {
-        return abi.decode(input, (uint256[]));
+        return abi.decode(response, (uint256));
     }
 }

@@ -6,9 +6,9 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 import { Batch } from "../../src/types/DataTypes.sol";
 
 library BatchBuilder {
-    /// @notice Generates an array containing `batchSize` copies of `sample`.
-    function generateBatchFromSample(
-        Batch.CreateWithDeltas memory sample,
+    /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
+    function fillBatch(
+        Batch.CreateWithDeltas memory batchSingle,
         uint256 batchSize
     )
         internal
@@ -18,13 +18,13 @@ library BatchBuilder {
         batch = new Batch.CreateWithDeltas[](batchSize);
         unchecked {
             for (uint256 i = 0; i < batchSize; ++i) {
-                batch[i] = sample;
+                batch[i] = batchSingle;
             }
         }
     }
 
     /// @notice Turns the `params` into an array of `Batch.CreateWithDeltas` structs.
-    function generateBatchFromParams(
+    function fillBatch(
         LockupDynamic.CreateWithDeltas memory params,
         uint256 batchSize
     )
@@ -33,7 +33,7 @@ library BatchBuilder {
         returns (Batch.CreateWithDeltas[] memory batch)
     {
         batch = new Batch.CreateWithDeltas[](batchSize);
-        Batch.CreateWithDeltas memory sample = Batch.CreateWithDeltas({
+        Batch.CreateWithDeltas memory batchSingle = Batch.CreateWithDeltas({
             broker: params.broker,
             cancelable: params.cancelable,
             recipient: params.recipient,
@@ -41,12 +41,12 @@ library BatchBuilder {
             sender: params.sender,
             totalAmount: params.totalAmount
         });
-        batch = generateBatchFromSample(sample, batchSize);
+        batch = fillBatch(batchSingle, batchSize);
     }
 
-    /// @notice Generates an array containing `batchSize` copies of `sample`.
-    function generateBatchFromSample(
-        Batch.CreateWithDurations memory sample,
+    /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
+    function fillBatch(
+        Batch.CreateWithDurations memory batchSingle,
         uint256 batchSize
     )
         internal
@@ -56,13 +56,13 @@ library BatchBuilder {
         batch = new Batch.CreateWithDurations[](batchSize);
         unchecked {
             for (uint256 i = 0; i < batchSize; ++i) {
-                batch[i] = sample;
+                batch[i] = batchSingle;
             }
         }
     }
 
     /// @notice Turns the `params` into an array of `Batch.CreateWithDurations` structs.
-    function generateBatchFromParams(
+    function fillBatch(
         LockupLinear.CreateWithDurations memory params,
         uint256 batchSize
     )
@@ -71,7 +71,7 @@ library BatchBuilder {
         returns (Batch.CreateWithDurations[] memory batch)
     {
         batch = new Batch.CreateWithDurations[](batchSize);
-        Batch.CreateWithDurations memory sample = Batch.CreateWithDurations({
+        Batch.CreateWithDurations memory batchSingle = Batch.CreateWithDurations({
             broker: params.broker,
             cancelable: params.cancelable,
             durations: params.durations,
@@ -79,12 +79,12 @@ library BatchBuilder {
             sender: params.sender,
             totalAmount: params.totalAmount
         });
-        batch = generateBatchFromSample(sample, batchSize);
+        batch = fillBatch(batchSingle, batchSize);
     }
 
-    /// @notice Generates an array containing `batchSize` copies of `sample`.
-    function generateBatchFromSample(
-        Batch.CreateWithMilestones memory sample,
+    /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
+    function fillBatch(
+        Batch.CreateWithMilestones memory batchSingle,
         uint256 batchSize
     )
         internal
@@ -94,13 +94,13 @@ library BatchBuilder {
         batch = new Batch.CreateWithMilestones[](batchSize);
         unchecked {
             for (uint256 i = 0; i < batchSize; ++i) {
-                batch[i] = sample;
+                batch[i] = batchSingle;
             }
         }
     }
 
     /// @notice Turns the `params` into an array of `Batch.CreateWithMilestones` structs.
-    function generateBatchFromParams(
+    function fillBatch(
         LockupDynamic.CreateWithMilestones memory params,
         uint256 batchSize
     )
@@ -109,7 +109,7 @@ library BatchBuilder {
         returns (Batch.CreateWithMilestones[] memory batch)
     {
         batch = new Batch.CreateWithMilestones[](batchSize);
-        Batch.CreateWithMilestones memory sample = Batch.CreateWithMilestones({
+        Batch.CreateWithMilestones memory batchSingle = Batch.CreateWithMilestones({
             broker: params.broker,
             cancelable: params.cancelable,
             recipient: params.recipient,
@@ -118,12 +118,12 @@ library BatchBuilder {
             startTime: params.startTime,
             totalAmount: params.totalAmount
         });
-        batch = generateBatchFromSample(sample, batchSize);
+        batch = fillBatch(batchSingle, batchSize);
     }
 
-    /// @notice Generates an array containing `batchSize` copies of `sample`.
-    function generateBatchFromSample(
-        Batch.CreateWithRange memory sample,
+    /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
+    function fillBatch(
+        Batch.CreateWithRange memory batchSingle,
         uint256 batchSize
     )
         internal
@@ -133,13 +133,13 @@ library BatchBuilder {
         batch = new Batch.CreateWithRange[](batchSize);
         unchecked {
             for (uint256 i = 0; i < batchSize; ++i) {
-                batch[i] = sample;
+                batch[i] = batchSingle;
             }
         }
     }
 
     /// @notice Turns the `params` into an array of `Batch.CreateWithRange` structs.
-    function generateBatchFromParams(
+    function fillBatch(
         LockupLinear.CreateWithRange memory params,
         uint256 batchSize
     )
@@ -148,7 +148,7 @@ library BatchBuilder {
         returns (Batch.CreateWithRange[] memory batch)
     {
         batch = new Batch.CreateWithRange[](batchSize);
-        Batch.CreateWithRange memory sample = Batch.CreateWithRange({
+        Batch.CreateWithRange memory batchSingle = Batch.CreateWithRange({
             broker: params.broker,
             cancelable: params.cancelable,
             range: params.range,
@@ -156,6 +156,6 @@ library BatchBuilder {
             sender: params.sender,
             totalAmount: params.totalAmount
         });
-        batch = generateBatchFromSample(sample, batchSize);
+        batch = fillBatch(batchSingle, batchSize);
     }
 }
