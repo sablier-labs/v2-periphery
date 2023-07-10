@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "prettier": "^2.8.8",
-    "solhint": "^3.4.1"
+    "solhint-community": "^3.7.0-rc00"
   },
   "files": [
     "artifacts",

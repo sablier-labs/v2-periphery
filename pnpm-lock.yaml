@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -22,9 +22,9 @@ devDependencies:
   prettier:
     specifier: ^2.8.8
     version: 2.8.8
-  solhint:
-    specifier: ^3.4.1
-    version: 3.4.1
+  solhint-community:
+    specifier: ^3.7.0-rc00
+    version: 3.7.0-rc00
 
 packages:
 
@@ -399,8 +399,8 @@ packages:
       is-fullwidth-code-point: 3.0.0
     dev: true
 
-  /solhint@3.4.1:
-    resolution: {integrity: sha512-pzZn2RlZhws1XwvLPVSsxfHrwsteFf5eySOhpAytzXwKQYbTCJV6z8EevYDiSVKMpWrvbKpEtJ055CuEmzp4Xg==}
+  /solhint-community@3.7.0-rc00:
+    resolution: {integrity: sha512-Csl2nyBoJ64f1cWev8U0Tw1gRB5v8FQP3UyWm5IjlFZfAMxCNxQ/Mh2yN3A1y5dt5oLlk1bbwlmKengoHwf9ag==}
     hasBin: true
     dependencies:
       '@solidity-parser/parser': 0.16.0
