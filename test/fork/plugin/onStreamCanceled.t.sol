@@ -2,12 +2,13 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ISablierV2LockupSender } from "@sablier/v2-core/interfaces/hooks/ISablierV2LockupSender.sol";
 import { LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { PermitSignature } from "permit2-test/utils/PermitSignature.sol";
 
-import { Fork_Test } from "../Fork.t.sol";
-
 import { Permit2Params } from "src/types/Permit2.sol";
+
+import { Fork_Test } from "../Fork.t.sol";
 
 /// @dev Runs against multiple fork assets.
 abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
@@ -49,20 +50,27 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
         // Make the recipient the caller so that Sablier calls the hook implemented by the plugin.
         changePrank({ msgSender: users.recipient.addr });
 
-        // Retrieve the refund amount
-        uint128 refundAmount = lockupLinear.refundableAmountOf(streamId);
+        // Expect a call to the hook.
+        uint128 senderAmount = lockupLinear.refundableAmountOf(streamId);
+        uint128 recipientAmount = amount - senderAmount;
+        vm.expectCall(
+            address(aliceProxy),
+            abi.encodeCall(
+                ISablierV2LockupSender.onStreamCanceled, (streamId, users.recipient.addr, senderAmount, recipientAmount)
+            )
+        );
 
         // Asset flow: Sablier contract → proxy → proxy owner
         // Expect transfers from the Sablier contract to the proxy, and then from the proxy to the proxy owner.
-        expectCallToTransfer({ asset_: address(asset), to: address(aliceProxy), amount: refundAmount });
-        expectCallToTransfer({ asset_: address(asset), to: users.alice.addr, amount: refundAmount });
+        expectCallToTransfer({ asset_: address(asset), to: address(aliceProxy), amount: senderAmount });
+        expectCallToTransfer({ asset_: address(asset), to: users.alice.addr, amount: senderAmount });
 
         // Cancel the stream and trigger the plugin.
         lockupLinear.cancel(streamId);
 
         // Assert that the balances match.
         uint256 actualBalance = asset.balanceOf(users.alice.addr);
-        uint256 expectedBalance = initialBalance + refundAmount;
+        uint256 expectedBalance = initialBalance + senderAmount;
         assertEq(actualBalance, expectedBalance, "balances mismatch");
     }
 }
