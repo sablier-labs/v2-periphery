@@ -15,8 +15,8 @@ dependencies:
     specifier: 1.0.0
     version: 1.0.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1)
   '@uniswap/permit2':
-    specifier: github:sablier-labs/permit2#abd5832c931ebdce2dd04e81f353d23324d341be
-    version: github.com/sablier-labs/permit2/abd5832c931ebdce2dd04e81f353d23324d341be
+    specifier: github:sablier-labs/permit2#4ea99fe3a01bb526cba6370f1e07d247a718ea51
+    version: github.com/sablier-labs/permit2/4ea99fe3a01bb526cba6370f1e07d247a718ea51
 
 devDependencies:
   prettier:
@@ -479,8 +479,8 @@ packages:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
     dev: true
 
-  github.com/sablier-labs/permit2/abd5832c931ebdce2dd04e81f353d23324d341be:
-    resolution: {tarball: https://codeload.github.com/sablier-labs/permit2/tar.gz/abd5832c931ebdce2dd04e81f353d23324d341be}
-    name: permit2
+  github.com/sablier-labs/permit2/4ea99fe3a01bb526cba6370f1e07d247a718ea51:
+    resolution: {tarball: https://codeload.github.com/sablier-labs/permit2/tar.gz/4ea99fe3a01bb526cba6370f1e07d247a718ea51}
+    name: '@uniswap/permit2'
     version: 1.0.0
     dev: false
