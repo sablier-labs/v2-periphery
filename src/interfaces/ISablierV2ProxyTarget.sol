@@ -23,7 +23,7 @@ interface ISablierV2ProxyTarget {
     ///
     /// @dev Notes:
     /// - All refunded assets are forwarded to the proxy owner.
-    /// - It is assumed that `assets` includes all assets associated with the stream ids in `batch`. If any asset
+    /// - It is assumed that `assets` includes only the assets associated with the stream ids in `batch`. If any asset
     /// is missing, the refunded amount will be left in the proxy.
     ///
     /// Requirements:
@@ -39,20 +39,25 @@ interface ISablierV2ProxyTarget {
     function burn(ISablierV2Lockup lockup, uint256 streamId) external;
 
     /// @notice Mirror for {ISablierV2Lockup.cancel}.
-    /// @dev Must be delegate called.
+    ///
+    /// @dev Notes:
+    /// - All refunded assets are forwarded to the proxy owner.
+    ///
+    /// Requirements:
+    /// - Must be delegate called.
     function cancel(ISablierV2Lockup lockup, uint256 streamId) external;
 
     /// @notice Mirror for {ISablierV2Lockup.cancelMultiple}.
     ///
     /// @dev Notes:
     /// - All refunded assets are forwarded to the proxy owner.
-    /// - It is assumed that `assets` includes all assets associated with `streamIds`. If any asset is missing, the
+    /// - It is assumed that `assets` includes only the assets associated with `streamIds`. If any asset is missing, the
     /// refunded amount will be left in the proxy.
     ///
     /// Requirements:
     /// - Must be delegate called.
     ///
-    /// @param lockup The address of the lockup streaming contract.
+    /// @param lockup The address of the Lockup streaming contract.
     /// @param assets The contract addresses of the ERC-20 assets used for streaming.
     /// @param streamIds The stream ids to cancel.
     function cancelMultiple(ISablierV2Lockup lockup, IERC20[] calldata assets, uint256[] calldata streamIds) external;
@@ -133,7 +138,7 @@ interface ISablierV2ProxyTarget {
     /// Requirements:
     /// - Must be delegate called.
     ///
-    /// @param lockup The address of the lockup streaming contract where the stream to cancel is.
+    /// @param lockup The address of the Lockup streaming contract where the stream to cancel is.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract to use for creating the new stream.
     /// @param streamId The id of the stream to cancel.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
@@ -158,7 +163,7 @@ interface ISablierV2ProxyTarget {
     /// Requirements:
     /// - Must be delegate called.
     ///
-    /// @param lockup The address of the lockup streaming contract where the stream to cancel is.
+    /// @param lockup The address of the Lockup streaming contract where the stream to cancel is.
     /// @param streamId The id of the stream to cancel.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract to use for creating the new stream.
     /// @param permit2Params A struct encapsulating the parameters needed for Permit2, most importantly the signature.
@@ -303,7 +308,7 @@ interface ISablierV2ProxyTarget {
     /// Requirements:
     /// - Must be delegate called.
     ///
-    /// @param lockup The address of the lockup streaming contract where the stream to cancel is.
+    /// @param lockup The address of the Lockup streaming contract where the stream to cancel is.
     /// @param streamId The id of the stream to cancel.
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract to use for creating the new stream.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
@@ -329,7 +334,7 @@ interface ISablierV2ProxyTarget {
     /// Requirements:
     /// - Must be delegate called.
     ///
-    /// @param lockup The address of the lockup streaming contract where the stream to cancel is.
+    /// @param lockup The address of the Lockup streaming contract where the stream to cancel is.
     /// @param streamId The id of the stream to cancel.
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract to use for creating the new stream.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
