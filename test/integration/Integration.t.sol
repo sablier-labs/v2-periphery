@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
+import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Precompiles as PRBProxyPrecompiles } from "@prb/proxy-test/utils/Precompiles.sol";
 import { Precompiles as V2CorePrecompiles } from "@sablier/v2-core-test/utils/Precompiles.sol";
-import { DeployPermit2 } from "permit2-test/utils/DeployPermit2.sol";
+import { DeployPermit2 } from "@uniswap/permit2-test/utils/DeployPermit2.sol";
 
 import { Defaults } from "../utils/Defaults.sol";
 import { WETH } from "../mocks/WETH.sol";

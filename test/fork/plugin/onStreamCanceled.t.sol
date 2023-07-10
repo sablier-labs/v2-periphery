@@ -3,7 +3,7 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
-import { PermitSignature } from "permit2-test/utils/PermitSignature.sol";
+import { PermitSignature } from "@uniswap/permit2-test/utils/PermitSignature.sol";
 
 import { Fork_Test } from "../Fork.t.sol";
 

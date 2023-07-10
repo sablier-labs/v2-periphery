@@ -9,8 +9,8 @@ import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
-import { IAllowanceTransfer } from "permit2/interfaces/IAllowanceTransfer.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
