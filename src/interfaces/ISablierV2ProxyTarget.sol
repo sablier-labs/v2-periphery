@@ -12,7 +12,7 @@ import { Permit2Params } from "../types/Permit2.sol";
 
 /// @title ISablierV2ProxyTarget
 /// @notice Proxy target with stateless scripts for interacting with Sablier V2, designed to be used by
-/// stream senders, recipients and the recipients' approved operators.
+/// stream senders.
 /// @dev Intended for use with an instance of PRBProxy through delegate calls. Any standard calls will be reverted.
 interface ISablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
