@@ -16,18 +16,8 @@ abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
         batchSize = _bound(batchSize, 1, 50);
 
         // Create two batches of streams.
-        batchCreateWithMilestones(batchSize);
-        batchCreateWithRange(batchSize);
-
-        // Declare the stream ids to cancel.
-        uint256[] memory dynamicStreamIds = new uint256[](batchSize);
-        uint256[] memory linearStreamIds = new uint256[](batchSize);
-        unchecked {
-            for (uint256 i = 0; i < batchSize; ++i) {
-                dynamicStreamIds[i] = i + 1;
-                linearStreamIds[i] = i + 1;
-            }
-        }
+        uint256[] memory dynamicStreamIds = batchCreateWithMilestones(batchSize);
+        uint256[] memory linearStreamIds = batchCreateWithRange(batchSize);
 
         // Simulate the passage of time.
         vm.warp({ timestamp: defaults.CLIFF_TIME() });
