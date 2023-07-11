@@ -37,7 +37,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     function setUp() public virtual override {
         // Fork Ethereum Mainnet at a specific block number.
-        vm.createSelectFork({ blockNumber: 17_634_000, urlOrAlias: "mainnet" });
+        vm.createSelectFork({ blockNumber: 17_665_000, urlOrAlias: "mainnet" });
 
         // Set up the base test contract.
         Base_Test.setUp();
@@ -84,7 +84,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     /// @dev Loads all dependencies pre-deployed on Goerli.
     function loadDependencies() private {
         weth = IWrappedNativeAsset(WETH_ADDRESS);
-        proxyRegistry = IPRBProxyRegistry(0xD42a2bB59775694c9Df4c7822BfFAb150e6c699D);
+        proxyRegistry = IPRBProxyRegistry(0x584009E9eDe26e212182c9745F5c000191296a78);
         aliceProxy = loadOrDeployProxy(users.alice.addr);
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);
         lockupDynamic = ISablierV2LockupDynamic(0x39EFdC3dbB57B2388CcC4bb40aC4CB1226Bc9E44);
@@ -93,7 +93,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     /// @dev Retrieves the proxy and deploys one if none is found.
     function loadOrDeployProxy(address user) internal returns (IPRBProxy proxy) {
-        proxy = proxyRegistry.getProxy({ owner: user });
+        proxy = proxyRegistry.getProxy(user);
         if (address(proxy) == address(0)) {
             proxy = proxyRegistry.deployFor(user);
         }
