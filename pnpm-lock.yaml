@@ -12,8 +12,8 @@ dependencies:
     specifier: 4.0.1
     version: 4.0.1
   '@sablier/v2-core':
-    specifier: 1.0.0
-    version: 1.0.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1)
+    specifier: 1.0.1
+    version: 1.0.1(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1)
   '@uniswap/permit2':
     specifier: github:sablier-labs/permit2#4ea99fe3a01bb526cba6370f1e07d247a718ea51
     version: github.com/sablier-labs/permit2/4ea99fe3a01bb526cba6370f1e07d247a718ea51
@@ -61,8 +61,8 @@ packages:
     resolution: {integrity: sha512-uphCpNzkhT3aKia5/KKJz2eHyeYGnJeiFt3IeehtylaXxfOK3iS1bsxljyR+XjtzldSA6aWtiKg0MnhEHw/IWg==}
     dev: false
 
-  /@sablier/v2-core@1.0.0(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1):
-    resolution: {integrity: sha512-3Es3T2mSrMrnR5BA332qScG+tMZMvCqnpHYwY1U6z1jBw15/W5iB9NMivzh+F2B301zO0fB6zASAU83f93WAtg==}
+  /@sablier/v2-core@1.0.1(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1):
+    resolution: {integrity: sha512-f7ALblu7XPQ0+RvzWbG1WxpRVZpDEkT9A1DHCRuoGLx4aOgNRK00MuzuJNET25zmbbKYTdGcY8B7gLYBgIkMZw==}
     peerDependencies:
       '@openzeppelin/contracts': 4.9.2
       '@prb/math': 4.0.1
