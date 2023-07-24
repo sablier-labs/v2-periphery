@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+// solhint-disable no-unused-import
 pragma solidity >=0.8.19;
 
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
-// solhint-disable-next-line no-unused-import
 import { IPermit2 } from "@uniswap/permit2/interfaces/IPermit2.sol"; // unused but re-exported for convenience
 
 /// @notice A struct encapsulating the parameters needed for Permit2.
