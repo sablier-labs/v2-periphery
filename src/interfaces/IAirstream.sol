@@ -3,7 +3,6 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IAdminable } from "@sablier/v2-core/interfaces/IAdminable.sol";
-import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 
 /// @notice Airstream is a portmanteau of "airdrop" and "stream". It refers to an airdrop model where the tokens
 /// are distributed over time, as opposed to all at once.
@@ -24,24 +23,24 @@ interface IAirstream is IAdminable {
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Returns the airstreamed ERC-20 asset.
+    /// @notice The airstreamed ERC-20 asset.
     /// @dev This is an immutable state variable.
     function asset() external returns (IERC20);
 
-    /// @notice Returns a flag indicating whether the airstreams can be canceled.
+    /// @notice A flag indicating whether the airstreams can be canceled.
     /// @dev This is an immutable state variable.
     function cancelable() external returns (bool);
 
-    /// @notice Returns the cut-off point for the airstream campaign, as a Unix timestamp. A value of zero means there
+    /// @notice The cut-off point for the airstream campaign, as a Unix timestamp. A value of zero means there
     /// is no expiration.
     /// @dev This is an immutable state variable.
     function expiration() external returns (uint40);
 
-    /// @notice Returns a flag indicating whether the recipient has claimed the airstream.
+    /// @notice A flag indicating whether the recipient has claimed the airstream.
     /// @param recipient The address of the recipient to check.
     function hasClaimed(address recipient) external returns (bool);
 
-    /// @notice Returns the root of the Merkle tree used to validate the claims.
+    /// @notice The root of the Merkle tree used to validate the claims.
     /// @dev This is an immutable state variable.
     function root() external returns (bytes32);
 

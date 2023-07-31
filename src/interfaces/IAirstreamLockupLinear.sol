@@ -6,9 +6,9 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { IAirstream } from "./IAirstream.sol";
 
 interface IAirstreamLockupLinear is IAirstream {
-    /// @notice Returns the total streaming duration of each airstream.
+    /// @notice The total streaming duration of each airstream.
     function duration() external view returns (uint40);
 
-    /// @notice Returns the address of the {SablierV2LockupLinear} contract.
+    /// @notice The address of the {SablierV2LockupLinear} contract.
     function lockupLinear() external view returns (ISablierV2LockupLinear);
 }
