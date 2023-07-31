@@ -3,9 +3,9 @@ pragma solidity >=0.8.19;
 
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 
-import { IAirstream } from "./IAirstream.sol";
+import { ISablierV2Airstream } from "./ISablierV2Airstream.sol";
 
-interface IAirstreamLockupLinear is IAirstream {
+interface ISablierV2AirstreamLockupLinear is ISablierV2Airstream {
     /// @notice The total streaming duration of each airstream.
     function duration() external view returns (uint40);
 

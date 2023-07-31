@@ -6,23 +6,23 @@ import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { Airstream } from "./abstracts/Airstream.sol";
-import { IAirstream } from "./interfaces/IAirstream.sol";
-import { IAirstreamLockupDynamic } from "./interfaces/IAirstreamLockupDynamic.sol";
+import { SablierV2Airstream } from "./abstracts/SablierV2Airstream.sol";
+import { ISablierV2Airstream } from "./interfaces/ISablierV2Airstream.sol";
+import { ISablierV2AirstreamLockupDynamic } from "./interfaces/ISablierV2AirstreamLockupDynamic.sol";
 
-contract AirstreamLockupDynamic is
+contract SablierV2AirstreamLockupDynamic is
     Adminable, // 1 inherit component
-    IAirstreamLockupDynamic, // 2 inherited components
-    Airstream // 2 inherited components
+    ISablierV2AirstreamLockupDynamic, // 2 inherited components
+    SablierV2Airstream // 2 inherited components
 {
     /*//////////////////////////////////////////////////////////////////////////
                                USER-FACING CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc IAirstreamLockupDynamic
+    /// @inheritdoc ISablierV2AirstreamLockupDynamic
     ISablierV2LockupDynamic public immutable override lockupDynamic;
 
-    /// @inheritdoc IAirstreamLockupDynamic
+    /// @inheritdoc ISablierV2AirstreamLockupDynamic
     LockupDynamic.SegmentWithDelta[] public override segments;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ contract AirstreamLockupDynamic is
         ISablierV2LockupDynamic lockupDynamic_,
         LockupDynamic.SegmentWithDelta[] memory segments_
     )
-        Airstream(lockupDynamic_, asset_, root_, cancelable_, expiration_)
+        SablierV2Airstream(lockupDynamic_, asset_, root_, cancelable_, expiration_)
     {
         lockupDynamic = lockupDynamic_;
         uint256 length = segments_.length;
@@ -54,7 +54,7 @@ contract AirstreamLockupDynamic is
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc IAirstream
+    /// @inheritdoc ISablierV2Airstream
     function claim(
         address recipient,
         uint128 amount,

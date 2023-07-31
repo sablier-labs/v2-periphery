@@ -5,23 +5,23 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 
-import { Airstream } from "./abstracts/Airstream.sol";
-import { IAirstream } from "./interfaces/IAirstream.sol";
-import { IAirstreamLockupLinear } from "./interfaces/IAirstreamLockupLinear.sol";
+import { SablierV2Airstream } from "./abstracts/SablierV2Airstream.sol";
+import { ISablierV2Airstream } from "./interfaces/ISablierV2Airstream.sol";
+import { ISablierV2AirstreamLockupLinear } from "./interfaces/ISablierV2AirstreamLockupLinear.sol";
 
 contract AirstreamLockupLinear is
     Adminable, // 1 inherit component
-    IAirstreamLockupLinear, // 2 inherited components
-    Airstream // 2 inherited components
+    ISablierV2AirstreamLockupLinear, // 2 inherited components
+    SablierV2Airstream // 2 inherited components
 {
     /*//////////////////////////////////////////////////////////////////////////
                                USER-FACING CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc IAirstreamLockupLinear
+    /// @inheritdoc ISablierV2AirstreamLockupLinear
     uint40 public immutable override duration;
 
-    /// @inheritdoc IAirstreamLockupLinear
+    /// @inheritdoc ISablierV2AirstreamLockupLinear
     ISablierV2LockupLinear public immutable override lockupLinear;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ contract AirstreamLockupLinear is
         ISablierV2LockupLinear lockupLinear_,
         uint40 duration_
     )
-        Airstream(lockupLinear_, asset_, root_, cancelable_, expiration_)
+        SablierV2Airstream(lockupLinear_, asset_, root_, cancelable_, expiration_)
     {
         lockupLinear = lockupLinear_;
         duration = duration_;
@@ -47,7 +47,7 @@ contract AirstreamLockupLinear is
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc IAirstream
+    /// @inheritdoc ISablierV2Airstream
     function claim(
         address recipient,
         uint128 amount,

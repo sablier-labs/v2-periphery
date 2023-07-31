@@ -4,23 +4,23 @@ pragma solidity >=0.8.19;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 
-import { IAirstream } from "../interfaces/IAirstream.sol";
+import { ISablierV2Airstream } from "../interfaces/ISablierV2Airstream.sol";
 
-abstract contract Airstream is IAirstream {
+abstract contract SablierV2Airstream is ISablierV2Airstream {
     /*//////////////////////////////////////////////////////////////////////////
                                USER-FACING CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc IAirstream
+    /// @inheritdoc ISablierV2Airstream
     IERC20 public immutable override asset;
 
-    /// @inheritdoc IAirstream
+    /// @inheritdoc ISablierV2Airstream
     bool public immutable override cancelable;
 
-    /// @inheritdoc IAirstream
+    /// @inheritdoc ISablierV2Airstream
     uint40 public immutable override expiration;
 
-    /// @inheritdoc IAirstream
+    /// @inheritdoc ISablierV2Airstream
     bytes32 public immutable override root;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ abstract contract Airstream is IAirstream {
                            USER-FACING CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc IAirstream
+    /// @inheritdoc ISablierV2Airstream
     function hasClaimed(address recipient) external pure override returns (bool) {
         recipient;
         return false;
@@ -57,17 +57,17 @@ abstract contract Airstream is IAirstream {
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc IAirstream
+    /// @inheritdoc ISablierV2Airstream
     function cancel(uint256 airstreamId) external pure override {
         airstreamId;
     }
 
-    /// @inheritdoc IAirstream
+    /// @inheritdoc ISablierV2Airstream
     function cancelMultiple(uint256[] calldata airstreamIds) external pure override {
         airstreamIds;
     }
 
-    /// @inheritdoc IAirstream
+    /// @inheritdoc ISablierV2Airstream
     function clawback(uint128 amount) external pure override {
         amount;
     }
