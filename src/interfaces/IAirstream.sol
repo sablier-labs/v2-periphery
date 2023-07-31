@@ -1,0 +1,107 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity >=0.8.19;
+
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IAdminable } from "@sablier/v2-core/interfaces/IAdminable.sol";
+import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
+
+/// @notice Airstream is a portmanteau of "airdrop" and "stream". It refers to an airdrop model where the tokens
+/// are distributed over time, as opposed to all at once.
+/// @dev This is the base interface for all Airstream contracts. There is a separate implementation for each streaming
+/// model. See the Sablier docs for more guidance on how streaming works: https://docs.sablier.com/
+interface IAirstream is IAdminable {
+    /*//////////////////////////////////////////////////////////////////////////
+                                       EVENTS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Emitted when a recipient claims an airstream.
+    event Claim(address indexed account, uint128 amount, uint256 indexed airstreamId);
+
+    /// @notice Emitted when the admin claws back the unclaimed tokens.
+    event Clawback(address indexed admin, uint128 amount);
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                 CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Returns the airstreamed ERC-20 asset.
+    /// @dev This is an immutable state variable.
+    function asset() external returns (IERC20);
+
+    /// @notice Returns a flag indicating whether the airstreams can be canceled.
+    /// @dev This is an immutable state variable.
+    function cancelable() external returns (bool);
+
+    /// @notice Returns the cut-off point for the airstream campaign, as a Unix timestamp. A value of zero means there
+    /// is no expiration.
+    /// @dev This is an immutable state variable.
+    function expiration() external returns (uint40);
+
+    /// @notice Returns a flag indicating whether the recipient has claimed the airstream.
+    /// @param recipient The address of the recipient to check.
+    function hasClaimed(address recipient) external returns (bool);
+
+    /// @notice Returns the root of the Merkle tree used to validate the claims.
+    /// @dev This is an immutable state variable.
+    function root() external returns (bytes32);
+
+    /*//////////////////////////////////////////////////////////////////////////
+                               NON-CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Mirror for {ISablierV2Lockup.cancel}.
+    ///
+    /// @dev Notes:
+    /// - All refunded assets are forwarded to the admin.
+    ///
+    /// Requirements:
+    /// - The caller must be the admin.
+    /// - The airstream campaign must be cancelable.
+    ///
+    /// @param airstreamId The id of the airstream to cancel.
+    function cancel(uint256 airstreamId) external;
+
+    /// @notice Mirror for {ISablierV2Lockup.cancelMultiple}.
+    ///
+    /// @dev Notes:
+    /// - All refunded assets are forwarded to the admin.
+    ///
+    /// Requirements:
+    /// - The caller must be the admin.
+    /// - The airstream campaign must be cancelable.
+    ///
+    /// @param airstreamIds The ids of the airstreams to cancel.
+    function cancelMultiple(uint256[] calldata airstreamIds) external;
+
+    /// @notice Claims the airstream by creating a Sablier stream to the recipient.
+    ///
+    /// @dev Emits a {Claim} event.
+    ///
+    /// Requirements:
+    /// - The airstream must not have expired.
+    /// - The airstream must not have been claimed already.
+    /// - The Merkle proof must be valid.
+    ///
+    /// @param recipient The address of the airstream holder.
+    /// @param amount The amount of tokens to be airstreamed.
+    /// @param merkleProof The Merkle proof of inclusion in the airstream.
+    /// @return airstreamId The id of the newly created airstream.
+    function claim(
+        address recipient,
+        uint128 amount,
+        bytes32[] calldata merkleProof
+    )
+        external
+        returns (uint256 airstreamId);
+
+    /// @notice Claws back the unclaimed tokens from the airstream contract.
+    ///
+    /// @dev Emits a {Clawback} event.
+    ///
+    /// Requirements:
+    /// - The caller must be the admin.
+    /// - The airstream must have expired.
+    ///
+    /// @param amount The amount of tokens to claw back.
+    function clawback(uint128 amount) external;
+}
