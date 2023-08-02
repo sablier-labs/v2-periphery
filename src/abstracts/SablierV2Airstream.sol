@@ -123,6 +123,9 @@ abstract contract SablierV2Airstream is
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
+    // I think bad naming, might be confused with factory create functions?
+    // question: How should we name this?
+    // idea: What about renaming the factory related functions with "campaign"? e.g. createAirstreamCampaignLockupDynamic
     function _createAirstream(address recipient, uint128 amount) internal virtual returns (uint256 airstreamId);
 
     /// @notice Mark the provided index as having been claimed.
