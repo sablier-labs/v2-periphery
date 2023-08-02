@@ -59,6 +59,7 @@ contract SablierV2AirstreamLockupDynamic is
     //////////////////////////////////////////////////////////////////////////*/
 
     function _createAirstream(address recipient, uint128 amount) internal override returns (uint256 airstreamId) {
+        // question: Should we add a global function to approve the contract once that can be called only by admin?
         asset.forceApprove(address(lockupDynamic), amount);
 
         airstreamId = lockupDynamic.createWithDeltas(
