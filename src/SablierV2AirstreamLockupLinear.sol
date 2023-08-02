@@ -2,6 +2,7 @@
 pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { Broker, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
@@ -15,6 +16,8 @@ contract SablierV2AirstreamLockupLinear is
     ISablierV2AirstreamLockupLinear, // 2 inherited components
     SablierV2Airstream // 4 inherited components
 {
+    using SafeERC20 for IERC20;
+
     /*//////////////////////////////////////////////////////////////////////////
                                USER-FACING CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
@@ -50,6 +53,8 @@ contract SablierV2AirstreamLockupLinear is
     //////////////////////////////////////////////////////////////////////////*/
 
     function _createAirstream(address recipient, uint128 amount) internal override returns (uint256 airstreamId) {
+        asset.forceApprove(address(lockupLinear), amount);
+
         airstreamId = lockupLinear.createWithDurations(
             LockupLinear.CreateWithDurations({
                 asset: asset,
