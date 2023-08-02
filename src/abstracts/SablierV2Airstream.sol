@@ -58,16 +58,6 @@ abstract contract SablierV2Airstream is ISablierV2Airstream {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2Airstream
-    function cancel(uint256 airstreamId) external pure override {
-        airstreamId;
-    }
-
-    /// @inheritdoc ISablierV2Airstream
-    function cancelMultiple(uint256[] calldata airstreamIds) external pure override {
-        airstreamIds;
-    }
-
-    /// @inheritdoc ISablierV2Airstream
     function clawback(uint128 amount) external pure override {
         amount;
     }

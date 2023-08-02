@@ -48,30 +48,6 @@ interface ISablierV2Airstream is IAdminable {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Mirror for {ISablierV2Lockup.cancel}.
-    ///
-    /// @dev Notes:
-    /// - All refunded assets are forwarded to the admin.
-    ///
-    /// Requirements:
-    /// - The caller must be the admin.
-    /// - The airstream campaign must be cancelable.
-    ///
-    /// @param airstreamId The id of the airstream to cancel.
-    function cancel(uint256 airstreamId) external;
-
-    /// @notice Mirror for {ISablierV2Lockup.cancelMultiple}.
-    ///
-    /// @dev Notes:
-    /// - All refunded assets are forwarded to the admin.
-    ///
-    /// Requirements:
-    /// - The caller must be the admin.
-    /// - The airstream campaign must be cancelable.
-    ///
-    /// @param airstreamIds The ids of the airstreams to cancel.
-    function cancelMultiple(uint256[] calldata airstreamIds) external;
-
     /// @notice Claims the airstream by creating a Sablier stream to the recipient.
     ///
     /// @dev Emits a {Claim} event.
