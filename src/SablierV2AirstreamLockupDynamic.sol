@@ -4,16 +4,16 @@ pragma solidity >=0.8.19;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
-import { LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
+import { Broker, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
+import { UD60x18 } from "@sablier/v2-core/types/Math.sol";
 
 import { SablierV2Airstream } from "./abstracts/SablierV2Airstream.sol";
 import { ISablierV2Airstream } from "./interfaces/ISablierV2Airstream.sol";
 import { ISablierV2AirstreamLockupDynamic } from "./interfaces/ISablierV2AirstreamLockupDynamic.sol";
 
 contract SablierV2AirstreamLockupDynamic is
-    Adminable, // 1 inherit component
     ISablierV2AirstreamLockupDynamic, // 2 inherited components
-    SablierV2Airstream // 2 inherited components
+    SablierV2Airstream // 4 inherited components
 {
     /*//////////////////////////////////////////////////////////////////////////
                                USER-FACING CONSTANTS
@@ -31,14 +31,15 @@ contract SablierV2AirstreamLockupDynamic is
 
     /// @dev Constructs the contract by initializing the immutable state variables.
     constructor(
+        address initialAdmin,
         IERC20 asset_,
-        bytes32 root_,
+        bytes32 merkleRoot_,
         bool cancelable_,
         uint40 expiration_,
         ISablierV2LockupDynamic lockupDynamic_,
         LockupDynamic.SegmentWithDelta[] memory segments_
     )
-        SablierV2Airstream(lockupDynamic_, asset_, root_, cancelable_, expiration_)
+        SablierV2Airstream(initialAdmin, asset_, merkleRoot_, cancelable_, expiration_)
     {
         lockupDynamic = lockupDynamic_;
         uint256 length = segments_.length;
@@ -51,23 +52,20 @@ contract SablierV2AirstreamLockupDynamic is
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                         USER-FACING NON-CONSTANT FUNCTIONS
+                          INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2Airstream
-    function claim(
-        address recipient,
-        uint128 amount,
-        bytes32[] calldata merkleProof
-    )
-        external
-        pure
-        override
-        returns (uint256 airstreamId)
-    {
-        recipient;
-        amount;
-        merkleProof;
-        airstreamId = 0;
+    function _createAirstream(address recipient, uint128 amount) internal override returns (uint256 airstreamId) {
+        airstreamId = lockupDynamic.createWithDeltas(
+            LockupDynamic.CreateWithDeltas({
+                asset: asset,
+                broker: Broker({ account: address(0), fee: UD60x18.wrap(0) }),
+                cancelable: cancelable,
+                recipient: recipient,
+                sender: admin,
+                segments: segments,
+                totalAmount: amount
+            })
+        );
     }
 }

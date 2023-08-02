@@ -4,22 +4,23 @@ pragma solidity >=0.8.19;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
+import { Broker, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+import { UD60x18 } from "@sablier/v2-core/types/Math.sol";
 
 import { SablierV2Airstream } from "./abstracts/SablierV2Airstream.sol";
 import { ISablierV2Airstream } from "./interfaces/ISablierV2Airstream.sol";
 import { ISablierV2AirstreamLockupLinear } from "./interfaces/ISablierV2AirstreamLockupLinear.sol";
 
-contract AirstreamLockupLinear is
-    Adminable, // 1 inherit component
+contract SablierV2AirstreamLockupLinear is
     ISablierV2AirstreamLockupLinear, // 2 inherited components
-    SablierV2Airstream // 2 inherited components
+    SablierV2Airstream // 4 inherited components
 {
     /*//////////////////////////////////////////////////////////////////////////
                                USER-FACING CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2AirstreamLockupLinear
-    uint40 public immutable override duration;
+    LockupLinear.Durations public override durations;
 
     /// @inheritdoc ISablierV2AirstreamLockupLinear
     ISablierV2LockupLinear public immutable override lockupLinear;
@@ -30,37 +31,35 @@ contract AirstreamLockupLinear is
 
     /// @dev Constructs the contract by initializing the immutable state variables.
     constructor(
+        address initialAdmin,
         IERC20 asset_,
-        bytes32 root_,
+        bytes32 merkleRoot_,
         bool cancelable_,
         uint40 expiration_,
         ISablierV2LockupLinear lockupLinear_,
-        uint40 duration_
+        LockupLinear.Durations memory durations_
     )
-        SablierV2Airstream(lockupLinear_, asset_, root_, cancelable_, expiration_)
+        SablierV2Airstream(initialAdmin, asset_, merkleRoot_, cancelable_, expiration_)
     {
         lockupLinear = lockupLinear_;
-        duration = duration_;
+        durations = durations_;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                         USER-FACING NON-CONSTANT FUNCTIONS
+                          INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2Airstream
-    function claim(
-        address recipient,
-        uint128 amount,
-        bytes32[] calldata merkleProof
-    )
-        external
-        pure
-        override
-        returns (uint256 airstreamId)
-    {
-        recipient;
-        amount;
-        merkleProof;
-        airstreamId = 0;
+    function _createAirstream(address recipient, uint128 amount) internal override returns (uint256 airstreamId) {
+        airstreamId = lockupLinear.createWithDurations(
+            LockupLinear.CreateWithDurations({
+                asset: asset,
+                broker: Broker({ account: address(0), fee: UD60x18.wrap(0) }),
+                cancelable: cancelable,
+                durations: durations,
+                recipient: recipient,
+                sender: admin,
+                totalAmount: amount
+            })
+        );
     }
 }

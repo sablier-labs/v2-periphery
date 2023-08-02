@@ -16,5 +16,5 @@ interface ISablierV2AirstreamLockupDynamic is ISablierV2Airstream {
 
     /// @notice The array of segments needed for creating the LockupDynamic stream, which implicitly provides the total
     /// streaming duration of each airstream.
-    function segments(uint256 index) external view returns (uint128 amount, UD2x18 exponent, uint40 delta);
+    function segments(uint256 segmentIndex) external view returns (uint128 amount, UD2x18 exponent, uint40 delta);
 }

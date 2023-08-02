@@ -14,10 +14,10 @@ interface ISablierV2Airstream is IAdminable {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Emitted when a recipient claims an airstream.
-    event Claim(address indexed account, uint128 amount, uint256 indexed airstreamId);
+    event Claim(uint256 index, address indexed recipient, uint128 amount, uint256 indexed airstreamId);
 
     /// @notice Emitted when the admin claws back the unclaimed tokens.
-    event Clawback(address indexed admin, uint128 amount);
+    event Clawback(address indexed admin, address indexed to, uint128 amount);
 
     /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
@@ -37,12 +37,12 @@ interface ISablierV2Airstream is IAdminable {
     function expiration() external returns (uint40);
 
     /// @notice A flag indicating whether the recipient has claimed the airstream.
-    /// @param recipient The address of the recipient to check.
-    function hasClaimed(address recipient) external returns (bool);
+    /// @param index The index of the recipient to check.
+    function hasClaimed(uint256 index) external returns (bool);
 
     /// @notice The root of the Merkle tree used to validate the claims.
     /// @dev This is an immutable state variable.
-    function root() external returns (bytes32);
+    function merkleRoot() external returns (bytes32);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
@@ -57,11 +57,13 @@ interface ISablierV2Airstream is IAdminable {
     /// - The airstream must not have been claimed already.
     /// - The Merkle proof must be valid.
     ///
+    /// @param index The index of the recipient in the Merkle tree.
     /// @param recipient The address of the airstream holder.
     /// @param amount The amount of tokens to be airstreamed.
     /// @param merkleProof The Merkle proof of inclusion in the airstream.
     /// @return airstreamId The id of the newly created airstream.
     function claim(
+        uint256 index,
         address recipient,
         uint128 amount,
         bytes32[] calldata merkleProof
@@ -77,6 +79,7 @@ interface ISablierV2Airstream is IAdminable {
     /// - The caller must be the admin.
     /// - The airstream must have expired.
     ///
+    /// @param to The address to receive the tokens.
     /// @param amount The amount of tokens to claw back.
-    function clawback(uint128 amount) external;
+    function clawback(address to, uint128 amount) external;
 }
