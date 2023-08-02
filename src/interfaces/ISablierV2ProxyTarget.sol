@@ -78,6 +78,16 @@ interface ISablierV2ProxyTarget {
     /// @dev Must be delegate called.
     function withdrawMaxAndTransfer(ISablierV2Lockup lockup, uint256 streamId, address newRecipient) external;
 
+    /// @notice Mirror for {ISablierV2Lockup.withdrawMultiple}.
+    /// @dev Must be delegate called.
+    function withdrawMultiple(
+        ISablierV2Lockup lockup,
+        uint256[] calldata streamIds,
+        address to,
+        uint128[] calldata amounts
+    )
+        external;
+
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
