@@ -81,6 +81,7 @@ abstract contract SablierV2Airstream is
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @inheritdoc ISablierV2Airstream
     function claim(
         uint256 index,
         address recipient,

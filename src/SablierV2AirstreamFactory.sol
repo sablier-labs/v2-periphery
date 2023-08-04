@@ -9,6 +9,7 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 import { ISablierV2AirstreamFactory } from "./interfaces/ISablierV2AirstreamFactory.sol";
 import { ISablierV2AirstreamLockupDynamic } from "./interfaces/ISablierV2AirstreamLockupDynamic.sol";
 import { ISablierV2AirstreamLockupLinear } from "./interfaces/ISablierV2AirstreamLockupLinear.sol";
+import { Errors } from "./libraries/Errors.sol";
 import { SablierV2AirstreamLockupDynamic } from "./SablierV2AirstreamLockupDynamic.sol";
 import { SablierV2AirstreamLockupLinear } from "./SablierV2AirstreamLockupLinear.sol";
 
@@ -92,7 +93,9 @@ contract SablierV2AirstreamFactory is ISablierV2AirstreamFactory {
             getAirstreamLockupDynamic(initialAdmin, asset, merkleRoot, expiration)
                 != ISablierV2AirstreamLockupDynamic(address(0))
         ) {
-            revert();
+            revert Errors.SablierV2AirstreamFactory_CampaignAlreadyDeployed(
+                address(getAirstreamLockupDynamic(initialAdmin, asset, merkleRoot, expiration))
+            );
         }
 
         bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, expiration));
@@ -105,7 +108,7 @@ contract SablierV2AirstreamFactory is ISablierV2AirstreamFactory {
             expiration,
             lockupDynamic,
             segments
-            );
+        );
 
         _lockupDynamicAirstreams[initialAdmin][asset][merkleRoot][expiration] = airstream;
 
@@ -129,7 +132,9 @@ contract SablierV2AirstreamFactory is ISablierV2AirstreamFactory {
             getAirstreamLockupLinear(initialAdmin, asset, merkleRoot, expiration)
                 != ISablierV2AirstreamLockupLinear(address(0))
         ) {
-            revert();
+            revert Errors.SablierV2AirstreamFactory_CampaignAlreadyDeployed(
+                address(getAirstreamLockupLinear(initialAdmin, asset, merkleRoot, expiration))
+            );
         }
 
         bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, expiration));
@@ -142,7 +147,7 @@ contract SablierV2AirstreamFactory is ISablierV2AirstreamFactory {
             expiration,
             lockupLinear,
             durations
-            );
+        );
 
         _lockupLinearAirstreams[initialAdmin][asset][merkleRoot][expiration] = airstream;
 
