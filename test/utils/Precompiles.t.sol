@@ -39,10 +39,10 @@ contract Precompiles_Test is Base_Test {
         assertEq(actualProxyPlugin.code, expectedProxyPluginCode, "bytecodes mismatch");
     }
 
-    function test_DeployProxyTarget() external onlyTestOptimizedProfile {
+    function test_DeployProxyTargetPermit2() external onlyTestOptimizedProfile {
         IAllowanceTransfer permit2 = IAllowanceTransfer(new DeployPermit2().run());
         address actualProxyTarget = address(precompiles.deployProxyTarget(permit2));
-        address expectedProxyTarget = address(deployPrecompiledProxyTarget(permit2));
+        address expectedProxyTarget = address(deployPrecompiledProxyTargetPermit2(permit2));
         bytes memory expectedProxyTargetCode =
             adjustBytecode(expectedProxyTarget.code, expectedProxyTarget, actualProxyTarget);
         assertEq(actualProxyTarget.code, expectedProxyTargetCode, "bytecodes mismatch");
@@ -64,7 +64,7 @@ contract Precompiles_Test is Base_Test {
             adjustBytecode(expectedProxyPlugin.code, expectedProxyPlugin, address(actualProxyPlugin));
         assertEq(address(actualProxyPlugin).code, expectedLockupDynamicCode, "bytecodes mismatch");
 
-        address expectedProxyTarget = address(deployPrecompiledProxyTarget(permit2));
+        address expectedProxyTarget = address(deployPrecompiledProxyTargetPermit2(permit2));
         bytes memory expectedProxyTargetCode =
             adjustBytecode(expectedProxyTarget.code, expectedProxyTarget, address(actualProxyTarget));
         assertEq(address(actualProxyTarget).code, expectedProxyTargetCode, "bytecodes mismatch");

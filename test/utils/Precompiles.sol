@@ -44,7 +44,7 @@ contract Precompiles {
         );
     }
 
-    /// @notice Deploys {SablierV2ProxyTarget} from precompiled bytecode.
+    /// @notice Deploys {SablierV2ProxyTargetPermit2} from precompiled bytecode.
     function deployProxyTarget(IAllowanceTransfer permit2) public returns (ISablierV2ProxyTarget proxyTarget) {
         bytes memory creationBytecode = bytes.concat(BYTECODE_PROXY_TARGET, abi.encode(permit2));
         assembly {
@@ -59,7 +59,7 @@ contract Precompiles {
     ///
     /// 1. {SablierV2Archive}
     /// 2. {SablierV2ProxyPlugin}
-    /// 3. {SablierV2ProxyTarget}
+    /// 3. {SablierV2ProxyTargetPermit2}
     function deployPeriphery(
         address initialAdmin,
         IAllowanceTransfer permit2

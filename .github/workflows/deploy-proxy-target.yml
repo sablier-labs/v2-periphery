@@ -38,7 +38,7 @@ jobs:
 
       - name: "Deploy the SablierV2ProxyTarget contract"
         run: >-
-          forge script script/DeployProxyTarget.s.sol
+          forge script script/DeployProxyTargetPermit2.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
           --sig "run(address)"

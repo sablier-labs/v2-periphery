@@ -4,10 +4,10 @@ pragma solidity >=0.8.19 <0.9.0;
 import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
-import { SablierV2ProxyTarget } from "../src/SablierV2ProxyTarget.sol";
+import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.sol";
 
-contract DeployProxyTarget is BaseScript {
-    function run(IAllowanceTransfer permit2) public broadcast returns (SablierV2ProxyTarget target) {
-        target = new SablierV2ProxyTarget(permit2);
+contract DeployProxyTargetPermit2 is BaseScript {
+    function run(IAllowanceTransfer permit2) public broadcast returns (SablierV2ProxyTargetPermit2 target) {
+        target = new SablierV2ProxyTargetPermit2(permit2);
     }
 }

@@ -6,13 +6,13 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 
 import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
-import { SablierV2ProxyTarget } from "../src/SablierV2ProxyTarget.sol";
+import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.sol";
 
 /// @notice Deploys all V2 Periphery contracts at deterministic addresses across chains, in the following order:
 ///
 /// 1. {SablierV2Archive}
 /// 2. {SablierV2ProxyPlugin}
-/// 3. {SablierV2ProxyTarget}
+/// 3. {SablierV2ProxyTargetPermit2}
 ///
 /// @dev Reverts if any contract has already been deployed.
 contract DeployDeterministicPeriphery is BaseScript {
@@ -26,10 +26,10 @@ contract DeployDeterministicPeriphery is BaseScript {
         public
         virtual
         broadcast
-        returns (SablierV2Archive archive, SablierV2ProxyPlugin plugin, SablierV2ProxyTarget target)
+        returns (SablierV2Archive archive, SablierV2ProxyPlugin plugin, SablierV2ProxyTargetPermit2 target)
     {
         archive = new SablierV2Archive{ salt: bytes32(abi.encodePacked(create2Salt)) }(initialAdmin);
         plugin = new SablierV2ProxyPlugin{ salt: bytes32(abi.encodePacked(create2Salt)) }(archive);
-        target = new SablierV2ProxyTarget{ salt: bytes32(abi.encodePacked(create2Salt)) }(permit2);
+        target = new SablierV2ProxyTargetPermit2{ salt: bytes32(abi.encodePacked(create2Salt)) }(permit2);
     }
 }
