@@ -10,12 +10,12 @@ import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2L
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
-import { OnlyDelegateCall } from "./abstracts/OnlyDelegateCall.sol";
-import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
-import { IWrappedNativeAsset } from "./interfaces/IWrappedNativeAsset.sol";
-import { Errors } from "./libraries/Errors.sol";
-import { Batch } from "./types/DataTypes.sol";
-import { Permit2Params } from "./types/Permit2.sol";
+import { OnlyDelegateCall } from "./OnlyDelegateCall.sol";
+import { ISablierV2ProxyTarget } from "../interfaces/ISablierV2ProxyTarget.sol";
+import { IWrappedNativeAsset } from "../interfaces/IWrappedNativeAsset.sol";
+import { Errors } from "../libraries/Errors.sol";
+import { Batch } from "../types/DataTypes.sol";
+import { Permit2Params } from "../types/Permit2.sol";
 
 /*
 
@@ -37,25 +37,11 @@ import { Permit2Params } from "./types/Permit2.sol";
 
 /// @title SablierV2ProxyTarget
 /// @notice See the documentation in {ISablierV2ProxyTarget}.
-contract SablierV2ProxyTarget is
+abstract contract SablierV2ProxyTarget is
     ISablierV2ProxyTarget, // 0 inherited components
     OnlyDelegateCall // 0 inherited components
 {
     using SafeERC20 for IERC20;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                     CONSTANTS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    IAllowanceTransfer internal immutable PERMIT2;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                    CONSTRUCTOR
-    //////////////////////////////////////////////////////////////////////////*/
-
-    constructor(IAllowanceTransfer permit2) {
-        PERMIT2 = permit2;
-    }
 
     /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
@@ -208,7 +194,7 @@ contract SablierV2ProxyTarget is
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
-        uint160 transferAmount;
+        uint128 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
@@ -263,7 +249,7 @@ contract SablierV2ProxyTarget is
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
-        uint160 transferAmount;
+        uint128 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
@@ -434,7 +420,7 @@ contract SablierV2ProxyTarget is
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
-        uint160 transferAmount;
+        uint128 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
@@ -489,7 +475,7 @@ contract SablierV2ProxyTarget is
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
-        uint160 transferAmount;
+        uint128 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
@@ -712,21 +698,9 @@ contract SablierV2ProxyTarget is
     function _transferAndApprove(
         address sablierContract,
         IERC20 asset,
-        uint160 amount,
+        uint128 amount,
         Permit2Params calldata permit2Params
     )
         internal
-    {
-        // Retrieve the proxy owner.
-        address owner = _getOwner();
-
-        // Permit the proxy to spend funds from the proxy owner.
-        PERMIT2.permit({ owner: owner, permitSingle: permit2Params.permitSingle, signature: permit2Params.signature });
-
-        // Transfer funds from the proxy owner to the proxy.
-        PERMIT2.transferFrom({ from: owner, to: address(this), amount: amount, token: address(asset) });
-
-        // Approve the Sablier contract to spend funds.
-        _approve(sablierContract, asset, amount);
-    }
+        virtual;
 }
