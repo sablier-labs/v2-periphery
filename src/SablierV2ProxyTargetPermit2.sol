@@ -29,13 +29,15 @@ contract SablierV2ProxyTargetPermit2 is SablierV2ProxyTarget {
         address sablierContract,
         IERC20 asset,
         uint128 amount,
-        Permit2Params calldata permit2Params
+        bytes calldata data
     )
         internal
         override
     {
         // Retrieve the proxy owner.
         address owner = _getOwner();
+
+        Permit2Params memory permit2Params = abi.decode(data, (Permit2Params));
 
         // Permit the proxy to spend funds from the proxy owner.
         PERMIT2.permit({ owner: owner, permitSingle: permit2Params.permitSingle, signature: permit2Params.signature });

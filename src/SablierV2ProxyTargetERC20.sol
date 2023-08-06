@@ -17,7 +17,7 @@ contract SablierV2ProxyTargetERC20 is SablierV2ProxyTarget {
         address sablierContract,
         IERC20 asset,
         uint128 amount,
-        Permit2Params calldata /* permit2Params */
+        bytes calldata /* data */
     )
         internal
         override
