@@ -8,7 +8,7 @@ import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.
 
 /// @notice Deploys {SablierV2ProxyTargetPermit2} at a deterministic address across chains.
 /// @dev Reverts if the contract has already been deployed.
-contract DeployDeterministicProxyTarget is BaseScript {
+contract DeployDeterministicProxyTargetPermit2 is BaseScript {
     /// @dev The presence of the salt instructs Forge to deploy contracts via this deterministic CREATE2 factory:
     /// https://github.com/Arachnid/deterministic-deployment-proxy
     function run(
