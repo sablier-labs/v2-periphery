@@ -31,9 +31,8 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
 
     function test_RevertWhen_CancelAndCreateWithDeltas_NotDelegateCalled() external {
         LockupDynamic.CreateWithDeltas memory createParams;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithDeltas(lockupDynamic, 0, lockupDynamic, createParams, permit2Params);
+        target.cancelAndCreateWithDeltas(lockupDynamic, 0, lockupDynamic, createParams, "");
     }
 
     function test_CancelAndCreateWithDeltas_SameSablierContract() external whenDelegateCalled {
@@ -100,9 +99,8 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
 
     function test_RevertWhen_CancelAndCreateWithDurations_NotDelegateCalled() external {
         LockupLinear.CreateWithDurations memory createParams;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithDurations(lockupLinear, 0, lockupLinear, createParams, permit2Params);
+        target.cancelAndCreateWithDurations(lockupLinear, 0, lockupLinear, createParams, "");
     }
 
     function test_CancelAndCreateWithDurations_SameSablierContract() external whenDelegateCalled {
@@ -169,9 +167,8 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
 
     function test_RevertWhen_CancelAndCreateWithMilestones_NotDelegateCalled() external {
         LockupDynamic.CreateWithMilestones memory createParams;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithMilestones(lockupDynamic, 0, lockupDynamic, createParams, permit2Params);
+        target.cancelAndCreateWithMilestones(lockupDynamic, 0, lockupDynamic, createParams, "");
     }
 
     function test_CancelAndCreateWithMilestones_SameSablierContract() external whenDelegateCalled {
@@ -238,9 +235,8 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
 
     function test_RevertWhen_CancelAndCreateWithRange_NotDelegateCalled() external {
         LockupLinear.CreateWithRange memory createParams;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithRange(lockupLinear, 0, lockupLinear, createParams, permit2Params);
+        target.cancelAndCreateWithRange(lockupLinear, 0, lockupLinear, createParams, "");
     }
 
     function test_CancelAndCreateWithRange_SameSablierContract() external whenDelegateCalled {

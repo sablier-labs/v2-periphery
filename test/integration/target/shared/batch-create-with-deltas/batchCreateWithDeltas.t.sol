@@ -14,9 +14,8 @@ abstract contract BatchCreateWithDeltas_Integration_Test is Integration_Test {
 
     function test_RevertWhen_NotDelegateCalled() external {
         Batch.CreateWithDeltas[] memory batch;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithDeltas(lockupDynamic, asset, batch, permit2Params);
+        target.batchCreateWithDeltas(lockupDynamic, asset, batch, "");
     }
 
     modifier whenDelegateCalled() {
@@ -25,8 +24,7 @@ abstract contract BatchCreateWithDeltas_Integration_Test is Integration_Test {
 
     function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
         Batch.CreateWithDeltas[] memory batch = new Batch.CreateWithDeltas[](0);
-        Permit2Params memory permit2Params;
-        bytes memory data = abi.encodeCall(target.batchCreateWithDeltas, (lockupDynamic, asset, batch, permit2Params));
+        bytes memory data = abi.encodeCall(target.batchCreateWithDeltas, (lockupDynamic, asset, batch, ""));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         aliceProxy.execute(address(target), data);
     }

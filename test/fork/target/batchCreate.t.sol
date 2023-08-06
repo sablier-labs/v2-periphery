@@ -55,7 +55,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             totalAmount: params.perStreamAmount
         });
         Batch.CreateWithRange[] memory batch = BatchBuilder.fillBatch(createParams, params.batchSize);
-        Permit2Params memory permit2Params = defaults.permit2Params({
+        bytes memory permit2Params = defaults.permit2Params({
             user: user,
             spender: address(userProxy),
             amount: totalTransferAmount,
@@ -130,7 +130,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             totalAmount: params.perStreamAmount
         });
         Batch.CreateWithMilestones[] memory batch = BatchBuilder.fillBatch(createWithMilestones, params.batchSize);
-        Permit2Params memory permit2Params = defaults.permit2Params({
+        bytes memory permit2Params = defaults.permit2Params({
             user: user,
             spender: address(userProxy),
             amount: totalTransferAmount,

@@ -14,9 +14,8 @@ abstract contract BatchCreateWithDurations_Integration_Test is Integration_Test 
 
     function test_RevertWhen_NotDelegateCalled() external {
         Batch.CreateWithDurations[] memory batch;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithDurations(lockupLinear, asset, batch, permit2Params);
+        target.batchCreateWithDurations(lockupLinear, asset, batch, "");
     }
 
     modifier whenDelegateCalled() {
@@ -25,8 +24,7 @@ abstract contract BatchCreateWithDurations_Integration_Test is Integration_Test 
 
     function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
         Batch.CreateWithDurations[] memory batch = new Batch.CreateWithDurations[](0);
-        Permit2Params memory permit2Params;
-        bytes memory data = abi.encodeCall(target.batchCreateWithDurations, (lockupLinear, asset, batch, permit2Params));
+        bytes memory data = abi.encodeCall(target.batchCreateWithDurations, (lockupLinear, asset, batch, ""));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         aliceProxy.execute(address(target), data);
     }
