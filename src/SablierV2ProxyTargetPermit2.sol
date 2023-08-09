@@ -2,15 +2,12 @@
 pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { SablierV2ProxyTarget } from "./abstracts/SablierV2ProxyTarget.sol";
 import { Permit2Params } from "./types/Permit2.sol";
 
 contract SablierV2ProxyTargetPermit2 is SablierV2ProxyTarget {
-    using SafeERC20 for IERC20;
-
     /*//////////////////////////////////////////////////////////////////////////
                                      CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
@@ -25,6 +22,9 @@ contract SablierV2ProxyTargetPermit2 is SablierV2ProxyTarget {
         PERMIT2 = permit2;
     }
 
+    /// @notice data Bytes containing a struct that encapsulats the parameters needed for Permit2, most importantly the
+    /// signature.
+    /// @dev See the documentation for the user-facing functions that call this internal function.
     function _transferAndApprove(
         address sablierContract,
         IERC20 asset,

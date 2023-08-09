@@ -692,8 +692,8 @@ abstract contract SablierV2ProxyTarget is
         }
     }
 
-    /// @dev Helper function to transfer funds from the proxy owner to the proxy using Permit2 and, if needed, approve
-    /// the Sablier contract to spend funds from the proxy.
+    /// @dev Helper function to transfer funds from the proxy owner to the proxy, if needed, approve the Sablier
+    /// contract to spend funds from the proxy.
     function _transferAndApprove(
         address sablierContract,
         IERC20 asset,
