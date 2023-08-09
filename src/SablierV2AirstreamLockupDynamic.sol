@@ -25,8 +25,9 @@ contract SablierV2AirstreamLockupDynamic is
     /// @inheritdoc ISablierV2AirstreamLockupDynamic
     ISablierV2LockupDynamic public immutable override lockupDynamic;
 
-    /// @inheritdoc ISablierV2AirstreamLockupDynamic
-    LockupDynamic.SegmentWithDelta[] public override segments;
+    /// @notice The array of segments needed for creating the LockupDynamic stream, which implicitly provides the total
+    /// streaming duration of each airstream.
+    LockupDynamic.SegmentWithDelta[] public segments;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
@@ -52,6 +53,23 @@ contract SablierV2AirstreamLockupDynamic is
                 i += 1;
             }
         }
+
+        // Approve the Sablier contract to spend funds from the airstream campaign.
+        asset.approve(address(lockupDynamic), type(uint256).max);
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                           USER-FACING CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @inheritdoc ISablierV2AirstreamLockupDynamic
+    function getSegment(uint256 segmentIndex) external view returns (LockupDynamic.SegmentWithDelta memory) {
+        return segments[segmentIndex];
+    }
+
+    /// @inheritdoc ISablierV2AirstreamLockupDynamic
+    function getSegments() external view returns (LockupDynamic.SegmentWithDelta[] memory) {
+        return segments;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -59,9 +77,6 @@ contract SablierV2AirstreamLockupDynamic is
     //////////////////////////////////////////////////////////////////////////*/
 
     function _createAirstream(address recipient, uint128 amount) internal override returns (uint256 airstreamId) {
-        // question: Should we add a global function to approve the contract once that can be called only by admin?
-        asset.forceApprove(address(lockupDynamic), amount);
-
         airstreamId = lockupDynamic.createWithDeltas(
             LockupDynamic.CreateWithDeltas({
                 asset: asset,
