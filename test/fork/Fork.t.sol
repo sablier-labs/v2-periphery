@@ -59,6 +59,9 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
         // Approve {Permit2} to transfer Alice's assets.
         maxApprovePermit2();
+
+        // Approve Alice's Proxy to spend assets from Alice.
+        asset.approve({ spender: address(aliceProxy), amount: MAX_UINT256 });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
