@@ -14,6 +14,8 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
     function setUp() public virtual override {
         Integration_Test.setUp();
         proxyRegistry.installPlugin(plugin);
+
+        target = targetERC20;
         streamId = createWithRange();
 
         // List the {LockupLinear} contract in the archive.
