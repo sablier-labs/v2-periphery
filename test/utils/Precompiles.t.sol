@@ -39,13 +39,21 @@ contract Precompiles_Test is Base_Test {
         assertEq(actualProxyPlugin.code, expectedProxyPluginCode, "bytecodes mismatch");
     }
 
+    function test_DeployProxyTargetERC20() external onlyTestOptimizedProfile {
+        address actualProxyTargetERC20 = address(precompiles.deployProxyTargetERC20());
+        address expectedProxyTargetERC20 = address(deployPrecompiledProxyTargetERC20());
+        bytes memory expectedProxyTargetCode =
+            adjustBytecode(expectedProxyTargetERC20.code, expectedProxyTargetERC20, actualProxyTargetERC20);
+        assertEq(actualProxyTargetERC20.code, expectedProxyTargetCode, "bytecodes mismatch");
+    }
+
     function test_DeployProxyTargetPermit2() external onlyTestOptimizedProfile {
         IAllowanceTransfer permit2 = IAllowanceTransfer(new DeployPermit2().run());
-        address actualProxyTarget = address(precompiles.deployProxyTarget(permit2));
-        address expectedProxyTarget = address(deployPrecompiledProxyTargetPermit2(permit2));
+        address actualProxyTargetPermit2 = address(precompiles.deployProxyTargetPermit2(permit2));
+        address expectedProxyTargetPermit2 = address(deployPrecompiledProxyTargetPermit2(permit2));
         bytes memory expectedProxyTargetCode =
-            adjustBytecode(expectedProxyTarget.code, expectedProxyTarget, actualProxyTarget);
-        assertEq(actualProxyTarget.code, expectedProxyTargetCode, "bytecodes mismatch");
+            adjustBytecode(expectedProxyTargetPermit2.code, expectedProxyTargetPermit2, actualProxyTargetPermit2);
+        assertEq(actualProxyTargetPermit2.code, expectedProxyTargetCode, "bytecodes mismatch");
     }
 
     function test_DeployPeriphery() external onlyTestOptimizedProfile {
@@ -53,7 +61,8 @@ contract Precompiles_Test is Base_Test {
         (
             ISablierV2Archive actualArchive,
             ISablierV2ProxyPlugin actualProxyPlugin,
-            ISablierV2ProxyTarget actualProxyTarget
+            ISablierV2ProxyTarget actualProxyTargetERC20,
+            ISablierV2ProxyTarget actualProxyTargetPermit2
         ) = precompiles.deployPeriphery(users.admin.addr, permit2);
 
         address expectedArchive = address(deployPrecompiledArchive(users.admin.addr));
@@ -64,10 +73,16 @@ contract Precompiles_Test is Base_Test {
             adjustBytecode(expectedProxyPlugin.code, expectedProxyPlugin, address(actualProxyPlugin));
         assertEq(address(actualProxyPlugin).code, expectedLockupDynamicCode, "bytecodes mismatch");
 
-        address expectedProxyTarget = address(deployPrecompiledProxyTargetPermit2(permit2));
-        bytes memory expectedProxyTargetCode =
-            adjustBytecode(expectedProxyTarget.code, expectedProxyTarget, address(actualProxyTarget));
-        assertEq(address(actualProxyTarget).code, expectedProxyTargetCode, "bytecodes mismatch");
+        address expectedProxyTargetERC20 = address(deployPrecompiledProxyTargetERC20());
+        bytes memory expectedProxyTargetERC20Code =
+            adjustBytecode(expectedProxyTargetERC20.code, expectedProxyTargetERC20, address(actualProxyTargetERC20));
+        assertEq(address(actualProxyTargetERC20).code, expectedProxyTargetERC20Code, "bytecodes mismatch");
+
+        address expectedProxyTargetPermit2 = address(deployPrecompiledProxyTargetPermit2(permit2));
+        bytes memory expectedProxyTargetPermit2Code = adjustBytecode(
+            expectedProxyTargetPermit2.code, expectedProxyTargetPermit2, address(actualProxyTargetPermit2)
+        );
+        assertEq(address(actualProxyTargetPermit2).code, expectedProxyTargetPermit2Code, "bytecodes mismatch");
     }
 
     /// @dev The expected bytecode has to be adjusted because some contracts inherit from {OnlyDelegateCall}, which
