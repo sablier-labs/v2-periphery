@@ -8,7 +8,6 @@ import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.s
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
-import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { OnlyDelegateCall } from "./OnlyDelegateCall.sol";
 import { ISablierV2ProxyTarget } from "../interfaces/ISablierV2ProxyTarget.sol";

@@ -52,8 +52,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     ISablierV2ProxyPlugin internal plugin;
     IPRBProxyRegistry internal proxyRegistry;
     ISablierV2ProxyTarget internal target;
-    SablierV2ProxyTargetPermit2 internal targetPermit2;
     SablierV2ProxyTargetERC20 internal targetERC20;
+    SablierV2ProxyTargetPermit2 internal targetPermit2;
     IWrappedNativeAsset internal weth;
     WLC internal wlc;
 
@@ -113,6 +113,13 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         );
     }
 
+    /// @dev Deploys {SablierV2ProxyTargetERC20} from a source precompiled with `--via-ir`.
+    function deployPrecompiledProxyTargetERC20() internal returns (SablierV2ProxyTargetERC20) {
+        return SablierV2ProxyTargetERC20(
+            deployCode("out-optimized/SablierV2ProxyTargetERC20.sol/SablierV2ProxyTargetERC20.json")
+        );
+    }
+
     /// @dev Deploys {SablierV2ProxyTargetPermit2} from a source precompiled with `--via-ir`.
     function deployPrecompiledProxyTargetPermit2(IAllowanceTransfer permit2_)
         internal
@@ -122,13 +129,6 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             deployCode(
                 "out-optimized/SablierV2ProxyTargetPermit2.sol/SablierV2ProxyTargetPermit2.json", abi.encode(permit2_)
             )
-        );
-    }
-
-    /// @dev Deploys {SablierV2ProxyTargetERC20} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyTargetERC20() internal returns (SablierV2ProxyTargetERC20) {
-        return SablierV2ProxyTargetERC20(
-            deployCode("out-optimized/SablierV2ProxyTargetERC20.sol/SablierV2ProxyTargetERC20.json")
         );
     }
 

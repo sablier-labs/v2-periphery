@@ -2,10 +2,8 @@
 pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { SablierV2ProxyTarget } from "./abstracts/SablierV2ProxyTarget.sol";
-import { Permit2Params } from "./types/Permit2.sol";
 
 contract SablierV2ProxyTargetERC20 is SablierV2ProxyTarget {
     /// @notice  Parameter `data` is ignored in this implementation.
