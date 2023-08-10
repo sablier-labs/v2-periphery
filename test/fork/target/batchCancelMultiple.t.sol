@@ -4,6 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
 
+import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
 import { Fork_Test } from "../Fork.t.sol";
@@ -12,10 +13,19 @@ import { Fork_Test } from "../Fork.t.sol";
 abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 
-    function testForkFuzz_BatchCancelMultiple(uint256 batchSize) external {
+    function testForkFuzz_BatchCancelMultiple_ERC20(uint256 batchSize) external {
+        testBatchCancelMultiple(batchSize, targetERC20);
+    }
+
+    function testForkFuzz_BatchCancelMultiple_Permit2(uint256 batchSize) external {
+        testBatchCancelMultiple(batchSize, targetPermit2);
+    }
+
+    function testBatchCancelMultiple(uint256 batchSize, ISablierV2ProxyTarget _target) internal {
         batchSize = _bound(batchSize, 1, 50);
 
         // Create two batches of streams.
+        target = _target;
         uint256[] memory dynamicStreamIds = batchCreateWithMilestones(batchSize);
         uint256[] memory linearStreamIds = batchCreateWithRange(batchSize);
 
@@ -39,8 +49,8 @@ abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
         Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](2);
         batch[0] = Batch.CancelMultiple(lockupDynamic, dynamicStreamIds);
         batch[1] = Batch.CancelMultiple(lockupLinear, linearStreamIds);
-        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
-        aliceProxy.execute(address(target), data);
+        bytes memory data = abi.encodeCall(_target.batchCancelMultiple, (batch, defaults.assets()));
+        aliceProxy.execute(address(_target), data);
 
         // Assert that all streams have been canceled.
         Lockup.Status expectedStatus = Lockup.Status.CANCELED;

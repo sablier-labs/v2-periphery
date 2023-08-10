@@ -19,93 +19,6 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 
     /*//////////////////////////////////////////////////////////////////////////
-                              BATCH-CREATE-WITH-RANGE
-    //////////////////////////////////////////////////////////////////////////*/
-
-    struct CreateWithRangeParams {
-        uint128 batchSize;
-        LockupLinear.Range range;
-        address recipient;
-        uint128 perStreamAmount;
-        uint256 userPrivateKey;
-    }
-
-    function testForkFuzz_BatchCreateWithRange_ERC20(CreateWithRangeParams memory params) external {
-        testBatchCreateWithRange(params, targetERC20);
-    }
-
-    function testForkFuzz_BatchCreateWithRange_Permit2(CreateWithRangeParams memory params) external {
-        testBatchCreateWithRange(params, targetPermit2);
-    }
-
-    function testBatchCreateWithRange(CreateWithRangeParams memory params, ISablierV2ProxyTarget _target) internal {
-        params.batchSize = boundUint128(params.batchSize, 1, 20);
-        params.perStreamAmount = boundUint128(params.perStreamAmount, 1, MAX_UINT128 / params.batchSize);
-        params.range.start = boundUint40(params.range.start, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
-        params.range.cliff = boundUint40(params.range.cliff, params.range.start, params.range.start + 52 weeks);
-        params.range.end = boundUint40(params.range.end, params.range.cliff + 1 seconds, MAX_UNIX_TIMESTAMP);
-        params.userPrivateKey = boundPrivateKey(params.userPrivateKey);
-
-        address user = vm.addr(params.userPrivateKey);
-        IPRBProxy userProxy = loadOrDeployProxy(user);
-        checkUsers(user, params.recipient, address(userProxy));
-
-        uint256 firstStreamId = lockupLinear.nextStreamId();
-        uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
-
-        deal({ token: address(asset), to: user, give: uint256(totalTransferAmount) });
-        changePrank({ msgSender: user });
-
-        if (_target == targetERC20) {
-            asset.approve({ spender: address(userProxy), amount: MAX_UINT256 });
-        } else if (_target == targetPermit2) {
-            maxApprovePermit2();
-        }
-
-        LockupLinear.CreateWithRange memory createParams = LockupLinear.CreateWithRange({
-            asset: asset,
-            broker: defaults.broker(),
-            cancelable: true,
-            recipient: params.recipient,
-            sender: address(userProxy),
-            range: params.range,
-            totalAmount: params.perStreamAmount
-        });
-        Batch.CreateWithRange[] memory batch = BatchBuilder.fillBatch(createParams, params.batchSize);
-        bytes memory transferData = _target == targetPermit2
-            ? defaults.permit2Params({
-                user: user,
-                spender: address(userProxy),
-                amount: totalTransferAmount,
-                privateKey: params.userPrivateKey
-            })
-            : bytes("");
-        bytes memory data = abi.encodeCall(_target.batchCreateWithRange, (lockupLinear, asset, batch, transferData));
-
-        // Asset flow: proxy owner → proxy → Sablier
-        // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({
-            asset_: address(asset),
-            from: user,
-            to: address(userProxy),
-            amount: totalTransferAmount
-        });
-        expectMultipleCallsToCreateWithRange({ count: uint64(params.batchSize), params: createParams });
-        expectMultipleCallsToTransferFrom({
-            asset_: address(asset),
-            count: uint64(params.batchSize),
-            from: address(userProxy),
-            to: address(lockupLinear),
-            amount: params.perStreamAmount
-        });
-
-        bytes memory response = userProxy.execute(address(_target), data);
-        uint256[] memory actualStreamIds = abi.decode(response, (uint256[]));
-        uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
-        assertEq(actualStreamIds, expectedStreamIds);
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
                             BATCH-CREATE-WITH-MILESTONES
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -196,6 +109,93 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             count: uint64(params.batchSize),
             from: address(userProxy),
             to: address(lockupDynamic),
+            amount: params.perStreamAmount
+        });
+
+        bytes memory response = userProxy.execute(address(_target), data);
+        uint256[] memory actualStreamIds = abi.decode(response, (uint256[]));
+        uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
+        assertEq(actualStreamIds, expectedStreamIds);
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                              BATCH-CREATE-WITH-RANGE
+    //////////////////////////////////////////////////////////////////////////*/
+
+    struct CreateWithRangeParams {
+        uint128 batchSize;
+        LockupLinear.Range range;
+        address recipient;
+        uint128 perStreamAmount;
+        uint256 userPrivateKey;
+    }
+
+    function testForkFuzz_BatchCreateWithRange_ERC20(CreateWithRangeParams memory params) external {
+        testBatchCreateWithRange(params, targetERC20);
+    }
+
+    function testForkFuzz_BatchCreateWithRange_Permit2(CreateWithRangeParams memory params) external {
+        testBatchCreateWithRange(params, targetPermit2);
+    }
+
+    function testBatchCreateWithRange(CreateWithRangeParams memory params, ISablierV2ProxyTarget _target) internal {
+        params.batchSize = boundUint128(params.batchSize, 1, 20);
+        params.perStreamAmount = boundUint128(params.perStreamAmount, 1, MAX_UINT128 / params.batchSize);
+        params.range.start = boundUint40(params.range.start, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
+        params.range.cliff = boundUint40(params.range.cliff, params.range.start, params.range.start + 52 weeks);
+        params.range.end = boundUint40(params.range.end, params.range.cliff + 1 seconds, MAX_UNIX_TIMESTAMP);
+        params.userPrivateKey = boundPrivateKey(params.userPrivateKey);
+
+        address user = vm.addr(params.userPrivateKey);
+        IPRBProxy userProxy = loadOrDeployProxy(user);
+        checkUsers(user, params.recipient, address(userProxy));
+
+        uint256 firstStreamId = lockupLinear.nextStreamId();
+        uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
+
+        deal({ token: address(asset), to: user, give: uint256(totalTransferAmount) });
+        changePrank({ msgSender: user });
+
+        if (_target == targetERC20) {
+            asset.approve({ spender: address(userProxy), amount: MAX_UINT256 });
+        } else if (_target == targetPermit2) {
+            maxApprovePermit2();
+        }
+
+        LockupLinear.CreateWithRange memory createParams = LockupLinear.CreateWithRange({
+            asset: asset,
+            broker: defaults.broker(),
+            cancelable: true,
+            recipient: params.recipient,
+            sender: address(userProxy),
+            range: params.range,
+            totalAmount: params.perStreamAmount
+        });
+        Batch.CreateWithRange[] memory batch = BatchBuilder.fillBatch(createParams, params.batchSize);
+        bytes memory transferData = _target == targetPermit2
+            ? defaults.permit2Params({
+                user: user,
+                spender: address(userProxy),
+                amount: totalTransferAmount,
+                privateKey: params.userPrivateKey
+            })
+            : bytes("");
+        bytes memory data = abi.encodeCall(_target.batchCreateWithRange, (lockupLinear, asset, batch, transferData));
+
+        // Asset flow: proxy owner → proxy → Sablier
+        // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
+        expectCallToTransferFrom({
+            asset_: address(asset),
+            from: user,
+            to: address(userProxy),
+            amount: totalTransferAmount
+        });
+        expectMultipleCallsToCreateWithRange({ count: uint64(params.batchSize), params: createParams });
+        expectMultipleCallsToTransferFrom({
+            asset_: address(asset),
+            count: uint64(params.batchSize),
+            from: address(userProxy),
+            to: address(lockupLinear),
             amount: params.perStreamAmount
         });
 
