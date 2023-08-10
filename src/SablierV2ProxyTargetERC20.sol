@@ -8,7 +8,7 @@ import { SablierV2ProxyTarget } from "./abstracts/SablierV2ProxyTarget.sol";
 import { Permit2Params } from "./types/Permit2.sol";
 
 contract SablierV2ProxyTargetERC20 is SablierV2ProxyTarget {
-    /// @notice `data` Parameter is ignored in this implementation.
+    /// @notice  Parameter `data` is ignored in this implementation.
     /// @dev See the documentation for the user-facing functions that call this internal function.
     function _transferAndApprove(
         address sablierContract,

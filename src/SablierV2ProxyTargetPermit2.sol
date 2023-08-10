@@ -22,8 +22,8 @@ contract SablierV2ProxyTargetPermit2 is SablierV2ProxyTarget {
         PERMIT2 = permit2;
     }
 
-    /// @notice data Bytes containing a struct that encapsulats the parameters needed for Permit2, most importantly the
-    /// signature.
+    /// @notice Parameter `data` containing a struct that encapsulats the parameters needed for Permit2, most
+    /// importantly the signature.
     /// @dev See the documentation for the user-facing functions that call this internal function.
     function _transferAndApprove(
         address sablierContract,
