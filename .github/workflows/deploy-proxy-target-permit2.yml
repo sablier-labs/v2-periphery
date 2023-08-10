@@ -1,4 +1,4 @@
-name: "Deploy Proxy Target"
+name: "Deploy Proxy Target Permit2"
 
 env:
   API_KEY_ARBISCAN: ${{ secrets.API_KEY_ARBISCAN }}
@@ -25,7 +25,7 @@ on:
         required: false
 
 jobs:
-  deploy-proxy-target:
+  deploy-proxy-target-permit2:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
@@ -36,7 +36,7 @@ jobs:
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Deploy the SablierV2ProxyTarget contract"
+      - name: "Deploy the SablierV2ProxyTargetPermit2 contract"
         run: >-
           forge script script/DeployProxyTargetPermit2.s.sol
           --broadcast
