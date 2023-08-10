@@ -6,7 +6,7 @@ import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
 import { SablierV2ProxyTargetERC20 } from "../src/SablierV2ProxyTargetERC20.sol";
 
 contract DeployProxyTargetERC20 is BaseScript {
-    function run() public broadcast returns (SablierV2ProxyTargetERC20 target) {
-        target = new SablierV2ProxyTargetERC20();
+    function run() public broadcast returns (SablierV2ProxyTargetERC20 targetERC20) {
+        targetERC20 = new SablierV2ProxyTargetERC20();
     }
 }

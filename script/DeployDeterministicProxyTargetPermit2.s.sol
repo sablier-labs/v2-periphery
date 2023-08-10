@@ -18,8 +18,8 @@ contract DeployDeterministicProxyTargetPermit2 is BaseScript {
         public
         virtual
         broadcast
-        returns (SablierV2ProxyTargetPermit2 target)
+        returns (SablierV2ProxyTargetPermit2 targetPermit2)
     {
-        target = new SablierV2ProxyTargetPermit2{ salt: bytes32(abi.encodePacked(create2Salt)) }(permit2);
+        targetPermit2 = new SablierV2ProxyTargetPermit2{ salt: bytes32(abi.encodePacked(create2Salt)) }(permit2);
     }
 }

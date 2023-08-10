@@ -7,7 +7,7 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.sol";
 
 contract DeployProxyTargetPermit2 is BaseScript {
-    function run(IAllowanceTransfer permit2) public broadcast returns (SablierV2ProxyTargetPermit2 target) {
-        target = new SablierV2ProxyTargetPermit2(permit2);
+    function run(IAllowanceTransfer permit2) public broadcast returns (SablierV2ProxyTargetPermit2 targetPermit2) {
+        targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
     }
 }
