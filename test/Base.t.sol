@@ -375,12 +375,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function batchCreateWithRange() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (
-                lockupLinear,
-                asset,
-                defaults.batchCreateWithRange(),
-                defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT())
-            )
+            (lockupLinear, asset, defaults.batchCreateWithRange(), getTransferData(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -452,7 +447,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         if (target == targetPermit2) {
             return defaults.permit2Params(amount);
         }
-        // The {ProxyTargetApprove} target does not require any transfer data.
+        // The {ProxyTargetApprove} contract does not require any transfer data.
         return bytes("");
     }
 }

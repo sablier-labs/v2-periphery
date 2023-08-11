@@ -58,7 +58,7 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithDeltas(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -87,7 +87,7 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithDeltas(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -132,7 +132,7 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithDurations(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -161,7 +161,7 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithDurations(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -206,7 +206,7 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithMilestones(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -235,7 +235,7 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithMilestones(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -280,7 +280,7 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithRange(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -309,7 +309,7 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithRange(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
