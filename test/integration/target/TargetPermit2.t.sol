@@ -4,24 +4,22 @@ pragma solidity >=0.8.19 <0.9.0;
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 
 import { Integration_Test } from "../Integration.t.sol";
-import { BatchCancelMultiple_Integration_Test } from "./shared/batch-cancel-multiple/batchCancelMultiple.t.sol";
-import { BatchCreateWithDeltas_Integration_Test } from "./shared/batch-create-with-deltas/batchCreateWithDeltas.t.sol";
-import { BatchCreateWithDurations_Integration_Test } from
-    "./shared/batch-create-with-durations/batchCreateWithDurations.t.sol";
+import { BatchCancelMultiple_Integration_Test } from "./batch-cancel-multiple/batchCancelMultiple.t.sol";
+import { BatchCreateWithDeltas_Integration_Test } from "./batch-create-with-deltas/batchCreateWithDeltas.t.sol";
+import { BatchCreateWithDurations_Integration_Test } from "./batch-create-with-durations/batchCreateWithDurations.t.sol";
 import { BatchCreateWithMilestones_Integration_Test } from
-    "./shared/batch-create-with-milestones/batchCreateWithMilestones.t.sol";
-import { BatchCreateWithRange_Integration_Test } from "./shared/batch-create-with-range/batchCreateWithRange.t.sol";
-import { Burn_Integration_Test } from "./shared/burn/burn.t.sol";
-import { Cancel_Integration_Test } from "./shared/cancel/cancel.t.sol";
-import { CancelAndCreate_Integration_Test } from "./shared/cancel-and-create/cancelAndCreate.t.sol";
-import { CancelMultiple_Integration_Test } from "./shared/cancel-multiple/cancelMultiple.t.sol";
-import { Renounce_Integration_Test } from "./shared/renounce/renounce.t.sol";
-import { Withdraw_Integration_Test } from "./shared/withdraw/withdraw.t.sol";
-import { WithdrawMax_Integration_Test } from "./shared/withdraw-max/withdrawMax.t.sol";
-import { WithdrawMaxAndTransfer_Integration_Test } from
-    "./shared/withdraw-max-and-transfer/withdrawMaxAndTransfer.t.sol";
-import { WithdrawMultiple_Integration_Test } from "./shared/withdraw-multiple/withdrawMultiple.t.sol";
-import { WrapAndCreate_Integration_Test } from "./shared/wrap-and-create/wrapAndCreate.t.sol";
+    "./batch-create-with-milestones/batchCreateWithMilestones.t.sol";
+import { BatchCreateWithRange_Integration_Test } from "./batch-create-with-range/batchCreateWithRange.t.sol";
+import { Burn_Integration_Test } from "./burn/burn.t.sol";
+import { Cancel_Integration_Test } from "./cancel/cancel.t.sol";
+import { CancelAndCreate_Integration_Test } from "./cancel-and-create/cancelAndCreate.t.sol";
+import { CancelMultiple_Integration_Test } from "./cancel-multiple/cancelMultiple.t.sol";
+import { Renounce_Integration_Test } from "./renounce/renounce.t.sol";
+import { Withdraw_Integration_Test } from "./withdraw/withdraw.t.sol";
+import { WithdrawMax_Integration_Test } from "./withdraw-max/withdrawMax.t.sol";
+import { WithdrawMaxAndTransfer_Integration_Test } from "./withdraw-max-and-transfer/withdrawMaxAndTransfer.t.sol";
+import { WithdrawMultiple_Integration_Test } from "./withdraw-multiple/withdrawMultiple.t.sol";
+import { WrapAndCreate_Integration_Test } from "./wrap-and-create/wrapAndCreate.t.sol";
 
 abstract contract TargetPermit2_Integration_Test is Integration_Test {
     function setUp() public virtual override {

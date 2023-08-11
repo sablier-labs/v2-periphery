@@ -6,9 +6,9 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 
 import { Fork_Test } from "../Fork.t.sol";
-import { BatchCancelMultiple_Fork_Test } from "./shared/batchCancelMultiple.t.sol";
-import { BatchCreate_Fork_Test } from "./shared/batchCreate.t.sol";
-import { WrapAndCreate_Fork_Test } from "./shared/wrapAndCreate.t.sol";
+import { BatchCancelMultiple_Fork_Test } from "./batchCancelMultiple.t.sol";
+import { BatchCreate_Fork_Test } from "./batchCreate.t.sol";
+import { WrapAndCreate_Fork_Test } from "./wrapAndCreate.t.sol";
 
 abstract contract TargetApprove_Fork_Test is Fork_Test {
     function setUp() public virtual override {
