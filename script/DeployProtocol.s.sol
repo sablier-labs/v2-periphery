@@ -10,6 +10,7 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 
 import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
+import { SablierV2ProxyTargetApprove } from "../src/SablierV2ProxyTargetApprove.sol";
 import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.sol";
 
 /// @notice Deploys the Sablier V2 Protocol and lists the streaming contracts in the archive.
@@ -29,7 +30,8 @@ contract DeployProtocol is BaseScript {
             SablierV2NFTDescriptor nftDescriptor,
             SablierV2Archive archive,
             SablierV2ProxyPlugin plugin,
-            SablierV2ProxyTargetPermit2 target
+            SablierV2ProxyTargetApprove targetApprove,
+            SablierV2ProxyTargetPermit2 targetPermit2
         )
     {
         // Deploy V2 Core.
@@ -41,7 +43,8 @@ contract DeployProtocol is BaseScript {
         // Deploy V2 Periphery.
         archive = new SablierV2Archive(initialAdmin);
         plugin = new SablierV2ProxyPlugin(archive);
-        target = new SablierV2ProxyTargetPermit2(permit2);
+        targetApprove = new SablierV2ProxyTargetApprove();
+        targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
 
         // List the streaming contracts.
         archive.list(address(lockupDynamic));
