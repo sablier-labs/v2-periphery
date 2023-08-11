@@ -5,6 +5,8 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import { SablierV2ProxyTarget } from "./abstracts/SablierV2ProxyTarget.sol";
 
+/// @title SablierV2ProxyTargetERC20
+/// @notice Proxy target contract that implements the transfer logic for standard ERC-20 approvals.
 contract SablierV2ProxyTargetERC20 is SablierV2ProxyTarget {
     /// @notice  Parameter `data` is ignored in this implementation.
     /// @dev See the documentation for the user-facing functions that call this internal function.

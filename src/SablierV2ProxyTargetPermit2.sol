@@ -7,6 +7,8 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 import { SablierV2ProxyTarget } from "./abstracts/SablierV2ProxyTarget.sol";
 import { Permit2Params } from "./types/Permit2.sol";
 
+/// @title SablierV2ProxyTargetPermit2
+/// @notice Proxy target contract that implements the transfer logic for Permit2.
 contract SablierV2ProxyTargetPermit2 is SablierV2ProxyTarget {
     /*//////////////////////////////////////////////////////////////////////////
                                      CONSTANTS
