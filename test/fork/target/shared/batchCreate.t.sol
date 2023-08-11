@@ -56,12 +56,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
 
         deal({ token: address(asset), to: user, give: uint256(totalTransferAmount) });
         changePrank({ msgSender: user });
-
-        if (target == targetApprove) {
-            asset.approve({ spender: address(userProxy), amount: MAX_UINT256 });
-        } else if (target == targetPermit2) {
-            maxApprovePermit2();
-        }
+        approveProxyOrPermit2(address(userProxy));
 
         LockupDynamic.CreateWithMilestones memory createWithMilestones = LockupDynamic.CreateWithMilestones({
             asset: asset,
@@ -137,12 +132,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
 
         deal({ token: address(asset), to: user, give: uint256(totalTransferAmount) });
         changePrank({ msgSender: user });
-
-        if (target == targetApprove) {
-            asset.approve({ spender: address(userProxy), amount: MAX_UINT256 });
-        } else if (target == targetPermit2) {
-            maxApprovePermit2();
-        }
+        approveProxyOrPermit2(address(userProxy));
 
         LockupLinear.CreateWithRange memory createParams = LockupLinear.CreateWithRange({
             asset: asset,
@@ -185,5 +175,17 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         uint256[] memory actualStreamIds = abi.decode(response, (uint256[]));
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                      HELPERS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function approveProxyOrPermit2(address proxy) internal {
+        if (target == targetApprove) {
+            asset.approve({ spender: proxy, amount: MAX_UINT256 });
+        } else if (target == targetPermit2) {
+            maxApprovePermit2();
+        }
     }
 }
