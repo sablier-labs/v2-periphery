@@ -97,6 +97,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             targetERC20 = deployPrecompiledProxyTargetERC20();
             targetPermit2 = deployPrecompiledProxyTargetPermit2(permit2);
         }
+        // The ERC-20 target is the default target.
+        target = targetERC20;
     }
 
     /// @dev Deploys {SablierV2Archive} from a source precompiled with `--via-ir`.

@@ -15,7 +15,6 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
     function setUp() public virtual override {
         Fork_Test.setUp();
         proxyRegistry.installPlugin(plugin);
-        target = targetERC20;
 
         if (!archive.isListed(address(lockupLinear))) {
             address archiveAdmin = archive.admin();
