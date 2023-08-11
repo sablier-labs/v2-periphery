@@ -13,7 +13,6 @@ abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 
     function setUp() public virtual override {
-        Fork_Test.setUp();
     }
 
     function testForkFuzz_BatchCancelMultiple(uint256 batchSize) external {

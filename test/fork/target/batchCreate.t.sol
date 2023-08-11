@@ -18,7 +18,6 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 
     function setUp() public virtual override {
-        Fork_Test.setUp();
     }
 
     /*//////////////////////////////////////////////////////////////////////////

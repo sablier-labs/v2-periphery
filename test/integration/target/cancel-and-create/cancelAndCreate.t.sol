@@ -16,9 +16,7 @@ import { Integration_Test } from "../../Integration.t.sol";
 /// - `cancelAndCreateWithMilestones`
 /// - `cancelAndCreateWithRange`
 abstract contract CancelAndCreate_Integration_Test is Integration_Test {
-    function setUp() public virtual override {
-        Integration_Test.setUp();
-    }
+    function setUp() public virtual override { }
 
     modifier whenDelegateCalled() {
         _;

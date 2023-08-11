@@ -143,8 +143,9 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
         vm.label({ account: address(permit2), newLabel: "Permit2" });
-        vm.label({ account: address(plugin), newLabel: "Proxy Plugin" });
-        vm.label({ account: address(target), newLabel: "Proxy Target" });
+        vm.label({ account: address(plugin), newLabel: "ProxyPlugin" });
+        vm.label({ account: address(targetApprove), newLabel: "ProxyTargetApprove" });
+        vm.label({ account: address(targetPermit2), newLabel: "ProxyTargetPermit2" });
         vm.label({ account: address(wlc), newLabel: "WLC" });
     }
 
@@ -375,7 +376,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function batchCreateWithRange() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (lockupLinear, asset, defaults.batchCreateWithRange(), getTransferData(defaults.PER_STREAM_AMOUNT()))
+            (lockupLinear, asset, defaults.batchCreateWithRange(), getTransferData(defaults.TOTAL_TRANSFER_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));

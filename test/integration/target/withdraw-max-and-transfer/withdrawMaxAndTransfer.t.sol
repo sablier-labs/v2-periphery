@@ -10,7 +10,6 @@ import { Integration_Test } from "../../Integration.t.sol";
 
 abstract contract WithdrawMaxAndTransfer_Integration_Test is Integration_Test {
     function setUp() public virtual override {
-        Integration_Test.setUp();
     }
 
     function test_RevertWhen_NotDelegateCalled() external {

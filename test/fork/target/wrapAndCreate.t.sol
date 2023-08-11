@@ -9,12 +9,10 @@ import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { Fork_Test } from "../Fork.t.sol";
 
 /// @dev Runs against $WETH only.
-contract WrapAndCreate_Fork_Test is Fork_Test {
+abstract contract WrapAndCreate_Fork_Test is Fork_Test {
     constructor() Fork_Test(IERC20(WETH_ADDRESS)) { }
 
-    function setUp() public virtual override {
-        Fork_Test.setUp();
-    }
+    function setUp() public virtual override { }
 
     /*//////////////////////////////////////////////////////////////////////////
                                WRAP-AND-CREATE-WITH-MILESTONES

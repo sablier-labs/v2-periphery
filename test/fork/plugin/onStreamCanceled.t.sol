@@ -34,8 +34,8 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
         // ABI encode the parameters and call the function via the proxy.
         LockupLinear.CreateWithRange memory createParams = defaults.createWithRange(asset);
         createParams.totalAmount = amount;
-        bytes memory data = abi.encodeCall(target.createWithRange, (lockupLinear, createParams, bytes("")));
-        bytes memory response = aliceProxy.execute(address(target), data);
+        bytes memory data = abi.encodeCall(targetApprove.createWithRange, (lockupLinear, createParams, bytes("")));
+        bytes memory response = aliceProxy.execute(address(targetApprove), data);
         uint256 streamId = abi.decode(response, (uint256));
 
         // Retrieve the initial asset balance of the proxy owner.
