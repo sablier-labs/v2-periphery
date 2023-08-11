@@ -6,8 +6,7 @@ import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol"
 import { Integration_Test } from "../Integration.t.sol";
 import { BatchCancelMultiple_Integration_Test } from "./batch-cancel-multiple/batchCancelMultiple.t.sol";
 import { BatchCreateWithDeltas_Integration_Test } from "./batch-create-with-deltas/batchCreateWithDeltas.t.sol";
-import { BatchCreateWithDurations_Integration_Test } from
-    "./batch-create-with-durations/batchCreateWithDurations.t.sol";
+import { BatchCreateWithDurations_Integration_Test } from "./batch-create-with-durations/batchCreateWithDurations.t.sol";
 import { BatchCreateWithMilestones_Integration_Test } from
     "./batch-create-with-milestones/batchCreateWithMilestones.t.sol";
 import { BatchCreateWithRange_Integration_Test } from "./batch-create-with-range/batchCreateWithRange.t.sol";
@@ -18,8 +17,7 @@ import { CancelMultiple_Integration_Test } from "./cancel-multiple/cancelMultipl
 import { Renounce_Integration_Test } from "./renounce/renounce.t.sol";
 import { Withdraw_Integration_Test } from "./withdraw/withdraw.t.sol";
 import { WithdrawMax_Integration_Test } from "./withdraw-max/withdrawMax.t.sol";
-import { WithdrawMaxAndTransfer_Integration_Test } from
-    "./withdraw-max-and-transfer/withdrawMaxAndTransfer.t.sol";
+import { WithdrawMaxAndTransfer_Integration_Test } from "./withdraw-max-and-transfer/withdrawMaxAndTransfer.t.sol";
 import { WithdrawMultiple_Integration_Test } from "./withdraw-multiple/withdrawMultiple.t.sol";
 import { WrapAndCreate_Integration_Test } from "./wrap-and-create/wrapAndCreate.t.sol";
 
