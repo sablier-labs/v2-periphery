@@ -7,16 +7,19 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.so
 
 import { PermitSignature } from "@uniswap/permit2-test/utils/PermitSignature.sol";
 
-import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Fork_Test } from "../Fork.t.sol";
-import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
-import { BatchBuilder } from "../../utils/BatchBuilder.sol";
+import { Fork_Test } from "../../Fork.t.sol";
+import { ArrayBuilder } from "../../../utils/ArrayBuilder.sol";
+import { BatchBuilder } from "../../../utils/BatchBuilder.sol";
 
 /// @dev Runs against multiple fork assets.
 abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
+
+    function setUp() public virtual override {
+        Fork_Test.setUp();
+    }
 
     /*//////////////////////////////////////////////////////////////////////////
                             BATCH-CREATE-WITH-MILESTONES
@@ -31,20 +34,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         uint256 userPrivateKey;
     }
 
-    function testForkFuzz_BatchCreateWithMilestones_ERC20(CreateWithMilestonesParams memory params) external {
-        testBatchCreateWithMilestones(params, targetERC20);
-    }
-
-    function testForkFuzz_BatchCreateWithMilestones_Permit2(CreateWithMilestonesParams memory params) external {
-        testBatchCreateWithMilestones(params, targetPermit2);
-    }
-
-    function testBatchCreateWithMilestones(
-        CreateWithMilestonesParams memory params,
-        ISablierV2ProxyTarget _target
-    )
-        internal
-    {
+    function testForkFuzz_BatchCreateWithMilestones(CreateWithMilestonesParams memory params) external {
         vm.assume(params.segments.length != 0);
         params.batchSize = boundUint128(params.batchSize, 1, 20);
         params.startTime = boundUint40(params.startTime, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
@@ -67,9 +57,9 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         deal({ token: address(asset), to: user, give: uint256(totalTransferAmount) });
         changePrank({ msgSender: user });
 
-        if (_target == targetERC20) {
+        if (target == targetERC20) {
             asset.approve({ spender: address(userProxy), amount: MAX_UINT256 });
-        } else if (_target == targetPermit2) {
+        } else if (target == targetPermit2) {
             maxApprovePermit2();
         }
 
@@ -84,7 +74,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             totalAmount: params.perStreamAmount
         });
         Batch.CreateWithMilestones[] memory batch = BatchBuilder.fillBatch(createWithMilestones, params.batchSize);
-        bytes memory transferData = _target == targetPermit2
+        bytes memory transferData = target == targetPermit2
             ? defaults.permit2Params({
                 user: user,
                 spender: address(userProxy),
@@ -93,7 +83,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             })
             : bytes("");
         bytes memory data =
-            abi.encodeCall(_target.batchCreateWithMilestones, (lockupDynamic, asset, batch, transferData));
+            abi.encodeCall(target.batchCreateWithMilestones, (lockupDynamic, asset, batch, transferData));
 
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
@@ -112,7 +102,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             amount: params.perStreamAmount
         });
 
-        bytes memory response = userProxy.execute(address(_target), data);
+        bytes memory response = userProxy.execute(address(target), data);
         uint256[] memory actualStreamIds = abi.decode(response, (uint256[]));
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);
@@ -130,15 +120,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         uint256 userPrivateKey;
     }
 
-    function testForkFuzz_BatchCreateWithRange_ERC20(CreateWithRangeParams memory params) external {
-        testBatchCreateWithRange(params, targetERC20);
-    }
-
-    function testForkFuzz_BatchCreateWithRange_Permit2(CreateWithRangeParams memory params) external {
-        testBatchCreateWithRange(params, targetPermit2);
-    }
-
-    function testBatchCreateWithRange(CreateWithRangeParams memory params, ISablierV2ProxyTarget _target) internal {
+    function testForkFuzz_BatchCreateWithRange(CreateWithRangeParams memory params) external {
         params.batchSize = boundUint128(params.batchSize, 1, 20);
         params.perStreamAmount = boundUint128(params.perStreamAmount, 1, MAX_UINT128 / params.batchSize);
         params.range.start = boundUint40(params.range.start, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
@@ -156,9 +138,9 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         deal({ token: address(asset), to: user, give: uint256(totalTransferAmount) });
         changePrank({ msgSender: user });
 
-        if (_target == targetERC20) {
+        if (target == targetERC20) {
             asset.approve({ spender: address(userProxy), amount: MAX_UINT256 });
-        } else if (_target == targetPermit2) {
+        } else if (target == targetPermit2) {
             maxApprovePermit2();
         }
 
@@ -172,7 +154,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             totalAmount: params.perStreamAmount
         });
         Batch.CreateWithRange[] memory batch = BatchBuilder.fillBatch(createParams, params.batchSize);
-        bytes memory transferData = _target == targetPermit2
+        bytes memory transferData = target == targetPermit2
             ? defaults.permit2Params({
                 user: user,
                 spender: address(userProxy),
@@ -180,7 +162,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
                 privateKey: params.userPrivateKey
             })
             : bytes("");
-        bytes memory data = abi.encodeCall(_target.batchCreateWithRange, (lockupLinear, asset, batch, transferData));
+        bytes memory data = abi.encodeCall(target.batchCreateWithRange, (lockupLinear, asset, batch, transferData));
 
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
@@ -199,7 +181,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             amount: params.perStreamAmount
         });
 
-        bytes memory response = userProxy.execute(address(_target), data);
+        bytes memory response = userProxy.execute(address(target), data);
         uint256[] memory actualStreamIds = abi.decode(response, (uint256[]));
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);

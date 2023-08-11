@@ -4,34 +4,23 @@ pragma solidity >=0.8.19 <0.9.0;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 
-import { Fork_Test } from "../Fork.t.sol";
+import { Fork_Test } from "../../Fork.t.sol";
 
 /// @dev Runs against $WETH only.
 contract WrapAndCreate_Fork_Test is Fork_Test {
     constructor() Fork_Test(IERC20(WETH_ADDRESS)) { }
 
+    function setUp() public virtual override {
+        Fork_Test.setUp();
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                                WRAP-AND-CREATE-WITH-MILESTONES
     //////////////////////////////////////////////////////////////////////////*/
 
-    function testForkFuzz_WrapAndCreateWithMilestones_ERC20(uint256 amount0, uint256 amount1) external {
-        testWrapAndCreateWithMilestones(amount0, amount1, targetERC20);
-    }
-
-    function testForkFuzz_WrapAndCreateWithMilestones_Permit2(uint256 amount0, uint256 amount1) external {
-        testWrapAndCreateWithMilestones(amount0, amount1, targetPermit2);
-    }
-
-    function testWrapAndCreateWithMilestones(
-        uint256 amount0,
-        uint256 amount1,
-        ISablierV2ProxyTarget _target
-    )
-        internal
-    {
+    function testForkFuzz_WrapAndCreateWithMilestones(uint256 amount0, uint256 amount1) external {
         uint256 max = users.alice.addr.balance - 1 ether;
         amount0 = _bound(amount0, 1 wei, max / 2);
         amount1 = _bound(amount1, 1 wei, max / 2);
@@ -51,8 +40,8 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
         createParams.segments[1].amount = uint128(amount1);
 
         // ABI encode the parameters and call the function via the proxy.
-        bytes memory data = abi.encodeCall(_target.wrapAndCreateWithMilestones, (lockupDynamic, createParams));
-        bytes memory response = aliceProxy.execute{ value: totalAmount }(address(_target), data);
+        bytes memory data = abi.encodeCall(target.wrapAndCreateWithMilestones, (lockupDynamic, createParams));
+        bytes memory response = aliceProxy.execute{ value: totalAmount }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
@@ -64,15 +53,7 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
                                WRAP-AND-CREATE-WITH-RANGE
     //////////////////////////////////////////////////////////////////////////*/
 
-    function testForkFuzz_WrapAndCreateWithRange_ERC20(uint256 etherAmount) external {
-        testWrapAndCreateWithRange(etherAmount, targetERC20);
-    }
-
-    function testForkFuzz_WrapAndCreateWithRange_Permit2(uint256 etherAmount) external {
-        testWrapAndCreateWithRange(etherAmount, targetPermit2);
-    }
-
-    function testWrapAndCreateWithRange(uint256 etherAmount, ISablierV2ProxyTarget _target) internal {
+    function testForkFuzz_WrapAndCreateWithRange(uint256 etherAmount) external {
         etherAmount = _bound(etherAmount, 1 wei, users.alice.addr.balance - 1 ether);
 
         // Expect the correct calls to be made.
@@ -86,8 +67,8 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
 
         // ABI encode the parameters and call the function via the proxy.
         LockupLinear.CreateWithRange memory createParams = defaults.createWithRange(weth);
-        bytes memory data = abi.encodeCall(_target.wrapAndCreateWithRange, (lockupLinear, createParams));
-        bytes memory response = aliceProxy.execute{ value: etherAmount }(address(_target), data);
+        bytes memory data = abi.encodeCall(target.wrapAndCreateWithRange, (lockupLinear, createParams));
+        bytes memory response = aliceProxy.execute{ value: etherAmount }(address(target), data);
 
         // Assert that the stream has been created successfully.
         uint256 actualStreamId = abi.decode(response, (uint256));
