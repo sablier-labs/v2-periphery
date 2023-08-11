@@ -5,8 +5,9 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import { OnStreamCanceled_Fork_Test } from "../plugin/onStreamCanceled.t.sol";
 import {
-    BatchCancelMultiple_TargetERC20_Fork_Test, BatchCreate_TargetERC20_Fork_Test
-} from "../target/TargetERC20.t.sol";
+    BatchCancelMultiple_TargetApprove_Fork_Test,
+    BatchCreate_TargetApprove_Fork_Test
+} from "../target/TargetApprove.t.sol";
 import {
     BatchCancelMultiple_TargetPermit2_Fork_Test,
     BatchCreate_TargetPermit2_Fork_Test
@@ -14,11 +15,11 @@ import {
 
 IERC20 constant usdt = IERC20(0xdAC17F958D2ee523a2206206994597C13D831ec7);
 
-contract USDT_BatchCancelMultiple_TargetERC20_Fork_Test is BatchCancelMultiple_TargetERC20_Fork_Test(usdt) { }
+contract USDT_BatchCancelMultiple_TargetApprove_Fork_Test is BatchCancelMultiple_TargetApprove_Fork_Test(usdt) { }
 
 contract USDT_BatchCancelMultiple_TargetPermit2_Fork_Test is BatchCancelMultiple_TargetPermit2_Fork_Test(usdt) { }
 
-contract USDT_BatchCreate_TargetERC20_Fork_Test is BatchCreate_TargetERC20_Fork_Test(usdt) { }
+contract USDT_BatchCreate_TargetApprove_Fork_Test is BatchCreate_TargetApprove_Fork_Test(usdt) { }
 
 contract USDT_BatchCreate_TargetPermit2_Fork_Test is BatchCreate_TargetPermit2_Fork_Test(usdt) { }
 

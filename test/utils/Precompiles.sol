@@ -46,15 +46,15 @@ contract Precompiles {
         );
     }
 
-    /// @notice Deploys {SablierV2ProxyTargetERC20} from precompiled bytecode.
-    function deployProxyTargetERC20() public returns (ISablierV2ProxyTarget proxyTargetERC20) {
+    /// @notice Deploys {SablierV2ProxyTargetApprove} from precompiled bytecode.
+    function deployProxyTargetApprove() public returns (ISablierV2ProxyTarget proxyTargetApprove) {
         bytes memory creationBytecode = BYTECODE_PROXY_TARGET_ERC20;
         assembly {
-            proxyTargetERC20 := create(0, add(creationBytecode, 0x20), mload(creationBytecode))
+            proxyTargetApprove := create(0, add(creationBytecode, 0x20), mload(creationBytecode))
         }
         require(
-            address(proxyTargetERC20) != address(0),
-            "Sablier V2 Precompiles: deployment failed for ProxyTargetERC20 contract"
+            address(proxyTargetApprove) != address(0),
+            "Sablier V2 Precompiles: deployment failed for ProxyTargetApprove contract"
         );
     }
 
@@ -77,7 +77,7 @@ contract Precompiles {
     ///
     /// 1. {SablierV2Archive}
     /// 2. {SablierV2ProxyPlugin}
-    /// 3. {SablierV2ProxyTargetERC20}
+    /// 3. {SablierV2ProxyTargetApprove}
     /// 4. {SablierV2ProxyTargetPermit2}
     function deployPeriphery(
         address initialAdmin,
@@ -87,13 +87,13 @@ contract Precompiles {
         returns (
             ISablierV2Archive archive,
             ISablierV2ProxyPlugin proxyPlugin,
-            ISablierV2ProxyTarget proxyTargetERC20,
+            ISablierV2ProxyTarget proxyTargetApprove,
             ISablierV2ProxyTarget proxyTargetPermit2
         )
     {
         archive = deployArchive(initialAdmin);
         proxyPlugin = deployProxyPlugin(archive);
-        proxyTargetERC20 = deployProxyTargetERC20();
+        proxyTargetApprove = deployProxyTargetApprove();
         proxyTargetPermit2 = deployProxyTargetPermit2(permit2);
     }
 }

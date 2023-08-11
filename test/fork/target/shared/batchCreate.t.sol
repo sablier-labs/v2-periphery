@@ -57,7 +57,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         deal({ token: address(asset), to: user, give: uint256(totalTransferAmount) });
         changePrank({ msgSender: user });
 
-        if (target == targetERC20) {
+        if (target == targetApprove) {
             asset.approve({ spender: address(userProxy), amount: MAX_UINT256 });
         } else if (target == targetPermit2) {
             maxApprovePermit2();
@@ -138,7 +138,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         deal({ token: address(asset), to: user, give: uint256(totalTransferAmount) });
         changePrank({ msgSender: user });
 
-        if (target == targetERC20) {
+        if (target == targetApprove) {
             asset.approve({ spender: address(userProxy), amount: MAX_UINT256 });
         } else if (target == targetPermit2) {
             maxApprovePermit2();

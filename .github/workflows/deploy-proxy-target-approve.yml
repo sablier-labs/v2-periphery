@@ -21,7 +21,7 @@ on:
         required: false
 
 jobs:
-  deploy-proxy-target-erc20:
+  deploy-proxy-target-approve:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
@@ -32,9 +32,9 @@ jobs:
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Deploy the SablierV2ProxyTargetERC20 contract"
+      - name: "Deploy the SablierV2ProxyTargetApprove contract"
         run: >-
-          forge script script/DeployProxyTargetERC20.s.sol
+          forge script script/DeployProxyTargetApprove.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
           --sig "run()"

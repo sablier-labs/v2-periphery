@@ -10,36 +10,39 @@ import { BatchCancelMultiple_Fork_Test } from "./shared/batchCancelMultiple.t.so
 import { BatchCreate_Fork_Test } from "./shared/batchCreate.t.sol";
 import { WrapAndCreate_Fork_Test } from "./shared/wrapAndCreate.t.sol";
 
-abstract contract TargetERC20_Fork_Test is Fork_Test {
+abstract contract TargetApprove_Fork_Test is Fork_Test {
     function setUp() public virtual override {
         Fork_Test.setUp();
-        target = ISablierV2ProxyTarget(targetERC20);
+        target = ISablierV2ProxyTarget(targetApprove);
     }
 }
 
 /// @dev Inherited by the asset contracts in "test/fork/assets"
-abstract contract BatchCancelMultiple_TargetERC20_Fork_Test is TargetERC20_Fork_Test, BatchCancelMultiple_Fork_Test {
+abstract contract BatchCancelMultiple_TargetApprove_Fork_Test is
+    TargetApprove_Fork_Test,
+    BatchCancelMultiple_Fork_Test
+{
     constructor(IERC20 asset_) BatchCancelMultiple_Fork_Test(asset_) { }
 
-    function setUp() public virtual override(TargetERC20_Fork_Test, BatchCancelMultiple_Fork_Test) {
-        TargetERC20_Fork_Test.setUp();
+    function setUp() public virtual override(TargetApprove_Fork_Test, BatchCancelMultiple_Fork_Test) {
+        TargetApprove_Fork_Test.setUp();
         BatchCancelMultiple_Fork_Test.setUp();
     }
 }
 
 /// @dev Inherited by the asset contracts in "test/fork/assets"
-abstract contract BatchCreate_TargetERC20_Fork_Test is TargetERC20_Fork_Test, BatchCreate_Fork_Test {
+abstract contract BatchCreate_TargetApprove_Fork_Test is TargetApprove_Fork_Test, BatchCreate_Fork_Test {
     constructor(IERC20 asset_) BatchCreate_Fork_Test(asset_) { }
 
-    function setUp() public virtual override(TargetERC20_Fork_Test, BatchCreate_Fork_Test) {
-        TargetERC20_Fork_Test.setUp();
+    function setUp() public virtual override(TargetApprove_Fork_Test, BatchCreate_Fork_Test) {
+        TargetApprove_Fork_Test.setUp();
         BatchCreate_Fork_Test.setUp();
     }
 }
 
-contract WrapAndCreate_TargetERC20_Fork_Test is TargetERC20_Fork_Test, WrapAndCreate_Fork_Test {
-    function setUp() public virtual override(TargetERC20_Fork_Test, WrapAndCreate_Fork_Test) {
-        TargetERC20_Fork_Test.setUp();
+contract WrapAndCreate_TargetApprove_Fork_Test is TargetApprove_Fork_Test, WrapAndCreate_Fork_Test {
+    function setUp() public virtual override(TargetApprove_Fork_Test, WrapAndCreate_Fork_Test) {
+        TargetApprove_Fork_Test.setUp();
         WrapAndCreate_Fork_Test.setUp();
     }
 }
