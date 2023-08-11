@@ -103,8 +103,7 @@ interface ISablierV2ProxyTarget {
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithDurations}.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithDurations(
         ISablierV2LockupLinear lockupLinear,
@@ -127,8 +126,7 @@ interface ISablierV2ProxyTarget {
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithRange}.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithRange(
         ISablierV2LockupLinear lockupLinear,
@@ -152,8 +150,7 @@ interface ISablierV2ProxyTarget {
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract to use for creating the new stream.
     /// @param streamId The id of the stream to cancel.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithDurations(
         ISablierV2Lockup lockup,
@@ -178,8 +175,7 @@ interface ISablierV2ProxyTarget {
     /// @param streamId The id of the stream to cancel.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract to use for creating the new stream.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithRange(
         ISablierV2Lockup lockup,
@@ -196,8 +192,7 @@ interface ISablierV2ProxyTarget {
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamId The id of the newly created stream.
     function createWithDurations(
         ISablierV2LockupLinear lockupLinear,
@@ -212,8 +207,7 @@ interface ISablierV2ProxyTarget {
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamId The id of the newly created stream.
     function createWithRange(
         ISablierV2LockupLinear lockupLinear,
@@ -281,8 +275,7 @@ interface ISablierV2ProxyTarget {
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupDynamic.createWithDeltas}.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithDeltas(
         ISablierV2LockupDynamic lockupDynamic,
@@ -305,8 +298,7 @@ interface ISablierV2ProxyTarget {
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupDynamic.createWithMilestones}.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithMilestones(
         ISablierV2LockupDynamic lockupDynamic,
@@ -331,8 +323,7 @@ interface ISablierV2ProxyTarget {
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract to use for creating the new stream.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithDeltas(
         ISablierV2Lockup lockup,
@@ -358,8 +349,7 @@ interface ISablierV2ProxyTarget {
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract to use for creating the new stream.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithMilestones(
         ISablierV2Lockup lockup,
@@ -376,8 +366,7 @@ interface ISablierV2ProxyTarget {
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamId The id of the newly created stream.
     function createWithDeltas(
         ISablierV2LockupDynamic lockupDynamic,
@@ -392,8 +381,7 @@ interface ISablierV2ProxyTarget {
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
     /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
-    /// parameters
-    /// needed for Permit2 in one implementation and may be ignored in another.
+    /// parameters needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamId The id of the newly created stream.
     function createWithMilestones(
         ISablierV2LockupDynamic lockupDynamic,
