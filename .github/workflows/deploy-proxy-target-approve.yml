@@ -1,4 +1,4 @@
-name: "Deploy Proxy Target ERC20"
+name: "Deploy ProxyTargetApprove"
 
 env:
   API_KEY_ARBISCAN: ${{ secrets.API_KEY_ARBISCAN }}

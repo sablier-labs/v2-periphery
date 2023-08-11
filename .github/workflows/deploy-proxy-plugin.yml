@@ -1,4 +1,4 @@
-name: "Deploy Proxy Plugin"
+name: "Deploy ProxyPlugin"
 
 env:
   API_KEY_ARBISCAN: ${{ secrets.API_KEY_ARBISCAN }}

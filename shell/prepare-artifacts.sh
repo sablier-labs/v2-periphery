@@ -27,8 +27,6 @@ FOUNDRY_PROFILE=optimized forge build
 # Copy the production artifacts
 cp out-optimized/SablierV2Archive.sol/SablierV2Archive.json $artifacts
 cp out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json $artifacts
-cp out-optimized/SablierV2ProxyTargetApprove.sol/SablierV2ProxyTargetApprove.json $artifacts
-cp out-optimized/SablierV2ProxyTargetPermit2.sol/SablierV2ProxyTargetPermit2.json $artifacts
 
 interfaces=./artifacts/interfaces
 cp out-optimized/ISablierV2Archive.sol/ISablierV2Archive.json $interfaces

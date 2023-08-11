@@ -1,4 +1,4 @@
-name: "Deploy Proxy Target Permit2"
+name: "Deploy ProxyTargetPermit2"
 
 env:
   API_KEY_ARBISCAN: ${{ secrets.API_KEY_ARBISCAN }}
