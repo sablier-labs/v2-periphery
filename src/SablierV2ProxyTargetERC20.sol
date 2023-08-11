@@ -8,13 +8,14 @@ import { SablierV2ProxyTarget } from "./abstracts/SablierV2ProxyTarget.sol";
 /// @title SablierV2ProxyTargetERC20
 /// @notice Proxy target contract that implements the transfer logic for standard ERC-20 approvals.
 contract SablierV2ProxyTargetERC20 is SablierV2ProxyTarget {
-    /// @notice  Parameter `data` is ignored in this implementation.
-    /// @dev See the documentation for the user-facing functions that call this internal function.
+    /// @notice Transfers the given `amount` of `asset` to the Sablier contract using standard the ERC-20
+    /// approve and transfer flow, and then approves Sablier to spend the funds.
+    /// @dev The `transferData` data is ignored in this implementation.
     function _transferAndApprove(
         address sablierContract,
         IERC20 asset,
-        uint128 amount,
-        bytes calldata /* data */
+        uint160 amount,
+        bytes calldata /* transferData */
     )
         internal
         override

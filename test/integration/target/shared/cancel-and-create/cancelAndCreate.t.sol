@@ -31,7 +31,13 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
     function test_RevertWhen_CancelAndCreateWithDeltas_NotDelegateCalled() external {
         LockupDynamic.CreateWithDeltas memory createParams;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithDeltas(lockupDynamic, 0, lockupDynamic, createParams, "");
+        target.cancelAndCreateWithDeltas({
+            lockup: lockupDynamic,
+            streamId: 0,
+            lockupDynamic: lockupDynamic,
+            createParams: createParams,
+            transferData: bytes("")
+        });
     }
 
     function test_CancelAndCreateWithDeltas_SameSablierContract() external whenDelegateCalled {
@@ -99,7 +105,13 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
     function test_RevertWhen_CancelAndCreateWithDurations_NotDelegateCalled() external {
         LockupLinear.CreateWithDurations memory createParams;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithDurations(lockupLinear, 0, lockupLinear, createParams, "");
+        target.cancelAndCreateWithDurations({
+            lockup: lockupLinear,
+            streamId: 0,
+            lockupLinear: lockupLinear,
+            createParams: createParams,
+            transferData: bytes("")
+        });
     }
 
     function test_CancelAndCreateWithDurations_SameSablierContract() external whenDelegateCalled {
@@ -167,7 +179,13 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
     function test_RevertWhen_CancelAndCreateWithMilestones_NotDelegateCalled() external {
         LockupDynamic.CreateWithMilestones memory createParams;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithMilestones(lockupDynamic, 0, lockupDynamic, createParams, "");
+        target.cancelAndCreateWithMilestones({
+            lockup: lockupDynamic,
+            streamId: 0,
+            lockupDynamic: lockupDynamic,
+            createParams: createParams,
+            transferData: bytes("")
+        });
     }
 
     function test_CancelAndCreateWithMilestones_SameSablierContract() external whenDelegateCalled {
@@ -235,7 +253,13 @@ abstract contract CancelAndCreate_Integration_Test is Integration_Test {
     function test_RevertWhen_CancelAndCreateWithRange_NotDelegateCalled() external {
         LockupLinear.CreateWithRange memory createParams;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithRange(lockupLinear, 0, lockupLinear, createParams, "");
+        target.cancelAndCreateWithRange({
+            lockup: lockupLinear,
+            streamId: 0,
+            lockupLinear: lockupLinear,
+            createParams: createParams,
+            transferData: bytes("")
+        });
     }
 
     function test_CancelAndCreateWithRange_SameSablierContract() external whenDelegateCalled {

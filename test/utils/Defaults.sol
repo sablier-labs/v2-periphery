@@ -72,8 +72,8 @@ contract Defaults is PermitSignature {
                                        PARAMS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function permit2Params(uint160 amount) public view returns (bytes memory data) {
-        data = permit2Params(users.alice.addr, address(proxy), amount, users.alice.key);
+    function permit2Params(uint160 amount) public view returns (bytes memory) {
+        return permit2Params(users.alice.addr, address(proxy), amount, users.alice.key);
     }
 
     function permit2Params(
@@ -84,7 +84,7 @@ contract Defaults is PermitSignature {
     )
         public
         view
-        returns (bytes memory data)
+        returns (bytes memory)
     {
         (,, uint48 nonce) = permit2.allowance({ user: user, token: address(asset), spender: spender });
         IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
@@ -105,7 +105,7 @@ contract Defaults is PermitSignature {
                 domainSeparator: permit2.DOMAIN_SEPARATOR()
             })
         });
-        data = abi.encode(permit2Params_);
+        return abi.encode(permit2Params_);
     }
 
     /*//////////////////////////////////////////////////////////////////////////

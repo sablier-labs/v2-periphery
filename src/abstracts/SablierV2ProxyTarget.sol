@@ -176,7 +176,7 @@ abstract contract SablierV2ProxyTarget is
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithDurations[] calldata batch,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         override
@@ -192,7 +192,7 @@ abstract contract SablierV2ProxyTarget is
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
-        uint128 transferAmount;
+        uint160 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
@@ -201,7 +201,7 @@ abstract contract SablierV2ProxyTarget is
         }
 
         // Transfers the assets to the proxy and approves the Sablier contract to spend them.
-        _transferAndApprove(address(lockupLinear), asset, transferAmount, data);
+        _transferAndApprove(address(lockupLinear), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -231,7 +231,7 @@ abstract contract SablierV2ProxyTarget is
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithRange[] calldata batch,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         override
@@ -247,7 +247,7 @@ abstract contract SablierV2ProxyTarget is
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
-        uint128 transferAmount;
+        uint160 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
@@ -256,7 +256,7 @@ abstract contract SablierV2ProxyTarget is
         }
 
         // Transfers the assets to the proxy and approve the Sablier contract to spend them.
-        _transferAndApprove(address(lockupLinear), asset, transferAmount, data);
+        _transferAndApprove(address(lockupLinear), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -287,7 +287,7 @@ abstract contract SablierV2ProxyTarget is
         uint256 streamId,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         override
@@ -295,7 +295,7 @@ abstract contract SablierV2ProxyTarget is
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
-        newStreamId = createWithDurations(lockupLinear, createParams, data);
+        newStreamId = createWithDurations(lockupLinear, createParams, transferData);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -304,7 +304,7 @@ abstract contract SablierV2ProxyTarget is
         uint256 streamId,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         override
@@ -312,21 +312,21 @@ abstract contract SablierV2ProxyTarget is
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
-        newStreamId = createWithRange(lockupLinear, createParams, data);
+        newStreamId = createWithRange(lockupLinear, createParams, transferData);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithDurations(
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         public
         override
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, data);
+        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, transferData);
         streamId = lockupLinear.createWithDurations(createParams);
     }
 
@@ -334,14 +334,14 @@ abstract contract SablierV2ProxyTarget is
     function createWithRange(
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         public
         override
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, data);
+        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, transferData);
         streamId = lockupLinear.createWithRange(createParams);
     }
 
@@ -402,7 +402,7 @@ abstract contract SablierV2ProxyTarget is
         ISablierV2LockupDynamic dynamic,
         IERC20 asset,
         Batch.CreateWithDeltas[] calldata batch,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         override
@@ -418,7 +418,7 @@ abstract contract SablierV2ProxyTarget is
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
-        uint128 transferAmount;
+        uint160 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
@@ -427,7 +427,7 @@ abstract contract SablierV2ProxyTarget is
         }
 
         // Perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
-        _transferAndApprove(address(dynamic), asset, transferAmount, data);
+        _transferAndApprove(address(dynamic), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -457,7 +457,7 @@ abstract contract SablierV2ProxyTarget is
         ISablierV2LockupDynamic dynamic,
         IERC20 asset,
         Batch.CreateWithMilestones[] calldata batch,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         override
@@ -473,7 +473,7 @@ abstract contract SablierV2ProxyTarget is
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
         // transactions will revert if there is overflow.
         uint256 i;
-        uint128 transferAmount;
+        uint160 transferAmount;
         for (i = 0; i < batchSize;) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
@@ -482,7 +482,7 @@ abstract contract SablierV2ProxyTarget is
         }
 
         // Perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
-        _transferAndApprove(address(dynamic), asset, transferAmount, data);
+        _transferAndApprove(address(dynamic), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -514,7 +514,7 @@ abstract contract SablierV2ProxyTarget is
         uint256 streamId,
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithDeltas calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         override
@@ -522,7 +522,7 @@ abstract contract SablierV2ProxyTarget is
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
-        newStreamId = createWithDeltas(dynamic, createParams, data);
+        newStreamId = createWithDeltas(dynamic, createParams, transferData);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -531,7 +531,7 @@ abstract contract SablierV2ProxyTarget is
         uint256 streamId,
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithMilestones calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         override
@@ -539,21 +539,21 @@ abstract contract SablierV2ProxyTarget is
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
-        newStreamId = createWithMilestones(dynamic, createParams, data);
+        newStreamId = createWithMilestones(dynamic, createParams, transferData);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithDeltas(
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithDeltas calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         public
         override
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, data);
+        _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, transferData);
         streamId = dynamic.createWithDeltas(createParams);
     }
 
@@ -561,14 +561,14 @@ abstract contract SablierV2ProxyTarget is
     function createWithMilestones(
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithMilestones calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         public
         override
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, data);
+        _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, transferData);
         streamId = dynamic.createWithMilestones(createParams);
     }
 
@@ -691,13 +691,14 @@ abstract contract SablierV2ProxyTarget is
         }
     }
 
-    /// @dev Helper function to transfer funds from the proxy owner to the proxy, if needed, approve the Sablier
-    /// contract to spend funds from the proxy.
+    /// @dev Helper function to transfer funds from the proxy owner to the proxy, which is meant to be inherited by
+    /// child contracts that implement the transfer logic. If needed, this function also approves the Sablier contract
+    /// to spend funds from the proxy.
     function _transferAndApprove(
         address sablierContract,
         IERC20 asset,
-        uint128 amount,
-        bytes calldata data
+        uint160 amount,
+        bytes calldata transferData
     )
         internal
         virtual;

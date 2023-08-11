@@ -14,7 +14,12 @@ abstract contract BatchCreateWithMilestones_Integration_Test is Integration_Test
     function test_RevertWhen_NotDelegateCalled() external {
         Batch.CreateWithMilestones[] memory batch;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithMilestones(lockupDynamic, asset, batch, "");
+        target.batchCreateWithMilestones({
+            lockupDynamic: lockupDynamic,
+            asset: asset,
+            batch: batch,
+            transferData: bytes("")
+        });
     }
 
     modifier whenDelegateCalled() {
@@ -23,7 +28,7 @@ abstract contract BatchCreateWithMilestones_Integration_Test is Integration_Test
 
     function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
         Batch.CreateWithMilestones[] memory batch = new Batch.CreateWithMilestones[](0);
-        bytes memory data = abi.encodeCall(target.batchCreateWithMilestones, (lockupDynamic, asset, batch, ""));
+        bytes memory data = abi.encodeCall(target.batchCreateWithMilestones, (lockupDynamic, asset, batch, bytes("")));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         aliceProxy.execute(address(target), data);
     }

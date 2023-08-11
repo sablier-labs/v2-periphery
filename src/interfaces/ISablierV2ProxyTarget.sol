@@ -102,14 +102,15 @@ interface ISablierV2ProxyTarget {
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithDurations}.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithDurations(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithDurations[] calldata batch,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256[] memory streamIds);
@@ -125,14 +126,15 @@ interface ISablierV2ProxyTarget {
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithRange}.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithRange(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithRange[] calldata batch,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256[] memory streamIds);
@@ -149,7 +151,8 @@ interface ISablierV2ProxyTarget {
     /// @param lockup The address of the Lockup streaming contract where the stream to cancel is.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract to use for creating the new stream.
     /// @param streamId The id of the stream to cancel.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithDurations(
@@ -157,7 +160,7 @@ interface ISablierV2ProxyTarget {
         uint256 streamId,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256 newStreamId);
@@ -174,7 +177,8 @@ interface ISablierV2ProxyTarget {
     /// @param lockup The address of the Lockup streaming contract where the stream to cancel is.
     /// @param streamId The id of the stream to cancel.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract to use for creating the new stream.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithRange(
@@ -182,7 +186,7 @@ interface ISablierV2ProxyTarget {
         uint256 streamId,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256 newStreamId);
@@ -191,13 +195,14 @@ interface ISablierV2ProxyTarget {
     /// @dev Must be delegate called.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamId The id of the newly created stream.
     function createWithDurations(
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256 streamId);
@@ -206,13 +211,14 @@ interface ISablierV2ProxyTarget {
     /// @dev Must be delegate called.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamId The id of the newly created stream.
     function createWithRange(
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256 streamId);
@@ -274,14 +280,15 @@ interface ISablierV2ProxyTarget {
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupDynamic.createWithDeltas}.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithDeltas(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
         Batch.CreateWithDeltas[] calldata batch,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256[] memory streamIds);
@@ -297,14 +304,15 @@ interface ISablierV2ProxyTarget {
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupDynamic.createWithMilestones}.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamIds The ids of the newly created streams.
     function batchCreateWithMilestones(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
         Batch.CreateWithMilestones[] calldata batch,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256[] memory streamIds);
@@ -322,7 +330,8 @@ interface ISablierV2ProxyTarget {
     /// @param streamId The id of the stream to cancel.
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract to use for creating the new stream.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithDeltas(
@@ -330,7 +339,7 @@ interface ISablierV2ProxyTarget {
         uint256 streamId,
         ISablierV2LockupDynamic lockupDynamic,
         LockupDynamic.CreateWithDeltas calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256 newStreamId);
@@ -348,7 +357,8 @@ interface ISablierV2ProxyTarget {
     /// @param streamId The id of the stream to cancel.
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract to use for creating the new stream.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return newStreamId The id of the newly created stream.
     function cancelAndCreateWithMilestones(
@@ -356,7 +366,7 @@ interface ISablierV2ProxyTarget {
         uint256 streamId,
         ISablierV2LockupDynamic lockupDynamic,
         LockupDynamic.CreateWithMilestones calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256 newStreamId);
@@ -365,13 +375,14 @@ interface ISablierV2ProxyTarget {
     /// @dev Must be delegate called.
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param createParams A struct encapsulating the create function parameters, which are documented in V2 Core.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamId The id of the newly created stream.
     function createWithDeltas(
         ISablierV2LockupDynamic lockupDynamic,
         LockupDynamic.CreateWithDeltas calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256 streamId);
@@ -380,13 +391,14 @@ interface ISablierV2ProxyTarget {
     /// @dev Must be delegate called.
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param createParams Struct encapsulating the function parameters, which are documented in V2 Core.
-    /// @param data Bytes used for additional information, specific to the implementation, it may contain the parameters
+    /// @param transferData Bytes used for additional information, specific to the implementation, it may contain the
+    /// parameters
     /// needed for Permit2 in one implementation and may be ignored in another.
     /// @return streamId The id of the newly created stream.
     function createWithMilestones(
         ISablierV2LockupDynamic lockupDynamic,
         LockupDynamic.CreateWithMilestones calldata createParams,
-        bytes calldata data
+        bytes calldata transferData
     )
         external
         returns (uint256 streamId);

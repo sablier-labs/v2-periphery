@@ -24,22 +24,24 @@ contract SablierV2ProxyTargetPermit2 is SablierV2ProxyTarget {
         PERMIT2 = permit2;
     }
 
-    /// @notice Parameter `data` containing a struct that encapsulats the parameters needed for Permit2, most
-    /// importantly the signature.
-    /// @dev See the documentation for the user-facing functions that call this internal function.
+    /// @notice Transfers the given `amount` of `asset` to the Sablier contract using Permit2, and then approves Sablier
+    /// to spend the funds.
+    /// @dev The parameter `transferData` contains an ABI-encoded struct that encapsulates the parameters needed for
+    /// Permit2.
     function _transferAndApprove(
         address sablierContract,
         IERC20 asset,
-        uint128 amount,
-        bytes calldata data
+        uint160 amount,
+        bytes calldata transferData
     )
         internal
         override
     {
+        // Decode the Permit2 parameters.
+        Permit2Params memory permit2Params = abi.decode(transferData, (Permit2Params));
+
         // Retrieve the proxy owner.
         address owner = _getOwner();
-
-        Permit2Params memory permit2Params = abi.decode(data, (Permit2Params));
 
         // Permit the proxy to spend funds from the proxy owner.
         PERMIT2.permit({ owner: owner, permitSingle: permit2Params.permitSingle, signature: permit2Params.signature });

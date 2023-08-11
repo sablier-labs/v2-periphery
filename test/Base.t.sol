@@ -328,12 +328,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function batchCreateWithDeltas() internal returns (uint256[] memory) {
         bytes memory data = abi.encodeCall(
             target.batchCreateWithDeltas,
-            (
-                lockupDynamic,
-                asset,
-                defaults.batchCreateWithDeltas(),
-                defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT())
-            )
+            (lockupDynamic, asset, defaults.batchCreateWithDeltas(), getTransferData(defaults.TOTAL_TRANSFER_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -346,7 +341,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
                 lockupLinear,
                 asset,
                 defaults.batchCreateWithDurations(),
-                defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT())
+                getTransferData(defaults.TOTAL_TRANSFER_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -360,7 +355,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
                 lockupDynamic,
                 asset,
                 defaults.batchCreateWithMilestones(),
-                defaults.permit2Params(defaults.TOTAL_TRANSFER_AMOUNT())
+                getTransferData(defaults.TOTAL_TRANSFER_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -371,12 +366,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         uint128 totalTransferAmount = uint128(batchSize) * defaults.PER_STREAM_AMOUNT();
         bytes memory data = abi.encodeCall(
             target.batchCreateWithMilestones,
-            (
-                lockupDynamic,
-                asset,
-                defaults.batchCreateWithMilestones(batchSize),
-                defaults.permit2Params(totalTransferAmount)
-            )
+            (lockupDynamic, asset, defaults.batchCreateWithMilestones(batchSize), getTransferData(totalTransferAmount))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -400,7 +390,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         uint128 totalTransferAmount = uint128(batchSize) * defaults.PER_STREAM_AMOUNT();
         bytes memory data = abi.encodeCall(
             target.batchCreateWithRange,
-            (lockupLinear, asset, defaults.batchCreateWithRange(batchSize), defaults.permit2Params(totalTransferAmount))
+            (lockupLinear, asset, defaults.batchCreateWithRange(batchSize), getTransferData(totalTransferAmount))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256[]));
@@ -409,7 +399,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function createWithDeltas() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithDeltas,
-            (lockupDynamic, defaults.createWithDeltas(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            (lockupDynamic, defaults.createWithDeltas(), getTransferData(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256));
@@ -418,7 +408,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function createWithDurations() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithDurations,
-            (lockupLinear, defaults.createWithDurations(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            (lockupLinear, defaults.createWithDurations(), getTransferData(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256));
@@ -427,7 +417,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function createWithMilestones() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithMilestones,
-            (lockupDynamic, defaults.createWithMilestones(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            (lockupDynamic, defaults.createWithMilestones(), getTransferData(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256));
@@ -435,7 +425,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
 
     function createWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal returns (uint256) {
         bytes memory data = abi.encodeCall(
-            target.createWithMilestones, (lockupDynamic, params, defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            target.createWithMilestones, (lockupDynamic, params, getTransferData(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256));
@@ -444,7 +434,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function createWithRange() internal returns (uint256) {
         bytes memory data = abi.encodeCall(
             target.createWithRange,
-            (lockupLinear, defaults.createWithRange(), defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            (lockupLinear, defaults.createWithRange(), getTransferData(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256));
@@ -452,9 +442,17 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
 
     function createWithRange(LockupLinear.CreateWithRange memory params) internal returns (uint256) {
         bytes memory data = abi.encodeCall(
-            target.createWithRange, (lockupLinear, params, defaults.permit2Params(defaults.PER_STREAM_AMOUNT()))
+            target.createWithRange, (lockupLinear, params, getTransferData(defaults.PER_STREAM_AMOUNT()))
         );
         bytes memory response = aliceProxy.execute(address(target), data);
         return abi.decode(response, (uint256));
+    }
+
+    function getTransferData(uint160 amount) internal view returns (bytes memory) {
+        if (target == targetPermit2) {
+            return defaults.permit2Params(amount);
+        }
+        // The {ProxyTargetERC20} target does not require any transfer data.
+        return bytes("");
     }
 }
