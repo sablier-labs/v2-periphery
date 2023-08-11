@@ -9,8 +9,14 @@ import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { Fork_Test } from "../Fork.t.sol";
 
 /// @dev Runs against $WETH only.
-contract WrapAndCreate_Fork_Test is Fork_Test {
+abstract contract WrapAndCreate_Fork_Test is Fork_Test {
     constructor() Fork_Test(IERC20(WETH_ADDRESS)) { }
+
+    function setUp() public virtual override { }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                               WRAP-AND-CREATE-WITH-MILESTONES
+    //////////////////////////////////////////////////////////////////////////*/
 
     function testForkFuzz_WrapAndCreateWithMilestones(uint256 amount0, uint256 amount1) external {
         uint256 max = users.alice.addr.balance - 1 ether;
@@ -40,6 +46,10 @@ contract WrapAndCreate_Fork_Test is Fork_Test {
         uint256 expectedStreamId = lockupDynamic.nextStreamId() - 1;
         assertEq(actualStreamId, expectedStreamId, "stream id mismatch");
     }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                               WRAP-AND-CREATE-WITH-RANGE
+    //////////////////////////////////////////////////////////////////////////*/
 
     function testForkFuzz_WrapAndCreateWithRange(uint256 etherAmount) external {
         etherAmount = _bound(etherAmount, 1 wei, users.alice.addr.balance - 1 ether);

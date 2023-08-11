@@ -40,6 +40,9 @@ abstract contract Integration_Test is Base_Test {
 
         changePrank({ msgSender: users.alice.addr });
         asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
+
+        // Approve Alice's Proxy to spend assets from Alice.
+        asset.approve({ spender: address(aliceProxy), amount: MAX_UINT256 });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

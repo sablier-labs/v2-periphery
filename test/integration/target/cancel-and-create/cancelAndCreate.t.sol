@@ -7,7 +7,6 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { LockupLinear, LockupDynamic } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
-import { Permit2Params } from "src/types/Permit2.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
@@ -16,7 +15,9 @@ import { Integration_Test } from "../../Integration.t.sol";
 /// - `cancelAndCreateWithDurations`
 /// - `cancelAndCreateWithMilestones`
 /// - `cancelAndCreateWithRange`
-contract CancelAndCreate_Integration_Test is Integration_Test {
+abstract contract CancelAndCreate_Integration_Test is Integration_Test {
+    function setUp() public virtual override { }
+
     modifier whenDelegateCalled() {
         _;
     }
@@ -27,9 +28,14 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
 
     function test_RevertWhen_CancelAndCreateWithDeltas_NotDelegateCalled() external {
         LockupDynamic.CreateWithDeltas memory createParams;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithDeltas(lockupDynamic, 0, lockupDynamic, createParams, permit2Params);
+        target.cancelAndCreateWithDeltas({
+            lockup: lockupDynamic,
+            streamId: 0,
+            lockupDynamic: lockupDynamic,
+            createParams: createParams,
+            transferData: bytes("")
+        });
     }
 
     function test_CancelAndCreateWithDeltas_SameSablierContract() external whenDelegateCalled {
@@ -50,7 +56,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithDeltas(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -79,7 +85,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithDeltas(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -96,9 +102,14 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
 
     function test_RevertWhen_CancelAndCreateWithDurations_NotDelegateCalled() external {
         LockupLinear.CreateWithDurations memory createParams;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithDurations(lockupLinear, 0, lockupLinear, createParams, permit2Params);
+        target.cancelAndCreateWithDurations({
+            lockup: lockupLinear,
+            streamId: 0,
+            lockupLinear: lockupLinear,
+            createParams: createParams,
+            transferData: bytes("")
+        });
     }
 
     function test_CancelAndCreateWithDurations_SameSablierContract() external whenDelegateCalled {
@@ -119,7 +130,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithDurations(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -148,7 +159,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithDurations(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -165,9 +176,14 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
 
     function test_RevertWhen_CancelAndCreateWithMilestones_NotDelegateCalled() external {
         LockupDynamic.CreateWithMilestones memory createParams;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithMilestones(lockupDynamic, 0, lockupDynamic, createParams, permit2Params);
+        target.cancelAndCreateWithMilestones({
+            lockup: lockupDynamic,
+            streamId: 0,
+            lockupDynamic: lockupDynamic,
+            createParams: createParams,
+            transferData: bytes("")
+        });
     }
 
     function test_CancelAndCreateWithMilestones_SameSablierContract() external whenDelegateCalled {
@@ -188,7 +204,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithMilestones(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -217,7 +233,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithMilestones(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -234,9 +250,14 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
 
     function test_RevertWhen_CancelAndCreateWithRange_NotDelegateCalled() external {
         LockupLinear.CreateWithRange memory createParams;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.cancelAndCreateWithRange(lockupLinear, 0, lockupLinear, createParams, permit2Params);
+        target.cancelAndCreateWithRange({
+            lockup: lockupLinear,
+            streamId: 0,
+            lockupLinear: lockupLinear,
+            createParams: createParams,
+            transferData: bytes("")
+        });
     }
 
     function test_CancelAndCreateWithRange_SameSablierContract() external whenDelegateCalled {
@@ -257,7 +278,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithRange(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);
@@ -286,7 +307,7 @@ contract CancelAndCreate_Integration_Test is Integration_Test {
                 streamId,
                 createContract,
                 defaults.createWithRange(),
-                defaults.permit2Params(defaults.PER_STREAM_AMOUNT())
+                getTransferData(defaults.PER_STREAM_AMOUNT())
             )
         );
         bytes memory response = aliceProxy.execute(address(target), data);

@@ -1,4 +1,4 @@
-name: "Deploy Proxy Target"
+name: "Deploy ProxyTargetApprove"
 
 env:
   API_KEY_ARBISCAN: ${{ secrets.API_KEY_ARBISCAN }}
@@ -19,13 +19,9 @@ on:
         default: "goerli"
         description: "Chain name as defined in the Foundry config."
         required: false
-      permit2:
-        default: "0x000000000022D473030F116dDEE9F6B43aC78BA3"
-        description: "The permit2 address."
-        required: false
 
 jobs:
-  deploy-proxy-target:
+  deploy-proxy-target-approve:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
@@ -36,15 +32,14 @@ jobs:
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Deploy the SablierV2ProxyTarget contract"
+      - name: "Deploy the SablierV2ProxyTargetApprove contract"
         run: >-
-          forge script script/DeployProxyTarget.s.sol
+          forge script script/DeployProxyTargetApprove.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
-          --sig "run(address)"
+          --sig "run()"
           --verify
           -vvvv
-          "${{ inputs.permit2 }}"
 
       - name: "Add workflow summary"
         run: |

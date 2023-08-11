@@ -6,8 +6,6 @@ import { ISablierV2LockupSender } from "@sablier/v2-core/src/interfaces/hooks/IS
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { PermitSignature } from "@uniswap/permit2-test/utils/PermitSignature.sol";
 
-import { Permit2Params } from "src/types/Permit2.sol";
-
 import { Fork_Test } from "../Fork.t.sol";
 
 /// @dev Runs against multiple fork assets.
@@ -36,9 +34,8 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
         // ABI encode the parameters and call the function via the proxy.
         LockupLinear.CreateWithRange memory createParams = defaults.createWithRange(asset);
         createParams.totalAmount = amount;
-        Permit2Params memory permit2Params = defaults.permit2Params(amount);
-        bytes memory data = abi.encodeCall(target.createWithRange, (lockupLinear, createParams, permit2Params));
-        bytes memory response = aliceProxy.execute(address(target), data);
+        bytes memory data = abi.encodeCall(targetApprove.createWithRange, (lockupLinear, createParams, bytes("")));
+        bytes memory response = aliceProxy.execute(address(targetApprove), data);
         uint256 streamId = abi.decode(response, (uint256));
 
         // Retrieve the initial asset balance of the proxy owner.

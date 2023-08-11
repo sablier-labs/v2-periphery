@@ -3,16 +3,21 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
-import { Permit2Params } from "src/types/Permit2.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
-contract BatchCreateWithMilestones_Integration_Test is Integration_Test {
+abstract contract BatchCreateWithMilestones_Integration_Test is Integration_Test {
+    function setUp() public virtual override { }
+
     function test_RevertWhen_NotDelegateCalled() external {
         Batch.CreateWithMilestones[] memory batch;
-        Permit2Params memory permit2Params;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithMilestones(lockupDynamic, asset, batch, permit2Params);
+        target.batchCreateWithMilestones({
+            lockupDynamic: lockupDynamic,
+            asset: asset,
+            batch: batch,
+            transferData: bytes("")
+        });
     }
 
     modifier whenDelegateCalled() {
@@ -21,9 +26,7 @@ contract BatchCreateWithMilestones_Integration_Test is Integration_Test {
 
     function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
         Batch.CreateWithMilestones[] memory batch = new Batch.CreateWithMilestones[](0);
-        Permit2Params memory permit2Params;
-        bytes memory data =
-            abi.encodeCall(target.batchCreateWithMilestones, (lockupDynamic, asset, batch, permit2Params));
+        bytes memory data = abi.encodeCall(target.batchCreateWithMilestones, (lockupDynamic, asset, batch, bytes("")));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         aliceProxy.execute(address(target), data);
     }
