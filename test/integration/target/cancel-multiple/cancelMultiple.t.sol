@@ -9,7 +9,9 @@ import { Errors } from "src/libraries/Errors.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
-contract CancelMultiple_Integration_Test is Integration_Test {
+abstract contract CancelMultiple_Integration_Test is Integration_Test {
+    function setUp() public virtual override { }
+
     function test_RevertWhen_NotDelegateCalled() external {
         IERC20[] memory assets;
         uint256[] memory streamIds;

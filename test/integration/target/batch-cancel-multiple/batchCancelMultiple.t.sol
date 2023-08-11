@@ -9,7 +9,9 @@ import { Batch } from "src/types/DataTypes.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
-contract BatchCancelMultiple_Integration_Test is Integration_Test {
+abstract contract BatchCancelMultiple_Integration_Test is Integration_Test {
+    function setUp() public virtual override { }
+
     function test_RevertWhen_NotDelegateCalled() external {
         Batch.CancelMultiple[] memory batch;
         IERC20[] memory assets = defaults.assets();

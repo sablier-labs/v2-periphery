@@ -7,7 +7,9 @@ import { Errors } from "src/libraries/Errors.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
-contract Withdraw_Integration_Test is Integration_Test {
+abstract contract Withdraw_Integration_Test is Integration_Test {
+    function setUp() public virtual override { }
+
     function test_RevertWhen_NotDelegateCalled() external {
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.withdraw({ lockup: lockupLinear, streamId: 0, to: users.recipient.addr, amount: 0 });

@@ -8,7 +8,9 @@ import { Errors } from "src/libraries/Errors.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
-contract Cancel_Integration_Test is Integration_Test {
+abstract contract Cancel_Integration_Test is Integration_Test {
+    function setUp() public virtual override { }
+
     function test_RevertWhen_NotDelegateCalled() external {
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         target.cancel({ lockup: lockupLinear, streamId: 0 });

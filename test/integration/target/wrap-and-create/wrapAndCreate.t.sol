@@ -13,7 +13,9 @@ import { Integration_Test } from "../../Integration.t.sol";
 /// - `wrapAndCreateWithDurations`
 /// - `wrapAndCreateWithMilestones`
 /// - `wrapAndCreateWithRange`
-contract WrapAndCreate_Integration_Test is Integration_Test {
+abstract contract WrapAndCreate_Integration_Test is Integration_Test {
+    function setUp() public virtual override { }
+
     modifier whenDelegateCalled() {
         _;
     }

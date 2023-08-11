@@ -8,14 +8,12 @@ import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lock
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
-import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
-import { OnlyDelegateCall } from "./abstracts/OnlyDelegateCall.sol";
-import { ISablierV2ProxyTarget } from "./interfaces/ISablierV2ProxyTarget.sol";
-import { IWrappedNativeAsset } from "./interfaces/IWrappedNativeAsset.sol";
-import { Errors } from "./libraries/Errors.sol";
-import { Batch } from "./types/DataTypes.sol";
-import { Permit2Params } from "./types/Permit2.sol";
+import { OnlyDelegateCall } from "./OnlyDelegateCall.sol";
+import { ISablierV2ProxyTarget } from "../interfaces/ISablierV2ProxyTarget.sol";
+import { IWrappedNativeAsset } from "../interfaces/IWrappedNativeAsset.sol";
+import { Errors } from "../libraries/Errors.sol";
+import { Batch } from "../types/DataTypes.sol";
 
 /*
 
@@ -37,25 +35,11 @@ import { Permit2Params } from "./types/Permit2.sol";
 
 /// @title SablierV2ProxyTarget
 /// @notice See the documentation in {ISablierV2ProxyTarget}.
-contract SablierV2ProxyTarget is
+abstract contract SablierV2ProxyTarget is
     ISablierV2ProxyTarget, // 0 inherited components
     OnlyDelegateCall // 0 inherited components
 {
     using SafeERC20 for IERC20;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                     CONSTANTS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    IAllowanceTransfer internal immutable PERMIT2;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                    CONSTRUCTOR
-    //////////////////////////////////////////////////////////////////////////*/
-
-    constructor(IAllowanceTransfer permit2) {
-        PERMIT2 = permit2;
-    }
 
     /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
@@ -192,7 +176,7 @@ contract SablierV2ProxyTarget is
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithDurations[] calldata batch,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         external
         override
@@ -217,7 +201,7 @@ contract SablierV2ProxyTarget is
         }
 
         // Transfers the assets to the proxy and approves the Sablier contract to spend them.
-        _transferAndApprove(address(lockupLinear), asset, transferAmount, permit2Params);
+        _transferAndApprove(address(lockupLinear), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -247,7 +231,7 @@ contract SablierV2ProxyTarget is
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithRange[] calldata batch,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         external
         override
@@ -272,7 +256,7 @@ contract SablierV2ProxyTarget is
         }
 
         // Transfers the assets to the proxy and approve the Sablier contract to spend them.
-        _transferAndApprove(address(lockupLinear), asset, transferAmount, permit2Params);
+        _transferAndApprove(address(lockupLinear), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -303,7 +287,7 @@ contract SablierV2ProxyTarget is
         uint256 streamId,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations calldata createParams,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         external
         override
@@ -311,7 +295,7 @@ contract SablierV2ProxyTarget is
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
-        newStreamId = createWithDurations(lockupLinear, createParams, permit2Params);
+        newStreamId = createWithDurations(lockupLinear, createParams, transferData);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -320,7 +304,7 @@ contract SablierV2ProxyTarget is
         uint256 streamId,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange calldata createParams,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         external
         override
@@ -328,21 +312,21 @@ contract SablierV2ProxyTarget is
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
-        newStreamId = createWithRange(lockupLinear, createParams, permit2Params);
+        newStreamId = createWithRange(lockupLinear, createParams, transferData);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithDurations(
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithDurations calldata createParams,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         public
         override
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, permit2Params);
+        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, transferData);
         streamId = lockupLinear.createWithDurations(createParams);
     }
 
@@ -350,14 +334,14 @@ contract SablierV2ProxyTarget is
     function createWithRange(
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.CreateWithRange calldata createParams,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         public
         override
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, permit2Params);
+        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, transferData);
         streamId = lockupLinear.createWithRange(createParams);
     }
 
@@ -418,7 +402,7 @@ contract SablierV2ProxyTarget is
         ISablierV2LockupDynamic dynamic,
         IERC20 asset,
         Batch.CreateWithDeltas[] calldata batch,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         external
         override
@@ -443,7 +427,7 @@ contract SablierV2ProxyTarget is
         }
 
         // Perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
-        _transferAndApprove(address(dynamic), asset, transferAmount, permit2Params);
+        _transferAndApprove(address(dynamic), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -473,7 +457,7 @@ contract SablierV2ProxyTarget is
         ISablierV2LockupDynamic dynamic,
         IERC20 asset,
         Batch.CreateWithMilestones[] calldata batch,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         external
         override
@@ -498,7 +482,7 @@ contract SablierV2ProxyTarget is
         }
 
         // Perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
-        _transferAndApprove(address(dynamic), asset, transferAmount, permit2Params);
+        _transferAndApprove(address(dynamic), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -530,7 +514,7 @@ contract SablierV2ProxyTarget is
         uint256 streamId,
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithDeltas calldata createParams,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         external
         override
@@ -538,7 +522,7 @@ contract SablierV2ProxyTarget is
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
-        newStreamId = createWithDeltas(dynamic, createParams, permit2Params);
+        newStreamId = createWithDeltas(dynamic, createParams, transferData);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
@@ -547,7 +531,7 @@ contract SablierV2ProxyTarget is
         uint256 streamId,
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithMilestones calldata createParams,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         external
         override
@@ -555,21 +539,21 @@ contract SablierV2ProxyTarget is
         returns (uint256 newStreamId)
     {
         cancel(lockup, streamId);
-        newStreamId = createWithMilestones(dynamic, createParams, permit2Params);
+        newStreamId = createWithMilestones(dynamic, createParams, transferData);
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
     function createWithDeltas(
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithDeltas calldata createParams,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         public
         override
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, permit2Params);
+        _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, transferData);
         streamId = dynamic.createWithDeltas(createParams);
     }
 
@@ -577,14 +561,14 @@ contract SablierV2ProxyTarget is
     function createWithMilestones(
         ISablierV2LockupDynamic dynamic,
         LockupDynamic.CreateWithMilestones calldata createParams,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         public
         override
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, permit2Params);
+        _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, transferData);
         streamId = dynamic.createWithMilestones(createParams);
     }
 
@@ -707,26 +691,15 @@ contract SablierV2ProxyTarget is
         }
     }
 
-    /// @dev Helper function to transfer funds from the proxy owner to the proxy using Permit2 and, if needed, approve
-    /// the Sablier contract to spend funds from the proxy.
+    /// @dev Helper function to transfer funds from the proxy owner to the proxy, which is meant to be inherited by
+    /// child contracts that implement the transfer logic. This function also approves the Sablier contract to spend
+    /// to spend funds from the proxy if the allowance is insufficient.
     function _transferAndApprove(
         address sablierContract,
         IERC20 asset,
         uint160 amount,
-        Permit2Params calldata permit2Params
+        bytes calldata transferData
     )
         internal
-    {
-        // Retrieve the proxy owner.
-        address owner = _getOwner();
-
-        // Permit the proxy to spend funds from the proxy owner.
-        PERMIT2.permit({ owner: owner, permitSingle: permit2Params.permitSingle, signature: permit2Params.signature });
-
-        // Transfer funds from the proxy owner to the proxy.
-        PERMIT2.transferFrom({ from: owner, to: address(this), amount: amount, token: address(asset) });
-
-        // Approve the Sablier contract to spend funds.
-        _approve(sablierContract, asset, amount);
-    }
+        virtual;
 }

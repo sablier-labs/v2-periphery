@@ -7,7 +7,9 @@ import { Errors } from "src/libraries/Errors.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
-contract WithdrawMultiple_Integration_Test is Integration_Test {
+abstract contract WithdrawMultiple_Integration_Test is Integration_Test {
+    function setUp() public virtual override { }
+
     function test_RevertWhen_NotDelegateCalled() external {
         uint256[] memory streamIds;
         uint128[] memory amounts;
