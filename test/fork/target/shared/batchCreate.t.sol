@@ -176,16 +176,4 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);
     }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                      HELPERS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    function approveProxyOrPermit2(address proxy) internal {
-        if (target == targetApprove) {
-            asset.approve({ spender: proxy, amount: MAX_UINT256 });
-        } else if (target == targetPermit2) {
-            maxApprovePermit2();
-        }
-    }
 }

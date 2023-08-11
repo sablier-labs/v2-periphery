@@ -69,6 +69,15 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
                                       HELPERS
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev Approves the proxy or uses Permit2 to spend assets from the current pranked user.
+    function approveProxyOrPermit2(address proxy) internal {
+        if (target == targetApprove) {
+            asset.approve({ spender: proxy, amount: MAX_UINT256 });
+        } else if (target == targetPermit2) {
+            maxApprovePermit2();
+        }
+    }
+
     /// @dev Checks the user assumptions.
     function checkUsers(address user, address recipient, address proxy_) internal virtual {
         // The protocol does not allow the zero address to interact with it.
