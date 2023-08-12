@@ -19,7 +19,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice The list of airstream campaigns created by the user.
-    mapping(address user => ISablierV2AirstreamCampaign[]) private _airstreamCampgaings;
+    mapping(address user => ISablierV2AirstreamCampaign[] contracts) private _airstreamCampaigns;
 
     /*//////////////////////////////////////////////////////////////////////////
                            USER-FACING CONSTANT FUNCTIONS
@@ -32,7 +32,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         override
         returns (ISablierV2AirstreamCampaign[] memory campaigns)
     {
-        campaigns = _airstreamCampgaings[user];
+        campaigns = _airstreamCampaigns[user];
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         );
 
         // Store the campaign in the user's list of campaigns.
-        _airstreamCampgaings[initialAdmin].push(airstream);
+        _airstreamCampaigns[initialAdmin].push(airstream);
 
         // Log the creation of the campaign.
         emit CreateAirstreamCampaignLD(initialAdmin, merkleRoot, airstream);
@@ -101,7 +101,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         );
 
         // Store the campaign in the user's list of campaigns.
-        _airstreamCampgaings[initialAdmin].push(airstream);
+        _airstreamCampaigns[initialAdmin].push(airstream);
 
         // Log the creation of the campaign.
         emit CreateAirstreamCampaignLL(initialAdmin, merkleRoot, airstream);
