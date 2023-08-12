@@ -3,18 +3,17 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
 import { Broker, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 import { UD60x18 } from "@sablier/v2-core/types/Math.sol";
 
-import { SablierV2Airstream } from "./abstracts/SablierV2Airstream.sol";
-import { ISablierV2Airstream } from "./interfaces/ISablierV2Airstream.sol";
-import { ISablierV2AirstreamLockupDynamic } from "./interfaces/ISablierV2AirstreamLockupDynamic.sol";
+import { SablierV2AirstreamCampaign } from "./abstracts/SablierV2AirstreamCampaign.sol";
+import { ISablierV2AirstreamCampaignLD } from "./interfaces/ISablierV2AirstreamCampaignLD.sol";
 
-contract SablierV2AirstreamLockupDynamic is
-    ISablierV2AirstreamLockupDynamic, // 2 inherited components
-    SablierV2Airstream // 4 inherited components
+/// @title SablierV2AirstreamCampaignLD
+contract SablierV2AirstreamCampaignLD is
+    ISablierV2AirstreamCampaignLD, // 2 inherited components
+    SablierV2AirstreamCampaign // 4 inherited components
 {
     using SafeERC20 for IERC20;
 
@@ -22,7 +21,7 @@ contract SablierV2AirstreamLockupDynamic is
                                USER-FACING CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2AirstreamLockupDynamic
+    /// @inheritdoc ISablierV2AirstreamCampaignLD
     ISablierV2LockupDynamic public immutable override lockupDynamic;
 
     /// @notice The array of segments needed for creating the LockupDynamic stream, which implicitly provides the total
@@ -43,7 +42,7 @@ contract SablierV2AirstreamLockupDynamic is
         ISablierV2LockupDynamic lockupDynamic_,
         LockupDynamic.SegmentWithDelta[] memory segments_
     )
-        SablierV2Airstream(initialAdmin, asset_, merkleRoot_, cancelable_, expiration_)
+        SablierV2AirstreamCampaign(initialAdmin, asset_, merkleRoot_, cancelable_, expiration_)
     {
         lockupDynamic = lockupDynamic_;
         uint256 length = segments_.length;
@@ -62,12 +61,12 @@ contract SablierV2AirstreamLockupDynamic is
                            USER-FACING CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2AirstreamLockupDynamic
+    /// @inheritdoc ISablierV2AirstreamCampaignLD
     function getSegment(uint256 segmentIndex) external view returns (LockupDynamic.SegmentWithDelta memory) {
         return segments[segmentIndex];
     }
 
-    /// @inheritdoc ISablierV2AirstreamLockupDynamic
+    /// @inheritdoc ISablierV2AirstreamCampaignLD
     function getSegments() external view returns (LockupDynamic.SegmentWithDelta[] memory) {
         return segments;
     }

@@ -6,19 +6,19 @@ import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2L
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { ISablierV2AirstreamLockupDynamic } from "./ISablierV2AirstreamLockupDynamic.sol";
-import { ISablierV2AirstreamLockupLinear } from "./ISablierV2AirstreamLockupLinear.sol";
+import { ISablierV2AirstreamCampaignLD } from "./ISablierV2AirstreamCampaignLD.sol";
+import { ISablierV2AirstreamCampaignLL } from "./ISablierV2AirstreamCampaignLL.sol";
 
-interface ISablierV2AirstreamFactory {
+interface ISablierV2AirstreamCampaignFactory {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
 
     event CreateAirstreamLockupDynamic(
-        address indexed admin, bytes32 merkleRoot, ISablierV2AirstreamLockupDynamic indexed airstream
+        address indexed admin, bytes32 merkleRoot, ISablierV2AirstreamCampaignLD indexed airstream
     );
     event CreateAirstreamLockupLinear(
-        address indexed admin, bytes32 merkleRoot, ISablierV2AirstreamLockupLinear indexed airstream
+        address indexed admin, bytes32 merkleRoot, ISablierV2AirstreamCampaignLL indexed airstream
     );
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ interface ISablierV2AirstreamFactory {
     )
         external
         view
-        returns (ISablierV2AirstreamLockupDynamic);
+        returns (ISablierV2AirstreamCampaignLD);
 
     function getAirstreamLockupLinear(
         address admin,
@@ -43,7 +43,7 @@ interface ISablierV2AirstreamFactory {
     )
         external
         view
-        returns (ISablierV2AirstreamLockupLinear);
+        returns (ISablierV2AirstreamCampaignLL);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
@@ -60,7 +60,7 @@ interface ISablierV2AirstreamFactory {
         LockupDynamic.SegmentWithDelta[] memory segments
     )
         external
-        returns (ISablierV2AirstreamLockupDynamic);
+        returns (ISablierV2AirstreamCampaignLD);
 
     /// @notice Creates a new Sablier V2 Linear airstream campaign.
     function createAirstreamLockupLinear(
@@ -73,5 +73,5 @@ interface ISablierV2AirstreamFactory {
         LockupLinear.Durations memory durations
     )
         external
-        returns (ISablierV2AirstreamLockupLinear);
+        returns (ISablierV2AirstreamCampaignLL);
 }

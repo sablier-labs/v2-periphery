@@ -5,13 +5,12 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
-import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
 
-import { ISablierV2Airstream } from "../interfaces/ISablierV2Airstream.sol";
+import { ISablierV2AirstreamCampaign } from "../interfaces/ISablierV2AirstreamCampaign.sol";
 import { Errors } from "../libraries/Errors.sol";
 
-abstract contract SablierV2Airstream is
-    ISablierV2Airstream, // 2 inherited component
+abstract contract SablierV2AirstreamCampaign is
+    ISablierV2AirstreamCampaign, // 2 inherited component
     Adminable // 1 inherited component
 {
     using SafeERC20 for IERC20;
@@ -20,16 +19,16 @@ abstract contract SablierV2Airstream is
                                USER-FACING CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2Airstream
+    /// @inheritdoc ISablierV2AirstreamCampaign
     IERC20 public immutable override asset;
 
-    /// @inheritdoc ISablierV2Airstream
+    /// @inheritdoc ISablierV2AirstreamCampaign
     bool public immutable override cancelable;
 
-    /// @inheritdoc ISablierV2Airstream
+    /// @inheritdoc ISablierV2AirstreamCampaign
     uint40 public immutable override expiration;
 
-    /// @inheritdoc ISablierV2Airstream
+    /// @inheritdoc ISablierV2AirstreamCampaign
     bytes32 public immutable override merkleRoot;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -59,7 +58,7 @@ abstract contract SablierV2Airstream is
     /// @notice Reverts if the campaign has expired.
     modifier hasNotExpired() {
         if (block.timestamp > expiration) {
-            revert Errors.SablierV2Airstream_CampaignExpired(expiration);
+            revert Errors.SablierV2AirstreamCampaign_CampaignExpired(expiration);
         }
         _;
     }
@@ -68,7 +67,7 @@ abstract contract SablierV2Airstream is
                            USER-FACING CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2Airstream
+    /// @inheritdoc ISablierV2AirstreamCampaign
     function hasClaimed(uint256 index) public view override returns (bool) {
         uint256 claimedWordIndex = index >> 8;
         uint256 claimedBitIndex = index & 0xff;
@@ -81,7 +80,7 @@ abstract contract SablierV2Airstream is
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2Airstream
+    /// @inheritdoc ISablierV2AirstreamCampaign
     function claim(
         uint256 index,
         address recipient,
@@ -95,7 +94,7 @@ abstract contract SablierV2Airstream is
     {
         // Checks: the index is unclaimed.
         if (hasClaimed(index)) {
-            revert Errors.SablierV2Airstream_AlreadyClaimed(index);
+            revert Errors.SablierV2AirstreamCampaign_AlreadyClaimed(index);
         }
 
         // Hash the function arguments.
@@ -103,7 +102,7 @@ abstract contract SablierV2Airstream is
 
         // Checks: the input claim belongs to the unique merkle root.
         if (!MerkleProof.verify(merkleProof, merkleRoot, leaf)) {
-            revert Errors.SablierV2Airstream_InvalidProof();
+            revert Errors.SablierV2AirstreamCampaign_InvalidProof();
         }
 
         // Effects: mark the index as claimed.
@@ -114,7 +113,7 @@ abstract contract SablierV2Airstream is
         emit Claim(index, recipient, amount, airstreamId);
     }
 
-    /// @inheritdoc ISablierV2Airstream
+    /// @inheritdoc ISablierV2AirstreamCampaign
     function clawback(address to, uint128 amount) external override onlyAdmin hasNotExpired {
         asset.safeTransfer(to, amount);
         emit Clawback(admin, to, amount);

@@ -5,9 +5,9 @@ import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2L
 import { UD2x18 } from "@sablier/v2-core/types/Math.sol";
 import { LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
-import { ISablierV2Airstream } from "./ISablierV2Airstream.sol";
+import { ISablierV2AirstreamCampaign } from "./ISablierV2AirstreamCampaign.sol";
 
-interface ISablierV2AirstreamLockupDynamic is ISablierV2Airstream {
+interface ISablierV2AirstreamCampaignLD is ISablierV2AirstreamCampaign {
     /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/

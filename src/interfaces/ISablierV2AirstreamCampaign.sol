@@ -8,7 +8,7 @@ import { IAdminable } from "@sablier/v2-core/interfaces/IAdminable.sol";
 /// are distributed over time, as opposed to all at once.
 /// @dev This is the base interface for all Airstream contracts. There is a separate implementation for each streaming
 /// model. See the Sablier docs for more guidance on how streaming works: https://docs.sablier.com/
-interface ISablierV2Airstream is IAdminable {
+interface ISablierV2AirstreamCampaign is IAdminable {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/

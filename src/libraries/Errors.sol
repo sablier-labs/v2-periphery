@@ -16,20 +16,20 @@ library Errors {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Thrown when trying to claim multiple times.
-    error SablierV2Airstream_AlreadyClaimed(uint256 index);
+    error SablierV2AirstreamCampaign_AlreadyClaimed(uint256 index);
 
     /// @notice Thrown when trying to claim when airstream campaign has expired.
-    error SablierV2Airstream_CampaignExpired(uint40 expiration);
+    error SablierV2AirstreamCampaign_CampaignExpired(uint40 expiration);
 
     /// @notice Thrown when trying to claim with invalid Merkle proof.
-    error SablierV2Airstream_InvalidProof();
+    error SablierV2AirstreamCampaign_InvalidProof();
 
     /*//////////////////////////////////////////////////////////////////////////
                             SABLIER-V2-AIRSTREAM-FACTORY
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Thrown when trying to create an airstream campaign that is already deployed.
-    error SablierV2AirstreamFactory_CampaignAlreadyDeployed(address airstream);
+    error SablierV2AirstreamCampaignFactory_CampaignAlreadyDeployed(address airstream);
 
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-PROXY-PLUGIN

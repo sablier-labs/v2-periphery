@@ -3,18 +3,17 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
 import { Broker, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 import { UD60x18 } from "@sablier/v2-core/types/Math.sol";
 
-import { SablierV2Airstream } from "./abstracts/SablierV2Airstream.sol";
-import { ISablierV2Airstream } from "./interfaces/ISablierV2Airstream.sol";
-import { ISablierV2AirstreamLockupLinear } from "./interfaces/ISablierV2AirstreamLockupLinear.sol";
+import { SablierV2AirstreamCampaign } from "./abstracts/SablierV2AirstreamCampaign.sol";
+import { ISablierV2AirstreamCampaignLL } from "./interfaces/ISablierV2AirstreamCampaignLL.sol";
 
-contract SablierV2AirstreamLockupLinear is
-    ISablierV2AirstreamLockupLinear, // 2 inherited components
-    SablierV2Airstream // 4 inherited components
+/// @title SablierV2AirstreamCampaignLD
+contract SablierV2AirstreamCampaignLL is
+    ISablierV2AirstreamCampaignLL, // 2 inherited components
+    SablierV2AirstreamCampaign // 4 inherited components
 {
     using SafeERC20 for IERC20;
 
@@ -22,10 +21,10 @@ contract SablierV2AirstreamLockupLinear is
                                USER-FACING CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2AirstreamLockupLinear
+    /// @inheritdoc ISablierV2AirstreamCampaignLL
     LockupLinear.Durations public override durations;
 
-    /// @inheritdoc ISablierV2AirstreamLockupLinear
+    /// @inheritdoc ISablierV2AirstreamCampaignLL
     ISablierV2LockupLinear public immutable override lockupLinear;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -42,7 +41,7 @@ contract SablierV2AirstreamLockupLinear is
         ISablierV2LockupLinear lockupLinear_,
         LockupLinear.Durations memory durations_
     )
-        SablierV2Airstream(initialAdmin, asset_, merkleRoot_, cancelable_, expiration_)
+        SablierV2AirstreamCampaign(initialAdmin, asset_, merkleRoot_, cancelable_, expiration_)
     {
         lockupLinear = lockupLinear_;
         durations = durations_;
