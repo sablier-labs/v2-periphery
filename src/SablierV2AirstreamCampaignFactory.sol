@@ -52,8 +52,10 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLD airstream)
     {
+        // Hash the common variables between campaigns to generate a salt.
         bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
 
+        // Deploy the airstream campaign with CREATE2.
         airstream = new SablierV2AirstreamCampaignLD{salt: salt} (
             initialAdmin,
             asset,
@@ -64,8 +66,10 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
             segments
         );
 
+        // Store the campaign in the user's list of campaigns.
         _airstreamCampgaings[initialAdmin].push(airstream);
 
+        // Log the creation of the campaign.
         emit CreateAirstreamCampaignLD(initialAdmin, merkleRoot, airstream);
     }
 
@@ -82,8 +86,10 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLL airstream)
     {
+        // Hash the common variables between campaigns to generate a salt.
         bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
 
+        // Deploy the airstream campaign with CREATE2.
         airstream = new SablierV2AirstreamCampaignLL{salt: salt} (
             initialAdmin,
             asset,
@@ -94,8 +100,10 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
             durations
         );
 
+        // Store the campaign in the user's list of campaigns.
         _airstreamCampgaings[initialAdmin].push(airstream);
 
+        // Log the creation of the campaign.
         emit CreateAirstreamCampaignLL(initialAdmin, merkleRoot, airstream);
     }
 }
