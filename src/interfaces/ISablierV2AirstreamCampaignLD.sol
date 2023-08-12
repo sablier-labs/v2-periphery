@@ -2,7 +2,6 @@
 pragma solidity >=0.8.19;
 
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
-import { UD2x18 } from "@sablier/v2-core/types/Math.sol";
 import { LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { ISablierV2AirstreamCampaign } from "./ISablierV2AirstreamCampaign.sol";

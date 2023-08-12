@@ -66,7 +66,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
             segments
         );
 
-        // Store the campaign in the user's list of campaigns.
+        // Effects: store the campaign in the user's list of campaigns.
         _airstreamCampaigns[initialAdmin].push(airstream);
 
         // Log the creation of the campaign.
@@ -100,7 +100,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
             durations
         );
 
-        // Store the campaign in the user's list of campaigns.
+        // Effects: store the campaign in the user's list of campaigns.
         _airstreamCampaigns[initialAdmin].push(airstream);
 
         // Log the creation of the campaign.
