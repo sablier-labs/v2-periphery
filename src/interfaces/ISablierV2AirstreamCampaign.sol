@@ -48,7 +48,7 @@ interface ISablierV2AirstreamCampaign is IAdminable {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Claims the airstream by creating a Sablier stream to the recipient.
+    /// @notice Claims the associated funds by creating an airstream to the recipient.
     ///
     /// @dev Emits a {Claim} event.
     ///

@@ -7,9 +7,9 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2Lo
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
 
 import { ISablierV2AirstreamCampaignFactory } from "./interfaces/ISablierV2AirstreamCampaignFactory.sol";
+import { ISablierV2AirstreamCampaign } from "./interfaces/ISablierV2AirstreamCampaign.sol";
 import { ISablierV2AirstreamCampaignLD } from "./interfaces/ISablierV2AirstreamCampaignLD.sol";
 import { ISablierV2AirstreamCampaignLL } from "./interfaces/ISablierV2AirstreamCampaignLL.sol";
-import { Errors } from "./libraries/Errors.sol";
 import { SablierV2AirstreamCampaignLD } from "./SablierV2AirstreamCampaignLD.sol";
 import { SablierV2AirstreamCampaignLL } from "./SablierV2AirstreamCampaignLL.sol";
 
@@ -18,58 +18,21 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
                                   INTERNAL STORAGE
     //////////////////////////////////////////////////////////////////////////*/
 
-    // question: should we use mappings to store the airstream campaigns?
-    // How should the mappings look like?
-    mapping(
-        address admin
-            => mapping(
-                IERC20 asset
-                    => mapping(
-                        bytes32 merkleRoot => mapping(uint40 expiration => ISablierV2AirstreamCampaignLD airstream)
-                    )
-            )
-    ) private _lockupDynamicAirstreams;
-
-    mapping(
-        address admin
-            => mapping(
-                IERC20 asset
-                    => mapping(
-                        bytes32 merkleRoot => mapping(uint40 expiration => ISablierV2AirstreamCampaignLL airstream)
-                    )
-            )
-    ) private _lockupLinearAirstreams;
+    /// @notice The list of airstream campaigns created by the user.
+    mapping(address user => ISablierV2AirstreamCampaign[]) private _airstreamCampgaings;
 
     /*//////////////////////////////////////////////////////////////////////////
                            USER-FACING CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice inheritdoc ISablierV2AirstreamCampaignFactory
-    function getAirstreamLockupDynamic(
-        address admin,
-        IERC20 asset,
-        bytes32 merkleRoot,
-        uint40 expiration
-    )
-        public
+    function getAirstreamCampaigns(address user)
+        external
         view
-        returns (ISablierV2AirstreamCampaignLD)
+        override
+        returns (ISablierV2AirstreamCampaign[] memory campaigns)
     {
-        return _lockupDynamicAirstreams[admin][asset][merkleRoot][expiration];
-    }
-
-    /// @notice inheritdoc ISablierV2AirstreamCampaignFactory
-    function getAirstreamLockupLinear(
-        address admin,
-        IERC20 asset,
-        bytes32 merkleRoot,
-        uint40 expiration
-    )
-        public
-        view
-        returns (ISablierV2AirstreamCampaignLL)
-    {
-        return _lockupLinearAirstreams[admin][asset][merkleRoot][expiration];
+        campaigns = _airstreamCampgaings[user];
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -77,7 +40,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice inheritdoc ISablierV2AirstreamCampaignFactory
-    function createAirstreamLockupDynamic(
+    function createAirstreamCampaignLD(
         address initialAdmin,
         IERC20 asset,
         bytes32 merkleRoot,
@@ -89,16 +52,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLD airstream)
     {
-        if (
-            getAirstreamLockupDynamic(initialAdmin, asset, merkleRoot, expiration)
-                != ISablierV2AirstreamCampaignLD(address(0))
-        ) {
-            revert Errors.SablierV2AirstreamCampaignFactory_CampaignAlreadyDeployed(
-                address(getAirstreamLockupDynamic(initialAdmin, asset, merkleRoot, expiration))
-            );
-        }
-
-        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, expiration));
+        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
 
         airstream = new SablierV2AirstreamCampaignLD{salt: salt} (
             initialAdmin,
@@ -110,13 +64,13 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
             segments
         );
 
-        _lockupDynamicAirstreams[initialAdmin][asset][merkleRoot][expiration] = airstream;
+        _airstreamCampgaings[initialAdmin].push(airstream);
 
-        emit CreateAirstreamLockupDynamic(initialAdmin, merkleRoot, airstream);
+        emit CreateAirstreamCampaignLD(initialAdmin, merkleRoot, airstream);
     }
 
     /// @notice inheritdoc ISablierV2AirstreamCampaignFactory
-    function createAirstreamLockupLinear(
+    function createAirstreamCampaignLL(
         address initialAdmin,
         IERC20 asset,
         bytes32 merkleRoot,
@@ -128,16 +82,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLL airstream)
     {
-        if (
-            getAirstreamLockupLinear(initialAdmin, asset, merkleRoot, expiration)
-                != ISablierV2AirstreamCampaignLL(address(0))
-        ) {
-            revert Errors.SablierV2AirstreamCampaignFactory_CampaignAlreadyDeployed(
-                address(getAirstreamLockupLinear(initialAdmin, asset, merkleRoot, expiration))
-            );
-        }
-
-        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, expiration));
+        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
 
         airstream = new SablierV2AirstreamCampaignLL{salt: salt} (
             initialAdmin,
@@ -149,8 +94,8 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
             durations
         );
 
-        _lockupLinearAirstreams[initialAdmin][asset][merkleRoot][expiration] = airstream;
+        _airstreamCampgaings[initialAdmin].push(airstream);
 
-        emit CreateAirstreamLockupLinear(initialAdmin, merkleRoot, airstream);
+        emit CreateAirstreamCampaignLL(initialAdmin, merkleRoot, airstream);
     }
 }
