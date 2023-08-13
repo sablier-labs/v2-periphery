@@ -75,6 +75,7 @@ contract SablierV2AirstreamCampaignLD is
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev Creates an airstream on the {SablierV2LockupDynamic} contract.
     function _createAirstream(address recipient, uint128 amount) internal override returns (uint256 airstreamId) {
         airstreamId = lockupDynamic.createWithDeltas(
             LockupDynamic.CreateWithDeltas({
