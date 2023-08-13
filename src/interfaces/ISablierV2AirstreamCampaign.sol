@@ -36,8 +36,9 @@ interface ISablierV2AirstreamCampaign is IAdminable {
     /// @dev This is an immutable state variable.
     function expiration() external returns (uint40);
 
-    /// @notice A flag indicating whether the recipient has claimed the airstream.
+    /// @notice Checks whether a claim has been made for a given index.
     /// @param index The index of the recipient to check.
+    /// @return Whether the claim has been made.
     function hasClaimed(uint256 index) external returns (bool);
 
     /// @notice The root of the Merkle tree used to validate the claims.

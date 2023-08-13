@@ -68,11 +68,28 @@ abstract contract SablierV2AirstreamCampaign is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2AirstreamCampaign
+    /// @dev Uses a 256-bit word to represent 256 claims, where each bit corresponds to a claim.
+    /// The `index` is divided into two parts: the word index and the bit index within the word.
+    /// The word index determines which 256-bit word in the mapping is used, and the bit index identifies the specific
+    /// bit within that word.
+    /// A mask is formed with the bit index, and the result of a bitwise AND between the word and the mask will reveal
+    /// if the bit is set.
     function hasClaimed(uint256 index) public view override returns (bool) {
+        // The word index identifies the specific 256-bit word in the mapping.
+        // Shifting 8 bits to the right means using the bits at positions [255:8].
         uint256 claimedWordIndex = index >> 8;
+
+        // The bit index identifies the specific bit within the 256-bit word.
+        // Applying an 8-bit mask means using the bits at positions [7:0].
         uint256 claimedBitIndex = index & 0xff;
+
+        // Retrieves the 256-bit word from the mapping, representing the claimed statuses for 256 claims.
         uint256 claimedWord = _claimedBitMap[claimedWordIndex];
+
+        // Creates a mask with a single bit set at the position specified by `claimedBitIndex`.
         uint256 mask = (1 << claimedBitIndex);
+
+        // Uses the mask to extract the specific bit from the word and checks if it is set.
         return claimedWord & mask != 0;
     }
 
@@ -108,8 +125,10 @@ abstract contract SablierV2AirstreamCampaign is
         // Effects: mark the index as claimed.
         _setClaimed(index);
 
+        // Interactions: create the airstream.
         airstreamId = _createAirstream(recipient, amount);
 
+        // Log the claim.
         emit Claim(index, recipient, amount, airstreamId);
     }
 
@@ -123,16 +142,24 @@ abstract contract SablierV2AirstreamCampaign is
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    // I think bad naming, might be confused with factory create functions?
-    // question: How should we name this?
-    // idea: What about renaming the factory related functions with "campaign"? e.g. createAirstreamCampaignLockupDynamic
+    /// @dev Function to create an airstream which is meant to be inherited by child contracts that implement the logic.
     function _createAirstream(address recipient, uint128 amount) internal virtual returns (uint256 airstreamId);
 
-    /// @notice Mark the provided index as having been claimed.
-    /// @param index The index that is going to be claimed.
+    /// @notice Marks a claim as made for a given index.
+    /// @dev Similar to `hasClaimed`, this function divides the `index` into a word index and a bit index.
+    /// It then uses these to form a mask and performs a bitwise OR between the mask and the current word to set the
+    /// specific bit.
+    /// @param index The index of the recipient to be marked as made.
     function _setClaimed(uint256 index) internal {
+        // The word index identifies the specific 256-bit word in the mapping.
+        // Shifting 8 bits to the right means using the bits at positions [255:8].
         uint256 claimedWordIndex = index >> 8;
+
+        // The bit index identifies the specific bit within the 256-bit word.
+        // Applying an 8-bit mask means using the bits at positions [7:0].
         uint256 claimedBitIndex = index & 0xff;
+
+        // Sets the specific bit without altering the others in the word, marking the claim as made.
         _claimedBitMap[claimedWordIndex] = _claimedBitMap[claimedWordIndex] | (1 << claimedBitIndex);
     }
 }
