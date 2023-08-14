@@ -109,7 +109,7 @@ abstract contract SablierV2AirstreamCampaign is
         hasNotExpired
         returns (uint256 airstreamId)
     {
-        // Checks: the index is unclaimed.
+        // Checks: the index is has been claimed.
         if (hasClaimed(index)) {
             revert Errors.SablierV2AirstreamCampaign_AlreadyClaimed(index);
         }

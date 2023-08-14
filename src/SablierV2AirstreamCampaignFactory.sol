@@ -55,6 +55,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLD airstreamCampaign)
     {
+        // What value should the salt have?
         // Hash the common variables between campaigns to generate a salt.
         bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
 
@@ -94,6 +95,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLL airstreamCampaign)
     {
+        // What value should the salt have?
         // Hash the common variables between campaigns to generate a salt.
         bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
 
