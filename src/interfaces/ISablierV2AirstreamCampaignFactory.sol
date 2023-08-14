@@ -45,6 +45,18 @@ interface ISablierV2AirstreamCampaignFactory {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Creates a new Sablier V2 Lockup Dynamic airstream campaign.
+    /// @dev Emits a {CreateAirstreamCampaignLD} event.
+    /// @param initialAdmin The initial admin of the campaign.
+    /// @param asset The asset of the campaign.
+    /// @param merkleRoot The Merkle root of the campaign.
+    /// @param cancelable Whether the airstreams are cancelable.
+    /// @param expiration The expiration of the campaign.
+    /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
+    /// @param segments The segments of the campaign.
+    /// @param ipfsCID Helper parameter to emit for additional information.
+    /// @param campaignTotalAmount Helper parameter to emit for additional information.
+    /// @param recipientsCount Helper parameter to emit for additional information./
+    /// @return airstreamCampaign The address of the newly created airstream campaign.
     function createAirstreamCampaignLD(
         address initialAdmin,
         IERC20 asset,
@@ -58,9 +70,21 @@ interface ISablierV2AirstreamCampaignFactory {
         uint256 recipientsCount
     )
         external
-        returns (ISablierV2AirstreamCampaignLD);
+        returns (ISablierV2AirstreamCampaignLD airstreamCampaign);
 
     /// @notice Creates a new Sablier V2 Lockup Linear airstream campaign.
+    /// @dev Emits a {CreateAirstreamCampaignLL} event.
+    /// @param initialAdmin The initial admin of the campaign.
+    /// @param asset The asset of the campaign.
+    /// @param merkleRoot The Merkle root of the campaign.
+    /// @param cancelable Whether the airstreams are cancelable.
+    /// @param expiration The expiration of the campaign.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
+    /// @param durations The durations of the campaign.
+    /// @param ipfsCID Helper parameter to emit for additional information.
+    /// @param campaignTotalAmount Helper parameter to emit for additional information.
+    /// @param recipientsCount Helper parameter to emit for additional information.
+    /// @return airstreamCampaign The address of the newly created airstream campaign.
     function createAirstreamCampaignLL(
         address initialAdmin,
         IERC20 asset,
@@ -74,5 +98,5 @@ interface ISablierV2AirstreamCampaignFactory {
         uint256 recipientsCount
     )
         external
-        returns (ISablierV2AirstreamCampaignLL);
+        returns (ISablierV2AirstreamCampaignLL airstreamCampaign);
 }

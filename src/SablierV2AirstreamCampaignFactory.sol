@@ -53,13 +53,13 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         uint256 recipientsCount
     )
         external
-        returns (ISablierV2AirstreamCampaignLD airstream)
+        returns (ISablierV2AirstreamCampaignLD airstreamCampaign)
     {
         // Hash the common variables between campaigns to generate a salt.
         bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
 
         // Deploy the airstream campaign with CREATE2.
-        airstream = new SablierV2AirstreamCampaignLD{salt: salt} (
+        airstreamCampaign = new SablierV2AirstreamCampaignLD{salt: salt} (
             initialAdmin,
             asset,
             merkleRoot,
@@ -70,10 +70,12 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         );
 
         // Effects: store the campaign in the user's list of campaigns.
-        _airstreamCampaigns[initialAdmin].push(airstream);
+        _airstreamCampaigns[initialAdmin].push(airstreamCampaign);
 
         // Log the creation of the campaign.
-        emit CreateAirstreamCampaignLD(initialAdmin, asset, airstream, ipfsCID, campaignTotalAmount, recipientsCount);
+        emit CreateAirstreamCampaignLD(
+            initialAdmin, asset, airstreamCampaign, ipfsCID, campaignTotalAmount, recipientsCount
+        );
     }
 
     /// @notice inheritdoc ISablierV2AirstreamCampaignFactory
@@ -90,13 +92,13 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         uint256 recipientsCount
     )
         external
-        returns (ISablierV2AirstreamCampaignLL airstream)
+        returns (ISablierV2AirstreamCampaignLL airstreamCampaign)
     {
         // Hash the common variables between campaigns to generate a salt.
         bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
 
         // Deploy the airstream campaign with CREATE2.
-        airstream = new SablierV2AirstreamCampaignLL{salt: salt} (
+        airstreamCampaign = new SablierV2AirstreamCampaignLL{salt: salt} (
             initialAdmin,
             asset,
             merkleRoot,
@@ -107,9 +109,11 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         );
 
         // Effects: store the campaign in the user's list of campaigns.
-        _airstreamCampaigns[initialAdmin].push(airstream);
+        _airstreamCampaigns[initialAdmin].push(airstreamCampaign);
 
         // Log the creation of the campaign.
-        emit CreateAirstreamCampaignLL(initialAdmin, asset, airstream, ipfsCID, campaignTotalAmount, recipientsCount);
+        emit CreateAirstreamCampaignLL(
+            initialAdmin, asset, airstreamCampaign, ipfsCID, campaignTotalAmount, recipientsCount
+        );
     }
 }
