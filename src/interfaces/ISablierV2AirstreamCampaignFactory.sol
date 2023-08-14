@@ -15,11 +15,22 @@ interface ISablierV2AirstreamCampaignFactory {
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
 
+    // Should all be `indexed`?
     event CreateAirstreamCampaignLD(
-        address indexed admin, bytes32 merkleRoot, ISablierV2AirstreamCampaignLD indexed airstream
+        address indexed admin,
+        IERC20 indexed asset,
+        ISablierV2AirstreamCampaignLD indexed airstreamCampaign,
+        string ipfsCID,
+        uint256 campaignTotalAmount,
+        uint256 recipientsCount
     );
     event CreateAirstreamCampaignLL(
-        address indexed admin, bytes32 merkleRoot, ISablierV2AirstreamCampaignLL indexed airstream
+        address indexed admin,
+        IERC20 indexed asset,
+        ISablierV2AirstreamCampaignLL indexed airstreamCampaign,
+        string ipfsCID,
+        uint256 campaignTotalAmount,
+        uint256 recipientsCount
     );
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -41,7 +52,10 @@ interface ISablierV2AirstreamCampaignFactory {
         bool cancelable,
         uint40 expiration,
         ISablierV2LockupDynamic lockupDynamic,
-        LockupDynamic.SegmentWithDelta[] memory segments
+        LockupDynamic.SegmentWithDelta[] memory segments,
+        string memory ipfsCID,
+        uint256 campaignTotalAmount,
+        uint256 recipientsCount
     )
         external
         returns (ISablierV2AirstreamCampaignLD);
@@ -54,7 +68,10 @@ interface ISablierV2AirstreamCampaignFactory {
         bool cancelable,
         uint40 expiration,
         ISablierV2LockupLinear lockupLinear,
-        LockupLinear.Durations memory durations
+        LockupLinear.Durations memory durations,
+        string memory ipfsCID,
+        uint256 campaignTotalAmount,
+        uint256 recipientsCount
     )
         external
         returns (ISablierV2AirstreamCampaignLL);

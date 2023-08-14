@@ -47,7 +47,10 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         bool cancelable,
         uint40 expiration,
         ISablierV2LockupDynamic lockupDynamic,
-        LockupDynamic.SegmentWithDelta[] memory segments
+        LockupDynamic.SegmentWithDelta[] memory segments,
+        string memory ipfsCID,
+        uint256 campaignTotalAmount,
+        uint256 recipientsCount
     )
         external
         returns (ISablierV2AirstreamCampaignLD airstream)
@@ -70,7 +73,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         _airstreamCampaigns[initialAdmin].push(airstream);
 
         // Log the creation of the campaign.
-        emit CreateAirstreamCampaignLD(initialAdmin, merkleRoot, airstream);
+        emit CreateAirstreamCampaignLD(initialAdmin, asset, airstream, ipfsCID, campaignTotalAmount, recipientsCount);
     }
 
     /// @notice inheritdoc ISablierV2AirstreamCampaignFactory
@@ -81,7 +84,10 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         bool cancelable,
         uint40 expiration,
         ISablierV2LockupLinear lockupLinear,
-        LockupLinear.Durations memory durations
+        LockupLinear.Durations memory durations,
+        string memory ipfsCID,
+        uint256 campaignTotalAmount,
+        uint256 recipientsCount
     )
         external
         returns (ISablierV2AirstreamCampaignLL airstream)
@@ -104,6 +110,6 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         _airstreamCampaigns[initialAdmin].push(airstream);
 
         // Log the creation of the campaign.
-        emit CreateAirstreamCampaignLL(initialAdmin, merkleRoot, airstream);
+        emit CreateAirstreamCampaignLL(initialAdmin, asset, airstream, ipfsCID, campaignTotalAmount, recipientsCount);
     }
 }
