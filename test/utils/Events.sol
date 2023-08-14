@@ -1,8 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19;
 
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+import { ISablierV2AirstreamCampaignLD } from "src/interfaces/ISablierV2AirstreamCampaignLD.sol";
+import { ISablierV2AirstreamCampaignLL } from "src/interfaces/ISablierV2AirstreamCampaignLL.sol";
+
 /// @notice Abstract contract containing all the events emitted by the protocol.
 abstract contract Events {
+    event CreateAirstreamCampaignLD(
+        address indexed admin,
+        IERC20 indexed asset,
+        ISablierV2AirstreamCampaignLD indexed airstreamCampaign,
+        string ipfsCID,
+        uint256 campaignTotalAmount,
+        uint256 recipientsCount
+    );
+    event CreateAirstreamCampaignLL(
+        address indexed admin,
+        IERC20 indexed asset,
+        ISablierV2AirstreamCampaignLL indexed airstreamCampaign,
+        string ipfsCID,
+        uint256 campaignTotalAmount,
+        uint256 recipientsCount
+    );
     event List(address indexed admin, address indexed addr);
     event Unlist(address indexed admin, address indexed addr);
 }

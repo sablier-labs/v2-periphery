@@ -1,34 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
-import { IPRBProxyRegistry } from "@prb/proxy/src/interfaces/IPRBProxyRegistry.sol";
-import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
-import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
-import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
-import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
-import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
-
-import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
-import { StdCheats } from "forge-std/StdCheats.sol";
-
-import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
-import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
-import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
-import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
-import { SablierV2Archive } from "src/SablierV2Archive.sol";
-import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
-import { SablierV2ProxyTargetApprove } from "src/SablierV2ProxyTargetApprove.sol";
-import { SablierV2ProxyTargetPermit2 } from "src/SablierV2ProxyTargetPermit2.sol";
-
-import { WLC } from "./mocks/WLC.sol";
-import { Assertions } from "./utils/Assertions.sol";
-import { Defaults } from "./utils/Defaults.sol";
-import { Events } from "./utils/Events.sol";
-import { Users } from "./utils/Types.sol";
+// solhint-disable no-unused-import
+import "./BaseImports.t.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
 abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
@@ -45,6 +19,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     ISablierV2Archive internal archive;
     IPRBProxy internal aliceProxy;
     IERC20 internal asset;
+    ISablierV2AirstreamCampaignFactory internal campaignFactory;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
@@ -71,6 +46,10 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         users.broker = createUser("Broker");
         users.eve = createUser("Eve");
         users.recipient = createUser("Recipient");
+        users.recipient1 = createUser("Recipient1");
+        users.recipient2 = createUser("Recipient2");
+        users.recipient3 = createUser("Recipient3");
+        users.recipient4 = createUser("Recipient4");
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -88,11 +67,13 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function deployPeripheryConditionally() internal {
         if (!isTestOptimizedProfile()) {
             archive = new SablierV2Archive(users.admin.addr);
+            campaignFactory = new SablierV2AirstreamCampaignFactory();
             plugin = new SablierV2ProxyPlugin(archive);
             targetApprove = new SablierV2ProxyTargetApprove();
             targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
         } else {
             archive = deployPrecompiledArchive(users.admin.addr);
+            campaignFactory = deployPrecompiledCampaignFactory();
             plugin = deployPrecompiledProxyPlugin(archive);
             targetApprove = deployPrecompiledProxyTargetApprove();
             targetPermit2 = deployPrecompiledProxyTargetPermit2(permit2);
@@ -105,6 +86,13 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function deployPrecompiledArchive(address initialAdmin) internal returns (ISablierV2Archive) {
         return ISablierV2Archive(
             deployCode("out-optimized/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(initialAdmin))
+        );
+    }
+
+    /// @dev Deploys {SablierV2AirstreamCampaignFactory} from a source precompiled with `--via-ir`.
+    function deployPrecompiledCampaignFactory() internal returns (ISablierV2AirstreamCampaignFactory) {
+        return ISablierV2AirstreamCampaignFactory(
+            deployCode("out-optimized/SablierV2AirstreamCampaignFactory.sol/SablierV2AirstreamCampaignFactory.json")
         );
     }
 
@@ -320,6 +308,108 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         internal
     {
         vm.expectCall({ callee: asset_, count: count, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                 AIRSTREAM-CAMPAIGN
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function createAirstreamCampaignLD() internal returns (ISablierV2AirstreamCampaignLD) {
+        return campaignFactory.createAirstreamCampaignLD(
+            users.admin.addr,
+            asset,
+            defaults.MERKLE_ROOT(),
+            defaults.CANCELABLE(),
+            defaults.EXPIRATION(),
+            lockupDynamic,
+            defaults.segmentsWithDeltas(),
+            defaults.IPFS_CID(),
+            defaults.CAMPAIGN_TOTAL_AMOUNT(),
+            defaults.RECIPIENTS_COUNT()
+        );
+    }
+
+    function computeCampaignLDAddress() internal returns (address) {
+        bytes32 salt = keccak256(
+            abi.encodePacked(
+                users.admin.addr, asset, defaults.MERKLE_ROOT(), defaults.CANCELABLE(), defaults.EXPIRATION()
+            )
+        );
+        bytes32 creationBytecodeHash = keccak256(getCampaignLDBytecode());
+        return computeCreate2Address({
+            salt: salt,
+            initcodeHash: creationBytecodeHash,
+            deployer: address(campaignFactory)
+        });
+    }
+
+    function getCampaignLDBytecode() internal returns (bytes memory) {
+        bytes memory constructorArgs = abi.encode(
+            users.admin.addr,
+            asset,
+            defaults.MERKLE_ROOT(),
+            defaults.CANCELABLE(),
+            defaults.EXPIRATION(),
+            lockupDynamic,
+            defaults.segmentsWithDeltas()
+        );
+        if (!isTestOptimizedProfile()) {
+            return bytes.concat(type(SablierV2AirstreamCampaignLD).creationCode, constructorArgs);
+        } else {
+            return bytes.concat(
+                vm.getCode("out-optimized/SablierV2AirstreamCampaignLD.sol/SablierV2AirstreamCampaignLD.json"),
+                constructorArgs
+            );
+        }
+    }
+
+    function createAirstreamCampaignLL() internal returns (ISablierV2AirstreamCampaignLL) {
+        return campaignFactory.createAirstreamCampaignLL(
+            users.admin.addr,
+            asset,
+            defaults.MERKLE_ROOT(),
+            defaults.CANCELABLE(),
+            defaults.EXPIRATION(),
+            lockupLinear,
+            defaults.durations(),
+            defaults.IPFS_CID(),
+            defaults.CAMPAIGN_TOTAL_AMOUNT(),
+            defaults.RECIPIENTS_COUNT()
+        );
+    }
+
+    function computeCampaignLLAddress() internal returns (address) {
+        bytes32 salt = keccak256(
+            abi.encodePacked(
+                users.admin.addr, asset, defaults.MERKLE_ROOT(), defaults.CANCELABLE(), defaults.EXPIRATION()
+            )
+        );
+        bytes32 creationBytecodeHash = keccak256(getCampaignLLBytecode());
+        // Use the Create2 utility from Forge Std.
+        return computeCreate2Address({
+            salt: salt,
+            initcodeHash: creationBytecodeHash,
+            deployer: address(campaignFactory)
+        });
+    }
+
+    function getCampaignLLBytecode() internal returns (bytes memory) {
+        bytes memory constructorArgs = abi.encode(
+            users.admin.addr,
+            asset,
+            defaults.MERKLE_ROOT(),
+            defaults.CANCELABLE(),
+            defaults.EXPIRATION(),
+            lockupLinear,
+            defaults.durations()
+        );
+        if (!isTestOptimizedProfile()) {
+            return bytes.concat(type(SablierV2AirstreamCampaignLL).creationCode, constructorArgs);
+        } else {
+            return bytes.concat(
+                vm.getCode("out-optimized/SablierV2AirstreamCampaignLL.sol/PRBProxy.json"), constructorArgs
+            );
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////

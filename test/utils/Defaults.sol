@@ -37,6 +37,22 @@ contract Defaults is PermitSignature {
     uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
+                            AIRSTREAM CAMPAIGN CONSTANTS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    bool public constant CANCELABLE = false;
+    uint128 public constant CLAIMABLE_AMOUNT = 10_000e18;
+    uint40 public immutable EXPIRATION;
+    uint256 public constant INDEX1 = 1;
+    uint256 public constant INDEX2 = 2;
+    uint256 public constant INDEX3 = 3;
+    uint256 public constant INDEX4 = 4;
+    string public IPFS_CID = "This is IPFS CID";
+    uint256 public constant CAMPAIGN_TOTAL_AMOUNT = CLAIMABLE_AMOUNT * RECIPIENTS_COUNT;
+    uint256 public constant RECIPIENTS_COUNT = 4;
+    bytes32 public constant MERKLE_ROOT = bytes32(0x0000000);
+
+    /*//////////////////////////////////////////////////////////////////////////
                                  PERMIT2 CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -66,6 +82,7 @@ contract Defaults is PermitSignature {
         START_TIME = uint40(block.timestamp) + 100 seconds;
         CLIFF_TIME = START_TIME + CLIFF_DURATION;
         END_TIME = START_TIME + TOTAL_DURATION;
+        EXPIRATION = uint40(block.timestamp) + 12 weeks;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -139,7 +156,7 @@ contract Defaults is PermitSignature {
             broker: broker(),
             cancelable: true,
             recipient: users.recipient.addr,
-            segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
+            segments: segmentsWithDeltas(),
             sender: address(proxy),
             totalAmount: PER_STREAM_AMOUNT
         });
@@ -182,11 +199,16 @@ contract Defaults is PermitSignature {
     }
 
     /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
+    function segmentsWithDeltas() public pure returns (LockupDynamic.SegmentWithDelta[] memory) {
+        return segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 });
+    }
+
+    /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
     function segmentsWithDeltas(
         uint128 amount0,
         uint128 amount1
     )
-        private
+        public
         pure
         returns (LockupDynamic.SegmentWithDelta[] memory segments_)
     {
@@ -233,7 +255,7 @@ contract Defaults is PermitSignature {
         });
     }
 
-    function durations() private pure returns (LockupLinear.Durations memory) {
+    function durations() public pure returns (LockupLinear.Durations memory) {
         return LockupLinear.Durations({ cliff: CLIFF_DURATION, total: TOTAL_DURATION });
     }
 
