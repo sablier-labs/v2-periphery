@@ -54,8 +54,8 @@ interface ISablierV2AirstreamCampaign is IAdminable {
     /// @dev Emits a {Claim} event.
     ///
     /// Requirements:
-    /// - The airstream must not have expired.
-    /// - The airstream must not have been claimed already.
+    /// - The airstream campaign must not have expired.
+    /// - The airstream campaign must not have been claimed already.
     /// - The Merkle proof must be valid.
     ///
     /// @param index The index of the recipient in the Merkle tree.
@@ -72,13 +72,13 @@ interface ISablierV2AirstreamCampaign is IAdminable {
         external
         returns (uint256 airstreamId);
 
-    /// @notice Claws back the unclaimed tokens from the airstream contract.
+    /// @notice Claws back the unclaimed tokens from the airstream campaign.
     ///
     /// @dev Emits a {Clawback} event.
     ///
     /// Requirements:
     /// - The caller must be the admin.
-    /// - The airstream must have expired.
+    /// - The airstream campaign must have expired.
     ///
     /// @param to The address to receive the tokens.
     /// @param amount The amount of tokens to claw back.
