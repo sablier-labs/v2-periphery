@@ -4,10 +4,12 @@ pragma solidity >=0.8.19;
 import { msb } from "@prb/math/Common.sol";
 
 library MerkleBuilder {
+    /// @dev Function that hashes together the data needed for a Merkle tree leaf.
     function computeLeaf(uint256 index, address recipient, uint128 amount) internal pure returns (bytes32 leaf) {
         leaf = keccak256(abi.encodePacked(index, recipient, amount));
     }
 
+    /// @dev A batch function for `computeLeaf`.
     function computeLeaves(
         uint256[] memory indexes,
         address[] memory recipient,
@@ -25,12 +27,20 @@ library MerkleBuilder {
         }
     }
 
-    function computeProof(bytes32[] memory data, uint256 node) public pure returns (bytes32[] memory) {
-        uint256 count = data.length;
-        require(count > 1, "Data length must be greater than one");
+    /// @dev Function that computes the Merkle proof for a leaf in the Merkle tree.
+    function computeProof(bytes32[] memory leaves, uint256 leafPos) public pure returns (bytes32[] memory) {
+        uint256 count = leaves.length;
+        require(count > 1, "leaves length must be greater than one");
 
+        // `log2Ceil` represents the ceiling value of the logarithm to the base 2 of the number of leaves in the tree.
         uint256 log2Ceil;
+
+        // Calculate the most significant bit of the leaves length, which is equivalent to the floor value of
+        // log2(count)
         uint256 _msb = msb(count);
+
+        // If the count is a power of 2 and msb is greater than 0, then log2Ceil is exactly the msb.
+        // Otherwise, we need to take the ceiling value by adding 1 to msb.
         uint256 _lsb = (~count + 1) & count;
         if ((_lsb == count) && (_msb > 0)) {
             log2Ceil = _msb;
@@ -38,39 +48,41 @@ library MerkleBuilder {
             log2Ceil = _msb + 1;
         }
 
+        // `log2Ceil` is the exact depth of the Merkle tree, so the proof must be this length.
         bytes32[] memory proof = new bytes32[](log2Ceil);
         uint256 pos = 0;
-        while (data.length > 1) {
+        while (leaves.length > 1) {
             unchecked {
-                if (node % 2 == 1) {
-                    proof[pos] = data[node - 1];
-                } else if (node + 1 == data.length) {
+                if (leafPos % 2 == 1) {
+                    proof[pos] = leaves[leafPos - 1];
+                } else if (leafPos + 1 == leaves.length) {
                     proof[pos] = bytes32(0);
                 } else {
-                    proof[pos] = data[node + 1];
+                    proof[pos] = leaves[leafPos + 1];
                 }
                 ++pos;
-                node /= 2;
+                leafPos /= 2;
             }
-            data = combineLeaves(data);
+            leaves = combineLeaves(leaves);
         }
         return proof;
     }
 
-    function computeRoot(bytes32[] memory data) public pure returns (bytes32) {
-        require(data.length > 1, "Data length must be greater than one");
-        while (data.length > 1) {
-            data = combineLeaves(data);
+    /// @dev Function that computes the Merkle root for a set of leaves.
+    function computeRoot(bytes32[] memory leaves) public pure returns (bytes32) {
+        require(leaves.length > 1, "leaves length must be greater than one");
+        while (leaves.length > 1) {
+            leaves = combineLeaves(leaves);
         }
-        return data[0];
+        return leaves[0];
     }
 
-    /// @dev Helper function that returns the hash of two `bytes32`.
+    /// @dev Function that returns the hash of two `bytes32`.
     function hashBytes32(bytes32 b1, bytes32 b2) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(b1, b2));
     }
 
-    /// @dev Helper function that hashes the two `bytes32` inputs in ascending order.
+    /// @dev Function that hashes the two `bytes32` inputs in ascending order.
     function hashPair(bytes32 left, bytes32 right) internal pure returns (bytes32 pair) {
         pair = left < right ? hashBytes32(left, right) : hashBytes32(right, left);
     }
@@ -79,12 +91,14 @@ library MerkleBuilder {
                                  PRIVATE FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function combineLeaves(bytes32[] memory data) private pure returns (bytes32[] memory) {
-        uint256 count = data.length;
+    /// @dev Function that takes an array of leaves and combines them to create
+    /// the next level of the Merkle tree.
+    function combineLeaves(bytes32[] memory leaves) private pure returns (bytes32[] memory) {
+        uint256 count = leaves.length;
         bytes32[] memory result = new bytes32[]((count + 1) / 2);
         for (uint256 i = 0; i < count; i += 2) {
-            bytes32 left = data[i];
-            bytes32 right = i + 1 < count ? data[i + 1] : bytes32(0);
+            bytes32 left = leaves[i];
+            bytes32 right = i + 1 < count ? leaves[i + 1] : bytes32(0);
             result[i / 2] = hashPair(left, right);
         }
         return result;
