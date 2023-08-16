@@ -57,7 +57,7 @@ abstract contract SablierV2AirstreamCampaign is
 
     /// @notice Reverts if the campaign has expired.
     modifier hasNotExpired() {
-        if (block.timestamp > expiration) {
+        if (expiration > 0 && block.timestamp > expiration) {
             revert Errors.SablierV2AirstreamCampaign_CampaignExpired(expiration);
         }
         _;
