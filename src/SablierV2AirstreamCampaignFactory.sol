@@ -18,6 +18,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
                                   INTERNAL STORAGE
     //////////////////////////////////////////////////////////////////////////*/
 
+    // question: should we rename `user` to `admin`?
     /// @notice The list of airstream campaigns created by the user.
     mapping(address user => ISablierV2AirstreamCampaign[] contracts) private _airstreamCampaigns;
 
@@ -55,7 +56,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLD airstreamCampaign)
     {
-        // What value should the salt have?
+        // question: What value should the salt have?
         // Hash the common variables between campaigns to generate a salt.
         bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
 
@@ -95,7 +96,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLL airstreamCampaign)
     {
-        // What value should the salt have?
+        // question: What value should the salt have?
         // Hash the common variables between campaigns to generate a salt.
         bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
 

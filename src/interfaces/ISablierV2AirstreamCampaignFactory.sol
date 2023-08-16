@@ -15,7 +15,7 @@ interface ISablierV2AirstreamCampaignFactory {
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    // Should all be `indexed`?
+    // question: Should all be `indexed`?
     event CreateAirstreamCampaignLD(
         address indexed admin,
         IERC20 indexed asset,
