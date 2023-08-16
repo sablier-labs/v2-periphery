@@ -52,18 +52,6 @@ abstract contract SablierV2AirstreamCampaign is
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                     MODIFIERS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @notice Reverts if the campaign has expired.
-    modifier hasNotExpired() {
-        if (expiration > 0 && block.timestamp > expiration) {
-            revert Errors.SablierV2AirstreamCampaign_CampaignExpired(expiration);
-        }
-        _;
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
                            USER-FACING CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -106,9 +94,13 @@ abstract contract SablierV2AirstreamCampaign is
     )
         external
         override
-        hasNotExpired
         returns (uint256 airstreamId)
     {
+        // Checks: the campaign has not expired.
+        if (expiration > 0 && expiration >= block.timestamp) {
+            revert Errors.SablierV2AirstreamCampaign_CampaignExpired(expiration);
+        }
+
         // Checks: the index is has been claimed.
         if (hasClaimed(index)) {
             revert Errors.SablierV2AirstreamCampaign_AlreadyClaimed(index);
@@ -133,7 +125,12 @@ abstract contract SablierV2AirstreamCampaign is
     }
 
     /// @inheritdoc ISablierV2AirstreamCampaign
-    function clawback(address to, uint128 amount) external override onlyAdmin hasNotExpired {
+    function clawback(address to, uint128 amount) external override onlyAdmin {
+        // Checks: the campaign has expired.
+        if (expiration > 0 && expiration > block.timestamp) {
+            revert Errors.SablierV2AirstreamCampaign_CampaignNotExpired(expiration);
+        }
+
         asset.safeTransfer(to, amount);
         emit Clawback(admin, to, amount);
     }

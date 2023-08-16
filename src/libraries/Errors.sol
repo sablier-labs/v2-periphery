@@ -18,8 +18,11 @@ library Errors {
     /// @notice Thrown when trying to claim multiple times.
     error SablierV2AirstreamCampaign_AlreadyClaimed(uint256 index);
 
-    /// @notice Thrown when trying to claim when airstream campaign has expired.
+    /// @notice Thrown when trying to clawback when airstream campaign has expired.
     error SablierV2AirstreamCampaign_CampaignExpired(uint40 expiration);
+
+    /// @notice Thrown when trying to claim when airstream campaign has not expired.
+    error SablierV2AirstreamCampaign_CampaignNotExpired(uint40 expiration);
 
     /// @notice Thrown when trying to claim with invalid Merkle proof.
     error SablierV2AirstreamCampaign_InvalidProof();
