@@ -19,6 +19,7 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
+import { ISablierV2AirstreamCampaign } from "src/interfaces/ISablierV2AirstreamCampaign.sol";
 import { ISablierV2AirstreamCampaignFactory } from "src/interfaces/ISablierV2AirstreamCampaignFactory.sol";
 import { ISablierV2AirstreamCampaignLD } from "src/interfaces/ISablierV2AirstreamCampaignLD.sol";
 import { ISablierV2AirstreamCampaignLL } from "src/interfaces/ISablierV2AirstreamCampaignLL.sol";

@@ -28,7 +28,7 @@ library MerkleBuilder {
     }
 
     /// @dev Function that computes the Merkle proof for a leaf in the Merkle tree.
-    function computeProof(bytes32[] memory leaves, uint256 leafPos) public pure returns (bytes32[] memory) {
+    function computeProof(bytes32[] memory leaves, uint256 leafPos) internal pure returns (bytes32[] memory) {
         uint256 count = leaves.length;
         require(count > 1, "leaves length must be greater than one");
 
@@ -69,7 +69,7 @@ library MerkleBuilder {
     }
 
     /// @dev Function that computes the Merkle root for a set of leaves.
-    function computeRoot(bytes32[] memory leaves) public pure returns (bytes32) {
+    function computeRoot(bytes32[] memory leaves) internal pure returns (bytes32) {
         require(leaves.length > 1, "leaves length must be greater than one");
         while (leaves.length > 1) {
             leaves = combineLeaves(leaves);

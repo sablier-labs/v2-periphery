@@ -13,6 +13,7 @@ import { Permit2Params } from "src/types/Permit2.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";
+import { MerkleBuilder } from "./MerkleBuilder.sol";
 import { Users } from "./Types.sol";
 
 /// @notice Contract with default values for testing.
@@ -37,9 +38,11 @@ contract Defaults is PermitSignature {
     uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
-                            AIRSTREAM CAMPAIGN CONSTANTS
+                                 AIRSTREAM CAMPAIGN
     //////////////////////////////////////////////////////////////////////////*/
 
+    uint256 public constant LEAVES_COUNT = 4;
+    uint256 public constant CAMPAIGN_TOTAL_AMOUNT = CLAIMABLE_AMOUNT * LEAVES_COUNT;
     bool public constant CANCELABLE = false;
     uint128 public constant CLAIMABLE_AMOUNT = 10_000e18;
     uint40 public immutable EXPIRATION;
@@ -48,46 +51,42 @@ contract Defaults is PermitSignature {
     uint256 public constant INDEX3 = 3;
     uint256 public constant INDEX4 = 4;
     string public IPFS_CID = "This is IPFS CID";
-    uint256 public constant CAMPAIGN_TOTAL_AMOUNT = CLAIMABLE_AMOUNT * RECIPIENTS_COUNT;
     uint256 public constant RECIPIENTS_COUNT = 4;
-    bytes32 public constant MERKLE_ROOT = bytes32(0x0000000);
+
+    function index1Proof() public view returns (bytes32[] memory) {
+        return MerkleBuilder.computeProof(leaves(), 0);
+    }
+
+    function index2Proof() public view returns (bytes32[] memory) {
+        return MerkleBuilder.computeProof(leaves(), 1);
+    }
+
+    function index3Proof() public view returns (bytes32[] memory) {
+        return MerkleBuilder.computeProof(leaves(), 2);
+    }
+
+    function index4Proof() public view returns (bytes32[] memory) {
+        return MerkleBuilder.computeProof(leaves(), 3);
+    }
+
+    function leaves() public view returns (bytes32[] memory leaves_) {
+        leaves_ = new bytes32[](LEAVES_COUNT);
+        leaves_[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIMABLE_AMOUNT);
+        leaves_[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIMABLE_AMOUNT);
+        leaves_[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIMABLE_AMOUNT);
+        leaves_[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIMABLE_AMOUNT);
+    }
+
+    function merkleRoot() public view returns (bytes32) {
+        return MerkleBuilder.computeRoot(leaves());
+    }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                 PERMIT2 CONSTANTS
+                                      PERMIT2
     //////////////////////////////////////////////////////////////////////////*/
 
     uint48 public constant PERMIT2_EXPIRATION = type(uint48).max;
     uint256 public constant PERMIT2_SIG_DEADLINE = type(uint48).max;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                     VARIABLES
-    //////////////////////////////////////////////////////////////////////////*/
-
-    IERC20 private asset;
-    IPRBProxy private proxy;
-    IAllowanceTransfer private permit2;
-    Users private users;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                    CONSTRUCTOR
-    //////////////////////////////////////////////////////////////////////////*/
-
-    constructor(Users memory users_, IERC20 asset_, IAllowanceTransfer permit2_, IPRBProxy proxy_) {
-        users = users_;
-        asset = asset_;
-        permit2 = permit2_;
-        proxy = proxy_;
-
-        // Initialize the immutables.
-        START_TIME = uint40(block.timestamp) + 100 seconds;
-        CLIFF_TIME = START_TIME + CLIFF_DURATION;
-        END_TIME = START_TIME + TOTAL_DURATION;
-        EXPIRATION = uint40(block.timestamp) + 12 weeks;
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                       PARAMS
-    //////////////////////////////////////////////////////////////////////////*/
 
     function permit2Params(uint160 amount) public view returns (bytes memory) {
         return permit2Params(users.alice.addr, address(proxy), amount, users.alice.key);
@@ -123,6 +122,32 @@ contract Defaults is PermitSignature {
             })
         });
         return abi.encode(permit2Params_);
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                     VARIABLES
+    //////////////////////////////////////////////////////////////////////////*/
+
+    IERC20 private asset;
+    IPRBProxy private proxy;
+    IAllowanceTransfer private permit2;
+    Users private users;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    constructor(Users memory users_, IERC20 asset_, IAllowanceTransfer permit2_, IPRBProxy proxy_) {
+        users = users_;
+        asset = asset_;
+        permit2 = permit2_;
+        proxy = proxy_;
+
+        // Initialize the immutables.
+        START_TIME = uint40(block.timestamp) + 100 seconds;
+        CLIFF_TIME = START_TIME + CLIFF_DURATION;
+        END_TIME = START_TIME + TOTAL_DURATION;
+        EXPIRATION = uint40(block.timestamp) + 12 weeks;
     }
 
     /*//////////////////////////////////////////////////////////////////////////

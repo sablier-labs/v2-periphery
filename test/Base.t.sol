@@ -19,6 +19,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     ISablierV2Archive internal archive;
     IPRBProxy internal aliceProxy;
     IERC20 internal asset;
+    ISablierV2AirstreamCampaign internal campaign;
     ISablierV2AirstreamCampaignFactory internal campaignFactory;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
@@ -318,7 +319,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         return campaignFactory.createAirstreamCampaignLD(
             users.admin.addr,
             asset,
-            defaults.MERKLE_ROOT(),
+            defaults.merkleRoot(),
             defaults.CANCELABLE(),
             defaults.EXPIRATION(),
             lockupDynamic,
@@ -332,7 +333,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function computeCampaignLDAddress() internal returns (address) {
         bytes32 salt = keccak256(
             abi.encodePacked(
-                users.admin.addr, asset, defaults.MERKLE_ROOT(), defaults.CANCELABLE(), defaults.EXPIRATION()
+                users.admin.addr, asset, defaults.merkleRoot(), defaults.CANCELABLE(), defaults.EXPIRATION()
             )
         );
         bytes32 creationBytecodeHash = keccak256(getCampaignLDBytecode());
@@ -347,7 +348,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         bytes memory constructorArgs = abi.encode(
             users.admin.addr,
             asset,
-            defaults.MERKLE_ROOT(),
+            defaults.merkleRoot(),
             defaults.CANCELABLE(),
             defaults.EXPIRATION(),
             lockupDynamic,
@@ -367,7 +368,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         return campaignFactory.createAirstreamCampaignLL(
             users.admin.addr,
             asset,
-            defaults.MERKLE_ROOT(),
+            defaults.merkleRoot(),
             defaults.CANCELABLE(),
             defaults.EXPIRATION(),
             lockupLinear,
@@ -381,7 +382,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function computeCampaignLLAddress() internal returns (address) {
         bytes32 salt = keccak256(
             abi.encodePacked(
-                users.admin.addr, asset, defaults.MERKLE_ROOT(), defaults.CANCELABLE(), defaults.EXPIRATION()
+                users.admin.addr, asset, defaults.merkleRoot(), defaults.CANCELABLE(), defaults.EXPIRATION()
             )
         );
         bytes32 creationBytecodeHash = keccak256(getCampaignLLBytecode());
@@ -397,7 +398,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         bytes memory constructorArgs = abi.encode(
             users.admin.addr,
             asset,
-            defaults.MERKLE_ROOT(),
+            defaults.merkleRoot(),
             defaults.CANCELABLE(),
             defaults.EXPIRATION(),
             lockupLinear,
