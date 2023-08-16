@@ -30,8 +30,8 @@ contract CreateAirstreamCampaignLD_Integration_Test is Integration_Test {
 
         ISablierV2AirstreamCampaign[] memory expectedCampaign = campaignFactory.getAirstreamCampaigns(users.admin.addr);
 
-        assertTrue(actualCampaignLD.code.length > 0);
-        assertEq(actualCampaignLD, computedCampaign);
-        assertEq(actualCampaignLD, address(expectedCampaign[0]));
+        assertTrue(actualCampaignLD.code.length > 0, "campaignLD was not created");
+        assertEq(actualCampaignLD, computedCampaign, "campaignLD address does not match computed address");
+        assertEq(actualCampaignLD, address(expectedCampaign[0]), "campaignLD was not stored in the campaigns mapping");
     }
 }

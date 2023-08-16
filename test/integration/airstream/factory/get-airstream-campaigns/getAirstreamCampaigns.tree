@@ -1,0 +1,10 @@
+getAirstreamCampaigns.t.sol
+├── when the user has no campaigns
+│  └── it should return an empty array
+└── when the user have campaigns
+    ├── when the user has a LD campaign
+    │  └── it should return the correct campaign
+    ├── when the user has a LL campaign
+    │  └── it should return the correct campaign
+    └── when the user has a both LD and LL campaigns
+       └── it should return the correct campaigns
