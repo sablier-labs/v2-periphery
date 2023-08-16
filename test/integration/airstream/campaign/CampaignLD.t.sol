@@ -1,0 +1,32 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity >=0.8.19 <0.9.0;
+
+import { ISablierV2AirstreamCampaign } from "src/interfaces/ISablierV2AirstreamCampaign.sol";
+
+import { Integration_Test } from "../../Integration.t.sol";
+
+import { Claim_Integration_Test } from "./shared/claim/claim.t.sol";
+import { Clawback_Integration_Test } from "./shared/clawback/clawback.t.sol";
+
+abstract contract CampaignLD_Integration_Test is Integration_Test {
+    function setUp() public virtual override {
+        Integration_Test.setUp();
+        campaign = ISablierV2AirstreamCampaign(createAirstreamCampaignLD());
+        deal({ token: address(asset), to: address(campaign), give: defaults.CAMPAIGN_TOTAL_AMOUNT() });
+        vm.label(address(campaign), "campaignLD");
+    }
+}
+
+contract Claim_CampaignLD_Integration_Test is CampaignLD_Integration_Test, Claim_Integration_Test {
+    function setUp() public override(CampaignLD_Integration_Test, Claim_Integration_Test) {
+        CampaignLD_Integration_Test.setUp();
+        Claim_Integration_Test.setUp();
+    }
+}
+
+contract Clawback_CampaignLD_Integration_Test is CampaignLD_Integration_Test, Clawback_Integration_Test {
+    function setUp() public override(CampaignLD_Integration_Test, Clawback_Integration_Test) {
+        CampaignLD_Integration_Test.setUp();
+        Clawback_Integration_Test.setUp();
+    }
+}
