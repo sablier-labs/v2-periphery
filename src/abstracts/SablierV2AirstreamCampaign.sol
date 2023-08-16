@@ -97,8 +97,8 @@ abstract contract SablierV2AirstreamCampaign is
         returns (uint256 airstreamId)
     {
         // Checks: the campaign has not expired.
-        if (expiration > 0 && expiration >= block.timestamp) {
-            revert Errors.SablierV2AirstreamCampaign_CampaignExpired(expiration);
+        if (expiration > 0 && expiration < block.timestamp) {
+            revert Errors.SablierV2AirstreamCampaign_CampaignExpired(block.timestamp, expiration);
         }
 
         // Checks: the index is has been claimed.
@@ -127,8 +127,8 @@ abstract contract SablierV2AirstreamCampaign is
     /// @inheritdoc ISablierV2AirstreamCampaign
     function clawback(address to, uint128 amount) external override onlyAdmin {
         // Checks: the campaign has expired.
-        if (expiration > 0 && expiration > block.timestamp) {
-            revert Errors.SablierV2AirstreamCampaign_CampaignNotExpired(expiration);
+        if (expiration > 0 && expiration <= block.timestamp) {
+            revert Errors.SablierV2AirstreamCampaign_CampaignNotExpired(block.timestamp, expiration);
         }
 
         asset.safeTransfer(to, amount);
