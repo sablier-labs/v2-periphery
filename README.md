@@ -25,7 +25,7 @@ forge install sablier-labs/v2-periphery
 Then, add the following line to your `remappings.txt` file:
 
 ```text
-@sablier/v2-periphery/=lib/v2-periphery/src/
+@sablier/v2-periphery/=lib/v2-periphery/
 ```
 
 ### Node.js
