@@ -9,6 +9,7 @@ import { Integration_Test } from "../../Integration.t.sol";
 
 import { Claim_Integration_Test } from "./shared/claim/claim.t.sol";
 import { Clawback_Integration_Test } from "./shared/clawback/clawback.t.sol";
+import { HasClaimed_Integration_Test } from "./shared/has-claimed/hasClaimed.t.sol";
 
 abstract contract CampaignLL_Integration_Test is Integration_Test {
     function setUp() public virtual override {
@@ -31,5 +32,12 @@ contract Clawback_CampaignLL_Integration_Test is CampaignLL_Integration_Test, Cl
     function setUp() public override(CampaignLL_Integration_Test, Clawback_Integration_Test) {
         CampaignLL_Integration_Test.setUp();
         Clawback_Integration_Test.setUp();
+    }
+}
+
+contract HasClaimed_CampaignLL_Integration_Test is CampaignLL_Integration_Test, HasClaimed_Integration_Test {
+    function setUp() public override(CampaignLL_Integration_Test, HasClaimed_Integration_Test) {
+        CampaignLL_Integration_Test.setUp();
+        HasClaimed_Integration_Test.setUp();
     }
 }
