@@ -8,6 +8,8 @@ import { ISablierV2AirstreamCampaignLL } from "src/interfaces/ISablierV2Airstrea
 
 /// @notice Abstract contract containing all the events emitted by the protocol.
 abstract contract Events {
+    event Claim(uint256 index, address indexed recipient, uint128 amount, uint256 indexed airstreamId);
+    event Clawback(address indexed admin, address indexed to, uint128 amount);
     event CreateAirstreamCampaignLD(
         address indexed admin,
         IERC20 indexed asset,

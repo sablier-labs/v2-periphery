@@ -315,6 +315,12 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
                                  AIRSTREAM-CAMPAIGN
     //////////////////////////////////////////////////////////////////////////*/
 
+    function claim() internal returns (uint256) {
+        return campaign.claim(
+            defaults.INDEX1(), users.recipient1.addr, defaults.CLAIMABLE_AMOUNT(), defaults.index1Proof()
+        );
+    }
+
     function createAirstreamCampaignLD() internal returns (ISablierV2AirstreamCampaignLD) {
         return campaignFactory.createAirstreamCampaignLD(
             users.admin.addr,

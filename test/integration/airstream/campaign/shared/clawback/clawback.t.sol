@@ -8,20 +8,61 @@ import { Errors } from "src/libraries/Errors.sol";
 import { Integration_Test } from "../../../../Integration.t.sol";
 
 abstract contract Clawback_Integration_Test is Integration_Test {
-    function setUp() public virtual override {
-        changePrank({ msgSender: users.admin.addr });
-    }
+    function setUp() public virtual override { }
 
     function test_RevertWhen_CallerNotAdmin() external {
         changePrank({ msgSender: users.eve.addr });
-        vm.expectRevert(abi.encodeWithSelector(V2CoreErrors.CallerNotAdmin.selector, users.admin, users.eve));
+        vm.expectRevert(abi.encodeWithSelector(V2CoreErrors.CallerNotAdmin.selector, users.admin.addr, users.eve.addr));
         campaign.clawback({ to: users.eve.addr, amount: 1 });
     }
 
-    function test_RevertWhen_CampaignHasNotExpired() external {
+    modifier whenCallerAdmin() {
+        changePrank({ msgSender: users.admin.addr });
+        _;
+    }
+
+    function test_RevertWhen_CampaignHasNotExpired() external whenCallerAdmin {
         vm.expectRevert(
-            abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_CampaignNotExpired.selector, defaults.EXPIRATION())
+            abi.encodeWithSelector(
+                Errors.SablierV2AirstreamCampaign_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
+            )
         );
         campaign.clawback({ to: users.admin.addr, amount: 1 });
+    }
+
+    modifier whenCampaignHasExpired() {
+        _;
+    }
+
+    function test_RevertWhen_AllClaimsMade() external whenCallerAdmin whenCampaignHasExpired {
+        claim();
+        campaign.claim(defaults.INDEX2(), users.recipient2.addr, defaults.CLAIMABLE_AMOUNT(), defaults.index2Proof());
+        campaign.claim(defaults.INDEX3(), users.recipient3.addr, defaults.CLAIMABLE_AMOUNT(), defaults.index3Proof());
+        campaign.claim(defaults.INDEX4(), users.recipient4.addr, defaults.CLAIMABLE_AMOUNT(), defaults.index4Proof());
+        vm.warp({ timestamp: defaults.EXPIRATION() + 1 });
+        vm.expectRevert();
+        campaign.clawback({ to: users.admin.addr, amount: 1 });
+    }
+
+    modifier whenNotAllClaimsMade() {
+        _;
+    }
+
+    function test_Clawback_NoClaims() external whenCallerAdmin whenCampaignHasExpired whenNotAllClaimsMade {
+        testClawback();
+    }
+
+    function test_Clawback() external whenCallerAdmin whenCampaignHasExpired whenNotAllClaimsMade {
+        claim();
+        testClawback();
+    }
+
+    function testClawback() internal {
+        uint128 clawbackAmount = uint128(asset.balanceOf(address(campaign)));
+        vm.warp({ timestamp: defaults.EXPIRATION() + 1 });
+        expectCallToTransfer({ to: users.admin.addr, amount: clawbackAmount });
+        vm.expectEmit();
+        emit Clawback(users.admin.addr, users.admin.addr, clawbackAmount);
+        campaign.clawback({ to: users.admin.addr, amount: clawbackAmount });
     }
 }
