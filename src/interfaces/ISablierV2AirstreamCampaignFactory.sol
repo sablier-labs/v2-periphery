@@ -15,7 +15,7 @@ interface ISablierV2AirstreamCampaignFactory {
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    // question: Should all be `indexed`?
+    // question: Maximum number of indexed params is 3, which should them?
     event CreateAirstreamCampaignLD(
         address indexed admin,
         IERC20 indexed asset,
@@ -37,8 +37,8 @@ interface ISablierV2AirstreamCampaignFactory {
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Returns the list of airstream campaigns created by the user.
-    function getAirstreamCampaigns(address user) external view returns (ISablierV2AirstreamCampaign[] memory);
+    /// @notice Returns the list of airstream campaigns created by the admin.
+    function getAirstreamCampaigns(address admin) external view returns (ISablierV2AirstreamCampaign[] memory);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS

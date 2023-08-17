@@ -18,22 +18,21 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
                                   INTERNAL STORAGE
     //////////////////////////////////////////////////////////////////////////*/
 
-    // question: should we rename `user` to `admin`?
-    /// @notice The list of airstream campaigns created by the user.
-    mapping(address user => ISablierV2AirstreamCampaign[] contracts) private _airstreamCampaigns;
+    /// @notice The list of airstream campaigns created by the admin.
+    mapping(address admin => ISablierV2AirstreamCampaign[] contracts) private _airstreamCampaigns;
 
     /*//////////////////////////////////////////////////////////////////////////
                            USER-FACING CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice inheritdoc ISablierV2AirstreamCampaignFactory
-    function getAirstreamCampaigns(address user)
+    function getAirstreamCampaigns(address admin)
         external
         view
         override
         returns (ISablierV2AirstreamCampaign[] memory campaigns)
     {
-        campaigns = _airstreamCampaigns[user];
+        campaigns = _airstreamCampaigns[admin];
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -56,9 +55,8 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLD airstreamCampaign)
     {
-        // question: What value should the salt have?
-        // Hash the common variables between campaigns to generate a salt.
-        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
+        // Hash some common variables between campaigns to generate a salt.
+        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, expiration));
 
         // Deploy the airstream campaign with CREATE2.
         airstreamCampaign = new SablierV2AirstreamCampaignLD{salt: salt} (
@@ -71,7 +69,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
             segments
         );
 
-        // Effects: store the campaign in the user's list of campaigns.
+        // Effects: store the campaign in the admin's list of campaigns.
         _airstreamCampaigns[initialAdmin].push(airstreamCampaign);
 
         // Log the creation of the campaign.
@@ -96,9 +94,8 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLL airstreamCampaign)
     {
-        // question: What value should the salt have?
-        // Hash the common variables between campaigns to generate a salt.
-        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, cancelable, expiration));
+        // Hash some common variables between campaigns to generate a salt.
+        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, expiration));
 
         // Deploy the airstream campaign with CREATE2.
         airstreamCampaign = new SablierV2AirstreamCampaignLL{salt: salt} (
@@ -111,7 +108,7 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
             durations
         );
 
-        // Effects: store the campaign in the user's list of campaigns.
+        // Effects: store the campaign in the admin's list of campaigns.
         _airstreamCampaigns[initialAdmin].push(airstreamCampaign);
 
         // Log the creation of the campaign.
