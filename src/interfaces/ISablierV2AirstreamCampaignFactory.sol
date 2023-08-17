@@ -15,19 +15,21 @@ interface ISablierV2AirstreamCampaignFactory {
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    // question: Maximum number of indexed params is 3, which should them?
+    /// @notice Emitted when a Sablier V2 Lockup Dynamic airstream campaign is created.
     event CreateAirstreamCampaignLD(
         address indexed admin,
         IERC20 indexed asset,
-        ISablierV2AirstreamCampaignLD indexed airstreamCampaign,
+        ISablierV2AirstreamCampaignLD airstreamCampaign,
         string ipfsCID,
         uint256 campaignTotalAmount,
         uint256 recipientsCount
     );
+
+    /// @notice Emitted when a Sablier V2 Lockup Linear airstream campaign is created.
     event CreateAirstreamCampaignLL(
         address indexed admin,
         IERC20 indexed asset,
-        ISablierV2AirstreamCampaignLL indexed airstreamCampaign,
+        ISablierV2AirstreamCampaignLL airstreamCampaign,
         string ipfsCID,
         uint256 campaignTotalAmount,
         uint256 recipientsCount
