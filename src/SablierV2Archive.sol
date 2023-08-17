@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19;
 
-import { Adminable } from "@sablier/v2-core/abstracts/Adminable.sol";
+import { Adminable } from "@sablier/v2-core/src/abstracts/Adminable.sol";
 
 import { ISablierV2Archive } from "./interfaces/ISablierV2Archive.sol";
 

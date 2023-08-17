@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { Errors } from "@sablier/v2-core/libraries/Errors.sol";
+import { Errors } from "@sablier/v2-core/src/libraries/Errors.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
