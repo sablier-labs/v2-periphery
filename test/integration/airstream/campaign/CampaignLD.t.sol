@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
+
 import { ISablierV2AirstreamCampaign } from "src/interfaces/ISablierV2AirstreamCampaign.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
@@ -12,6 +14,7 @@ abstract contract CampaignLD_Integration_Test is Integration_Test {
     function setUp() public virtual override {
         Integration_Test.setUp();
         campaign = ISablierV2AirstreamCampaign(createAirstreamCampaignLD());
+        lockup = ISablierV2Lockup(lockupDynamic);
         deal({ token: address(asset), to: address(campaign), give: defaults.CAMPAIGN_TOTAL_AMOUNT() });
         vm.label(address(campaign), "campaignLD");
     }

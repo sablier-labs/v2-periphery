@@ -25,8 +25,8 @@ abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
         vm.warp({ timestamp: defaults.CLIFF_TIME() });
 
         // Expects calls to cancel multiple streams.
-        expectCallToCancelMultiple({ lockup: lockupDynamic, streamIds: dynamicStreamIds });
-        expectCallToCancelMultiple({ lockup: lockupLinear, streamIds: linearStreamIds });
+        expectCallToCancelMultiple({ lockup_: lockupDynamic, streamIds: dynamicStreamIds });
+        expectCallToCancelMultiple({ lockup_: lockupLinear, streamIds: linearStreamIds });
 
         // Asset flow: Sablier → proxy → proxy owner
         // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.

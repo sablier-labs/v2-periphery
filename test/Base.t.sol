@@ -22,6 +22,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     ISablierV2AirstreamCampaign internal campaign;
     ISablierV2AirstreamCampaignFactory internal campaignFactory;
     Defaults internal defaults;
+    ISablierV2Lockup lockup;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
     IAllowanceTransfer internal permit2;
@@ -143,8 +144,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Expects a call to {ISablierV2Lockup.cancel}.
-    function expectCallToCancel(ISablierV2Lockup lockup, uint256 streamId) internal {
-        vm.expectCall({ callee: address(lockup), data: abi.encodeCall(ISablierV2Lockup.cancel, (streamId)) });
+    function expectCallToCancel(ISablierV2Lockup lockup_, uint256 streamId) internal {
+        vm.expectCall({ callee: address(lockup_), data: abi.encodeCall(ISablierV2Lockup.cancel, (streamId)) });
     }
 
     /// @dev Expect calls to {ISablierV2Lockup.cancel}, {IERC20.transfer}, and {IERC20.transferFrom}.
@@ -177,8 +178,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     }
 
     /// @dev Expects a call to {ISablierV2Lockup.cancelMultiple}.
-    function expectCallToCancelMultiple(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {
-        vm.expectCall({ callee: address(lockup), data: abi.encodeCall(ISablierV2Lockup.cancelMultiple, (streamIds)) });
+    function expectCallToCancelMultiple(ISablierV2Lockup lockup_, uint256[] memory streamIds) internal {
+        vm.expectCall({ callee: address(lockup_), data: abi.encodeCall(ISablierV2Lockup.cancelMultiple, (streamIds)) });
     }
 
     /// @dev Expects a call to {ISablierV2LockupDynamic.createWithDeltas}.
@@ -316,9 +317,12 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     //////////////////////////////////////////////////////////////////////////*/
 
     function claim() internal returns (uint256) {
-        return campaign.claim(
-            defaults.INDEX1(), users.recipient1.addr, defaults.CLAIMABLE_AMOUNT(), defaults.index1Proof()
-        );
+        return campaign.claim({
+            index: defaults.INDEX1(),
+            recipient: users.recipient1.addr,
+            amount: defaults.CLAIMABLE_AMOUNT(),
+            merkleProof: defaults.index1Proof()
+        });
     }
 
     function createAirstreamCampaignLD() internal returns (ISablierV2AirstreamCampaignLD) {
