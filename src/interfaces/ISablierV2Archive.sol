@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19;
 
-import { IAdminable } from "@sablier/v2-core/interfaces/IAdminable.sol";
+import { IAdminable } from "@sablier/v2-core/src/interfaces/IAdminable.sol";
 
 /// @title ISablierV2Archive
 /// @notice An on-chain contract registry that keeps a record of all Sablier V2 contracts, including old deployments.

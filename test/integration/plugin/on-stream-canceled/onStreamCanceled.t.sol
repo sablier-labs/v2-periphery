@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { ISablierV2LockupSender } from "@sablier/v2-core/interfaces/hooks/ISablierV2LockupSender.sol";
+import { ISablierV2LockupSender } from "@sablier/v2-core/src/interfaces/hooks/ISablierV2LockupSender.sol";
 
 import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { Errors } from "src/libraries/Errors.sol";

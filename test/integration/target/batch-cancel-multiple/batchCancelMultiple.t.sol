@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
+import { Lockup } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";

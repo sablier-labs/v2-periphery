@@ -1,8 +1,8 @@
 @openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
-@prb/proxy/=lib/prb-proxy/src/
+@prb/proxy/=lib/prb-proxy/
 @prb/proxy-test/=lib/prb-proxy/test/
 @prb/test/=lib/prb-test/src/
-@sablier/v2-core/=lib/v2-core/src/
+@sablier/v2-core/=lib/v2-core/
 @sablier/v2-core-script/=lib/v2-core/script/
 @sablier/v2-core-test/=lib/v2-core/test/
 @uniswap/permit2/=lib/permit2/src/

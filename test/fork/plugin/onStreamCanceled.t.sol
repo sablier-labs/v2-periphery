@@ -2,8 +2,8 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { ISablierV2LockupSender } from "@sablier/v2-core/interfaces/hooks/ISablierV2LockupSender.sol";
-import { LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+import { ISablierV2LockupSender } from "@sablier/v2-core/src/interfaces/hooks/ISablierV2LockupSender.sol";
+import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { PermitSignature } from "@uniswap/permit2-test/utils/PermitSignature.sol";
 
 import { Permit2Params } from "src/types/Permit2.sol";

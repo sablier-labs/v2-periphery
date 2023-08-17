@@ -4,12 +4,12 @@ pragma solidity >=0.8.19 <0.9.0;
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
-import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
-import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
-import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
-import { ISablierV2LockupLinear } from "@sablier/v2-core/interfaces/ISablierV2LockupLinear.sol";
-import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
+import { IPRBProxyRegistry } from "@prb/proxy/src/interfaces/IPRBProxyRegistry.sol";
+import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
+import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
+import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
+import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";

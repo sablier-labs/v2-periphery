@@ -2,9 +2,9 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
-import { ud2x18, UD60x18 } from "@sablier/v2-core/types/Math.sol";
-import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
+import { ud2x18, UD60x18 } from "@sablier/v2-core/src/types/Math.sol";
+import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 import { PermitSignature } from "@uniswap/permit2-test/utils/PermitSignature.sol";
 

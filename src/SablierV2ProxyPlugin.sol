@@ -3,10 +3,10 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
-import { IPRBProxyPlugin } from "@prb/proxy/interfaces/IPRBProxyPlugin.sol";
-import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.sol";
-import { ISablierV2LockupSender } from "@sablier/v2-core/interfaces/hooks/ISablierV2LockupSender.sol";
+import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
+import { IPRBProxyPlugin } from "@prb/proxy/src/interfaces/IPRBProxyPlugin.sol";
+import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
+import { ISablierV2LockupSender } from "@sablier/v2-core/src/interfaces/hooks/ISablierV2LockupSender.sol";
 
 import { OnlyDelegateCall } from "./abstracts/OnlyDelegateCall.sol";
 import { ISablierV2Archive } from "./interfaces/ISablierV2Archive.sol";

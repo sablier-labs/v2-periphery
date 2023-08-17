@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { LockupDynamic, LockupLinear } from "@sablier/v2-core/types/DataTypes.sol";
+import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 

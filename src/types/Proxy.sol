@@ -7,6 +7,6 @@ pragma solidity >=0.8.19;
 // This file re-exports all PRBProxy interfaces used in V2 Periphery. It is provided for convenience so
 // that users don't have to install PRBProxy separately.
 
-import { IPRBProxy } from "@prb/proxy/interfaces/IPRBProxy.sol";
-import { IPRBProxyPlugin } from "@prb/proxy/interfaces/IPRBProxyPlugin.sol";
-import { IPRBProxyRegistry } from "@prb/proxy/interfaces/IPRBProxyRegistry.sol";
+import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
+import { IPRBProxyPlugin } from "@prb/proxy/src/interfaces/IPRBProxyPlugin.sol";
+import { IPRBProxyRegistry } from "@prb/proxy/src/interfaces/IPRBProxyRegistry.sol";

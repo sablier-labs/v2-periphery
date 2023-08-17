@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { PRBTest } from "@prb/test/PRBTest.sol";
-import { Lockup } from "@sablier/v2-core/types/DataTypes.sol";
+import { Lockup } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 abstract contract Assertions is PRBTest {
     event LogArray(bytes4[] value);
