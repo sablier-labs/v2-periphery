@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
+
 import { ISablierV2AirstreamCampaign } from "src/interfaces/ISablierV2AirstreamCampaign.sol";
 import { ISablierV2AirstreamCampaignLD } from "src/interfaces/ISablierV2AirstreamCampaignLD.sol";
 
@@ -9,9 +11,28 @@ import { Integration_Test } from "../../../Integration.t.sol";
 contract CreateAirstreamCampaignLD_Integration_Test is Integration_Test {
     function test_CreateAirstreamCampaignLD_AlreadyExists() external {
         createAirstreamCampaignLD();
-        // TODO: Fix this test. // [FAIL. Reason: EvmError: Revert] / 0 bytes of code
-        // vm.expectRevert();
-        // createAirstreamCampaignLD();
+
+        bytes32 merkleRoot = defaults.merkleRoot();
+        bool cancelable = defaults.CANCELABLE();
+        uint40 expiration = defaults.EXPIRATION();
+        LockupDynamic.SegmentWithDelta[] memory segmentWithDelta = defaults.segmentsWithDeltas();
+        string memory ipfsCID = defaults.IPFS_CID();
+        uint256 campaignAmount = defaults.CAMPAIGN_TOTAL_AMOUNT();
+        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+
+        vm.expectRevert();
+        campaignFactory.createAirstreamCampaignLD(
+            users.admin.addr,
+            asset,
+            merkleRoot,
+            cancelable,
+            expiration,
+            lockupDynamic,
+            segmentWithDelta,
+            ipfsCID,
+            campaignAmount,
+            recipientsCount
+        );
     }
 
     function test_CreateAirstreamCampaignLD() external {

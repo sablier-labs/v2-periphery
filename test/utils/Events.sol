@@ -13,7 +13,7 @@ abstract contract Events {
     event CreateAirstreamCampaignLD(
         address indexed admin,
         IERC20 indexed asset,
-        ISablierV2AirstreamCampaignLD indexed airstreamCampaign,
+        ISablierV2AirstreamCampaignLD airstreamCampaign,
         string ipfsCID,
         uint256 campaignTotalAmount,
         uint256 recipientsCount
@@ -21,7 +21,7 @@ abstract contract Events {
     event CreateAirstreamCampaignLL(
         address indexed admin,
         IERC20 indexed asset,
-        ISablierV2AirstreamCampaignLL indexed airstreamCampaign,
+        ISablierV2AirstreamCampaignLL airstreamCampaign,
         string ipfsCID,
         uint256 campaignTotalAmount,
         uint256 recipientsCount

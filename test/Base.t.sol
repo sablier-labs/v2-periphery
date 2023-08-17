@@ -326,26 +326,23 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     }
 
     function createAirstreamCampaignLD() internal returns (ISablierV2AirstreamCampaignLD) {
-        return campaignFactory.createAirstreamCampaignLD(
-            users.admin.addr,
-            asset,
-            defaults.merkleRoot(),
-            defaults.CANCELABLE(),
-            defaults.EXPIRATION(),
-            lockupDynamic,
-            defaults.segmentsWithDeltas(),
-            defaults.IPFS_CID(),
-            defaults.CAMPAIGN_TOTAL_AMOUNT(),
-            defaults.RECIPIENTS_COUNT()
-        );
+        return campaignFactory.createAirstreamCampaignLD({
+            initialAdmin: users.admin.addr,
+            asset: asset,
+            merkleRoot: defaults.merkleRoot(),
+            cancelable: defaults.CANCELABLE(),
+            expiration: defaults.EXPIRATION(),
+            lockupDynamic: lockupDynamic,
+            segments: defaults.segmentsWithDeltas(),
+            ipfsCID: defaults.IPFS_CID(),
+            campaignTotalAmount: defaults.CAMPAIGN_TOTAL_AMOUNT(),
+            recipientsCount: defaults.RECIPIENTS_COUNT()
+        });
     }
 
     function computeCampaignLDAddress() internal returns (address) {
-        bytes32 salt = keccak256(
-            abi.encodePacked(
-                users.admin.addr, asset, defaults.merkleRoot(), defaults.CANCELABLE(), defaults.EXPIRATION()
-            )
-        );
+        bytes32 salt =
+            keccak256(abi.encodePacked(users.admin.addr, asset, defaults.merkleRoot(), defaults.EXPIRATION()));
         bytes32 creationBytecodeHash = keccak256(getCampaignLDBytecode());
         return computeCreate2Address({
             salt: salt,
@@ -375,28 +372,24 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     }
 
     function createAirstreamCampaignLL() internal returns (ISablierV2AirstreamCampaignLL) {
-        return campaignFactory.createAirstreamCampaignLL(
-            users.admin.addr,
-            asset,
-            defaults.merkleRoot(),
-            defaults.CANCELABLE(),
-            defaults.EXPIRATION(),
-            lockupLinear,
-            defaults.durations(),
-            defaults.IPFS_CID(),
-            defaults.CAMPAIGN_TOTAL_AMOUNT(),
-            defaults.RECIPIENTS_COUNT()
-        );
+        return campaignFactory.createAirstreamCampaignLL({
+            initialAdmin: users.admin.addr,
+            asset: asset,
+            merkleRoot: defaults.merkleRoot(),
+            cancelable: defaults.CANCELABLE(),
+            expiration: defaults.EXPIRATION(),
+            lockupLinear: lockupLinear,
+            durations: defaults.durations(),
+            ipfsCID: defaults.IPFS_CID(),
+            campaignTotalAmount: defaults.CAMPAIGN_TOTAL_AMOUNT(),
+            recipientsCount: defaults.RECIPIENTS_COUNT()
+        });
     }
 
     function computeCampaignLLAddress() internal returns (address) {
-        bytes32 salt = keccak256(
-            abi.encodePacked(
-                users.admin.addr, asset, defaults.merkleRoot(), defaults.CANCELABLE(), defaults.EXPIRATION()
-            )
-        );
+        bytes32 salt =
+            keccak256(abi.encodePacked(users.admin.addr, asset, defaults.merkleRoot(), defaults.EXPIRATION()));
         bytes32 creationBytecodeHash = keccak256(getCampaignLLBytecode());
-        // Use the Create2 utility from Forge Std.
         return computeCreate2Address({
             salt: salt,
             initcodeHash: creationBytecodeHash,
