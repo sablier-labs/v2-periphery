@@ -3,9 +3,9 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { ISablierV2LockupDynamic } from "@sablier/v2-core/interfaces/ISablierV2LockupDynamic.sol";
-import { Broker, LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
-import { UD60x18 } from "@sablier/v2-core/types/Math.sol";
+import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
+import { Broker, LockupDynamic } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { UD60x18 } from "@sablier/v2-core/src/types/Math.sol";
 
 import { SablierV2AirstreamCampaign } from "./abstracts/SablierV2AirstreamCampaign.sol";
 import { ISablierV2AirstreamCampaignLD } from "./interfaces/ISablierV2AirstreamCampaignLD.sol";

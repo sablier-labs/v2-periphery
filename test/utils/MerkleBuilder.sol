@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19;
 
-import { msb } from "@prb/math/Common.sol";
+import { msb } from "@prb/math/src/Common.sol";
 
 library MerkleBuilder {
     /// @dev Function that hashes together the data needed for a Merkle tree leaf.

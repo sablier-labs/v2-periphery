@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { IAdminable } from "@sablier/v2-core/interfaces/IAdminable.sol";
+import { IAdminable } from "@sablier/v2-core/src/interfaces/IAdminable.sol";
 
 /// @notice Airstream is a portmanteau of "airdrop" and "stream". It refers to an airdrop model where the tokens
 /// are distributed over time, as opposed to all at once.

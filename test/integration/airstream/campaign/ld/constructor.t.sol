@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { LockupDynamic } from "@sablier/v2-core/types/DataTypes.sol";
+import { LockupDynamic } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { SablierV2AirstreamCampaignLD } from "src/SablierV2AirstreamCampaignLD.sol";
 
