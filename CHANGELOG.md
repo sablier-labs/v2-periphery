@@ -13,9 +13,9 @@ The format is based on [Common Changelog](https://common-changelog.org).
 
 ### Changed
 
+- Bump `@sablier/v2-core` to v1.0.2 ([#164](https://github.com/sablier-labs/v2-periphery/pull/164))
 - Update `@prb/proxy` and `@sablier/v2-core` import paths to use `src`
   ([#164](https://github.com/sablier-labs/v2-periphery/pull/164))
-- Bump `@sablier/v2-core` to v1.0.2 ([#164](https://github.com/sablier-labs/v2-periphery/pull/164))
 
 ## [1.0.2] - 2023-07-13
 
