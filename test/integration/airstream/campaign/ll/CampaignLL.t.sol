@@ -5,11 +5,11 @@ import { ISablierV2Lockup } from "@sablier/v2-core/interfaces/ISablierV2Lockup.s
 
 import { ISablierV2AirstreamCampaign } from "src/interfaces/ISablierV2AirstreamCampaign.sol";
 
-import { Integration_Test } from "../../Integration.t.sol";
+import { Integration_Test } from "../../../Integration.t.sol";
 
-import { Claim_Integration_Test } from "./shared/claim/claim.t.sol";
-import { Clawback_Integration_Test } from "./shared/clawback/clawback.t.sol";
-import { HasClaimed_Integration_Test } from "./shared/has-claimed/hasClaimed.t.sol";
+import { Claim_Integration_Test } from "../shared/claim/claim.t.sol";
+import { Clawback_Integration_Test } from "../shared/clawback/clawback.t.sol";
+import { HasClaimed_Integration_Test } from "../shared/has-claimed/hasClaimed.t.sol";
 
 abstract contract CampaignLL_Integration_Test is Integration_Test {
     function setUp() public virtual override {
