@@ -7,9 +7,9 @@ import { ISablierV2AirstreamCampaign } from "src/interfaces/ISablierV2AirstreamC
 
 import { Integration_Test } from "../../../Integration.t.sol";
 
-import { Claim_Integration_Test } from "../shared/claim/claim.t.sol";
-import { Clawback_Integration_Test } from "../shared/clawback/clawback.t.sol";
-import { HasClaimed_Integration_Test } from "../shared/has-claimed/hasClaimed.t.sol";
+import { Claim_Integration_Test } from "../claim/claim.t.sol";
+import { Clawback_Integration_Test } from "../clawback/clawback.t.sol";
+import { HasClaimed_Integration_Test } from "../has-claimed/hasClaimed.t.sol";
 
 abstract contract CampaignLL_Integration_Test is Integration_Test {
     function setUp() public virtual override {

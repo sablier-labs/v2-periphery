@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { Integration_Test } from "../../../../Integration.t.sol";
+import { Integration_Test } from "../../../Integration.t.sol";
 
 abstract contract HasClaimed_Integration_Test is Integration_Test {
     function setUp() public virtual override { }
