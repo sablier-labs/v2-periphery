@@ -8,6 +8,26 @@ import { SablierV2AirstreamCampaignLD } from "src/SablierV2AirstreamCampaignLD.s
 import { CampaignLD_Integration_Test } from "./campaignLD.t.sol";
 
 contract Constructor_CampaignLD_Integration_Test is CampaignLD_Integration_Test {
+    /// @dev Needed to prevent "Stack too deep" error
+    struct Vars {
+        address actualAdmin;
+        address expectedAdmin;
+        address actualAsset;
+        address expectedAsset;
+        bytes32 actualMerkleRoot;
+        bytes32 expectedMerkleRoot;
+        bool actualCancelable;
+        bool expectedCancelable;
+        uint40 actualExpiration;
+        uint40 expectedExpiration;
+        address actualLockupDynamic;
+        address expectedLockupDynamic;
+        LockupDynamic.SegmentWithDelta[] actualSegments;
+        LockupDynamic.SegmentWithDelta[] expectedSegments;
+        uint256 actualAllowance;
+        uint256 expectedAllowance;
+    }
+
     function test_Constructor() external {
         SablierV2AirstreamCampaignLD constructedCampaignLD = new SablierV2AirstreamCampaignLD(
             users.admin.addr,
@@ -19,32 +39,38 @@ contract Constructor_CampaignLD_Integration_Test is CampaignLD_Integration_Test 
             defaults.segmentsWithDeltas()
         );
 
-        address actualAdmin = constructedCampaignLD.admin();
-        address expectedAdmin = users.admin.addr;
-        assertEq(actualAdmin, expectedAdmin, "admin");
+        Vars memory vars;
 
-        address actualAsset = address(constructedCampaignLD.asset());
-        address expectedAsset = address(asset);
-        assertEq(actualAsset, expectedAsset, "asset");
+        vars.actualAdmin = constructedCampaignLD.admin();
+        vars.expectedAdmin = users.admin.addr;
+        assertEq(vars.actualAdmin, vars.expectedAdmin, "admin");
 
-        bytes32 actualMerkleRoot = constructedCampaignLD.merkleRoot();
-        bytes32 expectedMerkleRoot = defaults.merkleRoot();
-        assertEq(actualMerkleRoot, expectedMerkleRoot, "merkleRoot");
+        vars.actualAsset = address(constructedCampaignLD.asset());
+        vars.expectedAsset = address(asset);
+        assertEq(vars.actualAsset, vars.expectedAsset, "asset");
 
-        bool actualCancelable = constructedCampaignLD.cancelable();
-        bool expectedCancelable = defaults.CANCELABLE();
-        assertEq(actualCancelable, expectedCancelable, "cancelable");
+        vars.actualMerkleRoot = constructedCampaignLD.merkleRoot();
+        vars.expectedMerkleRoot = defaults.merkleRoot();
+        assertEq(vars.actualMerkleRoot, vars.expectedMerkleRoot, "merkleRoot");
 
-        uint40 actualExpiration = constructedCampaignLD.expiration();
-        uint40 expectedExpiration = defaults.EXPIRATION();
-        assertEq(actualExpiration, expectedExpiration, "expiration");
+        vars.actualCancelable = constructedCampaignLD.cancelable();
+        vars.expectedCancelable = defaults.CANCELABLE();
+        assertEq(vars.actualCancelable, vars.expectedCancelable, "cancelable");
 
-        address actualLockupDynamic = address(constructedCampaignLD.lockupDynamic());
-        address expectedLockupDynamic = address(lockupDynamic);
-        assertEq(actualLockupDynamic, expectedLockupDynamic, "lockupDynamic");
+        vars.actualExpiration = constructedCampaignLD.expiration();
+        vars.expectedExpiration = defaults.EXPIRATION();
+        assertEq(vars.actualExpiration, vars.expectedExpiration, "expiration");
 
-        LockupDynamic.SegmentWithDelta[] memory actualSegments = constructedCampaignLD.getSegments();
-        LockupDynamic.SegmentWithDelta[] memory expectedSegments = defaults.segmentsWithDeltas();
-        assertEq(actualSegments, expectedSegments, "segments");
+        vars.actualLockupDynamic = address(constructedCampaignLD.lockupDynamic());
+        vars.expectedLockupDynamic = address(lockupDynamic);
+        assertEq(vars.actualLockupDynamic, vars.expectedLockupDynamic, "lockupDynamic");
+
+        vars.actualSegments = constructedCampaignLD.getSegments();
+        vars.expectedSegments = defaults.segmentsWithDeltas();
+        assertEq(vars.actualSegments, vars.expectedSegments, "segments");
+
+        vars.actualAllowance = asset.allowance(address(constructedCampaignLD), address(lockupDynamic));
+        vars.expectedAllowance = MAX_UINT256;
+        assertEq(vars.actualAllowance, vars.expectedAllowance, "allowance");
     }
 }

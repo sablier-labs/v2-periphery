@@ -8,6 +8,27 @@ import { SablierV2AirstreamCampaignLL } from "src/SablierV2AirstreamCampaignLL.s
 import { CampaignLL_Integration_Test } from "./campaignLL.t.sol";
 
 contract Constructor_CampaignLL_Integration_Test is CampaignLL_Integration_Test {
+    /// @dev Needed to prevent "Stack too deep" error
+    struct Vars {
+        address actualAdmin;
+        address expectedAdmin;
+        address actualAsset;
+        address expectedAsset;
+        bytes32 actualMerkleRoot;
+        bytes32 expectedMerkleRoot;
+        bool actualCancelable;
+        bool expectedCancelable;
+        uint40 actualExpiration;
+        uint40 expectedExpiration;
+        address actualLockupLinear;
+        address expectedLockupLinear;
+        uint40 actualDurationsCliff;
+        uint40 actualDurationsTotal;
+        LockupLinear.Durations expectedDurations;
+        uint256 actualAllowance;
+        uint256 expectedAllowance;
+    }
+
     function test_Constructor() external {
         SablierV2AirstreamCampaignLL constructedCampaignLL = new SablierV2AirstreamCampaignLL(
             users.admin.addr,
@@ -19,33 +40,39 @@ contract Constructor_CampaignLL_Integration_Test is CampaignLL_Integration_Test 
             defaults.durations()
         );
 
-        address actualAdmin = constructedCampaignLL.admin();
-        address expectedAdmin = users.admin.addr;
-        assertEq(actualAdmin, expectedAdmin, "admin");
+        Vars memory vars;
 
-        address actualAsset = address(constructedCampaignLL.asset());
-        address expectedAsset = address(asset);
-        assertEq(actualAsset, expectedAsset, "asset");
+        vars.actualAdmin = constructedCampaignLL.admin();
+        vars.expectedAdmin = users.admin.addr;
+        assertEq(vars.actualAdmin, vars.expectedAdmin, "admin");
 
-        bytes32 actualMerkleRoot = constructedCampaignLL.merkleRoot();
-        bytes32 expectedMerkleRoot = defaults.merkleRoot();
-        assertEq(actualMerkleRoot, expectedMerkleRoot, "merkleRoot");
+        vars.actualAsset = address(constructedCampaignLL.asset());
+        vars.expectedAsset = address(asset);
+        assertEq(vars.actualAsset, vars.expectedAsset, "asset");
 
-        bool actualCancelable = constructedCampaignLL.cancelable();
-        bool expectedCancelable = defaults.CANCELABLE();
-        assertEq(actualCancelable, expectedCancelable, "cancelable");
+        vars.actualMerkleRoot = constructedCampaignLL.merkleRoot();
+        vars.expectedMerkleRoot = defaults.merkleRoot();
+        assertEq(vars.actualMerkleRoot, vars.expectedMerkleRoot, "merkleRoot");
 
-        uint40 actualExpiration = constructedCampaignLL.expiration();
-        uint40 expectedExpiration = defaults.EXPIRATION();
-        assertEq(actualExpiration, expectedExpiration, "expiration");
+        vars.actualCancelable = constructedCampaignLL.cancelable();
+        vars.expectedCancelable = defaults.CANCELABLE();
+        assertEq(vars.actualCancelable, vars.expectedCancelable, "cancelable");
 
-        address actualLockupLinear = address(constructedCampaignLL.lockupLinear());
-        address expectedLockupLinear = address(lockupLinear);
-        assertEq(actualLockupLinear, expectedLockupLinear, "lockupLinear");
+        vars.actualExpiration = constructedCampaignLL.expiration();
+        vars.expectedExpiration = defaults.EXPIRATION();
+        assertEq(vars.actualExpiration, vars.expectedExpiration, "expiration");
 
-        (uint40 actualDurationsCliff, uint40 actualDurationsTotal) = constructedCampaignLL.durations();
-        LockupLinear.Durations memory expectedDurations = defaults.durations();
-        assertEq(actualDurationsCliff, expectedDurations.cliff, "cliff");
-        assertEq(actualDurationsTotal, expectedDurations.total, "total");
+        vars.actualLockupLinear = address(constructedCampaignLL.lockupLinear());
+        vars.expectedLockupLinear = address(lockupLinear);
+        assertEq(vars.actualLockupLinear, vars.expectedLockupLinear, "lockupLinear");
+
+        (vars.actualDurationsCliff, vars.actualDurationsTotal) = constructedCampaignLL.durations();
+        vars.expectedDurations = defaults.durations();
+        assertEq(vars.actualDurationsCliff, vars.expectedDurations.cliff, "cliff");
+        assertEq(vars.actualDurationsTotal, vars.expectedDurations.total, "total");
+
+        vars.actualAllowance = asset.allowance(address(constructedCampaignLL), address(lockupLinear));
+        vars.expectedAllowance = MAX_UINT256;
+        assertEq(vars.actualAllowance, vars.expectedAllowance, "allowance");
     }
 }
