@@ -14,10 +14,8 @@ import { HasClaimed_Integration_Test } from "../has-claimed/hasClaimed.t.sol";
 abstract contract CampaignLL_Integration_Test is Integration_Test {
     function setUp() public virtual override {
         Integration_Test.setUp();
-        campaign = ISablierV2AirstreamCampaign(createAirstreamCampaignLL());
+        campaign = ISablierV2AirstreamCampaign(campaignLL);
         lockup = ISablierV2Lockup(lockupLinear);
-        deal({ token: address(asset), to: address(campaign), give: defaults.CAMPAIGN_TOTAL_AMOUNT() });
-        vm.label(address(campaign), "campaignLL");
     }
 }
 

@@ -31,6 +31,14 @@ abstract contract Integration_Test is Base_Test {
         // Deploy V2 Periphery.
         deployPeripheryConditionally();
 
+        // Create the airstream campaign.
+        createAirstreamCampaignLD();
+        createAirstreamCampaignLL();
+
+        // Fund the campaigns.
+        deal({ token: address(asset), to: address(campaignLD), give: defaults.CAMPAIGN_TOTAL_AMOUNT() });
+        deal({ token: address(asset), to: address(campaignLL), give: defaults.CAMPAIGN_TOTAL_AMOUNT() });
+
         // Label the contracts.
         labelContracts();
 

@@ -9,9 +9,11 @@ import { ISablierV2AirstreamCampaignLD } from "src/interfaces/ISablierV2Airstrea
 import { Integration_Test } from "../../../Integration.t.sol";
 
 contract CreateAirstreamCampaignLD_Integration_Test is Integration_Test {
-    function test_CreateAirstreamCampaignLD_AlreadyExists() external {
-        createAirstreamCampaignLD();
+    function setUp() public override {
+        Integration_Test.setUp();
+    }
 
+    function test_CreateAirstreamCampaignLD_AlreadyExists() external {
         bytes32 merkleRoot = defaults.merkleRoot();
         bool cancelable = defaults.CANCELABLE();
         uint40 expiration = defaults.EXPIRATION();
@@ -35,24 +37,25 @@ contract CreateAirstreamCampaignLD_Integration_Test is Integration_Test {
         );
     }
 
-    function test_CreateAirstreamCampaignLD() external {
-        address computedCampaign = computeCampaignLDAddress();
+    function test_CreateAirstreamCampaignLD(address admin) external {
+        vm.assume(admin != users.admin.addr);
+        address computedCampaignLD = computeCampaignLDAddress(admin);
 
         vm.expectEmit({ emitter: address(campaignFactory) });
         emit CreateAirstreamCampaignLD(
-            users.admin.addr,
+            admin,
             asset,
-            ISablierV2AirstreamCampaignLD(computedCampaign),
+            ISablierV2AirstreamCampaignLD(computedCampaignLD),
             defaults.IPFS_CID(),
             defaults.CAMPAIGN_TOTAL_AMOUNT(),
             defaults.RECIPIENTS_COUNT()
         );
-        address actualCampaignLD = address(createAirstreamCampaignLD());
+        address actualCampaignLD = address(createAirstreamCampaignLD(admin));
 
-        ISablierV2AirstreamCampaign[] memory expectedCampaign = campaignFactory.getAirstreamCampaigns(users.admin.addr);
+        ISablierV2AirstreamCampaign[] memory expectedCampaign = campaignFactory.getAirstreamCampaigns(admin);
 
         assertTrue(actualCampaignLD.code.length > 0, "campaignLD was not created");
-        assertEq(actualCampaignLD, computedCampaign, "campaignLD address does not match computed address");
+        assertEq(actualCampaignLD, computedCampaignLD, "campaignLD address does not match computed address");
         assertEq(actualCampaignLD, address(expectedCampaign[0]), "campaignLD was not stored in the campaigns mapping");
     }
 }

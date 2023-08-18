@@ -20,6 +20,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     IPRBProxy internal aliceProxy;
     IERC20 internal asset;
     ISablierV2AirstreamCampaign internal campaign;
+    ISablierV2AirstreamCampaignLD internal campaignLD;
+    ISablierV2AirstreamCampaignLL internal campaignLL;
     ISablierV2AirstreamCampaignFactory internal campaignFactory;
     Defaults internal defaults;
     ISablierV2Lockup lockup;
@@ -129,6 +131,9 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         vm.label({ account: address(aliceProxy), newLabel: "Alice's Proxy" });
         vm.label({ account: address(archive), newLabel: "Archive" });
         vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
+        vm.label({ account: address(campaignFactory), newLabel: "CampaignFactory" });
+        vm.label({ account: address(campaignLD), newLabel: "Campaign LD" });
+        vm.label({ account: address(campaignLL), newLabel: "Campaign LL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
@@ -325,9 +330,13 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         });
     }
 
-    function createAirstreamCampaignLD() internal returns (ISablierV2AirstreamCampaignLD) {
+    function createAirstreamCampaignLD() internal {
+        campaignLD = createAirstreamCampaignLD(users.admin.addr);
+    }
+
+    function createAirstreamCampaignLD(address admin) internal returns (ISablierV2AirstreamCampaignLD) {
         return campaignFactory.createAirstreamCampaignLD({
-            initialAdmin: users.admin.addr,
+            initialAdmin: admin,
             asset: asset,
             merkleRoot: defaults.merkleRoot(),
             cancelable: defaults.CANCELABLE(),
@@ -341,9 +350,12 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     }
 
     function computeCampaignLDAddress() internal returns (address) {
-        bytes32 salt =
-            keccak256(abi.encodePacked(users.admin.addr, asset, defaults.merkleRoot(), defaults.EXPIRATION()));
-        bytes32 creationBytecodeHash = keccak256(getCampaignLDBytecode());
+        return computeCampaignLDAddress(users.admin.addr);
+    }
+
+    function computeCampaignLDAddress(address admin) internal returns (address) {
+        bytes32 salt = keccak256(abi.encodePacked(admin, asset, defaults.merkleRoot(), defaults.EXPIRATION()));
+        bytes32 creationBytecodeHash = keccak256(getCampaignLDBytecode(admin));
         return computeCreate2Address({
             salt: salt,
             initcodeHash: creationBytecodeHash,
@@ -351,9 +363,9 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         });
     }
 
-    function getCampaignLDBytecode() internal returns (bytes memory) {
+    function getCampaignLDBytecode(address admin) internal returns (bytes memory) {
         bytes memory constructorArgs = abi.encode(
-            users.admin.addr,
+            admin,
             asset,
             defaults.merkleRoot(),
             defaults.CANCELABLE(),
@@ -371,9 +383,13 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         }
     }
 
-    function createAirstreamCampaignLL() internal returns (ISablierV2AirstreamCampaignLL) {
+    function createAirstreamCampaignLL() internal {
+        campaignLL = createAirstreamCampaignLL(users.admin.addr);
+    }
+
+    function createAirstreamCampaignLL(address admin) internal returns (ISablierV2AirstreamCampaignLL) {
         return campaignFactory.createAirstreamCampaignLL({
-            initialAdmin: users.admin.addr,
+            initialAdmin: admin,
             asset: asset,
             merkleRoot: defaults.merkleRoot(),
             cancelable: defaults.CANCELABLE(),
@@ -387,9 +403,12 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     }
 
     function computeCampaignLLAddress() internal returns (address) {
-        bytes32 salt =
-            keccak256(abi.encodePacked(users.admin.addr, asset, defaults.merkleRoot(), defaults.EXPIRATION()));
-        bytes32 creationBytecodeHash = keccak256(getCampaignLLBytecode());
+        return computeCampaignLLAddress(users.admin.addr);
+    }
+
+    function computeCampaignLLAddress(address admin) internal returns (address) {
+        bytes32 salt = keccak256(abi.encodePacked(admin, asset, defaults.merkleRoot(), defaults.EXPIRATION()));
+        bytes32 creationBytecodeHash = keccak256(getCampaignLLBytecode(admin));
         return computeCreate2Address({
             salt: salt,
             initcodeHash: creationBytecodeHash,
@@ -397,9 +416,9 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         });
     }
 
-    function getCampaignLLBytecode() internal returns (bytes memory) {
+    function getCampaignLLBytecode(address admin) internal returns (bytes memory) {
         bytes memory constructorArgs = abi.encode(
-            users.admin.addr,
+            admin,
             asset,
             defaults.merkleRoot(),
             defaults.CANCELABLE(),
