@@ -13,6 +13,7 @@ import { Permit2Params } from "src/types/Permit2.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";
+import { MerkleBuilder } from "./MerkleBuilder.sol";
 import { Users } from "./Types.sol";
 
 /// @notice Contract with default values for testing.
@@ -37,40 +38,55 @@ contract Defaults is PermitSignature {
     uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
-                                 PERMIT2 CONSTANTS
+                                 AIRSTREAM CAMPAIGN
+    //////////////////////////////////////////////////////////////////////////*/
+
+    uint256 public constant LEAVES_COUNT = 4;
+    uint256 public constant CAMPAIGN_TOTAL_AMOUNT = CLAIMABLE_AMOUNT * LEAVES_COUNT;
+    bool public constant CANCELABLE = false;
+    uint128 public constant CLAIMABLE_AMOUNT = 10_000e18;
+    uint40 public immutable EXPIRATION;
+    uint256 public constant INDEX1 = 1;
+    uint256 public constant INDEX2 = 2;
+    uint256 public constant INDEX3 = 3;
+    uint256 public constant INDEX4 = 4;
+    string public IPFS_CID = "This is IPFS CID";
+    uint256 public constant RECIPIENTS_COUNT = 4;
+
+    function index1Proof() public view returns (bytes32[] memory) {
+        return MerkleBuilder.computeProof(leaves(), 0);
+    }
+
+    function index2Proof() public view returns (bytes32[] memory) {
+        return MerkleBuilder.computeProof(leaves(), 1);
+    }
+
+    function index3Proof() public view returns (bytes32[] memory) {
+        return MerkleBuilder.computeProof(leaves(), 2);
+    }
+
+    function index4Proof() public view returns (bytes32[] memory) {
+        return MerkleBuilder.computeProof(leaves(), 3);
+    }
+
+    function leaves() public view returns (bytes32[] memory leaves_) {
+        leaves_ = new bytes32[](LEAVES_COUNT);
+        leaves_[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIMABLE_AMOUNT);
+        leaves_[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIMABLE_AMOUNT);
+        leaves_[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIMABLE_AMOUNT);
+        leaves_[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIMABLE_AMOUNT);
+    }
+
+    function merkleRoot() public view returns (bytes32) {
+        return MerkleBuilder.computeRoot(leaves());
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                      PERMIT2
     //////////////////////////////////////////////////////////////////////////*/
 
     uint48 public constant PERMIT2_EXPIRATION = type(uint48).max;
     uint256 public constant PERMIT2_SIG_DEADLINE = type(uint48).max;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                     VARIABLES
-    //////////////////////////////////////////////////////////////////////////*/
-
-    IERC20 private asset;
-    IPRBProxy private proxy;
-    IAllowanceTransfer private permit2;
-    Users private users;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                    CONSTRUCTOR
-    //////////////////////////////////////////////////////////////////////////*/
-
-    constructor(Users memory users_, IERC20 asset_, IAllowanceTransfer permit2_, IPRBProxy proxy_) {
-        users = users_;
-        asset = asset_;
-        permit2 = permit2_;
-        proxy = proxy_;
-
-        // Initialize the immutables.
-        START_TIME = uint40(block.timestamp) + 100 seconds;
-        CLIFF_TIME = START_TIME + CLIFF_DURATION;
-        END_TIME = START_TIME + TOTAL_DURATION;
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                       PARAMS
-    //////////////////////////////////////////////////////////////////////////*/
 
     function permit2Params(uint160 amount) public view returns (bytes memory) {
         return permit2Params(users.alice.addr, address(proxy), amount, users.alice.key);
@@ -109,6 +125,32 @@ contract Defaults is PermitSignature {
     }
 
     /*//////////////////////////////////////////////////////////////////////////
+                                     VARIABLES
+    //////////////////////////////////////////////////////////////////////////*/
+
+    IERC20 private asset;
+    IPRBProxy private proxy;
+    IAllowanceTransfer private permit2;
+    Users private users;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    constructor(Users memory users_, IERC20 asset_, IAllowanceTransfer permit2_, IPRBProxy proxy_) {
+        users = users_;
+        asset = asset_;
+        permit2 = permit2_;
+        proxy = proxy_;
+
+        // Initialize the immutables.
+        START_TIME = uint40(block.timestamp) + 100 seconds;
+        CLIFF_TIME = START_TIME + CLIFF_DURATION;
+        END_TIME = START_TIME + TOTAL_DURATION;
+        EXPIRATION = uint40(block.timestamp) + 12 weeks;
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -139,7 +181,7 @@ contract Defaults is PermitSignature {
             broker: broker(),
             cancelable: true,
             recipient: users.recipient.addr,
-            segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
+            segments: segmentsWithDeltas(),
             sender: address(proxy),
             totalAmount: PER_STREAM_AMOUNT
         });
@@ -182,11 +224,16 @@ contract Defaults is PermitSignature {
     }
 
     /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
+    function segmentsWithDeltas() public pure returns (LockupDynamic.SegmentWithDelta[] memory) {
+        return segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 });
+    }
+
+    /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
     function segmentsWithDeltas(
         uint128 amount0,
         uint128 amount1
     )
-        private
+        public
         pure
         returns (LockupDynamic.SegmentWithDelta[] memory segments_)
     {
@@ -233,7 +280,7 @@ contract Defaults is PermitSignature {
         });
     }
 
-    function durations() private pure returns (LockupLinear.Durations memory) {
+    function durations() public pure returns (LockupLinear.Durations memory) {
         return LockupLinear.Durations({ cliff: CLIFF_DURATION, total: TOTAL_DURATION });
     }
 

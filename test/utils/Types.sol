@@ -9,4 +9,8 @@ struct Users {
     StdCheats.Account broker;
     StdCheats.Account eve;
     StdCheats.Account recipient;
+    StdCheats.Account recipient1;
+    StdCheats.Account recipient2;
+    StdCheats.Account recipient3;
+    StdCheats.Account recipient4;
 }

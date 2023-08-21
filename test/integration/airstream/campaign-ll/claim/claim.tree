@@ -1,0 +1,22 @@
+claim.t.sol
+├── when the campaign has expired
+│  └── it should revert
+└── when the campaign has not expired
+   ├── when the recipient has already claimed
+   │  └── it should revert
+   └── when the recipient has not claimed
+      ├── when the index is not valid
+      │  └── it should revert
+      └── when the index is valid
+         ├── when the recipient address is not valid
+         │  └── it should revert
+         └── when the recipient address is valid
+            ├── when the amount is not valid
+            │  └── it should revert
+            └── when the recipient address is valid
+               ├── when the merkle proof is not valid
+               │  └── it should revert
+               └── when the merkle proof is valid
+                  ├── it should mark the index as claimed
+                  ├── it should create a lockup linear airstream
+                  └── it should emit a {Claim} event
