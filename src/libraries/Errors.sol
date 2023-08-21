@@ -12,6 +12,22 @@ library Errors {
     error CallNotDelegateCall();
 
     /*//////////////////////////////////////////////////////////////////////////
+                                SABLIER-V2-AIRSTREAM
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Thrown when trying to claim multiple times.
+    error SablierV2AirstreamCampaign_AlreadyClaimed(uint256 index);
+
+    /// @notice Thrown when trying to clawback when airstream campaign has expired.
+    error SablierV2AirstreamCampaign_CampaignExpired(uint256 currentTime, uint40 expiration);
+
+    /// @notice Thrown when trying to claim when airstream campaign has not expired.
+    error SablierV2AirstreamCampaign_CampaignNotExpired(uint256 currentTime, uint40 expiration);
+
+    /// @notice Thrown when trying to claim with invalid Merkle proof.
+    error SablierV2AirstreamCampaign_InvalidProof();
+
+    /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-PROXY-PLUGIN
     //////////////////////////////////////////////////////////////////////////*/
 
