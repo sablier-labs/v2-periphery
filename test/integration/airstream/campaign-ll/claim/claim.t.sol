@@ -132,7 +132,7 @@ contract Claim_Integration_Test is Integration_Test {
         });
 
         assertTrue(campaignLL.hasClaimed(defaults.INDEX1()));
-        assertEq(expectedAirstreamId, actualAirstreamId);
+        assertEq(actualAirstreamId, expectedAirstreamId);
         assertEq(actualStream, expectedStream);
     }
 }
