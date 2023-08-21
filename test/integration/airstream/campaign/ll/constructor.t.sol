@@ -66,7 +66,7 @@ contract Constructor_CampaignLL_Integration_Test is CampaignLL_Integration_Test 
         vars.expectedLockupLinear = address(lockupLinear);
         assertEq(vars.actualLockupLinear, vars.expectedLockupLinear, "lockupLinear");
 
-        (vars.actualDurationsCliff, vars.actualDurationsTotal) = constructedCampaignLL.durations();
+        (vars.actualDurationsCliff, vars.actualDurationsTotal) = constructedCampaignLL.airstreamDurations();
         vars.expectedDurations = defaults.durations();
         assertEq(vars.actualDurationsCliff, vars.expectedDurations.cliff, "cliff");
         assertEq(vars.actualDurationsTotal, vars.expectedDurations.total, "total");

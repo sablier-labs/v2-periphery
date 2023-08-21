@@ -22,7 +22,7 @@ contract SablierV2AirstreamCampaignLL is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2AirstreamCampaignLL
-    LockupLinear.Durations public override durations;
+    LockupLinear.Durations public override airstreamDurations;
 
     /// @inheritdoc ISablierV2AirstreamCampaignLL
     ISablierV2LockupLinear public immutable override lockupLinear;
@@ -39,12 +39,12 @@ contract SablierV2AirstreamCampaignLL is
         bool cancelable_,
         uint40 expiration_,
         ISablierV2LockupLinear lockupLinear_,
-        LockupLinear.Durations memory durations_
+        LockupLinear.Durations memory airstreamDurations_
     )
         SablierV2AirstreamCampaign(initialAdmin, asset_, merkleRoot_, cancelable_, expiration_)
     {
         lockupLinear = lockupLinear_;
-        durations = durations_;
+        airstreamDurations = airstreamDurations_;
 
         // Approve the Sablier contract to spend funds from the airstream campaign.
         asset.forceApprove(address(lockupLinear), type(uint256).max);
@@ -61,7 +61,7 @@ contract SablierV2AirstreamCampaignLL is
                 asset: asset,
                 broker: Broker({ account: address(0), fee: UD60x18.wrap(0) }),
                 cancelable: cancelable,
-                durations: durations,
+                durations: airstreamDurations,
                 recipient: recipient,
                 sender: admin,
                 totalAmount: amount
