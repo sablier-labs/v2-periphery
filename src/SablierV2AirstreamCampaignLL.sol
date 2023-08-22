@@ -81,7 +81,7 @@ contract SablierV2AirstreamCampaignLL is
         // Hash the function arguments.
         bytes32 leaf = keccak256(abi.encodePacked(index, recipient, amount));
 
-        // Checks: the input claim belongs to the unique merkle root.
+        // Checks: the input claim is included in the merkle tree.
         if (!MerkleProof.verify(merkleProof, merkleRoot, leaf)) {
             revert Errors.SablierV2AirstreamCampaign_InvalidProof();
         }

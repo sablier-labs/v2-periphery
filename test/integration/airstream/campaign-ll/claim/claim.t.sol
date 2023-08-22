@@ -40,7 +40,16 @@ contract Claim_Integration_Test is Integration_Test {
         _;
     }
 
-    function test_RevertWhen_InvalidIndex() external whenCampaignHasNotExpired whenNotClaimed {
+    modifier whenNotIncludedInMerkleTree() {
+        _;
+    }
+
+    function test_RevertWhen_InvalidIndex()
+        external
+        whenCampaignHasNotExpired
+        whenNotClaimed
+        whenNotIncludedInMerkleTree
+    {
         uint256 invalidIndex = defaults.INDEX2();
         uint128 amount = defaults.CLAIMABLE_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
@@ -48,11 +57,12 @@ contract Claim_Integration_Test is Integration_Test {
         campaignLL.claim(invalidIndex, users.recipient1.addr, amount, merkleProof);
     }
 
-    modifier whenIndexIsValid() {
-        _;
-    }
-
-    function test_RevertWhen_InvalidRecipient() external whenCampaignHasNotExpired whenNotClaimed whenIndexIsValid {
+    function test_RevertWhen_InvalidRecipient()
+        external
+        whenCampaignHasNotExpired
+        whenNotClaimed
+        whenNotIncludedInMerkleTree
+    {
         uint256 index1 = defaults.INDEX1();
         address invalidRecipient = users.recipient2.addr;
         uint128 amount = defaults.CLAIMABLE_AMOUNT();
@@ -61,16 +71,11 @@ contract Claim_Integration_Test is Integration_Test {
         campaignLL.claim(index1, invalidRecipient, amount, merkleProof);
     }
 
-    modifier whenRecipientIsValid() {
-        _;
-    }
-
     function test_RevertWhen_InvalidAmount()
         external
         whenCampaignHasNotExpired
         whenNotClaimed
-        whenIndexIsValid
-        whenRecipientIsValid
+        whenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
         uint128 invalidAmount = 1;
@@ -79,17 +84,11 @@ contract Claim_Integration_Test is Integration_Test {
         campaignLL.claim(index1, users.recipient1.addr, invalidAmount, merkleProof);
     }
 
-    modifier whenAmountIsValid() {
-        _;
-    }
-
     function test_RevertWhen_InvalidMerkleProof()
         external
         whenCampaignHasNotExpired
         whenNotClaimed
-        whenIndexIsValid
-        whenRecipientIsValid
-        whenAmountIsValid
+        whenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
         uint128 amount = 1;
@@ -98,19 +97,11 @@ contract Claim_Integration_Test is Integration_Test {
         campaignLL.claim(index1, users.recipient1.addr, amount, invalidMerkleProof);
     }
 
-    modifier whenMerkleProofIsValid() {
+    modifier whenIncludedInMerkleTree() {
         _;
     }
 
-    function test_Claim()
-        external
-        whenCampaignHasNotExpired
-        whenNotClaimed
-        whenIndexIsValid
-        whenRecipientIsValid
-        whenAmountIsValid
-        whenMerkleProofIsValid
-    {
+    function test_Claim() external whenCampaignHasNotExpired whenNotClaimed whenIncludedInMerkleTree {
         uint256 expectedAirstreamId = lockupLinear.nextStreamId();
 
         vm.expectEmit();
