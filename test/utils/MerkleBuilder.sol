@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+// solhint-disable reason-string
 pragma solidity >=0.8.19;
 
 import { msb } from "@prb/math/src/Common.sol";
 
+/// @dev A helper library for building leaves and Merkle roots and proofs.
 library MerkleBuilder {
     /// @dev Function that hashes together the data needed for a Merkle tree leaf.
     function computeLeaf(uint256 index, address recipient, uint128 amount) internal pure returns (bytes32 leaf) {

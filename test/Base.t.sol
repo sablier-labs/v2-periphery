@@ -109,7 +109,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             targetPush = new SablierV2ProxyTargetPush();
         } else {
             archive = deployPrecompiledArchive(users.admin.addr);
-            campaignFactory = deployPrecompiledCampaignFactory();
+            campaignFactory = deployPrecompiledAirstreamCampaignFactory();
             plugin = deployPrecompiledProxyPlugin(archive);
             targetApprove = deployPrecompiledProxyTargetApprove();
             targetPermit2 = deployPrecompiledProxyTargetPermit2(permit2);
@@ -127,7 +127,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     }
 
     /// @dev Deploys {SablierV2AirstreamCampaignFactory} from a source precompiled with `--via-ir`.
-    function deployPrecompiledCampaignFactory() internal returns (ISablierV2AirstreamCampaignFactory) {
+    function deployPrecompiledAirstreamCampaignFactory() internal returns (ISablierV2AirstreamCampaignFactory) {
         return ISablierV2AirstreamCampaignFactory(
             deployCode("out-optimized/SablierV2AirstreamCampaignFactory.sol/SablierV2AirstreamCampaignFactory.json")
         );
@@ -386,7 +386,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             cancelable: defaults.CANCELABLE(),
             expiration: defaults.EXPIRATION(),
             lockupLinear: lockupLinear,
-            durations: defaults.durations(),
+            airstreamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),
             campaignTotalAmount: defaults.CAMPAIGN_TOTAL_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()
@@ -419,7 +419,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             return bytes.concat(type(SablierV2AirstreamCampaignLL).creationCode, constructorArgs);
         } else {
             return bytes.concat(
-                vm.getCode("out-optimized/SablierV2AirstreamCampaignLL.sol/PRBProxy.json"), constructorArgs
+                vm.getCode("out-optimized/SablierV2AirstreamCampaignLL.sol/SablierV2AirstreamCampaignLL.json"),
+                constructorArgs
             );
         }
     }
