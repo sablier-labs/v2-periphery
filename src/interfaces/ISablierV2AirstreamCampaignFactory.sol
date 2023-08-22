@@ -29,7 +29,10 @@ interface ISablierV2AirstreamCampaignFactory {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Returns the list of airstream campaigns created by the admin.
-    function getAirstreamCampaigns(address admin) external view returns (ISablierV2AirstreamCampaignLL[] memory);
+    function getAirstreamCampaigns(address admin)
+        external
+        view
+        returns (ISablierV2AirstreamCampaignLL[] memory airstreamCampaigns);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
@@ -43,11 +46,11 @@ interface ISablierV2AirstreamCampaignFactory {
     /// @param cancelable Whether the airstreams are cancelable.
     /// @param expiration The expiration of the campaign.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
-    /// @param durations The durations of the campaign.
+    /// @param airstreamDurations The airstream durations of the campaign.
     /// @param ipfsCID Helper parameter to emit for additional information.
     /// @param campaignTotalAmount Helper parameter to emit for additional information.
     /// @param recipientsCount Helper parameter to emit for additional information.
-    /// @return airstreamCampaign The address of the newly created airstream campaign.
+    /// @return airstreamCampaignLL The address of the newly created airstream campaign.
     function createAirstreamCampaignLL(
         address initialAdmin,
         IERC20 asset,
@@ -55,11 +58,11 @@ interface ISablierV2AirstreamCampaignFactory {
         bool cancelable,
         uint40 expiration,
         ISablierV2LockupLinear lockupLinear,
-        LockupLinear.Durations memory durations,
+        LockupLinear.Durations memory airstreamDurations,
         string memory ipfsCID,
         uint256 campaignTotalAmount,
         uint256 recipientsCount
     )
         external
-        returns (ISablierV2AirstreamCampaignLL airstreamCampaign);
+        returns (ISablierV2AirstreamCampaignLL airstreamCampaignLL);
 }
