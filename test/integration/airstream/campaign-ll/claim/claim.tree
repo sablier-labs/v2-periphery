@@ -10,6 +10,8 @@ claim.t.sol
       │  │  └── it should revert
       │  ├── when the recipient address is not valid
       │  │  └── it should revert
+      │  ├── when the amount is not valid
+      │  │  └── it should revert
       │  └── when the merkle proof is not valid
       │     └── it should revert
       └── when the claim is included in the merkle tree
