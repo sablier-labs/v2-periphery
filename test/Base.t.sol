@@ -244,7 +244,9 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
 
     /// @dev Expects a call to {IERC20.transfer}.
     function expectCallToTransfer(address asset_, address to, uint256 amount) internal {
-        vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+        if (target != targetPush) {
+            vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+        }
     }
 
     /// @dev Expects a call to {IERC20.transferFrom}.
@@ -254,7 +256,9 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
 
     /// @dev Expects a call to {IERC20.transferFrom}.
     function expectCallToTransferFrom(address asset_, address from, address to, uint256 amount) internal {
-        vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
+        if (target != targetPush) {
+            vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
+        }
     }
 
     /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithDeltas}, each with the specified

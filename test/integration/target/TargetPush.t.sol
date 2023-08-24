@@ -25,7 +25,7 @@ abstract contract TargetPush_Integration_Test is Integration_Test {
     function setUp() public virtual override {
         Integration_Test.setUp();
         target = ISablierV2ProxyTarget(targetPush);
-        asset.transfer({ to: address(aliceProxy), amount: defaults.TOTAL_TRANSFER_AMOUNT() });
+        asset.transfer({ to: address(aliceProxy), amount: 2 * defaults.TOTAL_TRANSFER_AMOUNT() });
     }
 }
 
