@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
+// solhint-disable max-states-count
 pragma solidity >=0.8.19 <0.9.0;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -23,6 +24,7 @@ import { SablierV2Archive } from "src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTargetApprove } from "src/SablierV2ProxyTargetApprove.sol";
 import { SablierV2ProxyTargetPermit2 } from "src/SablierV2ProxyTargetPermit2.sol";
+import { SablierV2ProxyTargetPush } from "src/SablierV2ProxyTargetPush.sol";
 
 import { WLC } from "./mocks/WLC.sol";
 import { Assertions } from "./utils/Assertions.sol";
@@ -54,6 +56,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     ISablierV2ProxyTarget internal target;
     SablierV2ProxyTargetApprove internal targetApprove;
     SablierV2ProxyTargetPermit2 internal targetPermit2;
+    SablierV2ProxyTargetPush internal targetPush;
     IWrappedNativeAsset internal weth;
     WLC internal wlc;
 
@@ -91,13 +94,15 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
             plugin = new SablierV2ProxyPlugin(archive);
             targetApprove = new SablierV2ProxyTargetApprove();
             targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
+            targetPush = new SablierV2ProxyTargetPush();
         } else {
             archive = deployPrecompiledArchive(users.admin.addr);
             plugin = deployPrecompiledProxyPlugin(archive);
             targetApprove = deployPrecompiledProxyTargetApprove();
             targetPermit2 = deployPrecompiledProxyTargetPermit2(permit2);
+            targetPush = deployPrecompiledProxyTargetPush();
         }
-        // The ERC-20 target is the default target.
+        // The default target.
         target = targetApprove;
     }
 
@@ -134,6 +139,13 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         );
     }
 
+    /// @dev Deploys {deployPrecompiledProxyTargetPush} from a source precompiled with `--via-ir`.
+    function deployPrecompiledProxyTargetPush() internal returns (SablierV2ProxyTargetPush) {
+        return SablierV2ProxyTargetPush(
+            deployCode("out-optimized/SablierV2ProxyTargetPush.sol/SablierV2ProxyTargetPush.json")
+        );
+    }
+
     /// @dev Labels the most relevant contracts.
     function labelContracts() internal {
         vm.label({ account: address(aliceProxy), newLabel: "Alice's Proxy" });
@@ -146,6 +158,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         vm.label({ account: address(plugin), newLabel: "ProxyPlugin" });
         vm.label({ account: address(targetApprove), newLabel: "ProxyTargetApprove" });
         vm.label({ account: address(targetPermit2), newLabel: "ProxyTargetPermit2" });
+        vm.label({ account: address(targetPush), newLabel: "ProxyTargetPush" });
         vm.label({ account: address(wlc), newLabel: "WLC" });
     }
 

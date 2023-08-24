@@ -201,7 +201,7 @@ abstract contract SablierV2ProxyTarget is
         }
 
         // Transfers the assets to the proxy and approves the Sablier contract to spend them.
-        _transferAndApprove(address(lockupLinear), asset, transferAmount, transferData);
+        _handleTransfer(address(lockupLinear), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -256,7 +256,7 @@ abstract contract SablierV2ProxyTarget is
         }
 
         // Transfers the assets to the proxy and approve the Sablier contract to spend them.
-        _transferAndApprove(address(lockupLinear), asset, transferAmount, transferData);
+        _handleTransfer(address(lockupLinear), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -326,7 +326,7 @@ abstract contract SablierV2ProxyTarget is
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, transferData);
+        _handleTransfer(address(lockupLinear), createParams.asset, createParams.totalAmount, transferData);
         streamId = lockupLinear.createWithDurations(createParams);
     }
 
@@ -341,7 +341,7 @@ abstract contract SablierV2ProxyTarget is
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(lockupLinear), createParams.asset, createParams.totalAmount, transferData);
+        _handleTransfer(address(lockupLinear), createParams.asset, createParams.totalAmount, transferData);
         streamId = lockupLinear.createWithRange(createParams);
     }
 
@@ -427,7 +427,7 @@ abstract contract SablierV2ProxyTarget is
         }
 
         // Perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
-        _transferAndApprove(address(dynamic), asset, transferAmount, transferData);
+        _handleTransfer(address(dynamic), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -482,7 +482,7 @@ abstract contract SablierV2ProxyTarget is
         }
 
         // Perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
-        _transferAndApprove(address(dynamic), asset, transferAmount, transferData);
+        _handleTransfer(address(dynamic), asset, transferAmount, transferData);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
@@ -553,7 +553,7 @@ abstract contract SablierV2ProxyTarget is
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, transferData);
+        _handleTransfer(address(dynamic), createParams.asset, createParams.totalAmount, transferData);
         streamId = dynamic.createWithDeltas(createParams);
     }
 
@@ -568,7 +568,7 @@ abstract contract SablierV2ProxyTarget is
         onlyDelegateCall
         returns (uint256 streamId)
     {
-        _transferAndApprove(address(dynamic), createParams.asset, createParams.totalAmount, transferData);
+        _handleTransfer(address(dynamic), createParams.asset, createParams.totalAmount, transferData);
         streamId = dynamic.createWithMilestones(createParams);
     }
 
@@ -652,6 +652,17 @@ abstract contract SablierV2ProxyTarget is
         return IPRBProxy(address(this)).owner();
     }
 
+    /// @dev Handler function meant to be inherited by child contracts that implement the transfer logic. This function
+    /// may also approve the Sablier contract to spend to spend funds from the proxy if the allowance is insufficient.
+    function _handleTransfer(
+        address sablierContract,
+        IERC20 asset,
+        uint160 amount,
+        bytes calldata transferData
+    )
+        internal
+        virtual;
+
     /// @dev Shared logic between {cancelMultiple} and {batchCancelMultiple}.
     function _postMultipleCancellations(uint256[] memory initialBalances, IERC20[] calldata assets) internal {
         uint256 assetCount = assets.length;
@@ -690,16 +701,4 @@ abstract contract SablierV2ProxyTarget is
             revert Errors.SablierV2ProxyTarget_CreditAmountMismatch({ msgValue: msg.value, creditAmount: creditAmount });
         }
     }
-
-    /// @dev Helper function to transfer funds from the proxy owner to the proxy, which is meant to be inherited by
-    /// child contracts that implement the transfer logic. This function also approves the Sablier contract to spend
-    /// to spend funds from the proxy if the allowance is insufficient.
-    function _transferAndApprove(
-        address sablierContract,
-        IERC20 asset,
-        uint160 amount,
-        bytes calldata transferData
-    )
-        internal
-        virtual;
 }
