@@ -3,14 +3,12 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { Broker, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { UD60x18 } from "@sablier/v2-core/src/types/Math.sol";
 
 import { SablierV2AirstreamCampaign } from "./abstracts/SablierV2AirstreamCampaign.sol";
 import { ISablierV2AirstreamCampaignLL } from "./interfaces/ISablierV2AirstreamCampaignLL.sol";
-import { Errors } from "./libraries/Errors.sol";
 
 /// @title SablierV2AirstreamCampaignLL
 /// @notice See the documentation in {ISablierV2AirstreamCampaignLL}.
@@ -54,7 +52,7 @@ contract SablierV2AirstreamCampaignLL is
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                          INTERNAL NON-CONSTANT FUNCTIONS
+                         USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2AirstreamCampaignLL
@@ -68,23 +66,10 @@ contract SablierV2AirstreamCampaignLL is
         override
         returns (uint256 airstreamId)
     {
-        // Checks: the campaign has not expired.
-        if (expiration > 0 && expiration <= block.timestamp) {
-            revert Errors.SablierV2AirstreamCampaign_CampaignExpired(block.timestamp, expiration);
-        }
-
-        // Checks: the index is has been claimed.
-        if (hasClaimed(index)) {
-            revert Errors.SablierV2AirstreamCampaign_AlreadyClaimed(index);
-        }
-
-        // Hash the function arguments.
         bytes32 leaf = keccak256(abi.encodePacked(index, recipient, amount));
 
-        // Checks: the input claim is included in the merkle tree.
-        if (!MerkleProof.verify(merkleProof, merkleRoot, leaf)) {
-            revert Errors.SablierV2AirstreamCampaign_InvalidProof();
-        }
+        // Checks: validate the function.
+        _checkClaim(index, leaf, merkleProof);
 
         // Effects: mark the index as claimed.
         _setClaimed(index);

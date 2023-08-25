@@ -22,44 +22,51 @@ contract MerkleBuilder_Test is PRBTest, StdUtils {
     }
 
     function testFuzz_ComputeLeaves(LeavesParams[] memory params) external {
-        uint256[] memory indexes = new uint256[](params.length);
-        address[] memory recipients = new address[](params.length);
-        uint128[] memory amounts = new uint128[](params.length);
-        for (uint256 i = 0; i < params.length; ++i) {
+        uint256 count = params.length;
+
+        uint256[] memory indexes = new uint256[](count);
+        address[] memory recipients = new address[](count);
+        uint128[] memory amounts = new uint128[](count);
+        for (uint256 i = 0; i < count; ++i) {
             indexes[i] = params[i].indexes;
             recipients[i] = params[i].recipients;
             amounts[i] = params[i].amounts;
         }
-        bytes32[] memory actualLeaves = new bytes32[](params.length);
+
+        bytes32[] memory actualLeaves = new bytes32[](count);
         actualLeaves = MerkleBuilder.computeLeaves(indexes, recipients, amounts);
-        bytes32[] memory expectedLeaves = new bytes32[](params.length);
-        for (uint256 i = 0; i < indexes.length; ++i) {
+
+        bytes32[] memory expectedLeaves = new bytes32[](count);
+        for (uint256 i = 0; i < count; ++i) {
             expectedLeaves[i] = keccak256(abi.encodePacked(indexes[i], recipients[i], amounts[i]));
         }
+
         assertEq(actualLeaves, expectedLeaves, "computeLeaves");
     }
 
-    function testFuzz_ComputeRoot(bytes32[] memory data, uint256 node) public {
+    function testFuzz_ComputeRoot(bytes32[] memory data, uint256 leafPos) public {
         vm.assume(data.length > 1);
-        vm.assume(node < data.length);
+        vm.assume(leafPos < data.length);
 
-        bytes32[] memory proof = MerkleBuilder.computeProof(data, node);
-
+        bytes32[] memory proof = MerkleBuilder.computeProof(data, leafPos);
         bytes32 actualRoot = MerkleBuilder.computeRoot(data);
-        bytes32 expectedRoot = data[node];
+
+        bytes32 expectedRoot = data[leafPos];
         for (uint256 i = 0; i < proof.length; ++i) {
             expectedRoot = MerkleBuilder.hashPair(expectedRoot, proof[i]);
         }
+
         assertEq(actualRoot, expectedRoot, "computeRoot");
     }
 
-    function testFuzz_GetProof(bytes32[] memory data, uint256 node) external {
+    function testFuzz_ComputeProof(bytes32[] memory data, uint256 leafPos) external {
         vm.assume(data.length > 1);
-        node = _bound(node, 1, data.length - 1);
+        leafPos = _bound(leafPos, 1, data.length - 1);
 
-        bytes32[] memory proof = MerkleBuilder.computeProof(data, node);
+        bytes32[] memory proof = MerkleBuilder.computeProof(data, leafPos);
         bytes32 root = MerkleBuilder.computeRoot(data);
-        bytes32 leafToProve = data[node];
+
+        bytes32 leafToProve = data[leafPos];
         assertTrue(MerkleProof.verify(proof, root, leafToProve), "computeProof");
     }
 

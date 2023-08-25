@@ -26,7 +26,7 @@ contract Clawback_Integration_Test is Integration_Test {
     function test_RevertWhen_CampaignHasNotExpired() external whenCallerAdmin {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2AirstreamCampaign_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
+                Errors.SablierV2AirstreamCampaign_CampaignHasNotExpired.selector, block.timestamp, defaults.EXPIRATION()
             )
         );
         campaignLL.clawback({ to: users.admin.addr, amount: 1 });

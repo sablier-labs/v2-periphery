@@ -29,7 +29,17 @@ library MerkleBuilder {
         }
     }
 
-    /// @dev Function that computes the Merkle proof for a leaf in the Merkle tree.
+    /// @dev Function that computes the Merkle proof for a leaf position in the Merkle tree.
+    //
+    // Let's take for example the following Merkle tree with 4 leaves:
+    //
+    //        ROOT
+    //      /      \
+    //    H01      H23
+    //   /  \     /  \
+    // L0   L1   L2   L3
+    //
+    // If the `leafPos` is 0 (L0), the function will return the Merkle proof [L1, H23].
     function computeProof(bytes32[] memory leaves, uint256 leafPos) internal pure returns (bytes32[] memory) {
         uint256 count = leaves.length;
         require(count > 1, "leaves length must be greater than one");

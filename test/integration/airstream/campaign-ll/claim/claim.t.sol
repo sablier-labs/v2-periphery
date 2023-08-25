@@ -18,7 +18,7 @@ contract Claim_Integration_Test is Integration_Test {
         bytes32[] memory merkleProof;
         vm.warp({ timestamp: warpTime });
         vm.expectRevert(
-            abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_CampaignExpired.selector, warpTime, expiration)
+            abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_CampaignHasExpired.selector, warpTime, expiration)
         );
         campaignLL.claim({ index: 1, recipient: users.recipient1.addr, amount: 1, merkleProof: merkleProof });
     }

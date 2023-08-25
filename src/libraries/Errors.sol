@@ -19,10 +19,10 @@ library Errors {
     error SablierV2AirstreamCampaign_AlreadyClaimed(uint256 index);
 
     /// @notice Thrown when trying to clawback when airstream campaign has expired.
-    error SablierV2AirstreamCampaign_CampaignExpired(uint256 currentTime, uint40 expiration);
+    error SablierV2AirstreamCampaign_CampaignHasExpired(uint256 currentTime, uint40 expiration);
 
     /// @notice Thrown when trying to claim when airstream campaign has not expired.
-    error SablierV2AirstreamCampaign_CampaignNotExpired(uint256 currentTime, uint40 expiration);
+    error SablierV2AirstreamCampaign_CampaignHasNotExpired(uint256 currentTime, uint40 expiration);
 
     /// @notice Thrown when trying to claim with invalid Merkle proof.
     error SablierV2AirstreamCampaign_InvalidProof();

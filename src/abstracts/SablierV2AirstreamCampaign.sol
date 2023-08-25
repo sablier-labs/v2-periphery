@@ -3,6 +3,7 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import { Adminable } from "@sablier/v2-core/src/abstracts/Adminable.sol";
 
 import { ISablierV2AirstreamCampaign } from "../interfaces/ISablierV2AirstreamCampaign.sol";
@@ -82,6 +83,11 @@ abstract contract SablierV2AirstreamCampaign is
         return claimedWord & mask != 0;
     }
 
+    /// @inheritdoc ISablierV2AirstreamCampaign
+    function hasExpired() public view override returns (bool) {
+        return expiration > 0 && expiration <= block.timestamp;
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
@@ -89,12 +95,34 @@ abstract contract SablierV2AirstreamCampaign is
     /// @inheritdoc ISablierV2AirstreamCampaign
     function clawback(address to, uint128 amount) external override onlyAdmin {
         // Checks: the campaign has expired.
-        if (expiration > 0 && expiration > block.timestamp) {
-            revert Errors.SablierV2AirstreamCampaign_CampaignNotExpired(block.timestamp, expiration);
+        if (!hasExpired()) {
+            revert Errors.SablierV2AirstreamCampaign_CampaignHasNotExpired(block.timestamp, expiration);
         }
 
         asset.safeTransfer(to, amount);
         emit Clawback(admin, to, amount);
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                            INTERNAL CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Validates the `claim` function which is meant to be implemented by the child contracts.
+    function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal view {
+        // Checks: the campaign has not expired.
+        if (hasExpired()) {
+            revert Errors.SablierV2AirstreamCampaign_CampaignHasExpired(block.timestamp, expiration);
+        }
+
+        // Checks: the index has not been claimed.
+        if (hasClaimed(index)) {
+            revert Errors.SablierV2AirstreamCampaign_AlreadyClaimed(index);
+        }
+
+        // Checks: the input claim is included in the merkle tree.
+        if (!MerkleProof.verify(merkleProof, merkleRoot, leaf)) {
+            revert Errors.SablierV2AirstreamCampaign_InvalidProof();
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////

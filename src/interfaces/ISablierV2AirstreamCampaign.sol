@@ -42,6 +42,9 @@ interface ISablierV2AirstreamCampaign is IAdminable {
     /// @return Whether the claim has been made.
     function hasClaimed(uint256 index) external returns (bool);
 
+    /// @notice Returns whether the airstream campaign has expired.
+    function hasExpired() external view returns (bool);
+
     /// @notice The root of the Merkle tree used to validate the claims.
     /// @dev This is an immutable state variable.
     function merkleRoot() external returns (bytes32);
