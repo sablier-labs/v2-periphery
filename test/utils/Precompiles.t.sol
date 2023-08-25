@@ -56,13 +56,22 @@ contract Precompiles_Test is Base_Test {
         assertEq(actualProxyTargetPermit2.code, expectedProxyTargetCode, "bytecodes mismatch");
     }
 
+    function test_DeployProxyTargetPush() external onlyTestOptimizedProfile {
+        address actualProxyTargetPush = address(precompiles.deployProxyTargetPush());
+        address expectedProxyTargetPush = address(deployPrecompiledProxyTargetPush());
+        bytes memory expectedProxyTargetCode =
+            adjustBytecode(expectedProxyTargetPush.code, expectedProxyTargetPush, actualProxyTargetPush);
+        assertEq(actualProxyTargetPush.code, expectedProxyTargetCode, "bytecodes mismatch");
+    }
+
     function test_DeployPeriphery() external onlyTestOptimizedProfile {
         IAllowanceTransfer permit2 = IAllowanceTransfer(new DeployPermit2().run());
         (
             ISablierV2Archive actualArchive,
             ISablierV2ProxyPlugin actualProxyPlugin,
             ISablierV2ProxyTarget actualProxyTargetApprove,
-            ISablierV2ProxyTarget actualProxyTargetPermit2
+            ISablierV2ProxyTarget actualProxyTargetPermit2,
+            ISablierV2ProxyTarget actualProxyTargetPush
         ) = precompiles.deployPeriphery(users.admin.addr, permit2);
 
         address expectedArchive = address(deployPrecompiledArchive(users.admin.addr));
@@ -84,6 +93,11 @@ contract Precompiles_Test is Base_Test {
             expectedProxyTargetPermit2.code, expectedProxyTargetPermit2, address(actualProxyTargetPermit2)
         );
         assertEq(address(actualProxyTargetPermit2).code, expectedProxyTargetPermit2Code, "bytecodes mismatch");
+
+        address expectedProxyTargetPush = address(deployPrecompiledProxyTargetPush());
+        bytes memory expectedProxyTargetPushCode =
+            adjustBytecode(expectedProxyTargetPush.code, expectedProxyTargetPush, address(actualProxyTargetPush));
+        assertEq(address(actualProxyTargetPush).code, expectedProxyTargetPushCode, "bytecodes mismatch");
     }
 
     /// @dev The expected bytecode has to be adjusted because some contracts inherit from {OnlyDelegateCall}, which

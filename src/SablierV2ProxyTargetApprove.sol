@@ -14,7 +14,7 @@ contract SablierV2ProxyTargetApprove is SablierV2ProxyTarget {
     /// @notice Transfers the given `amount` of `asset` to the Sablier contract using standard the ERC-20
     /// approve and transfer flow, and then approves Sablier to spend the funds.
     /// @dev The `transferData` data is ignored in this implementation.
-    function _transferAndApprove(
+    function _handleTransfer(
         address sablierContract,
         IERC20 asset,
         uint160 amount,

@@ -30,12 +30,13 @@ abstract contract BatchCancelMultiple_Fork_Test is Fork_Test {
 
         // Asset flow: Sablier → proxy → proxy owner
         // Expects transfers from the Sablier contracts to the proxy, and then from the proxy to the proxy owner.
+        uint256 totalTransferAmount = 2 * defaults.REFUND_AMOUNT() * batchSize;
         expectMultipleCallsToTransfer({
             count: uint64(2 * batchSize),
             to: address(aliceProxy),
             amount: defaults.REFUND_AMOUNT()
         });
-        expectCallToTransfer({ to: users.alice.addr, amount: 2 * defaults.REFUND_AMOUNT() * batchSize });
+        expectCallToTransfer({ to: users.alice.addr, amount: totalTransferAmount });
 
         // ABI encode the parameters and call the function via the proxy.
         Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](2);

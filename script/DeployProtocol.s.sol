@@ -12,6 +12,7 @@ import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTargetApprove } from "../src/SablierV2ProxyTargetApprove.sol";
 import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.sol";
+import { SablierV2ProxyTargetPush } from "../src/SablierV2ProxyTargetPush.sol";
 
 /// @notice Deploys the Sablier V2 Protocol and lists the streaming contracts in the archive.
 contract DeployProtocol is BaseScript {
@@ -31,7 +32,8 @@ contract DeployProtocol is BaseScript {
             SablierV2Archive archive,
             SablierV2ProxyPlugin plugin,
             SablierV2ProxyTargetApprove targetApprove,
-            SablierV2ProxyTargetPermit2 targetPermit2
+            SablierV2ProxyTargetPermit2 targetPermit2,
+            SablierV2ProxyTargetPush targetPush
         )
     {
         // Deploy V2 Core.
@@ -40,14 +42,15 @@ contract DeployProtocol is BaseScript {
         lockupDynamic = new SablierV2LockupDynamic(initialAdmin, comptroller, nftDescriptor, maxSegmentCount);
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
 
-        // Deploy V2 Periphery.
-        archive = new SablierV2Archive(initialAdmin);
+        // Deploy V2 Periphery. The Archive needs its own context block to prevent Stack Too Deep.
+        {
+            archive = new SablierV2Archive(initialAdmin);
+            archive.list(address(lockupDynamic));
+            archive.list(address(lockupLinear));
+        }
         plugin = new SablierV2ProxyPlugin(archive);
         targetApprove = new SablierV2ProxyTargetApprove();
         targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
-
-        // List the streaming contracts.
-        archive.list(address(lockupDynamic));
-        archive.list(address(lockupLinear));
+        targetPush = new SablierV2ProxyTargetPush();
     }
 }
