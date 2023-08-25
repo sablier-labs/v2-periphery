@@ -25,6 +25,8 @@ mkdir $artifacts \
 FOUNDRY_PROFILE=optimized forge build
 
 # Copy the production artifacts
+cp out-optimized/SablierV2AirstreamCampaignFactory.sol/SablierV2AirstreamCampaignFactory.json $artifacts
+cp out-optimized/SablierV2AirstreamCampaignLL.sol/SablierV2AirstreamCampaignLL.json $artifacts
 cp out-optimized/SablierV2Archive.sol/SablierV2Archive.json $artifacts
 cp out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json $artifacts
 cp out-optimized/SablierV2ProxyTargetApprove.sol/SablierV2ProxyTargetApprove.json $artifacts
