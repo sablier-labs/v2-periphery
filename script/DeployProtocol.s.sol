@@ -42,15 +42,15 @@ contract DeployProtocol is BaseScript {
         lockupDynamic = new SablierV2LockupDynamic(initialAdmin, comptroller, nftDescriptor, maxSegmentCount);
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
 
-        // Deploy V2 Periphery.
-        archive = new SablierV2Archive(initialAdmin);
+        // Deploy V2 Periphery. The Archive needs its own context block to prevent Stack Too Deep.
+        {
+            archive = new SablierV2Archive(initialAdmin);
+            archive.list(address(lockupDynamic));
+            archive.list(address(lockupLinear));
+        }
         plugin = new SablierV2ProxyPlugin(archive);
         targetApprove = new SablierV2ProxyTargetApprove();
         targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
         targetPush = new SablierV2ProxyTargetPush();
-
-        // List the streaming contracts.
-        archive.list(address(lockupDynamic));
-        archive.list(address(lockupLinear));
     }
 }
