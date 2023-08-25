@@ -8,6 +8,7 @@ import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTargetApprove } from "../src/SablierV2ProxyTargetApprove.sol";
 import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.sol";
+import { SablierV2ProxyTargetPush } from "../src/SablierV2ProxyTargetPush.sol";
 
 /// @notice Deploys all V2 Periphery contract in the following order:
 ///
@@ -15,6 +16,7 @@ import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.
 /// 2. {SablierV2ProxyPlugin}
 /// 3. {SablierV2ProxyTargetApprove}
 /// 4. {SablierV2ProxyTargetPermit2}
+/// 5. {SablierV2ProxyTargetPush}
 contract DeployPeriphery is BaseScript {
     function run(
         address initialAdmin,
@@ -26,12 +28,14 @@ contract DeployPeriphery is BaseScript {
             SablierV2Archive archive,
             SablierV2ProxyPlugin plugin,
             SablierV2ProxyTargetApprove targetApprove,
-            SablierV2ProxyTargetPermit2 targetPermit2
+            SablierV2ProxyTargetPermit2 targetPermit2,
+            SablierV2ProxyTargetPush targetPush
         )
     {
         archive = new SablierV2Archive(initialAdmin);
         plugin = new SablierV2ProxyPlugin(archive);
         targetApprove = new SablierV2ProxyTargetApprove();
         targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
+        targetPush = new SablierV2ProxyTargetPush();
     }
 }

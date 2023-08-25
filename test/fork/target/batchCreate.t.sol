@@ -80,12 +80,16 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
 
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({
-            asset_: address(asset),
-            from: user,
-            to: address(userProxy),
-            amount: totalTransferAmount
-        });
+        if (target == targetPush) {
+            deal({ token: address(asset), to: address(userProxy), give: uint256(totalTransferAmount) });
+        } else {
+            expectCallToTransferFrom({
+                asset_: address(asset),
+                from: user,
+                to: address(userProxy),
+                amount: totalTransferAmount
+            });
+        }
         expectMultipleCallsToCreateWithMilestones({ count: uint64(params.batchSize), params: createWithMilestones });
         expectMultipleCallsToTransferFrom({
             asset_: address(asset),
@@ -154,12 +158,16 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
 
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({
-            asset_: address(asset),
-            from: user,
-            to: address(userProxy),
-            amount: totalTransferAmount
-        });
+        if (target == targetPush) {
+            deal({ token: address(asset), to: address(userProxy), give: uint256(totalTransferAmount) });
+        } else {
+            expectCallToTransferFrom({
+                asset_: address(asset),
+                from: user,
+                to: address(userProxy),
+                amount: totalTransferAmount
+            });
+        }
         expectMultipleCallsToCreateWithRange({ count: uint64(params.batchSize), params: createParams });
         expectMultipleCallsToTransferFrom({
             asset_: address(asset),

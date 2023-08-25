@@ -29,7 +29,7 @@ contract SablierV2ProxyTargetPermit2 is SablierV2ProxyTarget {
     /// to spend the funds.
     /// @dev The parameter `transferData` contains an ABI-encoded struct that encapsulates the parameters needed for
     /// Permit2.
-    function _transferAndApprove(
+    function _handleTransfer(
         address sablierContract,
         IERC20 asset,
         uint160 amount,
