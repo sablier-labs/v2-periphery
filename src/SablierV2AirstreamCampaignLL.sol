@@ -66,6 +66,7 @@ contract SablierV2AirstreamCampaignLL is
         override
         returns (uint256 airstreamId)
     {
+        // Generate the Merkle tree leaf by hashing the corresponding parameters.
         bytes32 leaf = keccak256(abi.encodePacked(index, recipient, amount));
 
         // Checks: validate the function.
