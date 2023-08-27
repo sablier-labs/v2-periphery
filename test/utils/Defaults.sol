@@ -41,8 +41,7 @@ contract Defaults is PermitSignature {
                                  AIRSTREAM CAMPAIGN
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint256 public constant LEAVES_COUNT = 4;
-    uint256 public constant CAMPAIGN_TOTAL_AMOUNT = CLAIMABLE_AMOUNT * LEAVES_COUNT;
+    uint256 public constant CAMPAIGN_TOTAL_AMOUNT = CLAIMABLE_AMOUNT * RECIPIENTS_COUNT;
     bool public constant CANCELABLE = false;
     uint128 public constant CLAIMABLE_AMOUNT = 10_000e18;
     uint40 public immutable EXPIRATION;
@@ -70,7 +69,7 @@ contract Defaults is PermitSignature {
     }
 
     function leaves() public view returns (bytes32[] memory leaves_) {
-        leaves_ = new bytes32[](LEAVES_COUNT);
+        leaves_ = new bytes32[](RECIPIENTS_COUNT);
         leaves_[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIMABLE_AMOUNT);
         leaves_[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIMABLE_AMOUNT);
         leaves_[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIMABLE_AMOUNT);
