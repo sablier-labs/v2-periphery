@@ -91,7 +91,7 @@ contract Claim_Integration_Test is Integration_Test {
         whenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
-        uint128 amount = 1;
+        uint128 amount = defaults.CLAIMABLE_AMOUNT();
         bytes32[] memory invalidMerkleProof = defaults.index2Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_InvalidProof.selector));
         campaignLL.claim(index1, users.recipient1.addr, amount, invalidMerkleProof);
