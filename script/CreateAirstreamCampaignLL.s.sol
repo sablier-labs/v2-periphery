@@ -10,35 +10,33 @@ import { ISablierV2AirstreamCampaignFactory } from "../src/interfaces/ISablierV2
 import { ISablierV2AirstreamCampaignLL } from "../src/interfaces/ISablierV2AirstreamCampaignLL.sol";
 
 contract CreateAirstreamCampaignLL is BaseScript {
-    function run(
-        ISablierV2AirstreamCampaignFactory campaignFactory,
-        address initialAdmin,
-        IERC20 asset,
-        bytes32 merkleRoot,
-        bool cancelable,
-        uint40 expiration,
-        ISablierV2LockupLinear lockupLinear,
-        uint40 cliffDuration,
-        uint40 totalDuration,
-        string memory ipfsCID,
-        uint256 campaignTotalAmount,
-        uint256 recipientsCount
-    )
-        public
-        broadcast
-        returns (ISablierV2AirstreamCampaignLL campaignLL)
-    {
-        campaignLL = campaignFactory.createAirstreamCampaignLL(
-            initialAdmin,
-            asset,
-            merkleRoot,
-            cancelable,
-            expiration,
-            lockupLinear,
-            LockupLinear.Durations({ cliff: cliffDuration, total: totalDuration }),
-            ipfsCID,
-            campaignTotalAmount,
-            recipientsCount
+    struct Params {
+        ISablierV2AirstreamCampaignFactory campaignFactory;
+        address initialAdmin;
+        IERC20 asset;
+        bytes32 merkleRoot;
+        bool cancelable;
+        uint40 expiration;
+        ISablierV2LockupLinear lockupLinear;
+        uint40 cliffDuration;
+        uint40 totalDuration;
+        string ipfsCID;
+        uint256 campaignTotalAmount;
+        uint256 recipientsCount;
+    }
+
+    function run(Params calldata params) public broadcast returns (ISablierV2AirstreamCampaignLL campaignLL) {
+        campaignLL = params.campaignFactory.createAirstreamCampaignLL(
+            params.initialAdmin,
+            params.asset,
+            params.merkleRoot,
+            params.cancelable,
+            params.expiration,
+            params.lockupLinear,
+            LockupLinear.Durations({ cliff: params.cliffDuration, total: params.totalDuration }),
+            params.ipfsCID,
+            params.campaignTotalAmount,
+            params.recipientsCount
         );
     }
 }
