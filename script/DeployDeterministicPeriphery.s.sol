@@ -33,16 +33,17 @@ contract DeployDeterministicPeriphery is BaseScript {
         virtual
         broadcast
         returns (
+            SablierV2AirstreamCampaignFactory airstreamCampaignFactory,
             SablierV2Archive archive,
-            SablierV2AirstreamCampaignFactory campaignFactory,
             SablierV2ProxyPlugin plugin,
             SablierV2ProxyTargetApprove targetApprove,
             SablierV2ProxyTargetPermit2 targetPermit2,
             SablierV2ProxyTargetPush targetPush
         )
     {
+        airstreamCampaignFactory =
+            new SablierV2AirstreamCampaignFactory{ salt: bytes32(abi.encodePacked(create2Salt)) }();
         archive = new SablierV2Archive{ salt: bytes32(abi.encodePacked(create2Salt)) }(initialAdmin);
-        campaignFactory = new SablierV2AirstreamCampaignFactory{ salt: bytes32(abi.encodePacked(create2Salt)) }();
         plugin = new SablierV2ProxyPlugin{ salt: bytes32(abi.encodePacked(create2Salt)) }(archive);
         targetApprove = new SablierV2ProxyTargetApprove{ salt: bytes32(abi.encodePacked(create2Salt)) }();
         targetPermit2 = new SablierV2ProxyTargetPermit2{ salt: bytes32(abi.encodePacked(create2Salt)) }(permit2);

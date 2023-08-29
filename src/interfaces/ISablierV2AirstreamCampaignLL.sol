@@ -22,13 +22,13 @@ interface ISablierV2AirstreamCampaignLL is ISablierV2AirstreamCampaign {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Claims the associated funds by creating a Lockup Linear airstream to the recipient.
+    /// @notice Makes the claim by creating a Lockup Linear airstream to the recipient.
     ///
     /// @dev Emits a {Claim} event.
     ///
     /// Requirements:
-    /// - The airstream campaign must not have expired.
-    /// - The airstream campaign must not have been claimed already.
+    /// - The campaign must not have expired.
+    /// - The airstream must not have been claimed already.
     /// - The Merkle proof must be valid.
     ///
     /// @param index The index of the recipient in the Merkle tree.

@@ -2,9 +2,9 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { PRBTest } from "@prb/test/PRBTest.sol";
-import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { Assertions as V2CoreAssertions } from "@sablier/v2-core-test/utils/Assertions.sol";
 
-abstract contract Assertions is PRBTest {
+abstract contract Assertions is PRBTest, V2CoreAssertions {
     event LogArray(bytes4[] value);
     event LogNamedArray(string key, bytes4[] value);
 
@@ -17,31 +17,5 @@ abstract contract Assertions is PRBTest {
             emit LogNamedArray("  Right", b);
             fail();
         }
-    }
-
-    /// @dev Compares two `Lockup.Status` enum values.
-    function assertEq(Lockup.Status a, Lockup.Status b) internal {
-        assertEq(uint256(a), uint256(b), "status");
-    }
-
-    /// @dev Compares two `Lockup.Status` enum values.
-    function assertEq(Lockup.Status a, Lockup.Status b, string memory err) internal {
-        assertEq(uint256(a), uint256(b), err);
-    }
-
-    /// @dev Compares two {LockupLinear.Stream} struct entities.
-    function assertEq(LockupLinear.Stream memory a, LockupLinear.Stream memory b) internal {
-        assertEq(a.amounts.deposited, b.amounts.deposited);
-        assertEq(a.amounts.refunded, b.amounts.refunded);
-        assertEq(a.amounts.withdrawn, b.amounts.withdrawn);
-        assertEq(address(a.asset), address(b.asset), "asset");
-        assertEq(a.cliffTime, b.cliffTime, "cliffTime");
-        assertEq(a.endTime, b.endTime, "endTime");
-        assertEq(a.isCancelable, b.isCancelable, "isCancelable");
-        assertEq(a.isDepleted, b.isDepleted, "isDepleted");
-        assertEq(a.isStream, b.isStream, "isStream");
-        assertEq(a.sender, b.sender, "sender");
-        assertEq(a.startTime, b.startTime, "startTime");
-        assertEq(a.wasCanceled, b.wasCanceled, "wasCanceled");
     }
 }

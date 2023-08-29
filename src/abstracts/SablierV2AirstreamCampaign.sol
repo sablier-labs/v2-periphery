@@ -45,12 +45,12 @@ abstract contract SablierV2AirstreamCampaign is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Constructs the contract by initializing the immutable state variables.
-    constructor(address initialAdmin, IERC20 asset_, bytes32 merkleRoot_, bool cancelable_, uint40 expiration_) {
+    constructor(address initialAdmin, IERC20 asset_, bytes32 merkleRoot_, uint40 expiration_, bool cancelable_) {
         admin = initialAdmin;
         asset = asset_;
         merkleRoot = merkleRoot_;
-        cancelable = cancelable_;
         expiration = expiration_;
+        cancelable = cancelable_;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -58,12 +58,6 @@ abstract contract SablierV2AirstreamCampaign is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2AirstreamCampaign
-    /// @dev Uses a 256-bit word to represent 256 claims, where each bit corresponds to a claim.
-    /// The `index` is divided into two parts: the word index and the bit index within the word.
-    /// The word index determines which 256-bit word in the mapping is used, and the bit index identifies the specific
-    /// bit within that word.
-    /// A mask is formed with the bit index, and the result of a bitwise AND between the word and the mask will reveal
-    /// if the bit is set.
     function hasClaimed(uint256 index) public view override returns (bool) {
         // The word index identifies the specific 256-bit word in the mapping.
         // Shifting 8 bits to the right means using the bits at positions [255:8].
@@ -96,10 +90,16 @@ abstract contract SablierV2AirstreamCampaign is
     function clawback(address to, uint128 amount) external override onlyAdmin {
         // Checks: the campaign has expired.
         if (!hasExpired()) {
-            revert Errors.SablierV2AirstreamCampaign_CampaignHasNotExpired(block.timestamp, expiration);
+            revert Errors.SablierV2AirstreamCampaign_CampaignExpired({
+                currentTime: block.timestamp,
+                expiration: expiration
+            });
         }
 
+        // Effects: transfer the tokens to the provided address.
         asset.safeTransfer(to, amount);
+
+        // Log the clawback.
         emit Clawback(admin, to, amount);
     }
 
@@ -107,7 +107,7 @@ abstract contract SablierV2AirstreamCampaign is
                             INTERNAL CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Validates the `claim` function which is meant to be implemented by the child contracts.
+    /// @dev Validates the parameters `claim` function which is meant to be implemented by the child contracts.
     function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal view {
         // Checks: the campaign has not expired.
         if (hasExpired()) {
@@ -116,7 +116,7 @@ abstract contract SablierV2AirstreamCampaign is
 
         // Checks: the index has not been claimed.
         if (hasClaimed(index)) {
-            revert Errors.SablierV2AirstreamCampaign_AlreadyClaimed(index);
+            revert Errors.SablierV2AirstreamCampaign_AirstreamClaimed(index);
         }
 
         // Checks: the input claim is included in the merkle tree.

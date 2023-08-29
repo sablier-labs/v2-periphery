@@ -1,7 +1,7 @@
 hasClaimed.t.sol
-├── when the index is not in the merkle tree
+├── when the index is not in the Merkle tree
 │  └── it should return false
-└── when the index is in the merkle tree
+└── when the index is in the Merkle tree
    ├── when the recipient has not claimed
    │  └── it should return false
    └── when the recipient has claimed

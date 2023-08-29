@@ -4,7 +4,7 @@ pragma solidity >=0.8.19;
 
 import { msb } from "@prb/math/src/Common.sol";
 
-/// @dev A helper library for building leaves and Merkle roots and proofs.
+/// @dev A helper library for building Merkle leaves, roots, and proofs.
 library MerkleBuilder {
     /// @dev Function that hashes together the data needed for a Merkle tree leaf.
     function computeLeaf(uint256 index, address recipient, uint128 amount) internal pure returns (bytes32 leaf) {
@@ -44,16 +44,17 @@ library MerkleBuilder {
         uint256 count = leaves.length;
         require(count > 1, "leaves length must be greater than one");
 
-        // `log2Ceil` represents the ceiling value of the logarithm to the base 2 of the number of leaves in the tree.
+        // `log2Ceil` is the ceil value of the binary logarithm of the number of leaves in the tree.
         uint256 log2Ceil;
 
-        // Calculate the most significant bit of the leaves length, which is equivalent to the floor value of
-        // log2(count)
+        // Calculate the most significant bit of the leaves length, which is the floor value of log2(count).
         uint256 _msb = msb(count);
+
+        // Calculate the least significant bit using the bitwise inverse operator ~.
+        uint256 _lsb = (~count + 1) & count;
 
         // If the count is a power of 2 and msb is greater than 0, then log2Ceil is exactly the msb.
         // Otherwise, we need to take the ceiling value by adding 1 to msb.
-        uint256 _lsb = (~count + 1) & count;
         if ((_lsb == count) && (_msb > 0)) {
             log2Ceil = _msb;
         } else {
@@ -103,8 +104,7 @@ library MerkleBuilder {
                                  PRIVATE FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Function that takes an array of leaves and combines them to create
-    /// the next level of the Merkle tree.
+    /// @dev Function that takes an array of leaves and combines them to create the next level of the Merkle tree.
     function combineLeaves(bytes32[] memory leaves) private pure returns (bytes32[] memory) {
         uint256 count = leaves.length;
         bytes32[] memory result = new bytes32[]((count + 1) / 2);

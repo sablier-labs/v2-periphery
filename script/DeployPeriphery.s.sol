@@ -13,8 +13,8 @@ import { SablierV2ProxyTargetPush } from "../src/SablierV2ProxyTargetPush.sol";
 
 /// @notice Deploys all V2 Periphery contract in the following order:
 ///
-/// 1. {SablierV2Archive}
-/// 2. {SablierV2AirstreamCampaignFactory}
+/// 1. {SablierV2AirstreamCampaignFactory}
+/// 2. {SablierV2Archive}
 /// 3. {SablierV2ProxyPlugin}
 /// 4. {SablierV2ProxyTargetApprove}
 /// 5. {SablierV2ProxyTargetPermit2}
@@ -27,16 +27,16 @@ contract DeployPeriphery is BaseScript {
         public
         broadcast
         returns (
+            SablierV2AirstreamCampaignFactory airstreamCampaignFactory,
             SablierV2Archive archive,
-            SablierV2AirstreamCampaignFactory campaignFactory,
             SablierV2ProxyPlugin plugin,
             SablierV2ProxyTargetApprove targetApprove,
             SablierV2ProxyTargetPermit2 targetPermit2,
             SablierV2ProxyTargetPush targetPush
         )
     {
+        airstreamCampaignFactory = new SablierV2AirstreamCampaignFactory();
         archive = new SablierV2Archive(initialAdmin);
-        campaignFactory = new SablierV2AirstreamCampaignFactory();
         plugin = new SablierV2ProxyPlugin(archive);
         targetApprove = new SablierV2ProxyTargetApprove();
         targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);

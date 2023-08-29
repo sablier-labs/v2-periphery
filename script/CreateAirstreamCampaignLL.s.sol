@@ -11,29 +11,34 @@ import { ISablierV2AirstreamCampaignLL } from "../src/interfaces/ISablierV2Airst
 
 contract CreateAirstreamCampaignLL is BaseScript {
     struct Params {
-        ISablierV2AirstreamCampaignFactory campaignFactory;
         address initialAdmin;
+        ISablierV2LockupLinear lockupLinear;
         IERC20 asset;
         bytes32 merkleRoot;
-        bool cancelable;
         uint40 expiration;
-        ISablierV2LockupLinear lockupLinear;
-        uint40 cliffDuration;
-        uint40 totalDuration;
+        LockupLinear.Durations airstreamDurations;
+        bool cancelable;
         string ipfsCID;
         uint256 campaignTotalAmount;
         uint256 recipientsCount;
     }
 
-    function run(Params calldata params) public broadcast returns (ISablierV2AirstreamCampaignLL campaignLL) {
-        campaignLL = params.campaignFactory.createAirstreamCampaignLL(
+    function run(
+        ISablierV2AirstreamCampaignFactory airstreamCampaignFactory,
+        Params calldata params
+    )
+        public
+        broadcast
+        returns (ISablierV2AirstreamCampaignLL airstreamCampaignLL)
+    {
+        airstreamCampaignLL = airstreamCampaignFactory.createAirstreamCampaignLL(
             params.initialAdmin,
+            params.lockupLinear,
             params.asset,
             params.merkleRoot,
-            params.cancelable,
             params.expiration,
-            params.lockupLinear,
-            LockupLinear.Durations({ cliff: params.cliffDuration, total: params.totalDuration }),
+            params.airstreamDurations,
+            params.cancelable,
             params.ipfsCID,
             params.campaignTotalAmount,
             params.recipientsCount

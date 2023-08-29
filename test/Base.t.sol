@@ -79,7 +79,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         users.admin = createUser("Admin");
         users.broker = createUser("Broker");
         users.eve = createUser("Eve");
-        users.recipient = createUser("Recipient");
+        users.recipient0 = createUser("Recipient");
         users.recipient1 = createUser("Recipient1");
         users.recipient2 = createUser("Recipient2");
         users.recipient3 = createUser("Recipient3");
@@ -170,8 +170,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         vm.label({ account: address(aliceProxy), newLabel: "Alice's Proxy" });
         vm.label({ account: address(archive), newLabel: "Archive" });
         vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
-        vm.label({ account: address(campaignFactory), newLabel: "CampaignFactory" });
-        vm.label({ account: address(campaignLL), newLabel: "Campaign LL" });
+        vm.label({ account: address(campaignFactory), newLabel: "AirstreamCampaignFactory" });
+        vm.label({ account: address(campaignLL), newLabel: "AirstreamCampaignLL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
@@ -401,7 +401,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     }
 
     function computeCampaignLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
-        bytes32 salt = keccak256(abi.encodePacked(admin, asset, merkleRoot, defaults.EXPIRATION()));
+        bytes32 salt = keccak256(abi.encodePacked(lockupLinear, admin, asset, merkleRoot, defaults.EXPIRATION()));
         bytes32 creationBytecodeHash = keccak256(getCampaignLLBytecode(admin, merkleRoot));
         return computeCreate2Address({
             salt: salt,
@@ -412,7 +412,7 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
 
     function getCampaignLLBytecode(address admin, bytes32 merkleRoot) internal returns (bytes memory) {
         bytes memory constructorArgs = abi.encode(
-            admin, asset, merkleRoot, defaults.CANCELABLE(), defaults.EXPIRATION(), lockupLinear, defaults.durations()
+            admin, lockupLinear, asset, merkleRoot, defaults.EXPIRATION(), defaults.durations(), defaults.CANCELABLE()
         );
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2AirstreamCampaignLL).creationCode, constructorArgs);

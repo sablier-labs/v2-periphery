@@ -26,7 +26,7 @@ contract Clawback_Integration_Test is Integration_Test {
     function test_RevertWhen_CampaignHasNotExpired() external whenCallerAdmin {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2AirstreamCampaign_CampaignHasNotExpired.selector, block.timestamp, defaults.EXPIRATION()
+                Errors.SablierV2AirstreamCampaign_CampaignExpired.selector, block.timestamp, defaults.EXPIRATION()
             )
         );
         campaignLL.clawback({ to: users.admin.addr, amount: 1 });
@@ -36,25 +36,11 @@ contract Clawback_Integration_Test is Integration_Test {
         _;
     }
 
-    function test_RevertWhen_AllClaimsMade() external whenCallerAdmin whenCampaignHasExpired {
-        claimLL();
-        campaignLL.claim(defaults.INDEX2(), users.recipient2.addr, defaults.CLAIMABLE_AMOUNT(), defaults.index2Proof());
-        campaignLL.claim(defaults.INDEX3(), users.recipient3.addr, defaults.CLAIMABLE_AMOUNT(), defaults.index3Proof());
-        campaignLL.claim(defaults.INDEX4(), users.recipient4.addr, defaults.CLAIMABLE_AMOUNT(), defaults.index4Proof());
-        vm.warp({ timestamp: defaults.EXPIRATION() + 1 });
-        vm.expectRevert();
-        campaignLL.clawback({ to: users.admin.addr, amount: 1 });
-    }
-
-    modifier whenNotAllClaimsMade() {
-        _;
-    }
-
-    function test_Clawback_NoClaims() external whenCallerAdmin whenCampaignHasExpired whenNotAllClaimsMade {
+    function test_Clawback_NoClaims() external whenCallerAdmin whenCampaignHasExpired {
         testClawback();
     }
 
-    function test_Clawback() external whenCallerAdmin whenCampaignHasExpired whenNotAllClaimsMade {
+    function test_Clawback() external whenCallerAdmin whenCampaignHasExpired {
         claimLL();
         testClawback();
     }
@@ -64,7 +50,7 @@ contract Clawback_Integration_Test is Integration_Test {
         vm.warp({ timestamp: defaults.EXPIRATION() + 1 });
         expectCallToTransfer({ to: users.admin.addr, amount: clawbackAmount });
         vm.expectEmit();
-        emit Clawback(users.admin.addr, users.admin.addr, clawbackAmount);
+        emit Clawback({ admin: users.admin.addr, to: users.admin.addr, amount: clawbackAmount });
         campaignLL.clawback({ to: users.admin.addr, amount: clawbackAmount });
     }
 }

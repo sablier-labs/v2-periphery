@@ -9,7 +9,7 @@ import { ISablierV2AirstreamCampaignLL } from "src/interfaces/ISablierV2Airstrea
 import { MerkleBuilder } from "../../utils/MerkleBuilder.sol";
 import { Fork_Test } from "../Fork.t.sol";
 
-abstract contract CampaignLL_Fork_Test is Fork_Test {
+abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 
     function setUp() public virtual override {
@@ -30,88 +30,94 @@ abstract contract CampaignLL_Fork_Test is Fork_Test {
     }
 
     struct Vars {
-        uint256 dataCount;
-        uint256 campaignTotalAmount;
-        uint256[] indexes;
-        address[] recipients;
+        uint256 actualAirstreamId;
+        LockupLinear.Stream actualStream;
         uint128[] amounts;
+        ISablierV2AirstreamCampaignLL campaignLL;
+        uint256 campaignTotalAmount;
+        uint128 clawbackAmount;
+        uint256 recipientsCount;
+        uint256 expectedAirstreamId;
+        address expectedCampaignLL;
+        LockupLinear.Stream expectedStream;
+        uint256[] indexes;
         bytes32[] leaves;
         bytes32 merkleRoot;
-        address computedCampaignLL;
-        ISablierV2AirstreamCampaignLL campaignLL;
-        uint256 actualAirstreamId;
-        uint256 expectedAirstreamId;
-        LockupLinear.Stream actualStream;
-        LockupLinear.Stream expectedStream;
-        uint128 clawbackAmount;
+        address[] recipients;
     }
 
-    function testForkFuzz_ClaimHasClaimedClawback(Params memory params) external {
+    function testForkFuzz_AirstreamCampaignLL(Params memory params) external {
         vm.assume(params.admin != users.admin.addr);
         vm.assume(params.leafData.length > 250);
-        vm.assume(params.leafPos < params.leafData.length);
+        params.leafPos = _bound(params.leafPos, 0, params.leafData.length - 1);
 
-        // Bound each amount so that `campaignTotalAmount` does not overflow.
-        for (uint256 i = 0; i < params.leafData.length; ++i) {
-            params.leafData[i].amount =
-                uint128(_bound(params.leafData[i].amount, 1, MAX_UINT256 / params.leafData.length - 1));
-        }
+        /*//////////////////////////////////////////////////////////////////////////
+                                          CREATE
+        //////////////////////////////////////////////////////////////////////////*/
 
+        // Bound each leaf amount so that `campaignTotalAmount` does not overflow.
         Vars memory vars;
-
-        vars.dataCount = params.leafData.length;
-        for (uint256 i = 0; i < vars.dataCount; ++i) {
+        vars.recipientsCount = params.leafData.length;
+        for (uint256 i = 0; i < vars.recipientsCount; ++i) {
+            params.leafData[i].amount =
+                uint128(_bound(params.leafData[i].amount, 1, MAX_UINT256 / vars.recipientsCount - 1));
             vars.campaignTotalAmount += params.leafData[i].amount;
         }
 
-        vars.indexes = new uint256[](vars.dataCount);
-        vars.recipients = new address[](vars.dataCount);
-        vars.amounts = new uint128[](vars.dataCount);
-        for (uint256 i = 0; i < vars.dataCount; ++i) {
+        vars.indexes = new uint256[](vars.recipientsCount);
+        vars.recipients = new address[](vars.recipientsCount);
+        vars.amounts = new uint128[](vars.recipientsCount);
+        for (uint256 i = 0; i < vars.recipientsCount; ++i) {
             vars.indexes[i] = params.leafData[i].index;
             vars.recipients[i] = params.leafData[i].recipient;
             vars.amounts[i] = params.leafData[i].amount;
         }
 
-        // Compute the Merkle leaves and root.
         vars.leaves = MerkleBuilder.computeLeaves(vars.indexes, vars.recipients, vars.amounts);
         vars.merkleRoot = MerkleBuilder.computeRoot(vars.leaves);
 
-        vars.computedCampaignLL = computeCampaignLLAddress(params.admin, vars.merkleRoot);
+        vars.expectedCampaignLL = computeCampaignLLAddress(params.admin, vars.merkleRoot);
         vm.expectEmit({ emitter: address(campaignFactory) });
         emit CreateAirstreamCampaignLL(
             params.admin,
             asset,
-            ISablierV2AirstreamCampaignLL(vars.computedCampaignLL),
+            ISablierV2AirstreamCampaignLL(vars.expectedCampaignLL),
+            defaults.EXPIRATION(),
+            defaults.durations(),
+            defaults.CANCELABLE(),
             defaults.IPFS_CID(),
             vars.campaignTotalAmount,
-            vars.dataCount
+            vars.recipientsCount
         );
 
-        // Create the campaign.
         vars.campaignLL = campaignFactory.createAirstreamCampaignLL(
             params.admin,
+            lockupLinear,
             asset,
             vars.merkleRoot,
-            defaults.CANCELABLE(),
             defaults.EXPIRATION(),
-            lockupLinear,
             defaults.durations(),
+            defaults.CANCELABLE(),
             defaults.IPFS_CID(),
             vars.campaignTotalAmount,
-            vars.dataCount
+            vars.recipientsCount
         );
 
-        assertTrue(address(vars.campaignLL).code.length > 0, "campaignLL was not created");
-        assertEq(address(vars.campaignLL), vars.computedCampaignLL, "campaignLL does not match computed address");
+        assertGt(address(vars.campaignLL).code.length, 0, "CampaignLL contract not created");
+        assertEq(
+            address(vars.campaignLL), vars.expectedCampaignLL, "CampaignLL contract does not match computed address"
+        );
 
         // Fund the campaign.
         deal({ token: address(asset), to: address(vars.campaignLL), give: vars.campaignTotalAmount });
 
-        vars.expectedAirstreamId = lockupLinear.nextStreamId();
+        /*//////////////////////////////////////////////////////////////////////////
+                                          CLAIM
+        //////////////////////////////////////////////////////////////////////////*/
 
         assertFalse(vars.campaignLL.hasClaimed(vars.indexes[params.leafPos]));
 
+        vars.expectedAirstreamId = lockupLinear.nextStreamId();
         emit Claim(
             vars.indexes[params.leafPos],
             vars.recipients[params.leafPos],
@@ -143,12 +149,16 @@ abstract contract CampaignLL_Fork_Test is Fork_Test {
         assertEq(vars.actualAirstreamId, vars.expectedAirstreamId);
         assertEq(vars.actualStream, vars.expectedStream);
 
+        /*//////////////////////////////////////////////////////////////////////////
+                                        CLAWBACK
+        //////////////////////////////////////////////////////////////////////////*/
+
         vars.clawbackAmount = uint128(asset.balanceOf(address(vars.campaignLL)));
-        vm.warp({ timestamp: defaults.EXPIRATION() + 1 });
+        vm.warp({ timestamp: defaults.EXPIRATION() + 1 seconds });
 
         changePrank({ msgSender: params.admin });
         expectCallToTransfer({ to: params.admin, amount: vars.clawbackAmount });
-        vm.expectEmit();
+        vm.expectEmit({ emitter: address(vars.campaignLL) });
         emit Clawback({ to: params.admin, admin: params.admin, amount: vars.clawbackAmount });
         vars.campaignLL.clawback({ to: params.admin, amount: vars.clawbackAmount });
     }

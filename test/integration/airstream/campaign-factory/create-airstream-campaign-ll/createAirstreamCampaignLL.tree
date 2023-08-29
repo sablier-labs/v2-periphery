@@ -2,6 +2,6 @@ createAirstreamCampaignLL.t.sol
 ├── when the airstream campaign already exists
 │  └── it should revert
 └── when the airstream campaign does not exist
-    ├── it should deploy the airstream campaign 
-    ├── it should update the mapping
-    └── it should emit an {CreateAirstreamCampaignLL} event
+   ├── it should deploy the airstream campaign
+   ├── it should update the mapping
+   └── it should emit an {CreateAirstreamCampaignLL} event

@@ -14,7 +14,7 @@ contract Claim_Integration_Test is Integration_Test {
 
     function test_RevertWhen_CampaignExpired() external {
         uint40 expiration = defaults.EXPIRATION();
-        uint256 warpTime = expiration + 1;
+        uint256 warpTime = expiration + 1 seconds;
         bytes32[] memory merkleProof;
         vm.warp({ timestamp: warpTime });
         vm.expectRevert(
@@ -32,7 +32,7 @@ contract Claim_Integration_Test is Integration_Test {
         uint256 index1 = defaults.INDEX1();
         uint128 amount = defaults.CLAIMABLE_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_AlreadyClaimed.selector, index1));
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_AirstreamClaimed.selector, index1));
         campaignLL.claim(index1, users.recipient1.addr, amount, merkleProof);
     }
 
@@ -122,8 +122,8 @@ contract Claim_Integration_Test is Integration_Test {
             wasCanceled: false
         });
 
-        assertTrue(campaignLL.hasClaimed(defaults.INDEX1()));
-        assertEq(actualAirstreamId, expectedAirstreamId);
+        assertTrue(campaignLL.hasClaimed(defaults.INDEX1()), "not claimed");
+        assertEq(actualAirstreamId, expectedAirstreamId, "invalid airstream id");
         assertEq(actualStream, expectedStream);
     }
 }

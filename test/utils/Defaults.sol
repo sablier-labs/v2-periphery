@@ -49,7 +49,7 @@ contract Defaults is PermitSignature {
     uint256 public constant INDEX2 = 2;
     uint256 public constant INDEX3 = 3;
     uint256 public constant INDEX4 = 4;
-    string public IPFS_CID = "This is IPFS CID";
+    string public IPFS_CID = "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR";
     uint256 public constant RECIPIENTS_COUNT = 4;
 
     function index1Proof() public view returns (bytes32[] memory) {
@@ -179,7 +179,7 @@ contract Defaults is PermitSignature {
             asset: asset_,
             broker: broker(),
             cancelable: true,
-            recipient: users.recipient.addr,
+            recipient: users.recipient0.addr,
             segments: segmentsWithDeltas(),
             sender: address(proxy),
             totalAmount: PER_STREAM_AMOUNT
@@ -195,7 +195,7 @@ contract Defaults is PermitSignature {
             asset: asset_,
             broker: broker(),
             cancelable: true,
-            recipient: users.recipient.addr,
+            recipient: users.recipient0.addr,
             segments: segments(),
             sender: address(proxy),
             startTime: START_TIME,
@@ -257,7 +257,7 @@ contract Defaults is PermitSignature {
             broker: broker(),
             cancelable: true,
             durations: durations(),
-            recipient: users.recipient.addr,
+            recipient: users.recipient0.addr,
             sender: address(proxy),
             totalAmount: PER_STREAM_AMOUNT
         });
@@ -273,7 +273,7 @@ contract Defaults is PermitSignature {
             broker: broker(),
             cancelable: true,
             range: linearRange(),
-            recipient: users.recipient.addr,
+            recipient: users.recipient0.addr,
             sender: address(proxy),
             totalAmount: PER_STREAM_AMOUNT
         });

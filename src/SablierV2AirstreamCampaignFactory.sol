@@ -40,12 +40,12 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
     /// @notice inheritdoc ISablierV2AirstreamCampaignFactory
     function createAirstreamCampaignLL(
         address initialAdmin,
+        ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         bytes32 merkleRoot,
-        bool cancelable,
         uint40 expiration,
-        ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory airstreamDurations,
+        bool cancelable,
         string memory ipfsCID,
         uint256 campaignTotalAmount,
         uint256 recipientsCount
@@ -53,26 +53,34 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
         external
         returns (ISablierV2AirstreamCampaignLL airstreamCampaignLL)
     {
-        // Hash some parameters to generate a salt.
-        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, asset, merkleRoot, expiration));
+        // Hash the parameters to generate a salt.
+        bytes32 salt = keccak256(abi.encodePacked(lockupLinear, initialAdmin, asset, merkleRoot, expiration));
 
         // Deploy the airstream campaign with CREATE2.
         airstreamCampaignLL = new SablierV2AirstreamCampaignLL{salt: salt} (
             initialAdmin,
+            lockupLinear,
             asset,
             merkleRoot,
-            cancelable,
             expiration,
-            lockupLinear,
-            airstreamDurations
+            airstreamDurations,
+            cancelable
         );
 
-        // Effects: store the campaign in the admin's list of campaigns.
+        // Effects: append the campaign in the admin's list of campaigns.
         _airstreamCampaigns[initialAdmin].push(airstreamCampaignLL);
 
-        // Log the creation of the campaign.
+        // Log the creation of the campaign, including some metadata that is not stored on-chain.
         emit CreateAirstreamCampaignLL(
-            initialAdmin, asset, airstreamCampaignLL, ipfsCID, campaignTotalAmount, recipientsCount
+            initialAdmin,
+            asset,
+            airstreamCampaignLL,
+            expiration,
+            airstreamDurations,
+            cancelable,
+            ipfsCID,
+            campaignTotalAmount,
+            recipientsCount
         );
     }
 }

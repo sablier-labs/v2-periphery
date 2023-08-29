@@ -19,6 +19,9 @@ interface ISablierV2AirstreamCampaignFactory {
         address indexed admin,
         IERC20 indexed asset,
         ISablierV2AirstreamCampaignLL airstreamCampaign,
+        uint40 expiration,
+        LockupLinear.Durations airstreamDurations,
+        bool cancelable,
         string ipfsCID,
         uint256 campaignTotalAmount,
         uint256 recipientsCount
@@ -38,27 +41,27 @@ interface ISablierV2AirstreamCampaignFactory {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Creates a new Sablier V2 Lockup Linear airstream campaign.
+    /// @notice Creates a new airstream campaign that uses Lockup Linear.
     /// @dev Emits a {CreateAirstreamCampaignLL} event.
     /// @param initialAdmin The initial admin of the campaign.
-    /// @param asset The asset of the campaign.
-    /// @param merkleRoot The Merkle root of the campaign.
-    /// @param cancelable Whether the airstreams are cancelable.
-    /// @param expiration The expiration of the campaign.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
+    /// @param asset The address of the airstreamed ERC-20 asset.
+    /// @param merkleRoot The Merkle root of the campaign.
+    /// @param expiration The expiration of the campaign, as a Unix timestamp.
     /// @param airstreamDurations The airstream durations of the campaign.
-    /// @param ipfsCID Helper parameter to emit for additional information.
-    /// @param campaignTotalAmount Helper parameter to emit for additional information.
-    /// @param recipientsCount Helper parameter to emit for additional information.
+    /// @param cancelable Indicates if each airstream will be cancelable.
+    /// @param ipfsCID Metadata parameter emitted for indexing purposes.
+    /// @param campaignTotalAmount Metadata parameter emitted for indexing purposes.
+    /// @param recipientsCount Metadata parameter emitted for indexing purposes.
     /// @return airstreamCampaignLL The address of the newly created airstream campaign.
     function createAirstreamCampaignLL(
         address initialAdmin,
+        ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         bytes32 merkleRoot,
-        bool cancelable,
         uint40 expiration,
-        ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory airstreamDurations,
+        bool cancelable,
         string memory ipfsCID,
         uint256 campaignTotalAmount,
         uint256 recipientsCount

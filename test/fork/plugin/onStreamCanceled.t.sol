@@ -45,7 +45,7 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
         vm.warp({ timestamp: defaults.START_TIME() + timeJump });
 
         // Make the recipient the caller so that Sablier calls the hook implemented by the plugin.
-        changePrank({ msgSender: users.recipient.addr });
+        changePrank({ msgSender: users.recipient0.addr });
 
         // Expect a call to the hook.
         uint128 senderAmount = lockupLinear.refundableAmountOf(streamId);
@@ -53,7 +53,8 @@ abstract contract OnStreamCanceled_Fork_Test is Fork_Test, PermitSignature {
         vm.expectCall(
             address(aliceProxy),
             abi.encodeCall(
-                ISablierV2LockupSender.onStreamCanceled, (streamId, users.recipient.addr, senderAmount, recipientAmount)
+                ISablierV2LockupSender.onStreamCanceled,
+                (streamId, users.recipient0.addr, senderAmount, recipientAmount)
             )
         );
 

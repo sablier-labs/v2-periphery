@@ -31,7 +31,7 @@ abstract contract Integration_Test is Base_Test {
         // Deploy V2 Periphery.
         deployPeripheryConditionally();
 
-        // Create the airstream campaign.
+        // Create the default airstream campaign.
         createAirstreamCampaignLL();
 
         // Fund the campaign.
@@ -41,7 +41,7 @@ abstract contract Integration_Test is Base_Test {
         labelContracts();
 
         // Approve Permit2 to spend assets from the stream's recipient and Alice (the proxy owner).
-        vm.startPrank({ msgSender: users.recipient.addr });
+        vm.startPrank({ msgSender: users.recipient0.addr });
         asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
 
         changePrank({ msgSender: users.alice.addr });

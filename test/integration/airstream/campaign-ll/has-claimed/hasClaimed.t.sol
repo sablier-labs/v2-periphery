@@ -9,8 +9,8 @@ contract HasClaimed_Integration_Test is Integration_Test {
     }
 
     function test_HasClaimed_IndexNotInTree() external {
-        uint256 indexNotInTree = 1337;
-        assertFalse(campaignLL.hasClaimed(indexNotInTree));
+        uint256 indexNotInTree = 1337e18;
+        assertFalse(campaignLL.hasClaimed(indexNotInTree), "claimed");
     }
 
     modifier whenIndexInTree() {
@@ -18,11 +18,15 @@ contract HasClaimed_Integration_Test is Integration_Test {
     }
 
     function test_HasClaimed_NotClaimed() external whenIndexInTree {
-        assertFalse(campaignLL.hasClaimed(defaults.INDEX1()));
+        assertFalse(campaignLL.hasClaimed(defaults.INDEX1()), "claimed");
     }
 
-    function test_HasClaimed() external whenIndexInTree {
+    modifier whenRecipientHasClaimed() {
+        _;
+    }
+
+    function test_HasClaimed() external whenIndexInTree whenRecipientHasClaimed {
         claimLL();
-        assertTrue(campaignLL.hasClaimed(defaults.INDEX1()));
+        assertTrue(campaignLL.hasClaimed(defaults.INDEX1()), "not claimed");
     }
 }

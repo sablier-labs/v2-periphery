@@ -44,9 +44,20 @@ contract MerkleBuilder_Test is PRBTest, StdUtils {
         assertEq(actualLeaves, expectedLeaves, "computeLeaves");
     }
 
+    function testFuzz_ComputeProof(bytes32[] memory data, uint256 leafPos) external {
+        vm.assume(data.length > 1);
+        leafPos = _bound(leafPos, 1, data.length - 1);
+
+        bytes32[] memory proof = MerkleBuilder.computeProof(data, leafPos);
+        bytes32 root = MerkleBuilder.computeRoot(data);
+
+        bytes32 leafToProve = data[leafPos];
+        assertTrue(MerkleProof.verify(proof, root, leafToProve), "computeProof");
+    }
+
     function testFuzz_ComputeRoot(bytes32[] memory data, uint256 leafPos) public {
         vm.assume(data.length > 1);
-        vm.assume(leafPos < data.length);
+        leafPos = _bound(leafPos, 1, data.length - 1);
 
         bytes32[] memory proof = MerkleBuilder.computeProof(data, leafPos);
         bytes32 actualRoot = MerkleBuilder.computeRoot(data);
@@ -57,17 +68,6 @@ contract MerkleBuilder_Test is PRBTest, StdUtils {
         }
 
         assertEq(actualRoot, expectedRoot, "computeRoot");
-    }
-
-    function testFuzz_ComputeProof(bytes32[] memory data, uint256 leafPos) external {
-        vm.assume(data.length > 1);
-        leafPos = _bound(leafPos, 1, data.length - 1);
-
-        bytes32[] memory proof = MerkleBuilder.computeProof(data, leafPos);
-        bytes32 root = MerkleBuilder.computeRoot(data);
-
-        bytes32 leafToProve = data[leafPos];
-        assertTrue(MerkleProof.verify(proof, root, leafToProve), "computeProof");
     }
 
     function testFuzz_HashBytes32(bytes32 b1, bytes32 b2) external {

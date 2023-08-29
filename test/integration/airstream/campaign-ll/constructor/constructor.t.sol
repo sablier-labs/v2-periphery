@@ -32,12 +32,12 @@ contract Constructor_CampaignLL_Integration_Test is Integration_Test {
     function test_Constructor() external {
         SablierV2AirstreamCampaignLL constructedCampaignLL = new SablierV2AirstreamCampaignLL(
             users.admin.addr,
+            lockupLinear,
             asset,
             defaults.merkleRoot(),
-            defaults.CANCELABLE(),
             defaults.EXPIRATION(),
-            lockupLinear,
-            defaults.durations()
+            defaults.durations(),
+            defaults.CANCELABLE()
         );
 
         Vars memory vars;
@@ -68,8 +68,8 @@ contract Constructor_CampaignLL_Integration_Test is Integration_Test {
 
         (vars.actualDurationsCliff, vars.actualDurationsTotal) = constructedCampaignLL.airstreamDurations();
         vars.expectedDurations = defaults.durations();
-        assertEq(vars.actualDurationsCliff, vars.expectedDurations.cliff, "cliff");
-        assertEq(vars.actualDurationsTotal, vars.expectedDurations.total, "total");
+        assertEq(vars.actualDurationsCliff, vars.expectedDurations.cliff, "durations.cliff");
+        assertEq(vars.actualDurationsTotal, vars.expectedDurations.total, "durations.total");
 
         vars.actualAllowance = asset.allowance(address(constructedCampaignLL), address(lockupLinear));
         vars.expectedAllowance = MAX_UINT256;

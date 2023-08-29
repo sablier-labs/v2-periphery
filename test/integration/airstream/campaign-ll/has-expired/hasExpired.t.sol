@@ -10,7 +10,7 @@ contract HasExpired_Integration_Test is Integration_Test {
         Integration_Test.setUp();
     }
 
-    function test_HasExpired_ExiprationZero() external {
+    function test_HasExpired_ExpirationZero() external {
         ISablierV2AirstreamCampaignLL _campaignLL = campaignFactory.createAirstreamCampaignLL({
             initialAdmin: users.admin.addr,
             asset: asset,
@@ -23,7 +23,6 @@ contract HasExpired_Integration_Test is Integration_Test {
             campaignTotalAmount: defaults.CAMPAIGN_TOTAL_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()
         });
-
         assertFalse(_campaignLL.hasExpired());
     }
 
@@ -31,17 +30,17 @@ contract HasExpired_Integration_Test is Integration_Test {
         _;
     }
 
-    function test_HasExpired_NotGreaterThanCurrentTime() external whenExpirationNotZero {
-        assertFalse(campaignLL.hasExpired());
+    function test_HasExpired_ExpirationLessThanCurrentTime() external whenExpirationNotZero {
+        assertFalse(campaignLL.hasExpired(), "campaign expired");
     }
 
-    function test_HasExpired_EqualToCurrentTime() external whenExpirationNotZero {
-        vm.warp(defaults.EXPIRATION());
-        assertTrue(campaignLL.hasExpired());
+    function test_HasExpired_ExpirationEqualToCurrentTime() external whenExpirationNotZero {
+        vm.warp({ timestamp: defaults.EXPIRATION() });
+        assertTrue(campaignLL.hasExpired(), "campaign not expired");
     }
 
-    function test_HasExpired_GreaterThanCurrentTime() external whenExpirationNotZero {
-        vm.warp(defaults.EXPIRATION() + 1);
-        assertTrue(campaignLL.hasExpired());
+    function test_HasExpired_ExpirationGreaterThanCurrentTime() external whenExpirationNotZero {
+        vm.warp({ timestamp: defaults.EXPIRATION() + 1 seconds });
+        assertTrue(campaignLL.hasExpired(), "campaign not expired");
     }
 }

@@ -2,6 +2,7 @@
 pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2AirstreamCampaignLL } from "src/interfaces/ISablierV2AirstreamCampaignLL.sol";
 
@@ -13,6 +14,9 @@ abstract contract Events {
         address indexed admin,
         IERC20 indexed asset,
         ISablierV2AirstreamCampaignLL airstreamCampaign,
+        uint40 expiration,
+        LockupLinear.Durations airstreamDurations,
+        bool cancelable,
         string ipfsCID,
         uint256 campaignTotalAmount,
         uint256 recipientsCount

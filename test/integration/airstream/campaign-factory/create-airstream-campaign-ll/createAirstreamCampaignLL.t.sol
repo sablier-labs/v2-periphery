@@ -24,37 +24,40 @@ contract CreateAirstreamCampaignLL_Integration_Test is Integration_Test {
         vm.expectRevert();
         campaignFactory.createAirstreamCampaignLL(
             users.admin.addr,
+            lockupLinear,
             asset,
             merkleRoot,
-            cancelable,
             expiration,
-            lockupLinear,
             durations,
+            cancelable,
             ipfsCID,
             campaignAmount,
             recipientsCount
         );
     }
 
-    function test_CreateAirstreamCampaignLL(address admin) external {
+    function testFuzz_CreateAirstreamCampaignLL(address admin) external {
         vm.assume(admin != users.admin.addr);
-        address computedCampaignLL = computeCampaignLLAddress(admin);
+        address expectedCampaignLL = computeCampaignLLAddress(admin);
 
         vm.expectEmit({ emitter: address(campaignFactory) });
         emit CreateAirstreamCampaignLL(
             admin,
             asset,
-            ISablierV2AirstreamCampaignLL(computedCampaignLL),
+            ISablierV2AirstreamCampaignLL(expectedCampaignLL),
+            defaults.EXPIRATION(),
+            defaults.durations(),
+            defaults.CANCELABLE(),
             defaults.IPFS_CID(),
             defaults.CAMPAIGN_TOTAL_AMOUNT(),
             defaults.RECIPIENTS_COUNT()
         );
         address actualCampaignLL = address(createAirstreamCampaignLL(admin));
 
-        ISablierV2AirstreamCampaignLL[] memory expectedCampaign = campaignFactory.getAirstreamCampaigns(admin);
+        ISablierV2AirstreamCampaignLL[] memory expectedCampaigns = campaignFactory.getAirstreamCampaigns(admin);
 
-        assertTrue(actualCampaignLL.code.length > 0, "campaignLL was not created");
-        assertEq(actualCampaignLL, computedCampaignLL, "campaignLL address does not match computed address");
-        assertEq(actualCampaignLL, address(expectedCampaign[0]), "campaignLL was not stored in the campaigns mapping");
+        assertGt(actualCampaignLL.code.length, 0, "CampaignLL contract was not created");
+        assertEq(actualCampaignLL, expectedCampaignLL, "CampaignLL contract does not match computed address");
+        assertEq(actualCampaignLL, address(expectedCampaigns[0]), "CampaignLL contract not stored in the mapping");
     }
 }

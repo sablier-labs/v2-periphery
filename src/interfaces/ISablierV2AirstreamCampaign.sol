@@ -37,12 +37,17 @@ interface ISablierV2AirstreamCampaign is IAdminable {
     /// @dev This is an immutable state variable.
     function expiration() external returns (uint40);
 
-    /// @notice Checks whether a claim has been made for a given index.
+    /// @notice Returns a flag indicating whether a claim has been made for a given index.
+    /// @dev Uses a 256-bit word to represent 256 claims, where each bit corresponds to a claim.
+    /// The `index` is divided into two parts: (i) the word index and (ii) the bit index within the word.
+    /// The word index determines which 256-bit word is used in the mapping, and the bit index identifies the specific
+    /// bit within that word.
+    /// A mask is formed with the bit index, and the result of a bitwise AND between the word and the mask will reveal
+    /// if the bit is set.
     /// @param index The index of the recipient to check.
-    /// @return Whether the claim has been made.
     function hasClaimed(uint256 index) external returns (bool);
 
-    /// @notice Returns whether the airstream campaign has expired.
+    /// @notice Returns a flag indicating whether the airstream campaign has expired.
     function hasExpired() external view returns (bool);
 
     /// @notice The root of the Merkle tree used to validate the claims.

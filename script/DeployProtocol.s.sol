@@ -30,8 +30,8 @@ contract DeployProtocol is BaseScript {
             SablierV2LockupDynamic lockupDynamic,
             SablierV2LockupLinear lockupLinear,
             SablierV2NFTDescriptor nftDescriptor,
+            SablierV2AirstreamCampaignFactory airstreamCampaignFactory,
             SablierV2Archive archive,
-            SablierV2AirstreamCampaignFactory campaignFactory,
             SablierV2ProxyPlugin plugin,
             SablierV2ProxyTargetApprove targetApprove,
             SablierV2ProxyTargetPermit2 targetPermit2,
@@ -45,12 +45,12 @@ contract DeployProtocol is BaseScript {
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
 
         // Deploy V2 Periphery. The Archive needs its own context block to prevent Stack Too Deep.
+        airstreamCampaignFactory = new SablierV2AirstreamCampaignFactory();
         {
             archive = new SablierV2Archive(initialAdmin);
             archive.list(address(lockupDynamic));
             archive.list(address(lockupLinear));
         }
-        campaignFactory = new SablierV2AirstreamCampaignFactory();
         plugin = new SablierV2ProxyPlugin(archive);
         targetApprove = new SablierV2ProxyTargetApprove();
         targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);

@@ -6,7 +6,7 @@ import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
 import { SablierV2AirstreamCampaignFactory } from "../src/SablierV2AirstreamCampaignFactory.sol";
 
 contract DeployAirstreamCampaignFactory is BaseScript {
-    function run() public broadcast returns (SablierV2AirstreamCampaignFactory campaignFactory) {
-        campaignFactory = new SablierV2AirstreamCampaignFactory();
+    function run() public broadcast returns (SablierV2AirstreamCampaignFactory airstreamCampaignFactory) {
+        airstreamCampaignFactory = new SablierV2AirstreamCampaignFactory();
     }
 }

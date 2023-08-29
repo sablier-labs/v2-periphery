@@ -10,13 +10,17 @@ contract GetAirstreamCampaigns_Integration_Test is Integration_Test {
         Integration_Test.setUp();
     }
 
-    function test_GetAirstreamCampaigns_Empty(address admin) external {
+    function test_GetAirstreamCampaigns_AdminDoesNotHaveCampaigns(address admin) external {
         vm.assume(admin != users.admin.addr);
         ISablierV2AirstreamCampaignLL[] memory campaigns = campaignFactory.getAirstreamCampaigns(admin);
-        assertTrue(campaigns.length == 0, "campaigns arrays not empty");
+        assertEq(campaigns.length, 0, "campaigns arrays not empty");
     }
 
-    function test_GetAirstreamCampaigns() external {
+    modifier whenAdminHasCampaigns() {
+        _;
+    }
+
+    function test_GetAirstreamCampaigns() external whenAdminHasCampaigns {
         ISablierV2AirstreamCampaignLL[] memory campaigns = campaignFactory.getAirstreamCampaigns(users.admin.addr);
         address actualCampaignLL = address(campaigns[0]);
         address expectedCampaignLL = address(campaignLL);
