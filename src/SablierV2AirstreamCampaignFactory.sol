@@ -72,9 +72,10 @@ contract SablierV2AirstreamCampaignFactory is ISablierV2AirstreamCampaignFactory
 
         // Log the creation of the campaign, including some metadata that is not stored on-chain.
         emit CreateAirstreamCampaignLL(
-            initialAdmin,
-            asset,
             airstreamCampaignLL,
+            initialAdmin,
+            lockupLinear,
+            asset,
             expiration,
             airstreamDurations,
             cancelable,

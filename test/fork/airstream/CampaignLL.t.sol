@@ -79,9 +79,10 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
         vars.expectedCampaignLL = computeCampaignLLAddress(params.admin, vars.merkleRoot);
         vm.expectEmit({ emitter: address(campaignFactory) });
         emit CreateAirstreamCampaignLL(
-            params.admin,
-            asset,
             ISablierV2AirstreamCampaignLL(vars.expectedCampaignLL),
+            params.admin,
+            lockupLinear,
+            asset,
             defaults.EXPIRATION(),
             defaults.durations(),
             defaults.CANCELABLE(),

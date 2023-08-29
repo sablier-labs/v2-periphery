@@ -42,9 +42,10 @@ contract CreateAirstreamCampaignLL_Integration_Test is Integration_Test {
 
         vm.expectEmit({ emitter: address(campaignFactory) });
         emit CreateAirstreamCampaignLL(
-            admin,
-            asset,
             ISablierV2AirstreamCampaignLL(expectedCampaignLL),
+            admin,
+            lockupLinear,
+            asset,
             defaults.EXPIRATION(),
             defaults.durations(),
             defaults.CANCELABLE(),
@@ -56,7 +57,7 @@ contract CreateAirstreamCampaignLL_Integration_Test is Integration_Test {
 
         ISablierV2AirstreamCampaignLL[] memory expectedCampaigns = campaignFactory.getAirstreamCampaigns(admin);
 
-        assertGt(actualCampaignLL.code.length, 0, "CampaignLL contract was not created");
+        assertGt(actualCampaignLL.code.length, 0, "CampaignLL contract not created");
         assertEq(actualCampaignLL, expectedCampaignLL, "CampaignLL contract does not match computed address");
         assertEq(actualCampaignLL, address(expectedCampaigns[0]), "CampaignLL contract not stored in the mapping");
     }

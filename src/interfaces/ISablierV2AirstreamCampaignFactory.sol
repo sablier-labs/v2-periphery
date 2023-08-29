@@ -16,9 +16,10 @@ interface ISablierV2AirstreamCampaignFactory {
 
     /// @notice Emitted when a Sablier V2 Lockup Linear airstream campaign is created.
     event CreateAirstreamCampaignLL(
-        address indexed admin,
-        IERC20 indexed asset,
         ISablierV2AirstreamCampaignLL airstreamCampaign,
+        address indexed admin,
+        ISablierV2LockupLinear indexed lockupLinear,
+        IERC20 indexed asset,
         uint40 expiration,
         LockupLinear.Durations airstreamDurations,
         bool cancelable,
