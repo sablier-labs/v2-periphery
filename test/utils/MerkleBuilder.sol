@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
+// solhint-disable reason-string
 pragma solidity >=0.8.19;
 
 /// @dev A helper library for building Merkle leaves, roots, and proofs.
