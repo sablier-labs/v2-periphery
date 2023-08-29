@@ -74,7 +74,7 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
         }
 
         vars.leaves = MerkleBuilder.computeLeaves(vars.indexes, vars.recipients, vars.amounts);
-        vars.merkleRoot = MerkleBuilder.computeRoot(vars.leaves);
+        vars.merkleRoot = getRoot(vars.leaves);
 
         vars.expectedCampaignLL = computeCampaignLLAddress(params.admin, vars.merkleRoot);
         vm.expectEmit({ emitter: address(campaignFactory) });
@@ -129,7 +129,7 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
             index: vars.indexes[params.leafPos],
             recipient: vars.recipients[params.leafPos],
             amount: vars.amounts[params.leafPos],
-            merkleProof: MerkleBuilder.computeProof(vars.leaves, params.leafPos)
+            merkleProof: getProof(vars.leaves, params.leafPos)
         });
 
         vars.actualStream = lockupLinear.getStream(vars.actualAirstreamId);

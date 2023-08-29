@@ -34,10 +34,11 @@ import { WLC } from "./mocks/WLC.sol";
 import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { Events } from "./utils/Events.sol";
+import { Merkle } from "./utils/Murky.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
-abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
+abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtils {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/

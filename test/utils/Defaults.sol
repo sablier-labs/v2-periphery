@@ -13,11 +13,12 @@ import { Permit2Params } from "src/types/Permit2.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";
+import { Merkle } from "./Murky.sol";
 import { MerkleBuilder } from "./MerkleBuilder.sol";
 import { Users } from "./Types.sol";
 
 /// @notice Contract with default values for testing.
-contract Defaults is PermitSignature {
+contract Defaults is Merkle, PermitSignature {
     /*//////////////////////////////////////////////////////////////////////////
                                  GENERIC CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
@@ -53,19 +54,19 @@ contract Defaults is PermitSignature {
     uint256 public constant RECIPIENTS_COUNT = 4;
 
     function index1Proof() public view returns (bytes32[] memory) {
-        return MerkleBuilder.computeProof(leaves(), 0);
+        return getProof(leaves(), 0);
     }
 
     function index2Proof() public view returns (bytes32[] memory) {
-        return MerkleBuilder.computeProof(leaves(), 1);
+        return getProof(leaves(), 1);
     }
 
     function index3Proof() public view returns (bytes32[] memory) {
-        return MerkleBuilder.computeProof(leaves(), 2);
+        return getProof(leaves(), 2);
     }
 
     function index4Proof() public view returns (bytes32[] memory) {
-        return MerkleBuilder.computeProof(leaves(), 3);
+        return getProof(leaves(), 3);
     }
 
     function leaves() public view returns (bytes32[] memory leaves_) {
@@ -77,7 +78,7 @@ contract Defaults is PermitSignature {
     }
 
     function merkleRoot() public view returns (bytes32) {
-        return MerkleBuilder.computeRoot(leaves());
+        return getRoot(leaves());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
