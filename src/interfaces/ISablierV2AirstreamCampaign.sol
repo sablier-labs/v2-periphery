@@ -38,12 +38,7 @@ interface ISablierV2AirstreamCampaign is IAdminable {
     function expiration() external returns (uint40);
 
     /// @notice Returns a flag indicating whether a claim has been made for a given index.
-    /// @dev Uses a 256-bit word to represent 256 claims, where each bit corresponds to a claim.
-    /// The `index` is divided into two parts: (i) the word index and (ii) the bit index within the word.
-    /// The word index determines which 256-bit word is used in the mapping, and the bit index identifies the specific
-    /// bit within that word.
-    /// A mask is formed with the bit index, and the result of a bitwise AND between the word and the mask will reveal
-    /// if the bit is set.
+    /// @dev Uses a bitmap to save gas.
     /// @param index The index of the recipient to check.
     function hasClaimed(uint256 index) external returns (bool);
 

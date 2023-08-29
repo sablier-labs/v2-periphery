@@ -4,6 +4,7 @@ pragma solidity >=0.8.19;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import { Adminable } from "@sablier/v2-core/src/abstracts/Adminable.sol";
 
 import { ISablierV2AirstreamCampaign } from "../interfaces/ISablierV2AirstreamCampaign.sol";
@@ -15,6 +16,7 @@ abstract contract SablierV2AirstreamCampaign is
     ISablierV2AirstreamCampaign, // 2 inherited component
     Adminable // 1 inherited component
 {
+    using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -37,8 +39,8 @@ abstract contract SablierV2AirstreamCampaign is
                                   INTERNAL STORAGE
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Packed booleans that stores if a claim is available.
-    mapping(uint256 wordIndex => uint256 packedBooleans) private _claimedBitMap;
+    /// @dev Packed booleans that record the history of claims.
+    BitMaps.BitMap private _claimedBitMap;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
@@ -59,22 +61,7 @@ abstract contract SablierV2AirstreamCampaign is
 
     /// @inheritdoc ISablierV2AirstreamCampaign
     function hasClaimed(uint256 index) public view override returns (bool) {
-        // The word index identifies the specific 256-bit word in the mapping.
-        // Shifting 8 bits to the right means using the bits at positions [255:8].
-        uint256 claimedWordIndex = index >> 8;
-
-        // The bit index identifies the specific bit within the 256-bit word.
-        // Applying an 8-bit mask means using the bits at positions [7:0].
-        uint256 claimedBitIndex = index & 0xff;
-
-        // Retrieves the 256-bit word from the mapping, representing the claimed statuses for 256 claims.
-        uint256 claimedWord = _claimedBitMap[claimedWordIndex];
-
-        // Creates a mask with a single bit set at the position specified by `claimedBitIndex`.
-        uint256 mask = (1 << claimedBitIndex);
-
-        // Uses the mask to extract the specific bit from the word and checks if it is set.
-        return claimedWord & mask != 0;
+        return _claimedBitMap.get(index);
     }
 
     /// @inheritdoc ISablierV2AirstreamCampaign
@@ -107,7 +94,7 @@ abstract contract SablierV2AirstreamCampaign is
                             INTERNAL CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Validates the parameters `claim` function which is meant to be implemented by the child contracts.
+    /// @dev Validates the parameters of the `claim` function, which is implemented by child contracts.
     function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal view {
         // Checks: the campaign has not expired.
         if (hasExpired()) {
@@ -115,11 +102,11 @@ abstract contract SablierV2AirstreamCampaign is
         }
 
         // Checks: the index has not been claimed.
-        if (hasClaimed(index)) {
+        if (_claimedBitMap.get(index)) {
             revert Errors.SablierV2AirstreamCampaign_AirstreamClaimed(index);
         }
 
-        // Checks: the input claim is included in the merkle tree.
+        // Checks: the input claim is included in the Merkle tree.
         if (!MerkleProof.verify(merkleProof, merkleRoot, leaf)) {
             revert Errors.SablierV2AirstreamCampaign_InvalidProof();
         }
@@ -129,21 +116,9 @@ abstract contract SablierV2AirstreamCampaign is
                           INTERNAL NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Marks a claim as made for a given index.
-    /// @dev Similar to `hasClaimed`, this function divides the `index` into a word index and a bit index.
-    /// It then uses these to form a mask and performs a bitwise OR between the mask and the current word to set the
-    /// specific bit.
-    /// @param index The index of the recipient to be marked as made.
+    /// @notice Marks an index as claimed in the bitmap.
+    /// @param index The index of the recipient to mark as claimed.
     function _setClaimed(uint256 index) internal {
-        // The word index identifies the specific 256-bit word in the mapping.
-        // Shifting 8 bits to the right means using the bits at positions [255:8].
-        uint256 claimedWordIndex = index >> 8;
-
-        // The bit index identifies the specific bit within the 256-bit word.
-        // Applying an 8-bit mask means using the bits at positions [7:0].
-        uint256 claimedBitIndex = index & 0xff;
-
-        // Sets the specific bit without altering the others in the word, marking the claim as made.
-        _claimedBitMap[claimedWordIndex] = _claimedBitMap[claimedWordIndex] | (1 << claimedBitIndex);
+        _claimedBitMap.set(index);
     }
 }
