@@ -374,11 +374,11 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         });
     }
 
-    function createAirstreamCampaignLL() internal {
-        campaignLL = createAirstreamCampaignLL(users.admin.addr);
+    function createDefaultAirstreamCampaignLL() internal {
+        campaignLL = createDefaultAirstreamCampaignLL(users.admin.addr);
     }
 
-    function createAirstreamCampaignLL(address admin) internal returns (ISablierV2AirstreamCampaignLL) {
+    function createDefaultAirstreamCampaignLL(address admin) internal returns (ISablierV2AirstreamCampaignLL) {
         return campaignFactory.createAirstreamCampaignLL({
             initialAdmin: admin,
             asset: asset,

@@ -53,7 +53,7 @@ contract CreateAirstreamCampaignLL_Integration_Test is Integration_Test {
             defaults.CAMPAIGN_TOTAL_AMOUNT(),
             defaults.RECIPIENTS_COUNT()
         );
-        address actualCampaignLL = address(createAirstreamCampaignLL(admin));
+        address actualCampaignLL = address(createDefaultAirstreamCampaignLL(admin));
 
         ISablierV2AirstreamCampaignLL[] memory expectedCampaigns = campaignFactory.getAirstreamCampaigns(admin);
 
