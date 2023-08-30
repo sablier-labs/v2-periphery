@@ -4,6 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import { AirstreamCampaignLL_Fork_Test } from "../airstream/CampaignLL.t.sol";
+import { BatchCreate_Fork_Test } from "../batch-create/batchCreate.t.sol";
 import { OnStreamCanceled_Fork_Test } from "../plugin/onStreamCanceled.t.sol";
 import {
     BatchCancelMultiple_TargetApprove_Fork_Test,
@@ -24,6 +25,8 @@ contract USDT_BatchCancelMultiple_TargetApprove_Fork_Test is BatchCancelMultiple
 contract USDT_BatchCancelMultiple_TargetPermit2_Fork_Test is BatchCancelMultiple_TargetPermit2_Fork_Test(usdt) { }
 
 contract USDT_BatchCancelMultiple_TargetPush_Fork_Test is BatchCancelMultiple_TargetPush_Fork_Test(usdt) { }
+
+contract USDT_BatchCreate_Fork_Test is BatchCreate_Fork_Test(usdt) { }
 
 contract USDT_BatchCreate_TargetApprove_Fork_Test is BatchCreate_TargetApprove_Fork_Test(usdt) { }
 
