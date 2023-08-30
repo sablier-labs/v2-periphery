@@ -37,8 +37,7 @@ contract BatchCreateWithRange_Integration_Test is Integration_Test {
         });
 
         // Assert that the batch of streams has been created successfully.
-        uint256[] memory actualStreamIds =
-            batchCreate.batchCreateWithRange(lockupLinear, asset, defaults.batchCreateWithRange());
+        uint256[] memory actualStreamIds = batch.createWithRange(lockupLinear, asset, defaults.batchCreateWithRange());
         uint256[] memory expectedStreamIds = defaults.incrementalStreamIds();
         assertEq(actualStreamIds, expectedStreamIds, "stream ids mismatch");
     }

@@ -8,9 +8,9 @@ import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Batch } from "../types/DataTypes.sol";
 
-/// @title ISablierV2BatchCreate
+/// @title ISablierV2Batch
 /// @notice A contract to batch create Sablier V2 Lockup streams.
-interface ISablierV2BatchCreate {
+interface ISablierV2Batch {
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
@@ -26,7 +26,7 @@ interface ISablierV2BatchCreate {
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithDurations}.
     /// @return streamIds The ids of the newly created streams.
-    function batchCreateWithDurations(
+    function createWithDurations(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithDurations[] calldata batch
@@ -45,7 +45,7 @@ interface ISablierV2BatchCreate {
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithRange}.
     /// @return streamIds The ids of the newly created streams.
-    function batchCreateWithRange(
+    function createWithRange(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithRange[] calldata batch
@@ -64,7 +64,7 @@ interface ISablierV2BatchCreate {
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupDynamic.createWithDeltas}.
     /// @return streamIds The ids of the newly created streams.
-    function batchCreateWithDeltas(
+    function createWithDeltas(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
         Batch.CreateWithDeltas[] calldata batch
@@ -83,7 +83,7 @@ interface ISablierV2BatchCreate {
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupDynamic.createWithMilestones}.
     /// @return streamIds The ids of the newly created streams.
-    function batchCreateWithMilestones(
+    function createWithMilestones(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
         Batch.CreateWithMilestones[] calldata batch

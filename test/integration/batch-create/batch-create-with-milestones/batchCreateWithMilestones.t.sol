@@ -41,7 +41,7 @@ contract BatchCreateWithMilestones_Integration_Test is Integration_Test {
 
         // Assert that the batch of streams has been created successfully.
         uint256[] memory actualStreamIds =
-            batchCreate.batchCreateWithMilestones(lockupDynamic, asset, defaults.batchCreateWithMilestones());
+            batch.createWithMilestones(lockupDynamic, asset, defaults.batchCreateWithMilestones());
         uint256[] memory expectedStreamIds = defaults.incrementalStreamIds();
         assertEq(actualStreamIds, expectedStreamIds, "stream ids mismatch");
     }

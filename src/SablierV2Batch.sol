@@ -7,21 +7,21 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { ISablierV2BatchCreate } from "./interfaces/ISablierV2BatchCreate.sol";
+import { ISablierV2Batch } from "./interfaces/ISablierV2Batch.sol";
 import { Errors } from "./libraries/Errors.sol";
 import { Batch } from "./types/DataTypes.sol";
 
-/// @title SablierV2ProxyTarget
-/// @notice See the documentation in {ISablierV2BatchCreate}.
-contract SablierV2BatchCreate is ISablierV2BatchCreate {
+/// @title SablierV2Batch
+/// @notice See the documentation in {ISablierV2Batch}.
+contract SablierV2Batch is ISablierV2Batch {
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2BatchCreate
-    function batchCreateWithDurations(
+    /// @inheritdoc ISablierV2Batch
+    function createWithDurations(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithDurations[] calldata batch
@@ -33,7 +33,7 @@ contract SablierV2BatchCreate is ISablierV2BatchCreate {
         // Check that the batch size is not zero.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
-            revert Errors.SablierV2BatchCreate_BatchSizeZero();
+            revert Errors.SablierV2Batch_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
@@ -73,8 +73,8 @@ contract SablierV2BatchCreate is ISablierV2BatchCreate {
         }
     }
 
-    /// @inheritdoc ISablierV2BatchCreate
-    function batchCreateWithRange(
+    /// @inheritdoc ISablierV2Batch
+    function createWithRange(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         Batch.CreateWithRange[] calldata batch
@@ -86,7 +86,7 @@ contract SablierV2BatchCreate is ISablierV2BatchCreate {
         // Check that the batch is not empty.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
-            revert Errors.SablierV2BatchCreate_BatchSizeZero();
+            revert Errors.SablierV2Batch_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
@@ -130,8 +130,8 @@ contract SablierV2BatchCreate is ISablierV2BatchCreate {
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2BatchCreate
-    function batchCreateWithDeltas(
+    /// @inheritdoc ISablierV2Batch
+    function createWithDeltas(
         ISablierV2LockupDynamic dynamic,
         IERC20 asset,
         Batch.CreateWithDeltas[] calldata batch
@@ -143,7 +143,7 @@ contract SablierV2BatchCreate is ISablierV2BatchCreate {
         // Check that the batch size is not zero.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
-            revert Errors.SablierV2BatchCreate_BatchSizeZero();
+            revert Errors.SablierV2Batch_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
@@ -183,8 +183,8 @@ contract SablierV2BatchCreate is ISablierV2BatchCreate {
         }
     }
 
-    /// @inheritdoc ISablierV2BatchCreate
-    function batchCreateWithMilestones(
+    /// @inheritdoc ISablierV2Batch
+    function createWithMilestones(
         ISablierV2LockupDynamic dynamic,
         IERC20 asset,
         Batch.CreateWithMilestones[] calldata batch
@@ -196,7 +196,7 @@ contract SablierV2BatchCreate is ISablierV2BatchCreate {
         // Check that the batch size is not zero.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
-            revert Errors.SablierV2BatchCreate_BatchSizeZero();
+            revert Errors.SablierV2Batch_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create

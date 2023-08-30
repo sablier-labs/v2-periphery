@@ -38,7 +38,7 @@ contract BatchCreateWithDeltas_Integration_Test is Integration_Test {
 
         // Assert that the batch of streams has been created successfully.
         uint256[] memory actualStreamIds =
-            batchCreate.batchCreateWithDeltas(lockupDynamic, asset, defaults.batchCreateWithDeltas());
+            batch.createWithDeltas(lockupDynamic, asset, defaults.batchCreateWithDeltas());
         uint256[] memory expectedStreamIds = defaults.incrementalStreamIds();
         assertEq(actualStreamIds, expectedStreamIds, "stream ids mismatch");
     }
