@@ -98,7 +98,10 @@ abstract contract SablierV2AirstreamCampaign is
     function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal view {
         // Checks: the campaign has not expired.
         if (hasExpired()) {
-            revert Errors.SablierV2AirstreamCampaign_CampaignHasExpired(block.timestamp, expiration);
+            revert Errors.SablierV2AirstreamCampaign_CampaignHasExpired({
+                currentTime: block.timestamp,
+                expiration: expiration
+            });
         }
 
         // Checks: the index has not been claimed.
