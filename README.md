@@ -38,8 +38,19 @@ pnpm add @sablier/v2-periphery
 
 ## Security
 
-Please refer to the [SECURITY](./SECURITY.md) policy for any security-related concerns. This repository is subject to a
+The codebase has undergone rigorous audits by leading security experts from Cantina, as well as independent auditors.
+For a comprehensive list of all audits conducted, please click [here](https://github.com/sablier-labs/audits).
+
+For any security-related concerns, please refer to the [SECURITY](./SECURITY.md) policy. This repository is subject to a
 bug bounty program per the terms outlined in the aforementioned policy.
+
+## Contributing
+
+Feel free to dive in! [Open](https://github.com/sablier-labs/v2-periphery/issues/new) an issue,
+[start](https://github.com/sablier-labs/v2-periphery/discussions/new) a discussion or submit a PR. For any informal
+concerns or feedback, please join our [Discord server](https://discord.gg/bSwRCwWRsT).
+
+For guidance on how to create PRs, see the [CONTRIBUTING](./CONTRIBUTING.md) guide.
 
 ## License
 
