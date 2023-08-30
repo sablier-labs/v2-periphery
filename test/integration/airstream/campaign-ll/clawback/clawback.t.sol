@@ -36,16 +36,8 @@ contract Clawback_Integration_Test is Integration_Test {
         _;
     }
 
-    function test_Clawback_NoClaims() external whenCallerAdmin whenCampaignHasExpired {
-        testClawback();
-    }
-
     function test_Clawback() external whenCallerAdmin whenCampaignHasExpired {
         claimLL();
-        testClawback();
-    }
-
-    function testClawback() internal {
         uint128 clawbackAmount = uint128(asset.balanceOf(address(campaignLL)));
         vm.warp({ timestamp: defaults.EXPIRATION() + 1 });
         expectCallToTransfer({ to: users.admin.addr, amount: clawbackAmount });

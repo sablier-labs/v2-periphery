@@ -5,9 +5,6 @@ clawback.t.sol
    ├── when the campaign has not expired
    │  └── it should revert
    └── when the campaign has expired
-      ├── when there have been claims
-      │  ├── it should perform the ERC-20 transfer
-      │  └── it should emit a {Clawback} event
-      └── when there have not been claims
-         ├── it should perform the ERC-20 transfer
-         └── it should emit a {Clawback} event
+      ├── it should perform the ERC-20 transfer
+      └── it should emit a {Clawback} event
+
