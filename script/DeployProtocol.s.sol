@@ -8,8 +8,9 @@ import { SablierV2NFTDescriptor } from "@sablier/v2-core/src/SablierV2NFTDescrip
 import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
-import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2AirstreamCampaignFactory } from "../src/SablierV2AirstreamCampaignFactory.sol";
+import { SablierV2Archive } from "../src/SablierV2Archive.sol";
+import { SablierV2Batch } from "../src/SablierV2Batch.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTargetApprove } from "../src/SablierV2ProxyTargetApprove.sol";
 import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.sol";
@@ -32,6 +33,7 @@ contract DeployProtocol is BaseScript {
             SablierV2NFTDescriptor nftDescriptor,
             SablierV2AirstreamCampaignFactory airstreamCampaignFactory,
             SablierV2Archive archive,
+            SablierV2Batch batch,
             SablierV2ProxyPlugin plugin,
             SablierV2ProxyTargetApprove targetApprove,
             SablierV2ProxyTargetPermit2 targetPermit2,
@@ -51,6 +53,7 @@ contract DeployProtocol is BaseScript {
             archive.list(address(lockupDynamic));
             archive.list(address(lockupLinear));
         }
+        batch = new SablierV2Batch();
         plugin = new SablierV2ProxyPlugin(archive);
         targetApprove = new SablierV2ProxyTargetApprove();
         targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);

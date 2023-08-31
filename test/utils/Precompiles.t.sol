@@ -7,6 +7,7 @@ import { LibString } from "solady/utils/LibString.sol";
 
 import { ISablierV2AirstreamCampaignFactory } from "../../src/interfaces/ISablierV2AirstreamCampaignFactory.sol";
 import { ISablierV2Archive } from "../../src/interfaces/ISablierV2Archive.sol";
+import { ISablierV2Batch } from "../../src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2ProxyPlugin } from "../../src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "../../src/interfaces/ISablierV2ProxyTarget.sol";
 
@@ -35,6 +36,12 @@ contract Precompiles_Test is Base_Test {
         address actualArchive = address(precompiles.deployArchive(users.admin.addr));
         address expectedArchive = address(deployPrecompiledArchive(users.admin.addr));
         assertEq(actualArchive.code, expectedArchive.code, "bytecodes mismatch");
+    }
+
+    function test_DeployBatch() external onlyTestOptimizedProfile {
+        address actualBatch = address(precompiles.deployBatch());
+        address expectedBatch = address(deployPrecompiledBatch());
+        assertEq(actualBatch.code, expectedBatch.code, "bytecodes mismatch");
     }
 
     function test_DeployProxyPlugin() external onlyTestOptimizedProfile {
@@ -76,6 +83,7 @@ contract Precompiles_Test is Base_Test {
         (
             ISablierV2AirstreamCampaignFactory actualFactory,
             ISablierV2Archive actualArchive,
+            ISablierV2Batch actualBatch,
             ISablierV2ProxyPlugin actualProxyPlugin,
             ISablierV2ProxyTarget actualProxyTargetApprove,
             ISablierV2ProxyTarget actualProxyTargetPermit2,
@@ -87,6 +95,9 @@ contract Precompiles_Test is Base_Test {
 
         address expectedArchive = address(deployPrecompiledArchive(users.admin.addr));
         assertEq(address(actualArchive).code, expectedArchive.code, "bytecodes mismatch");
+
+        address expectedBatch = address(deployPrecompiledBatch());
+        assertEq(address(actualBatch).code, expectedBatch.code, "bytecodes mismatch");
 
         address expectedProxyPlugin = address(deployPrecompiledProxyPlugin(actualArchive));
         bytes memory expectedLockupDynamicCode =
