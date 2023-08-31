@@ -28,7 +28,7 @@ FOUNDRY_PROFILE=optimized forge build
 cp out-optimized/SablierV2AirstreamCampaignFactory.sol/SablierV2AirstreamCampaignFactory.json $artifacts
 cp out-optimized/SablierV2AirstreamCampaignLL.sol/SablierV2AirstreamCampaignLL.json $artifacts
 cp out-optimized/SablierV2Archive.sol/SablierV2Archive.json $artifacts
-cp out-optimized/SablierVBatch.sol/SablierVBatch.json $artifacts
+cp out-optimized/SablierV2Batch.sol/SablierV2Batch.json $artifacts
 cp out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json $artifacts
 cp out-optimized/SablierV2ProxyTargetApprove.sol/SablierV2ProxyTargetApprove.json $artifacts
 cp out-optimized/SablierV2ProxyTargetPermit2.sol/SablierV2ProxyTargetPermit2.json $artifacts
