@@ -55,10 +55,12 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
                                           CREATE
         //////////////////////////////////////////////////////////////////////////*/
 
-        // Bound each leaf amount so that `campaignTotalAmount` does not overflow.
         Vars memory vars;
         vars.recipientsCount = params.leafData.length;
         for (uint256 i = 0; i < vars.recipientsCount; ++i) {
+            vm.assume(params.leafData[i].recipient != address(0));
+
+            // Bound each leaf amount so that `campaignTotalAmount` does not overflow.
             params.leafData[i].amount =
                 uint128(_bound(params.leafData[i].amount, 1, MAX_UINT256 / vars.recipientsCount - 1));
             vars.campaignTotalAmount += params.leafData[i].amount;
