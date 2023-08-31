@@ -4,6 +4,7 @@ pragma solidity >=0.8.19 <=0.9.0;
 import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
+import { SablierV2AirstreamCampaignFactory } from "../src/SablierV2AirstreamCampaignFactory.sol";
 import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTargetApprove } from "../src/SablierV2ProxyTargetApprove.sol";
@@ -12,11 +13,12 @@ import { SablierV2ProxyTargetPush } from "../src/SablierV2ProxyTargetPush.sol";
 
 /// @notice Deploys all V2 Periphery contracts at deterministic addresses across chains, in the following order:
 ///
-/// 1. {SablierV2Archive}
-/// 2. {SablierV2ProxyPlugin}
-/// 3. {SablierV2ProxyTargetApprove}
-/// 4. {SablierV2ProxyTargetPermit2}
-/// 5. {SablierV2ProxyTargetPush}
+/// 1. {SablierV2AirstreamCampaignFactory}
+/// 2. {SablierV2Archive}
+/// 3. {SablierV2ProxyPlugin}
+/// 4. {SablierV2ProxyTargetApprove}
+/// 5. {SablierV2ProxyTargetPermit2}
+/// 6. {SablierV2ProxyTargetPush}
 ///
 /// @dev Reverts if any contract has already been deployed.
 contract DeployDeterministicPeriphery is BaseScript {
@@ -31,6 +33,7 @@ contract DeployDeterministicPeriphery is BaseScript {
         virtual
         broadcast
         returns (
+            SablierV2AirstreamCampaignFactory airstreamCampaignFactory,
             SablierV2Archive archive,
             SablierV2ProxyPlugin plugin,
             SablierV2ProxyTargetApprove targetApprove,
@@ -38,6 +41,8 @@ contract DeployDeterministicPeriphery is BaseScript {
             SablierV2ProxyTargetPush targetPush
         )
     {
+        airstreamCampaignFactory =
+            new SablierV2AirstreamCampaignFactory{ salt: bytes32(abi.encodePacked(create2Salt)) }();
         archive = new SablierV2Archive{ salt: bytes32(abi.encodePacked(create2Salt)) }(initialAdmin);
         plugin = new SablierV2ProxyPlugin{ salt: bytes32(abi.encodePacked(create2Salt)) }(archive);
         targetApprove = new SablierV2ProxyTargetApprove{ salt: bytes32(abi.encodePacked(create2Salt)) }();

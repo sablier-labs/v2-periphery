@@ -25,6 +25,8 @@ mkdir $artifacts \
 FOUNDRY_PROFILE=optimized forge build
 
 # Copy the production artifacts
+cp out-optimized/SablierV2AirstreamCampaignFactory.sol/SablierV2AirstreamCampaignFactory.json $artifacts
+cp out-optimized/SablierV2AirstreamCampaignLL.sol/SablierV2AirstreamCampaignLL.json $artifacts
 cp out-optimized/SablierV2Archive.sol/SablierV2Archive.json $artifacts
 cp out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json $artifacts
 cp out-optimized/SablierV2ProxyTargetApprove.sol/SablierV2ProxyTargetApprove.json $artifacts
@@ -32,6 +34,8 @@ cp out-optimized/SablierV2ProxyTargetPermit2.sol/SablierV2ProxyTargetPermit2.jso
 cp out-optimized/SablierV2ProxyTargetPush.sol/SablierV2ProxyTargetPush.json $artifacts
 
 interfaces=./artifacts/interfaces
+cp out-optimized/ISablierV2AirstreamCampaignFactory.sol/ISablierV2AirstreamCampaignFactory.json $interfaces
+cp out-optimized/ISablierV2AirstreamCampaignLL.sol/ISablierV2AirstreamCampaignLL.json $interfaces
 cp out-optimized/ISablierV2Archive.sol/ISablierV2Archive.json $interfaces
 cp out-optimized/ISablierV2ProxyPlugin.sol/ISablierV2ProxyPlugin.json $interfaces
 cp out-optimized/ISablierV2ProxyTarget.sol/ISablierV2ProxyTarget.json $interfaces

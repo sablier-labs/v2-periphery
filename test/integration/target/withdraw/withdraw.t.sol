@@ -12,7 +12,7 @@ abstract contract Withdraw_Integration_Test is Integration_Test {
 
     function test_RevertWhen_NotDelegateCalled() external {
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.withdraw({ lockup: lockupLinear, streamId: 0, to: users.recipient.addr, amount: 0 });
+        target.withdraw({ lockup: lockupLinear, streamId: 0, to: users.recipient0.addr, amount: 0 });
     }
 
     modifier whenDelegateCalled() {
@@ -34,11 +34,11 @@ abstract contract Withdraw_Integration_Test is Integration_Test {
         vm.warp(defaults.CLIFF_TIME());
 
         // Asset flow: Sablier → recipient
-        expectCallToTransfer({ to: users.recipient.addr, amount: defaults.WITHDRAW_AMOUNT() });
+        expectCallToTransfer({ to: users.recipient0.addr, amount: defaults.WITHDRAW_AMOUNT() });
 
         // Withdraw from the stream.
         bytes memory data =
-            abi.encodeCall(target.withdraw, (lockup, streamId, users.recipient.addr, defaults.WITHDRAW_AMOUNT()));
+            abi.encodeCall(target.withdraw, (lockup, streamId, users.recipient0.addr, defaults.WITHDRAW_AMOUNT()));
         aliceProxy.execute(address(target), data);
 
         // Assert that the withdrawn amount has been updated.

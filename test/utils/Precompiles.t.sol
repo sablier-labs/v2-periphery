@@ -5,6 +5,7 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 import { DeployPermit2 } from "@uniswap/permit2-test/utils/DeployPermit2.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
+import { ISablierV2AirstreamCampaignFactory } from "../../src/interfaces/ISablierV2AirstreamCampaignFactory.sol";
 import { ISablierV2Archive } from "../../src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2ProxyPlugin } from "../../src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "../../src/interfaces/ISablierV2ProxyTarget.sol";
@@ -22,6 +23,12 @@ contract Precompiles_Test is Base_Test {
         if (isTestOptimizedProfile()) {
             _;
         }
+    }
+
+    function test_DeployAirstreamCampaignFactory() external onlyTestOptimizedProfile {
+        address actualFactory = address(precompiles.deployAirstreamCampaignFactory());
+        address expectedFactory = address(deployPrecompiledAirstreamCampaignFactory());
+        assertEq(actualFactory.code, expectedFactory.code, "bytecodes mismatch");
     }
 
     function test_DeployArchive() external onlyTestOptimizedProfile {
@@ -67,12 +74,16 @@ contract Precompiles_Test is Base_Test {
     function test_DeployPeriphery() external onlyTestOptimizedProfile {
         IAllowanceTransfer permit2 = IAllowanceTransfer(new DeployPermit2().run());
         (
+            ISablierV2AirstreamCampaignFactory actualFactory,
             ISablierV2Archive actualArchive,
             ISablierV2ProxyPlugin actualProxyPlugin,
             ISablierV2ProxyTarget actualProxyTargetApprove,
             ISablierV2ProxyTarget actualProxyTargetPermit2,
             ISablierV2ProxyTarget actualProxyTargetPush
         ) = precompiles.deployPeriphery(users.admin.addr, permit2);
+
+        address expectedFactory = address(deployPrecompiledAirstreamCampaignFactory());
+        assertEq(address(actualFactory).code, address(expectedFactory).code, "bytecodes mismatch");
 
         address expectedArchive = address(deployPrecompiledArchive(users.admin.addr));
         assertEq(address(actualArchive).code, expectedArchive.code, "bytecodes mismatch");

@@ -1,0 +1,7 @@
+createAirstreamCampaignLL.t.sol
+├── when the airstream campaign has been deployed with CREATE2
+│  └── it should revert
+└── when the airstream campaign has not been deployed
+   ├── it should deploy the airstream campaign
+   ├── it should update the mapping
+   └── it should emit an {CreateAirstreamCampaignLL} event

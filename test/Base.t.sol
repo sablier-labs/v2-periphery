@@ -16,10 +16,14 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
+import { ISablierV2AirstreamCampaignFactory } from "src/interfaces/ISablierV2AirstreamCampaignFactory.sol";
+import { ISablierV2AirstreamCampaignLL } from "src/interfaces/ISablierV2AirstreamCampaignLL.sol";
 import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
+import { SablierV2AirstreamCampaignFactory } from "src/SablierV2AirstreamCampaignFactory.sol";
+import { SablierV2AirstreamCampaignLL } from "src/SablierV2AirstreamCampaignLL.sol";
 import { SablierV2Archive } from "src/SablierV2Archive.sol";
 import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTargetApprove } from "src/SablierV2ProxyTargetApprove.sol";
@@ -30,10 +34,11 @@ import { WLC } from "./mocks/WLC.sol";
 import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { Events } from "./utils/Events.sol";
+import { Merkle } from "./utils/Murky.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
-abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
+abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtils {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
@@ -47,6 +52,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     ISablierV2Archive internal archive;
     IPRBProxy internal aliceProxy;
     IERC20 internal asset;
+    ISablierV2AirstreamCampaignLL internal campaignLL;
+    ISablierV2AirstreamCampaignFactory internal campaignFactory;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
@@ -73,7 +80,11 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         users.admin = createUser("Admin");
         users.broker = createUser("Broker");
         users.eve = createUser("Eve");
-        users.recipient = createUser("Recipient");
+        users.recipient0 = createUser("Recipient");
+        users.recipient1 = createUser("Recipient1");
+        users.recipient2 = createUser("Recipient2");
+        users.recipient3 = createUser("Recipient3");
+        users.recipient4 = createUser("Recipient4");
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -91,12 +102,14 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function deployPeripheryConditionally() internal {
         if (!isTestOptimizedProfile()) {
             archive = new SablierV2Archive(users.admin.addr);
+            campaignFactory = new SablierV2AirstreamCampaignFactory();
             plugin = new SablierV2ProxyPlugin(archive);
             targetApprove = new SablierV2ProxyTargetApprove();
             targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
             targetPush = new SablierV2ProxyTargetPush();
         } else {
             archive = deployPrecompiledArchive(users.admin.addr);
+            campaignFactory = deployPrecompiledAirstreamCampaignFactory();
             plugin = deployPrecompiledProxyPlugin(archive);
             targetApprove = deployPrecompiledProxyTargetApprove();
             targetPermit2 = deployPrecompiledProxyTargetPermit2(permit2);
@@ -110,6 +123,13 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
     function deployPrecompiledArchive(address initialAdmin) internal returns (ISablierV2Archive) {
         return ISablierV2Archive(
             deployCode("out-optimized/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(initialAdmin))
+        );
+    }
+
+    /// @dev Deploys {SablierV2AirstreamCampaignFactory} from a source precompiled with `--via-ir`.
+    function deployPrecompiledAirstreamCampaignFactory() internal returns (ISablierV2AirstreamCampaignFactory) {
+        return ISablierV2AirstreamCampaignFactory(
+            deployCode("out-optimized/SablierV2AirstreamCampaignFactory.sol/SablierV2AirstreamCampaignFactory.json")
         );
     }
 
@@ -151,6 +171,8 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         vm.label({ account: address(aliceProxy), newLabel: "Alice's Proxy" });
         vm.label({ account: address(archive), newLabel: "Archive" });
         vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
+        vm.label({ account: address(campaignFactory), newLabel: "AirstreamCampaignFactory" });
+        vm.label({ account: address(campaignLL), newLabel: "AirstreamCampaignLL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
@@ -337,6 +359,63 @@ abstract contract Base_Test is Assertions, Events, StdCheats, V2CoreUtils {
         internal
     {
         vm.expectCall({ callee: asset_, count: count, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                     AIRSTREAM
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function computeCampaignLLAddress() internal returns (address) {
+        return computeCampaignLLAddress(users.admin.addr, defaults.merkleRoot(), defaults.EXPIRATION());
+    }
+
+    function computeCampaignLLAddress(address admin) internal returns (address) {
+        return computeCampaignLLAddress(admin, defaults.merkleRoot(), defaults.EXPIRATION());
+    }
+
+    function computeCampaignLLAddress(address admin, uint40 expiration) internal returns (address) {
+        return computeCampaignLLAddress(admin, defaults.merkleRoot(), expiration);
+    }
+
+    function computeCampaignLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
+        return computeCampaignLLAddress(admin, merkleRoot, defaults.EXPIRATION());
+    }
+
+    function computeCampaignLLAddress(
+        address admin,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (address)
+    {
+        bytes32 salt = keccak256(abi.encodePacked(lockupLinear, admin, asset, merkleRoot, expiration));
+        bytes32 creationBytecodeHash = keccak256(getCampaignLLBytecode(admin, merkleRoot, expiration));
+        return computeCreate2Address({
+            salt: salt,
+            initcodeHash: creationBytecodeHash,
+            deployer: address(campaignFactory)
+        });
+    }
+
+    function getCampaignLLBytecode(
+        address admin,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (bytes memory)
+    {
+        bytes memory constructorArgs =
+            abi.encode(admin, lockupLinear, asset, merkleRoot, expiration, defaults.durations(), defaults.CANCELABLE());
+        if (!isTestOptimizedProfile()) {
+            return bytes.concat(type(SablierV2AirstreamCampaignLL).creationCode, constructorArgs);
+        } else {
+            return bytes.concat(
+                vm.getCode("out-optimized/SablierV2AirstreamCampaignLL.sol/SablierV2AirstreamCampaignLL.json"),
+                constructorArgs
+            );
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////

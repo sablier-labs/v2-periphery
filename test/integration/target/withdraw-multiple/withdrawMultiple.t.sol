@@ -14,7 +14,7 @@ abstract contract WithdrawMultiple_Integration_Test is Integration_Test {
         uint256[] memory streamIds;
         uint128[] memory amounts;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.withdrawMultiple(lockupLinear, streamIds, users.recipient.addr, amounts);
+        target.withdrawMultiple(lockupLinear, streamIds, users.recipient0.addr, amounts);
     }
 
     modifier whenDelegateCalled() {
@@ -39,14 +39,14 @@ abstract contract WithdrawMultiple_Integration_Test is Integration_Test {
         uint128 withdrawAmount = defaults.WITHDRAW_AMOUNT();
 
         // Asset flow: Sablier → recipient
-        expectMultipleCallsToTransfer({ count: batchSize, to: users.recipient.addr, amount: withdrawAmount });
+        expectMultipleCallsToTransfer({ count: batchSize, to: users.recipient0.addr, amount: withdrawAmount });
 
         uint128[] memory amounts = new uint128[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
             amounts[i] = withdrawAmount;
         }
 
-        bytes memory data = abi.encodeCall(target.withdrawMultiple, (lockup, streamIds, users.recipient.addr, amounts));
+        bytes memory data = abi.encodeCall(target.withdrawMultiple, (lockup, streamIds, users.recipient0.addr, amounts));
         aliceProxy.execute(address(target), data);
 
         // Assert that the withdrawn amount has been updated for all streams.
