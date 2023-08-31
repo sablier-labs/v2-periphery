@@ -6,14 +6,14 @@ import { Batch } from "src/types/DataTypes.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
-contract BatchCreateWithDurations_Integration_Test is Integration_Test {
-    function setUp() public virtual override { }
-
+contract CreateWithDurations_Integration_Test is Integration_Test {
+     function setUp() public virtual override {
+        Integration_Test.setUp();
+    }
     function test_RevertWhen_BatchSizeZero() external {
-        Batch.CreateWithDurations[] memory batch = new Batch.CreateWithDurations[](0);
-        bytes memory data = abi.encodeCall(target.batchCreateWithDurations, (lockupLinear, asset, batch, bytes("")));
-        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
-        aliceProxy.execute(address(target), data);
+        Batch.CreateWithDurations[] memory batchParams = new Batch.CreateWithDurations[](0);
+        vm.expectRevert(Errors.SablierV2Batch_BatchSizeZero.selector);
+        batch.createWithDurations(lockupLinear, asset, batchParams);
     }
 
     modifier whenBatchSizeNotZero() {
@@ -21,17 +21,13 @@ contract BatchCreateWithDurations_Integration_Test is Integration_Test {
     }
 
     function test_BatchCreateWithDurations() external whenBatchSizeNotZero {
-        // Asset flow: proxy owner → proxy → Sablier
-        // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({
-            from: users.alice.addr,
-            to: address(aliceProxy),
-            amount: defaults.TOTAL_TRANSFER_AMOUNT()
-        });
+        // Asset flow: Alice → batch → Sablier
+        // Expect transfers from Alice to the batch, and then from the batch to the Sablier contract.
+        expectCallToTransferFrom({ from: users.alice.addr, to: address(batch), amount: defaults.TOTAL_TRANSFER_AMOUNT() });
         expectMultipleCallsToCreateWithDurations({ count: defaults.BATCH_SIZE(), params: defaults.createWithDurations() });
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),
-            from: address(aliceProxy),
+            from: address(batch),
             to: address(lockupLinear),
             amount: defaults.PER_STREAM_AMOUNT()
         });

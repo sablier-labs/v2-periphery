@@ -6,32 +6,32 @@ import { Batch } from "src/types/DataTypes.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
-contract BatchCreateWithRange_Integration_Test is Integration_Test {
-    function setUp() public virtual override { }
+import { console2 } from "forge-std/console2.sol";
+
+contract CreateWithRange_Integration_Test is Integration_Test {
+    function setUp() public virtual override {
+        Integration_Test.setUp();
+    }
 
     function test_RevertWhen_BatchSizeZero() external {
-        Batch.CreateWithRange[] memory batch = new Batch.CreateWithRange[](0);
-        bytes memory data = abi.encodeCall(target.batchCreateWithRange, (lockupLinear, asset, batch, bytes("")));
-        vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
-        aliceProxy.execute(address(target), data);
+        Batch.CreateWithRange[] memory batchParams = new Batch.CreateWithRange[](0);
+        vm.expectRevert(Errors.SablierV2Batch_BatchSizeZero.selector);
+        console2.log("batchParams.length", batchParams.length);
+        batch.createWithRange(lockupLinear, asset, batchParams);
     }
 
     modifier whenBatchSizeNotZero() {
         _;
     }
 
-    function test_BatchCreateWithRange() external whenBatchSizeNotZero {
-        // Asset flow: proxy owner → proxy → Sablier
-        // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({
-            from: users.alice.addr,
-            to: address(aliceProxy),
-            amount: defaults.TOTAL_TRANSFER_AMOUNT()
-        });
+    function test_CreateWithRange() external whenBatchSizeNotZero {
+        // Asset flow: Alice → batch → Sablier
+        // Expect transfers from Alice to the batch, and then from the batch to the Sablier contract.
+        expectCallToTransferFrom({ from: users.alice.addr, to: address(batch), amount: defaults.TOTAL_TRANSFER_AMOUNT() });
         expectMultipleCallsToCreateWithRange({ count: defaults.BATCH_SIZE(), params: defaults.createWithRange() });
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),
-            from: address(aliceProxy),
+            from: address(batch),
             to: address(lockupLinear),
             amount: defaults.PER_STREAM_AMOUNT()
         });
