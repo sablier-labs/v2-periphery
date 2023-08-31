@@ -9,6 +9,7 @@ import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { SablierV2Archive } from "../src/SablierV2Archive.sol";
+import { SablierV2AirstreamCampaignFactory } from "../src/SablierV2AirstreamCampaignFactory.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTargetApprove } from "../src/SablierV2ProxyTargetApprove.sol";
 import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.sol";
@@ -29,6 +30,7 @@ contract DeployProtocol is BaseScript {
             SablierV2LockupDynamic lockupDynamic,
             SablierV2LockupLinear lockupLinear,
             SablierV2NFTDescriptor nftDescriptor,
+            SablierV2AirstreamCampaignFactory airstreamCampaignFactory,
             SablierV2Archive archive,
             SablierV2ProxyPlugin plugin,
             SablierV2ProxyTargetApprove targetApprove,
@@ -43,6 +45,7 @@ contract DeployProtocol is BaseScript {
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
 
         // Deploy V2 Periphery. The Archive needs its own context block to prevent Stack Too Deep.
+        airstreamCampaignFactory = new SablierV2AirstreamCampaignFactory();
         {
             archive = new SablierV2Archive(initialAdmin);
             archive.list(address(lockupDynamic));

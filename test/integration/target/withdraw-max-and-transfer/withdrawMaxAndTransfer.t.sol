@@ -13,7 +13,7 @@ abstract contract WithdrawMaxAndTransfer_Integration_Test is Integration_Test {
 
     function test_RevertWhen_NotDelegateCalled() external {
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.withdrawMaxAndTransfer({ lockup: lockupLinear, streamId: 0, newRecipient: users.recipient.addr });
+        target.withdrawMaxAndTransfer({ lockup: lockupLinear, streamId: 0, newRecipient: users.recipient0.addr });
     }
 
     modifier whenDelegateCalled() {
@@ -42,7 +42,7 @@ abstract contract WithdrawMaxAndTransfer_Integration_Test is Integration_Test {
         expectCallToTransfer({ to: address(aliceProxy), amount: defaults.WITHDRAW_AMOUNT() });
 
         // Make the max withdrawal and transfer the NFT.
-        bytes memory data = abi.encodeCall(target.withdrawMaxAndTransfer, (lockup, streamId, users.recipient.addr));
+        bytes memory data = abi.encodeCall(target.withdrawMaxAndTransfer, (lockup, streamId, users.recipient0.addr));
         aliceProxy.execute(address(target), data);
 
         // Assert that the withdrawn amount has been updated.
@@ -52,7 +52,7 @@ abstract contract WithdrawMaxAndTransfer_Integration_Test is Integration_Test {
 
         // Assert that the NFT has been transfered.
         address actualOwner = lockup.ownerOf(streamId);
-        address expectedOwner = users.recipient.addr;
+        address expectedOwner = users.recipient0.addr;
         assertEq(actualOwner, expectedOwner, "owner");
     }
 }

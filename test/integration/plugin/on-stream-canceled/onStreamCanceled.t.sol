@@ -27,7 +27,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
         plugin.onStreamCanceled({
             streamId: streamId,
-            recipient: users.recipient.addr,
+            recipient: users.recipient0.addr,
             senderAmount: 100e18,
             recipientAmount: 0
         });
@@ -42,7 +42,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyPlugin_UnknownCaller.selector, users.eve.addr));
         ISablierV2ProxyPlugin(address(aliceProxy)).onStreamCanceled({
             streamId: streamId,
-            recipient: users.recipient.addr,
+            recipient: users.recipient0.addr,
             senderAmount: 100e18,
             recipientAmount: 0
         });
@@ -60,7 +60,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         vm.warp(defaults.CLIFF_TIME());
 
         // Make the recipient the caller so that Sablier calls the hook implemented by the plugin.
-        changePrank({ msgSender: users.recipient.addr });
+        changePrank({ msgSender: users.recipient0.addr });
 
         // Expect a call to the hook.
         uint128 senderAmount = defaults.REFUND_AMOUNT();
@@ -68,7 +68,8 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         vm.expectCall(
             address(aliceProxy),
             abi.encodeCall(
-                ISablierV2LockupSender.onStreamCanceled, (streamId, users.recipient.addr, senderAmount, recipientAmount)
+                ISablierV2LockupSender.onStreamCanceled,
+                (streamId, users.recipient0.addr, senderAmount, recipientAmount)
             )
         );
 

@@ -2,9 +2,9 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { PRBTest } from "@prb/test/PRBTest.sol";
-import { Lockup } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { Assertions as V2CoreAssertions } from "@sablier/v2-core-test/utils/Assertions.sol";
 
-abstract contract Assertions is PRBTest {
+abstract contract Assertions is PRBTest, V2CoreAssertions {
     event LogArray(bytes4[] value);
     event LogNamedArray(string key, bytes4[] value);
 
@@ -17,15 +17,5 @@ abstract contract Assertions is PRBTest {
             emit LogNamedArray("  Right", b);
             fail();
         }
-    }
-
-    /// @dev Compares two `Lockup.Status` enum values.
-    function assertEq(Lockup.Status a, Lockup.Status b) internal {
-        assertEq(uint256(a), uint256(b), "status");
-    }
-
-    /// @dev Compares two `Lockup.Status` enum values.
-    function assertEq(Lockup.Status a, Lockup.Status b, string memory err) internal {
-        assertEq(uint256(a), uint256(b), err);
     }
 }
