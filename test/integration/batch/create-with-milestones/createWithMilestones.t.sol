@@ -10,6 +10,7 @@ contract CreateWithMilestones_Integration_Test is Integration_Test {
     function setUp() public virtual override {
         Integration_Test.setUp();
     }
+
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithMilestones[] memory batchParams = new Batch.CreateWithMilestones[](0);
         vm.expectRevert(Errors.SablierV2Batch_BatchSizeZero.selector);

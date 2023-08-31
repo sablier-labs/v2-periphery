@@ -6,8 +6,6 @@ import { Batch } from "src/types/DataTypes.sol";
 
 import { Integration_Test } from "../../Integration.t.sol";
 
-import { console2 } from "forge-std/console2.sol";
-
 contract CreateWithRange_Integration_Test is Integration_Test {
     function setUp() public virtual override {
         Integration_Test.setUp();
@@ -16,7 +14,6 @@ contract CreateWithRange_Integration_Test is Integration_Test {
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithRange[] memory batchParams = new Batch.CreateWithRange[](0);
         vm.expectRevert(Errors.SablierV2Batch_BatchSizeZero.selector);
-        console2.log("batchParams.length", batchParams.length);
         batch.createWithRange(lockupLinear, asset, batchParams);
     }
 

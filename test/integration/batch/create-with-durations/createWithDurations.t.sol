@@ -7,9 +7,10 @@ import { Batch } from "src/types/DataTypes.sol";
 import { Integration_Test } from "../../Integration.t.sol";
 
 contract CreateWithDurations_Integration_Test is Integration_Test {
-     function setUp() public virtual override {
+    function setUp() public virtual override {
         Integration_Test.setUp();
     }
+
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithDurations[] memory batchParams = new Batch.CreateWithDurations[](0);
         vm.expectRevert(Errors.SablierV2Batch_BatchSizeZero.selector);
