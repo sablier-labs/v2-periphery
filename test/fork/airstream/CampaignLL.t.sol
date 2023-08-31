@@ -19,7 +19,7 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
     /// @dev Encapsulates the data needed to compute a Merkle tree leaf.
     struct LeafData {
         uint256 index;
-        address recipient;
+        uint256 recipientSeed;
         uint128 amount;
     }
 
@@ -48,10 +48,11 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
     }
 
     function testForkFuzz_AirstreamCampaignLL(Params memory params) external {
-        vm.assume(params.admin != users.admin.addr);
+        vm.assume(params.admin != address(0) && params.admin != users.admin.addr);
         vm.assume(params.expiration == 0 || params.expiration > block.timestamp);
         vm.assume(params.leafData.length > 1);
         params.leafPos = _bound(params.leafPos, 0, params.leafData.length - 1);
+        assumeNoBlacklisted({ token: address(asset), addr: params.admin });
 
         /*//////////////////////////////////////////////////////////////////////////
                                           CREATE
@@ -59,22 +60,19 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
 
         Vars memory vars;
         vars.recipientsCount = params.leafData.length;
-        for (uint256 i = 0; i < vars.recipientsCount; ++i) {
-            vm.assume(params.leafData[i].recipient != address(0));
-
-            // Bound each leaf amount so that `campaignTotalAmount` does not overflow.
-            params.leafData[i].amount =
-                uint128(_bound(params.leafData[i].amount, 1, MAX_UINT256 / vars.recipientsCount - 1));
-            vars.campaignTotalAmount += params.leafData[i].amount;
-        }
-
+        vars.amounts = new uint128[](vars.recipientsCount);
         vars.indexes = new uint256[](vars.recipientsCount);
         vars.recipients = new address[](vars.recipientsCount);
-        vars.amounts = new uint128[](vars.recipientsCount);
         for (uint256 i = 0; i < vars.recipientsCount; ++i) {
             vars.indexes[i] = params.leafData[i].index;
-            vars.recipients[i] = params.leafData[i].recipient;
-            vars.amounts[i] = params.leafData[i].amount;
+
+            // Bound each leaf amount so that `campaignTotalAmount` does not overflow.
+            vars.amounts[i] = uint128(_bound(params.leafData[i].amount, 1, MAX_UINT256 / vars.recipientsCount - 1));
+            vars.campaignTotalAmount += params.leafData[i].amount;
+
+            // Avoid zero recipient addresses.
+            uint256 boundedRecipientSeed = _bound(params.leafData[i].recipientSeed, 1, MAX_UINT256);
+            vars.recipients[i] = address(uint160(boundedRecipientSeed));
         }
 
         vars.leaves = MerkleBuilder.computeLeaves(vars.indexes, vars.recipients, vars.amounts);
