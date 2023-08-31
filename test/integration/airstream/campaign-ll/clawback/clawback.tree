@@ -7,4 +7,3 @@ clawback.t.sol
    └── when the campaign has expired
       ├── it should perform the ERC-20 transfer
       └── it should emit a {Clawback} event
-

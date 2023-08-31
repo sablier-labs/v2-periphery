@@ -5,28 +5,27 @@ import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { SablierV2AirstreamCampaignLL } from "src/SablierV2AirstreamCampaignLL.sol";
 
-import { Integration_Test } from "../../../Integration.t.sol";
+import { Airstream_Integration_Test } from "../../Airstream.t.sol";
 
-contract Constructor_CampaignLL_Integration_Test is Integration_Test {
+contract Constructor_CampaignLL_Integration_Test is Airstream_Integration_Test {
     /// @dev Needed to prevent "Stack too deep" error
     struct Vars {
         address actualAdmin;
-        address expectedAdmin;
-        address actualAsset;
-        address expectedAsset;
-        bytes32 actualMerkleRoot;
-        bytes32 expectedMerkleRoot;
-        bool actualCancelable;
-        bool expectedCancelable;
-        uint40 actualExpiration;
-        uint40 expectedExpiration;
-        address actualLockupLinear;
-        address expectedLockupLinear;
-        uint40 actualDurationsCliff;
-        uint40 actualDurationsTotal;
-        LockupLinear.Durations expectedDurations;
         uint256 actualAllowance;
+        address actualAsset;
+        bool actualCancelable;
+        LockupLinear.Durations actualDurations;
+        uint40 actualExpiration;
+        address actualLockupLinear;
+        bytes32 actualMerkleRoot;
+        address expectedAdmin;
         uint256 expectedAllowance;
+        address expectedAsset;
+        bool expectedCancelable;
+        LockupLinear.Durations expectedDurations;
+        uint40 expectedExpiration;
+        address expectedLockupLinear;
+        bytes32 expectedMerkleRoot;
     }
 
     function test_Constructor() external {
@@ -66,10 +65,10 @@ contract Constructor_CampaignLL_Integration_Test is Integration_Test {
         vars.expectedLockupLinear = address(lockupLinear);
         assertEq(vars.actualLockupLinear, vars.expectedLockupLinear, "lockupLinear");
 
-        (vars.actualDurationsCliff, vars.actualDurationsTotal) = constructedCampaignLL.airstreamDurations();
+        (vars.actualDurations.cliff, vars.actualDurations.total) = constructedCampaignLL.airstreamDurations();
         vars.expectedDurations = defaults.durations();
-        assertEq(vars.actualDurationsCliff, vars.expectedDurations.cliff, "durations.cliff");
-        assertEq(vars.actualDurationsTotal, vars.expectedDurations.total, "durations.total");
+        assertEq(vars.actualDurations.cliff, vars.expectedDurations.cliff, "durations.cliff");
+        assertEq(vars.actualDurations.total, vars.expectedDurations.total, "durations.total");
 
         vars.actualAllowance = asset.allowance(address(constructedCampaignLL), address(lockupLinear));
         vars.expectedAllowance = MAX_UINT256;

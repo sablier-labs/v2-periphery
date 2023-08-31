@@ -42,9 +42,9 @@ contract Defaults is Merkle, PermitSignature {
                                  AIRSTREAM CAMPAIGN
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint256 public constant CAMPAIGN_TOTAL_AMOUNT = CLAIMABLE_AMOUNT * RECIPIENTS_COUNT;
+    uint256 public constant CAMPAIGN_TOTAL_AMOUNT = CLAIM_AMOUNT * RECIPIENTS_COUNT;
     bool public constant CANCELABLE = false;
-    uint128 public constant CLAIMABLE_AMOUNT = 10_000e18;
+    uint128 public constant CLAIM_AMOUNT = 10_000e18;
     uint40 public immutable EXPIRATION;
     uint256 public constant INDEX1 = 1;
     uint256 public constant INDEX2 = 2;
@@ -71,10 +71,10 @@ contract Defaults is Merkle, PermitSignature {
 
     function leaves() public view returns (bytes32[] memory leaves_) {
         leaves_ = new bytes32[](RECIPIENTS_COUNT);
-        leaves_[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIMABLE_AMOUNT);
-        leaves_[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIMABLE_AMOUNT);
-        leaves_[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIMABLE_AMOUNT);
-        leaves_[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIMABLE_AMOUNT);
+        leaves_[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
+        leaves_[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIM_AMOUNT);
+        leaves_[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIM_AMOUNT);
+        leaves_[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
     }
 
     function merkleRoot() public view returns (bytes32) {

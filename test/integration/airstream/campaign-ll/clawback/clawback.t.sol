@@ -5,11 +5,11 @@ import { Errors as V2CoreErrors } from "@sablier/v2-core/src/libraries/Errors.so
 
 import { Errors } from "src/libraries/Errors.sol";
 
-import { Integration_Test } from "../../../Integration.t.sol";
+import { Airstream_Integration_Test } from "../../Airstream.t.sol";
 
-contract Clawback_Integration_Test is Integration_Test {
+contract Clawback_Integration_Test is Airstream_Integration_Test {
     function setUp() public virtual override {
-        Integration_Test.setUp();
+        Airstream_Integration_Test.setUp();
     }
 
     function test_RevertWhen_CallerNotAdmin() external {
@@ -23,7 +23,7 @@ contract Clawback_Integration_Test is Integration_Test {
         _;
     }
 
-    function test_RevertWhen_CampaignHasNotExpired() external whenCallerAdmin {
+    function test_RevertWhen_CampaignNotExpired() external whenCallerAdmin {
         vm.expectRevert(
             abi.encodeWithSelector(
                 Errors.SablierV2AirstreamCampaign_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
@@ -32,17 +32,18 @@ contract Clawback_Integration_Test is Integration_Test {
         campaignLL.clawback({ to: users.admin.addr, amount: 1 });
     }
 
-    modifier whenCampaignHasExpired() {
+    modifier whenCampaignExpired() {
         _;
     }
 
-    function test_Clawback() external whenCallerAdmin whenCampaignHasExpired {
+    function testFuzz_Clawback(address to) external whenCallerAdmin whenCampaignExpired {
+        vm.assume(to != address(0));
         claimLL();
         uint128 clawbackAmount = uint128(asset.balanceOf(address(campaignLL)));
-        vm.warp({ timestamp: defaults.EXPIRATION() + 1 });
-        expectCallToTransfer({ to: users.admin.addr, amount: clawbackAmount });
-        vm.expectEmit();
-        emit Clawback({ admin: users.admin.addr, to: users.admin.addr, amount: clawbackAmount });
-        campaignLL.clawback({ to: users.admin.addr, amount: clawbackAmount });
+        expectCallToTransfer({ to: to, amount: clawbackAmount });
+        vm.warp({ timestamp: defaults.EXPIRATION() + 1 seconds });
+        vm.expectEmit({ emitter: address(campaignLL) });
+        emit Clawback({ admin: users.admin.addr, to: to, amount: clawbackAmount });
+        campaignLL.clawback({ to: to, amount: clawbackAmount });
     }
 }

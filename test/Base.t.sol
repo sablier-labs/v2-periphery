@@ -362,48 +362,35 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                 AIRSTREAM-CAMPAIGN
+                                     AIRSTREAM
     //////////////////////////////////////////////////////////////////////////*/
 
-    function claimLL() internal returns (uint256) {
-        return campaignLL.claim({
-            index: defaults.INDEX1(),
-            recipient: users.recipient1.addr,
-            amount: defaults.CLAIMABLE_AMOUNT(),
-            merkleProof: defaults.index1Proof()
-        });
-    }
-
-    function createDefaultAirstreamCampaignLL() internal {
-        campaignLL = createDefaultAirstreamCampaignLL(users.admin.addr);
-    }
-
-    function createDefaultAirstreamCampaignLL(address admin) internal returns (ISablierV2AirstreamCampaignLL) {
-        return campaignFactory.createAirstreamCampaignLL({
-            initialAdmin: admin,
-            asset: asset,
-            merkleRoot: defaults.merkleRoot(),
-            cancelable: defaults.CANCELABLE(),
-            expiration: defaults.EXPIRATION(),
-            lockupLinear: lockupLinear,
-            airstreamDurations: defaults.durations(),
-            ipfsCID: defaults.IPFS_CID(),
-            campaignTotalAmount: defaults.CAMPAIGN_TOTAL_AMOUNT(),
-            recipientsCount: defaults.RECIPIENTS_COUNT()
-        });
-    }
-
     function computeCampaignLLAddress() internal returns (address) {
-        return computeCampaignLLAddress(users.admin.addr, defaults.merkleRoot());
+        return computeCampaignLLAddress(users.admin.addr, defaults.merkleRoot(), defaults.EXPIRATION());
     }
 
     function computeCampaignLLAddress(address admin) internal returns (address) {
-        return computeCampaignLLAddress(admin, defaults.merkleRoot());
+        return computeCampaignLLAddress(admin, defaults.merkleRoot(), defaults.EXPIRATION());
+    }
+
+    function computeCampaignLLAddress(address admin, uint40 expiration) internal returns (address) {
+        return computeCampaignLLAddress(admin, defaults.merkleRoot(), expiration);
     }
 
     function computeCampaignLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
-        bytes32 salt = keccak256(abi.encodePacked(lockupLinear, admin, asset, merkleRoot, defaults.EXPIRATION()));
-        bytes32 creationBytecodeHash = keccak256(getCampaignLLBytecode(admin, merkleRoot));
+        return computeCampaignLLAddress(admin, merkleRoot, defaults.EXPIRATION());
+    }
+
+    function computeCampaignLLAddress(
+        address admin,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (address)
+    {
+        bytes32 salt = keccak256(abi.encodePacked(lockupLinear, admin, asset, merkleRoot, expiration));
+        bytes32 creationBytecodeHash = keccak256(getCampaignLLBytecode(admin, merkleRoot, expiration));
         return computeCreate2Address({
             salt: salt,
             initcodeHash: creationBytecodeHash,
@@ -411,10 +398,16 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         });
     }
 
-    function getCampaignLLBytecode(address admin, bytes32 merkleRoot) internal returns (bytes memory) {
-        bytes memory constructorArgs = abi.encode(
-            admin, lockupLinear, asset, merkleRoot, defaults.EXPIRATION(), defaults.durations(), defaults.CANCELABLE()
-        );
+    function getCampaignLLBytecode(
+        address admin,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (bytes memory)
+    {
+        bytes memory constructorArgs =
+            abi.encode(admin, lockupLinear, asset, merkleRoot, expiration, defaults.durations(), defaults.CANCELABLE());
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2AirstreamCampaignLL).creationCode, constructorArgs);
         } else {

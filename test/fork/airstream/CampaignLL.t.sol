@@ -25,6 +25,7 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
 
     struct Params {
         address admin;
+        uint40 expiration;
         LeafData[] leafData;
         uint256 leafPos;
     }
@@ -48,6 +49,7 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
 
     function testForkFuzz_AirstreamCampaignLL(Params memory params) external {
         vm.assume(params.admin != users.admin.addr);
+        vm.assume(params.expiration == 0 || params.expiration > block.timestamp);
         vm.assume(params.leafData.length > 1);
         params.leafPos = _bound(params.leafPos, 0, params.leafData.length - 1);
 
@@ -78,41 +80,41 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
         vars.leaves = MerkleBuilder.computeLeaves(vars.indexes, vars.recipients, vars.amounts);
         vars.merkleRoot = getRoot(vars.leaves);
 
-        vars.expectedCampaignLL = computeCampaignLLAddress(params.admin, vars.merkleRoot);
+        vars.expectedCampaignLL = computeCampaignLLAddress(params.admin, vars.merkleRoot, params.expiration);
         vm.expectEmit({ emitter: address(campaignFactory) });
-        emit CreateAirstreamCampaignLL(
-            ISablierV2AirstreamCampaignLL(vars.expectedCampaignLL),
-            params.admin,
-            lockupLinear,
-            asset,
-            defaults.EXPIRATION(),
-            defaults.durations(),
-            defaults.CANCELABLE(),
-            defaults.IPFS_CID(),
-            vars.campaignTotalAmount,
-            vars.recipientsCount
-        );
+        emit CreateAirstreamCampaignLL({
+            airstreamCampaign: ISablierV2AirstreamCampaignLL(vars.expectedCampaignLL),
+            admin: params.admin,
+            lockupLinear: lockupLinear,
+            asset: asset,
+            expiration: params.expiration,
+            airstreamDurations: defaults.durations(),
+            cancelable: defaults.CANCELABLE(),
+            ipfsCID: defaults.IPFS_CID(),
+            campaignTotalAmount: vars.campaignTotalAmount,
+            recipientsCount: vars.recipientsCount
+        });
 
-        vars.campaignLL = campaignFactory.createAirstreamCampaignLL(
-            params.admin,
-            lockupLinear,
-            asset,
-            vars.merkleRoot,
-            defaults.EXPIRATION(),
-            defaults.durations(),
-            defaults.CANCELABLE(),
-            defaults.IPFS_CID(),
-            vars.campaignTotalAmount,
-            vars.recipientsCount
-        );
+        vars.campaignLL = campaignFactory.createAirstreamCampaignLL({
+            initialAdmin: params.admin,
+            lockupLinear: lockupLinear,
+            asset: asset,
+            merkleRoot: vars.merkleRoot,
+            expiration: params.expiration,
+            airstreamDurations: defaults.durations(),
+            cancelable: defaults.CANCELABLE(),
+            ipfsCID: defaults.IPFS_CID(),
+            campaignTotalAmount: vars.campaignTotalAmount,
+            recipientsCount: vars.recipientsCount
+        });
+
+        // Fund the campaign.
+        deal({ token: address(asset), to: address(vars.campaignLL), give: vars.campaignTotalAmount });
 
         assertGt(address(vars.campaignLL).code.length, 0, "CampaignLL contract not created");
         assertEq(
             address(vars.campaignLL), vars.expectedCampaignLL, "CampaignLL contract does not match computed address"
         );
-
-        // Fund the campaign.
-        deal({ token: address(asset), to: address(vars.campaignLL), give: vars.campaignTotalAmount });
 
         /*//////////////////////////////////////////////////////////////////////////
                                           CLAIM
@@ -156,13 +158,15 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
                                         CLAWBACK
         //////////////////////////////////////////////////////////////////////////*/
 
-        vars.clawbackAmount = uint128(asset.balanceOf(address(vars.campaignLL)));
-        vm.warp({ timestamp: defaults.EXPIRATION() + 1 seconds });
+        if (params.expiration > 0) {
+            vars.clawbackAmount = uint128(asset.balanceOf(address(vars.campaignLL)));
+            vm.warp({ timestamp: uint256(params.expiration) + 1 seconds });
 
-        changePrank({ msgSender: params.admin });
-        expectCallToTransfer({ to: params.admin, amount: vars.clawbackAmount });
-        vm.expectEmit({ emitter: address(vars.campaignLL) });
-        emit Clawback({ to: params.admin, admin: params.admin, amount: vars.clawbackAmount });
-        vars.campaignLL.clawback({ to: params.admin, amount: vars.clawbackAmount });
+            changePrank({ msgSender: params.admin });
+            expectCallToTransfer({ to: params.admin, amount: vars.clawbackAmount });
+            vm.expectEmit({ emitter: address(vars.campaignLL) });
+            emit Clawback({ to: params.admin, admin: params.admin, amount: vars.clawbackAmount });
+            vars.campaignLL.clawback({ to: params.admin, amount: vars.clawbackAmount });
+        }
     }
 }

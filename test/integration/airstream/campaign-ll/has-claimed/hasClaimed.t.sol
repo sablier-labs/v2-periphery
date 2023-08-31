@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { Integration_Test } from "../../../Integration.t.sol";
+import { Airstream_Integration_Test } from "../../Airstream.t.sol";
 
-contract HasClaimed_Integration_Test is Integration_Test {
+contract HasClaimed_Integration_Test is Airstream_Integration_Test {
     function setUp() public virtual override {
-        Integration_Test.setUp();
+        Airstream_Integration_Test.setUp();
     }
 
     function test_HasClaimed_IndexNotInTree() external {
@@ -22,11 +22,11 @@ contract HasClaimed_Integration_Test is Integration_Test {
     }
 
     modifier whenRecipientHasClaimed() {
+        claimLL();
         _;
     }
 
     function test_HasClaimed() external whenIndexInTree whenRecipientHasClaimed {
-        claimLL();
         assertTrue(campaignLL.hasClaimed(defaults.INDEX1()), "not claimed");
     }
 }

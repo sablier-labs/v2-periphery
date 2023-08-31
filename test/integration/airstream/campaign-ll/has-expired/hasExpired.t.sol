@@ -1,29 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { Integration_Test } from "../../../Integration.t.sol";
-
 import { ISablierV2AirstreamCampaignLL } from "src/interfaces/ISablierV2AirstreamCampaignLL.sol";
 
-contract HasExpired_Integration_Test is Integration_Test {
+import { Airstream_Integration_Test } from "../../Airstream.t.sol";
+
+contract HasExpired_Integration_Test is Airstream_Integration_Test {
     function setUp() public virtual override {
-        Integration_Test.setUp();
+        Airstream_Integration_Test.setUp();
     }
 
     function test_HasExpired_ExpirationZero() external {
-        ISablierV2AirstreamCampaignLL _campaignLL = campaignFactory.createAirstreamCampaignLL({
-            initialAdmin: users.admin.addr,
-            asset: asset,
-            merkleRoot: defaults.merkleRoot(),
-            cancelable: defaults.CANCELABLE(),
-            expiration: 0,
-            lockupLinear: lockupLinear,
-            airstreamDurations: defaults.durations(),
-            ipfsCID: defaults.IPFS_CID(),
-            campaignTotalAmount: defaults.CAMPAIGN_TOTAL_AMOUNT(),
-            recipientsCount: defaults.RECIPIENTS_COUNT()
-        });
-        assertFalse(_campaignLL.hasExpired());
+        ISablierV2AirstreamCampaignLL testCampaign = createAirstreamCampaignLL({ expiration: 0 });
+        assertFalse(testCampaign.hasExpired(), "campaign expired");
     }
 
     modifier whenExpirationNotZero() {

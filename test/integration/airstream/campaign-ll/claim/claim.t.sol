@@ -5,11 +5,11 @@ import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 
-import { Integration_Test } from "../../../Integration.t.sol";
+import { Airstream_Integration_Test } from "../../Airstream.t.sol";
 
-contract Claim_Integration_Test is Integration_Test {
+contract Claim_Integration_Test is Airstream_Integration_Test {
     function setUp() public virtual override {
-        Integration_Test.setUp();
+        Airstream_Integration_Test.setUp();
     }
 
     function test_RevertWhen_CampaignExpired() external {
@@ -18,19 +18,19 @@ contract Claim_Integration_Test is Integration_Test {
         bytes32[] memory merkleProof;
         vm.warp({ timestamp: warpTime });
         vm.expectRevert(
-            abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_CampaignHasExpired.selector, warpTime, expiration)
+            abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_CampaignExpired.selector, warpTime, expiration)
         );
         campaignLL.claim({ index: 1, recipient: users.recipient1.addr, amount: 1, merkleProof: merkleProof });
     }
 
-    modifier whenCampaignHasNotExpired() {
+    modifier whenCampaignNotExpired() {
         _;
     }
 
-    function test_RevertWhen_AlreadyClaimed() external whenCampaignHasNotExpired {
+    function test_RevertWhen_AlreadyClaimed() external whenCampaignNotExpired {
         claimLL();
         uint256 index1 = defaults.INDEX1();
-        uint128 amount = defaults.CLAIMABLE_AMOUNT();
+        uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_AirstreamClaimed.selector, index1));
         campaignLL.claim(index1, users.recipient1.addr, amount, merkleProof);
@@ -46,12 +46,12 @@ contract Claim_Integration_Test is Integration_Test {
 
     function test_RevertWhen_InvalidIndex()
         external
-        whenCampaignHasNotExpired
+        whenCampaignNotExpired
         whenNotClaimed
         whenNotIncludedInMerkleTree
     {
-        uint256 invalidIndex = defaults.INDEX2();
-        uint128 amount = defaults.CLAIMABLE_AMOUNT();
+        uint256 invalidIndex = 1337;
+        uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_InvalidProof.selector));
         campaignLL.claim(invalidIndex, users.recipient1.addr, amount, merkleProof);
@@ -59,13 +59,13 @@ contract Claim_Integration_Test is Integration_Test {
 
     function test_RevertWhen_InvalidRecipient()
         external
-        whenCampaignHasNotExpired
+        whenCampaignNotExpired
         whenNotClaimed
         whenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
-        address invalidRecipient = users.recipient2.addr;
-        uint128 amount = defaults.CLAIMABLE_AMOUNT();
+        address invalidRecipient = address(1337);
+        uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_InvalidProof.selector));
         campaignLL.claim(index1, invalidRecipient, amount, merkleProof);
@@ -73,12 +73,12 @@ contract Claim_Integration_Test is Integration_Test {
 
     function test_RevertWhen_InvalidAmount()
         external
-        whenCampaignHasNotExpired
+        whenCampaignNotExpired
         whenNotClaimed
         whenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
-        uint128 invalidAmount = 1;
+        uint128 invalidAmount = 1337;
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_InvalidProof.selector));
         campaignLL.claim(index1, users.recipient1.addr, invalidAmount, merkleProof);
@@ -86,12 +86,12 @@ contract Claim_Integration_Test is Integration_Test {
 
     function test_RevertWhen_InvalidMerkleProof()
         external
-        whenCampaignHasNotExpired
+        whenCampaignNotExpired
         whenNotClaimed
         whenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
-        uint128 amount = defaults.CLAIMABLE_AMOUNT();
+        uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory invalidMerkleProof = defaults.index2Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2AirstreamCampaign_InvalidProof.selector));
         campaignLL.claim(index1, users.recipient1.addr, amount, invalidMerkleProof);
@@ -101,16 +101,16 @@ contract Claim_Integration_Test is Integration_Test {
         _;
     }
 
-    function test_Claim() external whenCampaignHasNotExpired whenNotClaimed whenIncludedInMerkleTree {
+    function test_Claim() external whenCampaignNotExpired whenNotClaimed whenIncludedInMerkleTree {
         uint256 expectedAirstreamId = lockupLinear.nextStreamId();
 
-        vm.expectEmit();
-        emit Claim(defaults.INDEX1(), users.recipient1.addr, defaults.CLAIMABLE_AMOUNT(), expectedAirstreamId);
+        vm.expectEmit({ emitter: address(campaignLL) });
+        emit Claim(defaults.INDEX1(), users.recipient1.addr, defaults.CLAIM_AMOUNT(), expectedAirstreamId);
         uint256 actualAirstreamId = claimLL();
 
         LockupLinear.Stream memory actualStream = lockupLinear.getStream(actualAirstreamId);
         LockupLinear.Stream memory expectedStream = LockupLinear.Stream({
-            amounts: Lockup.Amounts({ deposited: defaults.CLAIMABLE_AMOUNT(), refunded: 0, withdrawn: 0 }),
+            amounts: Lockup.Amounts({ deposited: defaults.CLAIM_AMOUNT(), refunded: 0, withdrawn: 0 }),
             asset: asset,
             cliffTime: uint40(block.timestamp) + defaults.CLIFF_DURATION(),
             endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
