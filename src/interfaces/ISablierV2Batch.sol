@@ -53,6 +53,10 @@ interface ISablierV2Batch {
         external
         returns (uint256[] memory streamIds);
 
+    /*//////////////////////////////////////////////////////////////////////////
+                             SABLIER-V2-LOCKUP-DYNAMIC
+    //////////////////////////////////////////////////////////////////////////*/
+
     /// @notice Creates a batch of Lockup Dynamic streams using `createWithDeltas`.
     ///
     /// @dev Requirements:
