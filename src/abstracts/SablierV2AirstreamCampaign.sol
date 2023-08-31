@@ -77,7 +77,7 @@ abstract contract SablierV2AirstreamCampaign is
     function clawback(address to, uint128 amount) external override onlyAdmin {
         // Checks: the campaign has expired.
         if (!hasExpired()) {
-            revert Errors.SablierV2AirstreamCampaign_CampaignExpired({
+            revert Errors.SablierV2AirstreamCampaign_CampaignNotExpired({
                 currentTime: block.timestamp,
                 expiration: expiration
             });
