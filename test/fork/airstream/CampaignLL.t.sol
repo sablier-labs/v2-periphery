@@ -48,7 +48,7 @@ abstract contract AirstreamCampaignLL_Fork_Test is Fork_Test {
 
     function testForkFuzz_AirstreamCampaignLL(Params memory params) external {
         vm.assume(params.admin != users.admin.addr);
-        vm.assume(params.leafData.length > 250);
+        vm.assume(params.leafData.length > 1);
         params.leafPos = _bound(params.leafPos, 0, params.leafData.length - 1);
 
         /*//////////////////////////////////////////////////////////////////////////
