@@ -12,29 +12,29 @@ contract Unlist_Integration_Test is Integration_Test {
         archive.unlist(address(lockupLinear));
     }
 
-    modifier callerAdmin() {
+    modifier whenCallerAdmin() {
         changePrank({ msgSender: users.admin.addr });
         _;
     }
 
-    function test_Unlist_AddressNotListed() external callerAdmin {
+    function test_Unlist_AddressNotListed() external whenCallerAdmin {
         archive.unlist(address(lockupLinear));
         bool isListed = archive.isListed(address(lockupLinear));
         assertFalse(isListed, "isListed");
     }
 
-    modifier addressListed() {
+    modifier givenAddressListed() {
         archive.list(address(lockupLinear));
         _;
     }
 
-    function test_Unlist() external callerAdmin addressListed {
+    function test_Unlist() external whenCallerAdmin givenAddressListed {
         archive.unlist(address(lockupLinear));
         bool isListed = archive.isListed(address(lockupLinear));
         assertFalse(isListed, "isListed");
     }
 
-    function test_Unlist_Event() external callerAdmin addressListed {
+    function test_Unlist_Event() external whenCallerAdmin givenAddressListed {
         vm.expectEmit({ emitter: address(archive) });
         emit Unlist({ admin: users.admin.addr, addr: address(lockupLinear) });
         archive.unlist(address(lockupLinear));

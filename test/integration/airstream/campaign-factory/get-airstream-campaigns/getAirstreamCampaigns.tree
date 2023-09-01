@@ -1,5 +1,5 @@
 getAirstreamCampaigns.t.sol
-├── when the admin has no campaigns
+├── given the admin has no campaigns
 │  └── it should return an empty array
-└── when the admin has campaigns
+└── given the admin has campaigns
    └── it should return the correct campaigns

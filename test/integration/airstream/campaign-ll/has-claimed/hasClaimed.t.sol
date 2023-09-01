@@ -21,12 +21,12 @@ contract HasClaimed_Integration_Test is Airstream_Integration_Test {
         assertFalse(campaignLL.hasClaimed(defaults.INDEX1()), "claimed");
     }
 
-    modifier whenRecipientHasClaimed() {
+    modifier givenRecipientHasClaimed() {
         claimLL();
         _;
     }
 
-    function test_HasClaimed() external whenIndexInTree whenRecipientHasClaimed {
+    function test_HasClaimed() external whenIndexInTree givenRecipientHasClaimed {
         assertTrue(campaignLL.hasClaimed(defaults.INDEX1()), "not claimed");
     }
 }

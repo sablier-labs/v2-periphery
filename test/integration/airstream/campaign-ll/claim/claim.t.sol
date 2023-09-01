@@ -27,7 +27,7 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
         _;
     }
 
-    function test_RevertWhen_AlreadyClaimed() external whenCampaignNotExpired {
+    function test_RevertGiven_AlreadyClaimed() external whenCampaignNotExpired {
         claimLL();
         uint256 index1 = defaults.INDEX1();
         uint128 amount = defaults.CLAIM_AMOUNT();
@@ -36,19 +36,19 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
         campaignLL.claim(index1, users.recipient1.addr, amount, merkleProof);
     }
 
-    modifier whenNotClaimed() {
+    modifier givenNotClaimed() {
         _;
     }
 
-    modifier whenNotIncludedInMerkleTree() {
+    modifier givenNotIncludedInMerkleTree() {
         _;
     }
 
     function test_RevertWhen_InvalidIndex()
         external
         whenCampaignNotExpired
-        whenNotClaimed
-        whenNotIncludedInMerkleTree
+        givenNotClaimed
+        givenNotIncludedInMerkleTree
     {
         uint256 invalidIndex = 1337;
         uint128 amount = defaults.CLAIM_AMOUNT();
@@ -60,8 +60,8 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
     function test_RevertWhen_InvalidRecipient()
         external
         whenCampaignNotExpired
-        whenNotClaimed
-        whenNotIncludedInMerkleTree
+        givenNotClaimed
+        givenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
         address invalidRecipient = address(1337);
@@ -74,8 +74,8 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
     function test_RevertWhen_InvalidAmount()
         external
         whenCampaignNotExpired
-        whenNotClaimed
-        whenNotIncludedInMerkleTree
+        givenNotClaimed
+        givenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
         uint128 invalidAmount = 1337;
@@ -87,8 +87,8 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
     function test_RevertWhen_InvalidMerkleProof()
         external
         whenCampaignNotExpired
-        whenNotClaimed
-        whenNotIncludedInMerkleTree
+        givenNotClaimed
+        givenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
         uint128 amount = defaults.CLAIM_AMOUNT();
@@ -97,11 +97,11 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
         campaignLL.claim(index1, users.recipient1.addr, amount, invalidMerkleProof);
     }
 
-    modifier whenIncludedInMerkleTree() {
+    modifier givenIncludedInMerkleTree() {
         _;
     }
 
-    function test_Claim() external whenCampaignNotExpired whenNotClaimed whenIncludedInMerkleTree {
+    function test_Claim() external whenCampaignNotExpired givenNotClaimed givenIncludedInMerkleTree {
         uint256 expectedAirstreamId = lockupLinear.nextStreamId();
 
         vm.expectEmit({ emitter: address(campaignLL) });
