@@ -40,7 +40,7 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
         _;
     }
 
-    modifier givenNotIncludedInMerkleTree() {
+    modifier whenNotIncludedInMerkleTree() {
         _;
     }
 
@@ -48,7 +48,7 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
         external
         whenCampaignNotExpired
         givenNotClaimed
-        givenNotIncludedInMerkleTree
+        whenNotIncludedInMerkleTree
     {
         uint256 invalidIndex = 1337;
         uint128 amount = defaults.CLAIM_AMOUNT();
@@ -61,7 +61,7 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
         external
         whenCampaignNotExpired
         givenNotClaimed
-        givenNotIncludedInMerkleTree
+        whenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
         address invalidRecipient = address(1337);
@@ -75,7 +75,7 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
         external
         whenCampaignNotExpired
         givenNotClaimed
-        givenNotIncludedInMerkleTree
+        whenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
         uint128 invalidAmount = 1337;
@@ -88,7 +88,7 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
         external
         whenCampaignNotExpired
         givenNotClaimed
-        givenNotIncludedInMerkleTree
+        whenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
         uint128 amount = defaults.CLAIM_AMOUNT();
@@ -97,11 +97,11 @@ contract Claim_Integration_Test is Airstream_Integration_Test {
         campaignLL.claim(index1, users.recipient1.addr, amount, invalidMerkleProof);
     }
 
-    modifier givenIncludedInMerkleTree() {
+    modifier whenIncludedInMerkleTree() {
         _;
     }
 
-    function test_Claim() external whenCampaignNotExpired givenNotClaimed givenIncludedInMerkleTree {
+    function test_Claim() external whenCampaignNotExpired givenNotClaimed whenIncludedInMerkleTree {
         uint256 expectedAirstreamId = lockupLinear.nextStreamId();
 
         vm.expectEmit({ emitter: address(campaignLL) });

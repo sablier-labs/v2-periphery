@@ -32,11 +32,11 @@ contract Clawback_Integration_Test is Airstream_Integration_Test {
         campaignLL.clawback({ to: users.admin.addr, amount: 1 });
     }
 
-    modifier whenCampaignExpired() {
+    modifier givenCampaignExpired() {
         _;
     }
 
-    function testFuzz_Clawback(address to) external whenCallerAdmin whenCampaignExpired {
+    function testFuzz_Clawback(address to) external whenCallerAdmin givenCampaignExpired {
         vm.assume(to != address(0));
         claimLL();
         uint128 clawbackAmount = uint128(asset.balanceOf(address(campaignLL)));

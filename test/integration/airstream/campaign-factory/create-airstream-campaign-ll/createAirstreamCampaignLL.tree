@@ -1,5 +1,5 @@
 createAirstreamCampaignLL.t.sol
-├── given the airstream campaign has been already deployed with CREATE2
+├── given the airstream campaign has been deployed with CREATE2
 │  └── it should revert
 └── given the airstream campaign has not been deployed
    ├── it should deploy the airstream campaign

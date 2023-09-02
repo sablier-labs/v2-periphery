@@ -2,8 +2,8 @@ clawback.t.sol
 ├── when the caller is not the admin
 │  └── it should revert
 └── when the caller is the admin
-   ├── when the campaign has not expired
+   ├── given the campaign has not expired
    │  └── it should revert
-   └── when the campaign has expired
+   └── given the campaign has expired
       ├── it should perform the ERC-20 transfer
       └── it should emit a {Clawback} event
