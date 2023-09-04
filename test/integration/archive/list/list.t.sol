@@ -12,29 +12,29 @@ contract List_Integration_Test is Integration_Test {
         archive.list(address(lockupLinear));
     }
 
-    modifier callerAdmin() {
+    modifier whenCallerAdmin() {
         changePrank({ msgSender: users.admin.addr });
         _;
     }
 
-    function test_List_AddressListed() external callerAdmin {
+    function test_List_AddressListed() external whenCallerAdmin {
         archive.list(address(lockupLinear));
         archive.list(address(lockupLinear));
         bool isListed = archive.isListed(address(lockupLinear));
         assertTrue(isListed, "isListed");
     }
 
-    modifier addressNotListed() {
+    modifier givenAddressNotListed() {
         _;
     }
 
-    function test_List() external callerAdmin addressNotListed {
+    function test_List() external whenCallerAdmin givenAddressNotListed {
         archive.list(address(lockupLinear));
         bool isListed = archive.isListed(address(lockupLinear));
         assertTrue(isListed, "isListed");
     }
 
-    function test_List_Event() external callerAdmin addressNotListed {
+    function test_List_Event() external whenCallerAdmin givenAddressNotListed {
         vm.expectEmit();
         emit List({ admin: users.admin.addr, addr: address(lockupLinear) });
         archive.list(address(lockupLinear));

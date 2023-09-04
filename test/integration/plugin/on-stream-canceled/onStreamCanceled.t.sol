@@ -37,7 +37,7 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         _;
     }
 
-    function test_RevertWhen_CallerNotListed() external whenDelegateCalled {
+    function test_RevertGiven_CallerNotListed() external whenDelegateCalled {
         changePrank({ msgSender: users.eve.addr });
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2ProxyPlugin_UnknownCaller.selector, users.eve.addr));
         ISablierV2ProxyPlugin(address(aliceProxy)).onStreamCanceled({
@@ -48,11 +48,11 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         });
     }
 
-    modifier whenCallerListed() {
+    modifier givenCallerListed() {
         _;
     }
 
-    function test_OnStreamCanceled() external whenDelegateCalled whenCallerListed {
+    function test_OnStreamCanceled() external whenDelegateCalled givenCallerListed {
         // Retrieve the initial asset balance of the proxy owner.
         uint256 initialBalance = asset.balanceOf(users.alice.addr);
 

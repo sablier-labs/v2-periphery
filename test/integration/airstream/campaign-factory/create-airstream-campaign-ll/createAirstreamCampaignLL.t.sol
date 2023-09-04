@@ -13,7 +13,7 @@ contract CreateAirstreamCampaignLL_Integration_Test is Airstream_Integration_Tes
     }
 
     /// @dev This test works because a default campaign is deployed in {Integration_Test.setUp}
-    function test_CreateAirstreamCampaignLL_AlreadyDeployed() external {
+    function test_RevertGiven_AlreadyDeployed() external {
         bytes32 merkleRoot = defaults.merkleRoot();
         uint40 expiration = defaults.EXPIRATION();
         bool cancelable = defaults.CANCELABLE();
@@ -37,11 +37,11 @@ contract CreateAirstreamCampaignLL_Integration_Test is Airstream_Integration_Tes
         });
     }
 
-    modifier notAlreadyDeployed() {
+    modifier givenNotAlreadyDeployed() {
         _;
     }
 
-    function testFuzz_CreateAirstreamCampaignLL(address admin, uint40 expiration) external notAlreadyDeployed {
+    function testFuzz_CreateAirstreamCampaignLL(address admin, uint40 expiration) external givenNotAlreadyDeployed {
         vm.assume(admin != users.admin.addr);
         address expectedCampaignLL = computeCampaignLLAddress(admin, expiration);
 

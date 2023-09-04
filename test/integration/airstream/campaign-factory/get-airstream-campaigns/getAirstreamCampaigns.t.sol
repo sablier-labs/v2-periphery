@@ -17,11 +17,11 @@ contract GetAirstreamCampaigns_Integration_Test is Airstream_Integration_Test {
         assertEq(campaigns.length, 0, "campaigns arrays not empty");
     }
 
-    modifier whenAdminHasCampaigns() {
+    modifier givenAdminHasCampaigns() {
         _;
     }
 
-    function test_GetAirstreamCampaigns() external whenAdminHasCampaigns {
+    function test_GetAirstreamCampaigns() external givenAdminHasCampaigns {
         ISablierV2AirstreamCampaignLL testCampaignLL = createAirstreamCampaignLL(defaults.EXPIRATION() + 1 seconds);
         ISablierV2AirstreamCampaignLL[] memory campaigns = campaignFactory.getAirstreamCampaigns(users.admin.addr);
         address[] memory actualCampaignLL;
