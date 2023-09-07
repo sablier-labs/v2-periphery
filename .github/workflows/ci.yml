@@ -77,11 +77,17 @@ jobs:
         - name: "Generate and prepare the contract artifacts"
           run: "./shell/prepare-artifacts.sh"
 
+        - name: "Build the test contracts"
+          run: "FOUNDRY_PROFILE=test-optimized forge build"   
+
         - name: "Cache the build so that it can be re-used by the other jobs"
           uses: "actions/cache/save@v3"
           with:
-            path: "out-optimized"
             key: "foundry-build-${{ github.sha }}"
+            path: |
+              cache
+              out
+              out-optimized
 
         - name: "Store the contract artifacts in CI"
           uses: "actions/upload-artifact@v3"
@@ -111,7 +117,10 @@ jobs:
         with:
           fail-on-cache-miss: true
           key: "foundry-build-${{ github.sha }}"
-          path: "out-optimized"
+          path: |
+            cache
+            out
+            out-optimized
 
       - name: "Run the integration tests against the optimized build"
         run: "FOUNDRY_PROFILE=test-optimized forge test --match-path \"test/integration/**/*.sol\""
@@ -138,7 +147,10 @@ jobs:
         with:
           fail-on-cache-miss: true
           key: "foundry-build-${{ github.sha }}"
-          path: "out-optimized"
+          path: |
+            cache
+            out
+            out-optimized
 
       - name: "Run the utils tests against the optimized build"
         run: "FOUNDRY_PROFILE=test-optimized forge test --match-path \"test/utils/**/*.sol\""
@@ -165,7 +177,10 @@ jobs:
         with:
           fail-on-cache-miss: true
           key: "foundry-build-${{ github.sha }}"
-          path: "out-optimized"
+          path: |
+            cache
+            out
+            out-optimized
 
       - name: "Generate fuzz seed that changes weekly to avoid burning through RPC allowance"
         run: |
