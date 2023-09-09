@@ -8,7 +8,7 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { Batch } from "../types/DataTypes.sol";
 
 /// @title ISablierV2Batch
-/// @notice A contract to batch create Sablier V2 Lockup streams.
+/// @notice Helper to batch create Sablier V2 Lockup streams.
 interface ISablierV2Batch {
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
