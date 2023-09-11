@@ -12,26 +12,26 @@ library Errors {
     error CallNotDelegateCall();
 
     /*//////////////////////////////////////////////////////////////////////////
-                                SABLIER-V2-AIRSTREAM
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @notice Thrown when trying to claim the same airstream more than once.
-    error SablierV2AirstreamCampaign_AirstreamClaimed(uint256 index);
-
-    /// @notice Thrown when trying to claim after the campaign has expired.
-    error SablierV2AirstreamCampaign_CampaignExpired(uint256 currentTime, uint40 expiration);
-
-    /// @notice Thrown when trying to claim when airstream campaign has not expired.
-    error SablierV2AirstreamCampaign_CampaignNotExpired(uint256 currentTime, uint40 expiration);
-
-    /// @notice Thrown when trying to claim with an invalid Merkle proof.
-    error SablierV2AirstreamCampaign_InvalidProof();
-
-    /*//////////////////////////////////////////////////////////////////////////
                                 SABLIER-V2-BATCH
     //////////////////////////////////////////////////////////////////////////*/
 
     error SablierV2Batch_BatchSizeZero();
+
+    /*//////////////////////////////////////////////////////////////////////////
+                             SABLIER-V2-MERKLE_STREAMER
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Thrown when trying to claim the same stream more than once.
+    error SablierV2MerkleStreamer_StreamClaimed(uint256 index);
+
+    /// @notice Thrown when trying to claim after the campaign has expired.
+    error SablierV2MerkleStreamer_CampaignExpired(uint256 currentTime, uint40 expiration);
+
+    /// @notice Thrown when trying to claim when Merkle streamer has not expired.
+    error SablierV2MerkleStreamer_CampaignNotExpired(uint256 currentTime, uint40 expiration);
+
+    /// @notice Thrown when trying to claim with an invalid Merkle proof.
+    error SablierV2MerkleStreamer_InvalidProof();
 
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-PROXY-PLUGIN

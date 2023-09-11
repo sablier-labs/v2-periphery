@@ -8,7 +8,7 @@ import { SablierV2NFTDescriptor } from "@sablier/v2-core/src/SablierV2NFTDescrip
 import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
-import { SablierV2AirstreamCampaignFactory } from "../src/SablierV2AirstreamCampaignFactory.sol";
+import { SablierV2MerkleStreamerFactory } from "../src/SablierV2MerkleStreamerFactory.sol";
 import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2Batch } from "../src/SablierV2Batch.sol";
 import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
@@ -31,7 +31,7 @@ contract DeployProtocol is BaseScript {
             SablierV2LockupDynamic lockupDynamic,
             SablierV2LockupLinear lockupLinear,
             SablierV2NFTDescriptor nftDescriptor,
-            SablierV2AirstreamCampaignFactory airstreamCampaignFactory,
+            SablierV2MerkleStreamerFactory merkleStreamerFactory,
             SablierV2Archive archive,
             SablierV2Batch batch,
             SablierV2ProxyPlugin plugin,
@@ -47,7 +47,7 @@ contract DeployProtocol is BaseScript {
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
 
         // Deploy V2 Periphery. The Archive needs its own context block to prevent Stack Too Deep.
-        airstreamCampaignFactory = new SablierV2AirstreamCampaignFactory();
+        merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
         {
             archive = new SablierV2Archive(initialAdmin);
             archive.list(address(lockupDynamic));

@@ -3,7 +3,7 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import { AirstreamCampaignLL_Fork_Test } from "../airstream/CampaignLL.t.sol";
+import { MerkleStreamerLL_Fork_Test } from "../merkle-streamer/MerkleStreamerLL.t.sol";
 import { CreateWithMilestones_Batch_Fork_Test } from "../batch/createWithMilestones.t.sol";
 import { CreateWithRange_Batch_Fork_Test } from "../batch/createWithRange.t.sol";
 import { OnStreamCanceled_Fork_Test } from "../plugin/onStreamCanceled.t.sol";
@@ -19,7 +19,7 @@ import { BatchCancelMultiple_TargetPush_Fork_Test, BatchCreate_TargetPush_Fork_T
 
 IERC20 constant usdc = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
 
-contract USDC_AirstreamCampaignLL_Fork_Test is AirstreamCampaignLL_Fork_Test(usdc) { }
+contract USDC_MerkleStreamerLL_Fork_Test is MerkleStreamerLL_Fork_Test(usdc) { }
 
 contract USDC_BatchCancelMultiple_TargetApprove_Fork_Test is BatchCancelMultiple_TargetApprove_Fork_Test(usdc) { }
 

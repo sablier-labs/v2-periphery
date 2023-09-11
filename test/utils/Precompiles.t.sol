@@ -5,7 +5,7 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 import { DeployPermit2 } from "@uniswap/permit2-test/utils/DeployPermit2.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-import { ISablierV2AirstreamCampaignFactory } from "../../src/interfaces/ISablierV2AirstreamCampaignFactory.sol";
+import { ISablierV2MerkleStreamerFactory } from "../../src/interfaces/ISablierV2MerkleStreamerFactory.sol";
 import { ISablierV2Archive } from "../../src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2Batch } from "../../src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2ProxyPlugin } from "../../src/interfaces/ISablierV2ProxyPlugin.sol";
@@ -26,9 +26,9 @@ contract Precompiles_Test is Base_Test {
         }
     }
 
-    function test_DeployAirstreamCampaignFactory() external onlyTestOptimizedProfile {
-        address actualFactory = address(precompiles.deployAirstreamCampaignFactory());
-        address expectedFactory = address(deployPrecompiledAirstreamCampaignFactory());
+    function test_DeployMerkleStreamerFactory() external onlyTestOptimizedProfile {
+        address actualFactory = address(precompiles.deployMerkleStreamerFactory());
+        address expectedFactory = address(deployPrecompiledMerkleStreamerFactory());
         assertEq(actualFactory.code, expectedFactory.code, "bytecodes mismatch");
     }
 
@@ -81,16 +81,16 @@ contract Precompiles_Test is Base_Test {
     /// @dev Needed to prevent "Stack too deep" error
     struct Vars {
         IAllowanceTransfer permit2;
-        ISablierV2AirstreamCampaignFactory actualAirstreamFactory;
+        ISablierV2MerkleStreamerFactory actualMerkleStreamerFactory;
         ISablierV2Archive actualArchive;
         ISablierV2Batch actualBatch;
         ISablierV2ProxyPlugin actualProxyPlugin;
         ISablierV2ProxyTarget actualProxyTargetApprove;
         ISablierV2ProxyTarget actualProxyTargetPermit2;
         ISablierV2ProxyTarget actualProxyTargetPush;
-        address expectedAirstreamFactory;
         address expectedArchive;
         address expectedBatch;
+        address expectedMerkleStreamerFactory;
         address expectedProxyPlugin;
         address expectedProxyTargetApprove;
         address expectedProxyTargetPermit2;
@@ -102,7 +102,7 @@ contract Precompiles_Test is Base_Test {
 
         vars.permit2 = IAllowanceTransfer(new DeployPermit2().run());
         (
-            vars.actualAirstreamFactory,
+            vars.actualMerkleStreamerFactory,
             vars.actualArchive,
             vars.actualBatch,
             vars.actualProxyPlugin,
@@ -111,9 +111,11 @@ contract Precompiles_Test is Base_Test {
             vars.actualProxyTargetPush
         ) = precompiles.deployPeriphery(users.admin.addr, permit2);
 
-        vars.expectedAirstreamFactory = address(deployPrecompiledAirstreamCampaignFactory());
+        vars.expectedMerkleStreamerFactory = address(deployPrecompiledMerkleStreamerFactory());
         assertEq(
-            address(vars.actualAirstreamFactory).code, address(vars.expectedAirstreamFactory).code, "bytecodes mismatch"
+            address(vars.actualMerkleStreamerFactory).code,
+            address(vars.expectedMerkleStreamerFactory).code,
+            "bytecodes mismatch"
         );
 
         vars.expectedArchive = address(deployPrecompiledArchive(users.admin.addr));

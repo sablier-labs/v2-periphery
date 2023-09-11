@@ -39,7 +39,7 @@ contract Defaults is Merkle, PermitSignature {
     uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
-                                 AIRSTREAM CAMPAIGN
+                                  MERKLE STREAMER
     //////////////////////////////////////////////////////////////////////////*/
 
     uint256 public constant CAMPAIGN_TOTAL_AMOUNT = CLAIM_AMOUNT * RECIPIENTS_COUNT;

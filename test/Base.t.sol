@@ -16,15 +16,15 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
-import { ISablierV2AirstreamCampaignFactory } from "src/interfaces/ISablierV2AirstreamCampaignFactory.sol";
-import { ISablierV2AirstreamCampaignLL } from "src/interfaces/ISablierV2AirstreamCampaignLL.sol";
+import { ISablierV2MerkleStreamerFactory } from "src/interfaces/ISablierV2MerkleStreamerFactory.sol";
+import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
 import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
-import { SablierV2AirstreamCampaignFactory } from "src/SablierV2AirstreamCampaignFactory.sol";
-import { SablierV2AirstreamCampaignLL } from "src/SablierV2AirstreamCampaignLL.sol";
+import { SablierV2MerkleStreamerFactory } from "src/SablierV2MerkleStreamerFactory.sol";
+import { SablierV2MerkleStreamerLL } from "src/SablierV2MerkleStreamerLL.sol";
 import { SablierV2Archive } from "src/SablierV2Archive.sol";
 import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
@@ -55,11 +55,11 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
     IPRBProxy internal aliceProxy;
     IERC20 internal asset;
     ISablierV2Batch internal batch;
-    ISablierV2AirstreamCampaignFactory internal campaignFactory;
-    ISablierV2AirstreamCampaignLL internal campaignLL;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
+    ISablierV2MerkleStreamerFactory internal merkleStreamerFactory;
+    ISablierV2MerkleStreamerLL internal merkleStreamerLL;
     IAllowanceTransfer internal permit2;
     ISablierV2ProxyPlugin internal plugin;
     IPRBProxyRegistry internal proxyRegistry;
@@ -106,7 +106,7 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         if (!isTestOptimizedProfile()) {
             archive = new SablierV2Archive(users.admin.addr);
             batch = new SablierV2Batch();
-            campaignFactory = new SablierV2AirstreamCampaignFactory();
+            merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
             plugin = new SablierV2ProxyPlugin(archive);
             targetApprove = new SablierV2ProxyTargetApprove();
             targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
@@ -114,7 +114,7 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         } else {
             archive = deployPrecompiledArchive(users.admin.addr);
             batch = deployPrecompiledBatch();
-            campaignFactory = deployPrecompiledAirstreamCampaignFactory();
+            merkleStreamerFactory = deployPrecompiledMerkleStreamerFactory();
             plugin = deployPrecompiledProxyPlugin(archive);
             targetApprove = deployPrecompiledProxyTargetApprove();
             targetPermit2 = deployPrecompiledProxyTargetPermit2(permit2);
@@ -136,10 +136,10 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         return ISablierV2Batch(deployCode("out-optimized/SablierV2Batch.sol/SablierV2Batch.json"));
     }
 
-    /// @dev Deploys {SablierV2AirstreamCampaignFactory} from a source precompiled with `--via-ir`.
-    function deployPrecompiledAirstreamCampaignFactory() internal returns (ISablierV2AirstreamCampaignFactory) {
-        return ISablierV2AirstreamCampaignFactory(
-            deployCode("out-optimized/SablierV2AirstreamCampaignFactory.sol/SablierV2AirstreamCampaignFactory.json")
+    /// @dev Deploys {SablierV2MerkleStreamerFactory} from a source precompiled with `--via-ir`.
+    function deployPrecompiledMerkleStreamerFactory() internal returns (ISablierV2MerkleStreamerFactory) {
+        return ISablierV2MerkleStreamerFactory(
+            deployCode("out-optimized/SablierV2MerkleStreamerFactory.sol/SablierV2MerkleStreamerFactory.json")
         );
     }
 
@@ -181,8 +181,8 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         vm.label({ account: address(aliceProxy), newLabel: "Alice's Proxy" });
         vm.label({ account: address(archive), newLabel: "Archive" });
         vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
-        vm.label({ account: address(campaignFactory), newLabel: "AirstreamCampaignFactory" });
-        vm.label({ account: address(campaignLL), newLabel: "AirstreamCampaignLL" });
+        vm.label({ account: address(merkleStreamerFactory), newLabel: "MerkleStreamerFactory" });
+        vm.label({ account: address(merkleStreamerLL), newLabel: "MerkleStreamerLL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
@@ -372,26 +372,26 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                     AIRSTREAM
+                                  MERKLE-STREAMER
     //////////////////////////////////////////////////////////////////////////*/
 
-    function computeCampaignLLAddress() internal returns (address) {
-        return computeCampaignLLAddress(users.admin.addr, defaults.merkleRoot(), defaults.EXPIRATION());
+    function computeMerkleStreamerLLAddress() internal returns (address) {
+        return computeMerkleStreamerLLAddress(users.admin.addr, defaults.merkleRoot(), defaults.EXPIRATION());
     }
 
-    function computeCampaignLLAddress(address admin) internal returns (address) {
-        return computeCampaignLLAddress(admin, defaults.merkleRoot(), defaults.EXPIRATION());
+    function computeMerkleStreamerLLAddress(address admin) internal returns (address) {
+        return computeMerkleStreamerLLAddress(admin, defaults.merkleRoot(), defaults.EXPIRATION());
     }
 
-    function computeCampaignLLAddress(address admin, uint40 expiration) internal returns (address) {
-        return computeCampaignLLAddress(admin, defaults.merkleRoot(), expiration);
+    function computeMerkleStreamerLLAddress(address admin, uint40 expiration) internal returns (address) {
+        return computeMerkleStreamerLLAddress(admin, defaults.merkleRoot(), expiration);
     }
 
-    function computeCampaignLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
-        return computeCampaignLLAddress(admin, merkleRoot, defaults.EXPIRATION());
+    function computeMerkleStreamerLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
+        return computeMerkleStreamerLLAddress(admin, merkleRoot, defaults.EXPIRATION());
     }
 
-    function computeCampaignLLAddress(
+    function computeMerkleStreamerLLAddress(
         address admin,
         bytes32 merkleRoot,
         uint40 expiration
@@ -400,15 +400,15 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         returns (address)
     {
         bytes32 salt = keccak256(abi.encodePacked(lockupLinear, admin, asset, merkleRoot, expiration));
-        bytes32 creationBytecodeHash = keccak256(getCampaignLLBytecode(admin, merkleRoot, expiration));
+        bytes32 creationBytecodeHash = keccak256(getMerkleStreamerLLBytecode(admin, merkleRoot, expiration));
         return computeCreate2Address({
             salt: salt,
             initcodeHash: creationBytecodeHash,
-            deployer: address(campaignFactory)
+            deployer: address(merkleStreamerFactory)
         });
     }
 
-    function getCampaignLLBytecode(
+    function getMerkleStreamerLLBytecode(
         address admin,
         bytes32 merkleRoot,
         uint40 expiration
@@ -419,10 +419,10 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         bytes memory constructorArgs =
             abi.encode(admin, lockupLinear, asset, merkleRoot, expiration, defaults.durations(), defaults.CANCELABLE());
         if (!isTestOptimizedProfile()) {
-            return bytes.concat(type(SablierV2AirstreamCampaignLL).creationCode, constructorArgs);
+            return bytes.concat(type(SablierV2MerkleStreamerLL).creationCode, constructorArgs);
         } else {
             return bytes.concat(
-                vm.getCode("out-optimized/SablierV2AirstreamCampaignLL.sol/SablierV2AirstreamCampaignLL.json"),
+                vm.getCode("out-optimized/SablierV2MerkleStreamerLL.sol/SablierV2MerkleStreamerLL.json"),
                 constructorArgs
             );
         }
