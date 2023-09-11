@@ -19,12 +19,14 @@ import { StdCheats } from "forge-std/StdCheats.sol";
 import { ISablierV2AirstreamCampaignFactory } from "src/interfaces/ISablierV2AirstreamCampaignFactory.sol";
 import { ISablierV2AirstreamCampaignLL } from "src/interfaces/ISablierV2AirstreamCampaignLL.sol";
 import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
+import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { SablierV2AirstreamCampaignFactory } from "src/SablierV2AirstreamCampaignFactory.sol";
 import { SablierV2AirstreamCampaignLL } from "src/SablierV2AirstreamCampaignLL.sol";
 import { SablierV2Archive } from "src/SablierV2Archive.sol";
+import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTargetApprove } from "src/SablierV2ProxyTargetApprove.sol";
 import { SablierV2ProxyTargetPermit2 } from "src/SablierV2ProxyTargetPermit2.sol";
@@ -52,8 +54,9 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
     ISablierV2Archive internal archive;
     IPRBProxy internal aliceProxy;
     IERC20 internal asset;
-    ISablierV2AirstreamCampaignLL internal campaignLL;
+    ISablierV2Batch internal batch;
     ISablierV2AirstreamCampaignFactory internal campaignFactory;
+    ISablierV2AirstreamCampaignLL internal campaignLL;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
@@ -102,6 +105,7 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
     function deployPeripheryConditionally() internal {
         if (!isTestOptimizedProfile()) {
             archive = new SablierV2Archive(users.admin.addr);
+            batch = new SablierV2Batch();
             campaignFactory = new SablierV2AirstreamCampaignFactory();
             plugin = new SablierV2ProxyPlugin(archive);
             targetApprove = new SablierV2ProxyTargetApprove();
@@ -109,6 +113,7 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
             targetPush = new SablierV2ProxyTargetPush();
         } else {
             archive = deployPrecompiledArchive(users.admin.addr);
+            batch = deployPrecompiledBatch();
             campaignFactory = deployPrecompiledAirstreamCampaignFactory();
             plugin = deployPrecompiledProxyPlugin(archive);
             targetApprove = deployPrecompiledProxyTargetApprove();
@@ -124,6 +129,11 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         return ISablierV2Archive(
             deployCode("out-optimized/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(initialAdmin))
         );
+    }
+
+    /// @dev Deploys {SablierV2Batch} from a source precompiled with `--via-ir`.
+    function deployPrecompiledBatch() internal returns (ISablierV2Batch) {
+        return ISablierV2Batch(deployCode("out-optimized/SablierV2Batch.sol/SablierV2Batch.json"));
     }
 
     /// @dev Deploys {SablierV2AirstreamCampaignFactory} from a source precompiled with `--via-ir`.
