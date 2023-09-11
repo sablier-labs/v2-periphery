@@ -10,9 +10,14 @@ abstract contract BatchCreateWithRange_Integration_Test is Integration_Test {
     function setUp() public virtual override { }
 
     function test_RevertWhen_NotDelegateCalled() external {
-        Batch.CreateWithRange[] memory batch;
+        Batch.CreateWithRange[] memory batchParams;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCreateWithRange({ lockupLinear: lockupLinear, asset: asset, batch: batch, transferData: bytes("") });
+        target.batchCreateWithRange({
+            lockupLinear: lockupLinear,
+            asset: asset,
+            batch: batchParams,
+            transferData: bytes("")
+        });
     }
 
     modifier whenDelegateCalled() {
@@ -20,8 +25,8 @@ abstract contract BatchCreateWithRange_Integration_Test is Integration_Test {
     }
 
     function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
-        Batch.CreateWithRange[] memory batch = new Batch.CreateWithRange[](0);
-        bytes memory data = abi.encodeCall(target.batchCreateWithRange, (lockupLinear, asset, batch, bytes("")));
+        Batch.CreateWithRange[] memory batchParams = new Batch.CreateWithRange[](0);
+        bytes memory data = abi.encodeCall(target.batchCreateWithRange, (lockupLinear, asset, batchParams, bytes("")));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         aliceProxy.execute(address(target), data);
     }

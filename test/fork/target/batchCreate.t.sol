@@ -66,7 +66,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             startTime: params.startTime,
             totalAmount: params.perStreamAmount
         });
-        Batch.CreateWithMilestones[] memory batch = BatchBuilder.fillBatch(createWithMilestones, params.batchSize);
+        Batch.CreateWithMilestones[] memory batchParams = BatchBuilder.fillBatch(createWithMilestones, params.batchSize);
         bytes memory transferData = target == targetPermit2
             ? defaults.permit2Params({
                 user: user,
@@ -76,7 +76,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             })
             : bytes("");
         bytes memory data =
-            abi.encodeCall(target.batchCreateWithMilestones, (lockupDynamic, asset, batch, transferData));
+            abi.encodeCall(target.batchCreateWithMilestones, (lockupDynamic, asset, batchParams, transferData));
 
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
@@ -145,7 +145,7 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             range: params.range,
             totalAmount: params.perStreamAmount
         });
-        Batch.CreateWithRange[] memory batch = BatchBuilder.fillBatch(createParams, params.batchSize);
+        Batch.CreateWithRange[] memory batchParams = BatchBuilder.fillBatch(createParams, params.batchSize);
         bytes memory transferData = target == targetPermit2
             ? defaults.permit2Params({
                 user: user,
@@ -154,7 +154,8 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
                 privateKey: params.userPrivateKey
             })
             : bytes("");
-        bytes memory data = abi.encodeCall(target.batchCreateWithRange, (lockupLinear, asset, batch, transferData));
+        bytes memory data =
+            abi.encodeCall(target.batchCreateWithRange, (lockupLinear, asset, batchParams, transferData));
 
         // Asset flow: proxy owner → proxy → Sablier
         // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.

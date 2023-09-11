@@ -13,10 +13,10 @@ abstract contract BatchCancelMultiple_Integration_Test is Integration_Test {
     function setUp() public virtual override { }
 
     function test_RevertWhen_NotDelegateCalled() external {
-        Batch.CancelMultiple[] memory batch;
+        Batch.CancelMultiple[] memory batchParams;
         IERC20[] memory assets = defaults.assets();
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.batchCancelMultiple(batch, assets);
+        target.batchCancelMultiple(batchParams, assets);
     }
 
     modifier whenDelegateCalled() {
@@ -24,8 +24,8 @@ abstract contract BatchCancelMultiple_Integration_Test is Integration_Test {
     }
 
     function test_RevertWhen_BatchSizeZero() external whenDelegateCalled {
-        Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](0);
-        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
+        Batch.CancelMultiple[] memory batchParams = new Batch.CancelMultiple[](0);
+        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batchParams, defaults.assets()));
         vm.expectRevert(Errors.SablierV2ProxyTarget_BatchSizeZero.selector);
         aliceProxy.execute(address(target), data);
     }
@@ -56,10 +56,10 @@ abstract contract BatchCancelMultiple_Integration_Test is Integration_Test {
         expectCallToTransfer({ to: users.alice.addr, amount: 2 * defaults.REFUND_AMOUNT() * defaults.BATCH_SIZE() });
 
         // ABI encode the parameters and call the function via the proxy.
-        Batch.CancelMultiple[] memory batch = new Batch.CancelMultiple[](2);
-        batch[0] = Batch.CancelMultiple(lockupDynamic, dynamicStreamIds);
-        batch[1] = Batch.CancelMultiple(lockupLinear, linearStreamIds);
-        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batch, defaults.assets()));
+        Batch.CancelMultiple[] memory batchParams = new Batch.CancelMultiple[](2);
+        batchParams[0] = Batch.CancelMultiple(lockupDynamic, dynamicStreamIds);
+        batchParams[1] = Batch.CancelMultiple(lockupLinear, linearStreamIds);
+        bytes memory data = abi.encodeCall(target.batchCancelMultiple, (batchParams, defaults.assets()));
         aliceProxy.execute(address(target), data);
 
         // Assert that all streams have been canceled.
