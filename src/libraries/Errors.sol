@@ -18,7 +18,7 @@ library Errors {
     error SablierV2Batch_BatchSizeZero();
 
     /*//////////////////////////////////////////////////////////////////////////
-                             SABLIER-V2-MERKLE_STREAMER
+                             SABLIER-V2-MERKLE-STREAMER
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Thrown when trying to claim the same stream more than once.

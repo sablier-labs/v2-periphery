@@ -29,8 +29,8 @@ fi
 # Replace the current bytecodes
 sd "(BYTECODE_ARCHIVE =)[^;]+;" "\$1 hex\"$archive\";" $precompiles_path
 sd "(BYTECODE_BATCH =)[^;]+;" "\$1 hex\"$batch\";" $precompiles_path
-sd "(BYTECODE_PROXY_PLUGIN =)[^;]+;" "\$1 hex\"$proxy_plugin\";" $precompiles_path
 sd "(BYTECODE_MERKLE_STREAMER_FACTORY =)[^;]+;" "\$1 hex\"$merkle_streamer_factory\";" $precompiles_path
+sd "(BYTECODE_PROXY_PLUGIN =)[^;]+;" "\$1 hex\"$proxy_plugin\";" $precompiles_path
 sd "(BYTECODE_PROXY_TARGET_APPROVE =)[^;]+;" "\$1 hex\"$proxy_target_approve\";" $precompiles_path
 sd "(BYTECODE_PROXY_TARGET_PERMIT2 =)[^;]+;" "\$1 hex\"$proxy_target_permit2\";" $precompiles_path
 sd "(BYTECODE_PROXY_TARGET_PUSH =)[^;]+;" "\$1 hex\"$proxy_target_push\";" $precompiles_path
