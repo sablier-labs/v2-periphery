@@ -16,5 +16,5 @@ claim.t.sol
       │     └── it should revert
       └── given the claim is included in the Merkle tree
          ├── it should mark the index as claimed
-         ├── it should create a LockupLinear Merkle streamer
+         ├── it should create a LockupLinear stream
          └── it should emit a {Claim} event

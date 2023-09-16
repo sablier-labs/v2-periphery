@@ -31,9 +31,9 @@ contract DeployProtocol is BaseScript {
             SablierV2LockupDynamic lockupDynamic,
             SablierV2LockupLinear lockupLinear,
             SablierV2NFTDescriptor nftDescriptor,
-            SablierV2MerkleStreamerFactory merkleStreamerFactory,
             SablierV2Archive archive,
             SablierV2Batch batch,
+            SablierV2MerkleStreamerFactory merkleStreamerFactory,
             SablierV2ProxyPlugin plugin,
             SablierV2ProxyTargetApprove targetApprove,
             SablierV2ProxyTargetPermit2 targetPermit2,
@@ -47,13 +47,13 @@ contract DeployProtocol is BaseScript {
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
 
         // Deploy V2 Periphery. The Archive needs its own context block to prevent Stack Too Deep.
-        merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
         {
             archive = new SablierV2Archive(initialAdmin);
             archive.list(address(lockupDynamic));
             archive.list(address(lockupLinear));
         }
         batch = new SablierV2Batch();
+        merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
         plugin = new SablierV2ProxyPlugin(archive);
         targetApprove = new SablierV2ProxyTargetApprove();
         targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);

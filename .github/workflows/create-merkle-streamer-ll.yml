@@ -1,4 +1,4 @@
-name: "Create MerkleStreamer LockupLinear"
+name: "Create Merkle Streamer LockupLinear"
 
 env:
     API_KEY_ARBISCAN: ${{ secrets.API_KEY_ARBISCAN }}

@@ -25,20 +25,20 @@ mkdir $artifacts \
 FOUNDRY_PROFILE=optimized forge build
 
 # Copy the production artifacts
-cp out-optimized/SablierV2MerkleStreamerFactory.sol/SablierV2MerkleStreamerFactory.json $artifacts
-cp out-optimized/SablierV2MerkleStreamerLL.sol/SablierV2MerkleStreamerLL.json $artifacts
 cp out-optimized/SablierV2Archive.sol/SablierV2Archive.json $artifacts
 cp out-optimized/SablierV2Batch.sol/SablierV2Batch.json $artifacts
+cp out-optimized/SablierV2MerkleStreamerFactory.sol/SablierV2MerkleStreamerFactory.json $artifacts
+cp out-optimized/SablierV2MerkleStreamerLL.sol/SablierV2MerkleStreamerLL.json $artifacts
 cp out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json $artifacts
 cp out-optimized/SablierV2ProxyTargetApprove.sol/SablierV2ProxyTargetApprove.json $artifacts
 cp out-optimized/SablierV2ProxyTargetPermit2.sol/SablierV2ProxyTargetPermit2.json $artifacts
 cp out-optimized/SablierV2ProxyTargetPush.sol/SablierV2ProxyTargetPush.json $artifacts
 
 interfaces=./artifacts/interfaces
-cp out-optimized/ISablierV2MerkleStreamerFactory.sol/ISablierV2MerkleStreamerFactory.json $interfaces
-cp out-optimized/ISablierV2MerkleStreamerLL.sol/ISablierV2MerkleStreamerLL.json $interfaces
 cp out-optimized/ISablierV2Archive.sol/ISablierV2Archive.json $interfaces
 cp out-optimized/ISablierV2Batch.sol/ISablierV2Batch.json $interfaces
+cp out-optimized/ISablierV2MerkleStreamerFactory.sol/ISablierV2MerkleStreamerFactory.json $interfaces
+cp out-optimized/ISablierV2MerkleStreamerLL.sol/ISablierV2MerkleStreamerLL.json $interfaces
 cp out-optimized/ISablierV2ProxyPlugin.sol/ISablierV2ProxyPlugin.json $interfaces
 cp out-optimized/ISablierV2ProxyTarget.sol/ISablierV2ProxyTarget.json $interfaces
 

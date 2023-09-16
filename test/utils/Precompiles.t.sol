@@ -5,9 +5,9 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 import { DeployPermit2 } from "@uniswap/permit2-test/utils/DeployPermit2.sol";
 import { LibString } from "solady/utils/LibString.sol";
 
-import { ISablierV2MerkleStreamerFactory } from "../../src/interfaces/ISablierV2MerkleStreamerFactory.sol";
 import { ISablierV2Archive } from "../../src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2Batch } from "../../src/interfaces/ISablierV2Batch.sol";
+import { ISablierV2MerkleStreamerFactory } from "../../src/interfaces/ISablierV2MerkleStreamerFactory.sol";
 import { ISablierV2ProxyPlugin } from "../../src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "../../src/interfaces/ISablierV2ProxyTarget.sol";
 
@@ -26,12 +26,6 @@ contract Precompiles_Test is Base_Test {
         }
     }
 
-    function test_DeployMerkleStreamerFactory() external onlyTestOptimizedProfile {
-        address actualFactory = address(precompiles.deployMerkleStreamerFactory());
-        address expectedFactory = address(deployPrecompiledMerkleStreamerFactory());
-        assertEq(actualFactory.code, expectedFactory.code, "bytecodes mismatch");
-    }
-
     function test_DeployArchive() external onlyTestOptimizedProfile {
         address actualArchive = address(precompiles.deployArchive(users.admin.addr));
         address expectedArchive = address(deployPrecompiledArchive(users.admin.addr));
@@ -42,6 +36,12 @@ contract Precompiles_Test is Base_Test {
         address actualBatch = address(precompiles.deployBatch());
         address expectedBatch = address(deployPrecompiledBatch());
         assertEq(actualBatch.code, expectedBatch.code, "bytecodes mismatch");
+    }
+
+    function test_DeployMerkleStreamerFactory() external onlyTestOptimizedProfile {
+        address actualFactory = address(precompiles.deployMerkleStreamerFactory());
+        address expectedFactory = address(deployPrecompiledMerkleStreamerFactory());
+        assertEq(actualFactory.code, expectedFactory.code, "bytecodes mismatch");
     }
 
     function test_DeployProxyPlugin() external onlyTestOptimizedProfile {
@@ -81,9 +81,9 @@ contract Precompiles_Test is Base_Test {
     /// @dev Needed to prevent "Stack too deep" error
     struct Vars {
         IAllowanceTransfer permit2;
-        ISablierV2MerkleStreamerFactory actualMerkleStreamerFactory;
         ISablierV2Archive actualArchive;
         ISablierV2Batch actualBatch;
+        ISablierV2MerkleStreamerFactory actualMerkleStreamerFactory;
         ISablierV2ProxyPlugin actualProxyPlugin;
         ISablierV2ProxyTarget actualProxyTargetApprove;
         ISablierV2ProxyTarget actualProxyTargetPermit2;
@@ -102,14 +102,20 @@ contract Precompiles_Test is Base_Test {
 
         vars.permit2 = IAllowanceTransfer(new DeployPermit2().run());
         (
-            vars.actualMerkleStreamerFactory,
             vars.actualArchive,
             vars.actualBatch,
+            vars.actualMerkleStreamerFactory,
             vars.actualProxyPlugin,
             vars.actualProxyTargetApprove,
             vars.actualProxyTargetPermit2,
             vars.actualProxyTargetPush
         ) = precompiles.deployPeriphery(users.admin.addr, permit2);
+
+        vars.expectedArchive = address(deployPrecompiledArchive(users.admin.addr));
+        assertEq(address(vars.actualArchive).code, vars.expectedArchive.code, "bytecodes mismatch");
+
+        vars.expectedBatch = address(deployPrecompiledBatch());
+        assertEq(address(vars.actualBatch).code, vars.expectedBatch.code, "bytecodes mismatch");
 
         vars.expectedMerkleStreamerFactory = address(deployPrecompiledMerkleStreamerFactory());
         assertEq(
@@ -117,12 +123,6 @@ contract Precompiles_Test is Base_Test {
             address(vars.expectedMerkleStreamerFactory).code,
             "bytecodes mismatch"
         );
-
-        vars.expectedArchive = address(deployPrecompiledArchive(users.admin.addr));
-        assertEq(address(vars.actualArchive).code, vars.expectedArchive.code, "bytecodes mismatch");
-
-        vars.expectedBatch = address(deployPrecompiledBatch());
-        assertEq(address(vars.actualBatch).code, vars.expectedBatch.code, "bytecodes mismatch");
 
         vars.expectedProxyPlugin = address(deployPrecompiledProxyPlugin(vars.actualArchive));
         bytes memory expectedLockupDynamicCode =
