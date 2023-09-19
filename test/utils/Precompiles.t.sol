@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.19 <=0.9.0;
+pragma solidity >=0.8.19 <0.9.0;
 
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 import { DeployPermit2 } from "@uniswap/permit2-test/utils/DeployPermit2.sol";
@@ -92,9 +92,13 @@ contract Precompiles_Test is Base_Test {
         address expectedBatch;
         address expectedMerkleStreamerFactory;
         address expectedProxyPlugin;
+        bytes expectedLockupDynamicCode;
         address expectedProxyTargetApprove;
+        bytes expectedProxyTargetApproveCode;
         address expectedProxyTargetPermit2;
+        bytes expectedProxyTargetPermit2Code;
         address expectedProxyTargetPush;
+        bytes expectedProxyTargetPushCode;
     }
 
     function test_DeployPeriphery() external onlyTestOptimizedProfile {
@@ -125,31 +129,31 @@ contract Precompiles_Test is Base_Test {
         );
 
         vars.expectedProxyPlugin = address(deployPrecompiledProxyPlugin(vars.actualArchive));
-        bytes memory expectedLockupDynamicCode =
+        vars.expectedLockupDynamicCode =
             adjustBytecode(vars.expectedProxyPlugin.code, vars.expectedProxyPlugin, address(vars.actualProxyPlugin));
-        assertEq(address(vars.actualProxyPlugin).code, expectedLockupDynamicCode, "bytecodes mismatch");
+        assertEq(address(vars.actualProxyPlugin).code, vars.expectedLockupDynamicCode, "bytecodes mismatch");
 
         vars.expectedProxyTargetApprove = address(deployPrecompiledProxyTargetApprove());
-        bytes memory expectedProxyTargetApproveCode = adjustBytecode(
+        vars.expectedProxyTargetApproveCode = adjustBytecode(
             vars.expectedProxyTargetApprove.code,
             vars.expectedProxyTargetApprove,
             address(vars.actualProxyTargetApprove)
         );
-        assertEq(address(vars.actualProxyTargetApprove).code, expectedProxyTargetApproveCode, "bytecodes mismatch");
+        assertEq(address(vars.actualProxyTargetApprove).code, vars.expectedProxyTargetApproveCode, "bytecodes mismatch");
 
         vars.expectedProxyTargetPermit2 = address(deployPrecompiledProxyTargetPermit2(permit2));
-        bytes memory expectedProxyTargetPermit2Code = adjustBytecode(
+        vars.expectedProxyTargetPermit2Code = adjustBytecode(
             vars.expectedProxyTargetPermit2.code,
             vars.expectedProxyTargetPermit2,
             address(vars.actualProxyTargetPermit2)
         );
-        assertEq(address(vars.actualProxyTargetPermit2).code, expectedProxyTargetPermit2Code, "bytecodes mismatch");
+        assertEq(address(vars.actualProxyTargetPermit2).code, vars.expectedProxyTargetPermit2Code, "bytecodes mismatch");
 
         vars.expectedProxyTargetPush = address(deployPrecompiledProxyTargetPush());
-        bytes memory expectedProxyTargetPushCode = adjustBytecode(
+        vars.expectedProxyTargetPushCode = adjustBytecode(
             vars.expectedProxyTargetPush.code, vars.expectedProxyTargetPush, address(vars.actualProxyTargetPush)
         );
-        assertEq(address(vars.actualProxyTargetPush).code, expectedProxyTargetPushCode, "bytecodes mismatch");
+        assertEq(address(vars.actualProxyTargetPush).code, vars.expectedProxyTargetPushCode, "bytecodes mismatch");
     }
 
     /// @dev The expected bytecode has to be adjusted because some contracts inherit from {OnlyDelegateCall}, which
