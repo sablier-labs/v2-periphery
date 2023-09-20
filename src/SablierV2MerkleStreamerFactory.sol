@@ -48,7 +48,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
         LockupLinear.Durations memory streamDurations,
         bool cancelable,
         string memory ipfsCID,
-        uint256 campaignTotalAmount,
+        uint256 aggregateAmount,
         uint256 recipientsCount
     )
         external
@@ -81,7 +81,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
             streamDurations,
             cancelable,
             ipfsCID,
-            campaignTotalAmount,
+            aggregateAmount,
             recipientsCount
         );
     }

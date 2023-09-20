@@ -13,7 +13,7 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
         merkleStreamerLL = createMerkleStreamerLL();
 
         // Fund the Merkle streamer.
-        deal({ token: address(asset), to: address(merkleStreamerLL), give: defaults.CAMPAIGN_TOTAL_AMOUNT() });
+        deal({ token: address(asset), to: address(merkleStreamerLL), give: defaults.AGGREGATE_TOTAL_AMOUNT() });
     }
 
     function claimLL() internal returns (uint256) {
@@ -47,7 +47,7 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
             cancelable: defaults.CANCELABLE(),
             streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),
-            campaignTotalAmount: defaults.CAMPAIGN_TOTAL_AMOUNT(),
+            aggregateAmount: defaults.AGGREGATE_TOTAL_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()
         });
     }

@@ -25,7 +25,7 @@ interface ISablierV2MerkleStreamerFactory {
         LockupLinear.Durations streamDurations,
         bool cancelable,
         string ipfsCID,
-        uint256 campaignTotalAmount,
+        uint256 aggregateAmount,
         uint256 recipientsCount
     );
 
@@ -53,7 +53,7 @@ interface ISablierV2MerkleStreamerFactory {
     /// @param streamDurations The durations for each stream due to the recipient.
     /// @param cancelable Indicates if each stream will be cancelable.
     /// @param ipfsCID Metadata parameter emitted for indexing purposes.
-    /// @param campaignTotalAmount Total amount of ERC-20 assets to be streamed.
+    /// @param aggregateAmount Total amount of ERC-20 assets to be streamed by all recipients.
     /// @param recipientsCount Total number of recipients eligible to claim.
     /// @return merkleStreamerLL The address of the newly created Merkle streamer contract.
     function createMerkleStreamerLL(
@@ -65,7 +65,7 @@ interface ISablierV2MerkleStreamerFactory {
         LockupLinear.Durations memory streamDurations,
         bool cancelable,
         string memory ipfsCID,
-        uint256 campaignTotalAmount,
+        uint256 aggregateAmount,
         uint256 recipientsCount
     )
         external
