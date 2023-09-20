@@ -55,7 +55,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
         returns (ISablierV2MerkleStreamerLL merkleStreamerLL)
     {
         // Hash the parameters to generate a salt.
-        bytes32 salt = keccak256(abi.encodePacked(lockupLinear, initialAdmin, asset, merkleRoot, expiration));
+        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, lockupLinear, asset, merkleRoot, expiration));
 
         // Deploy the Merkle streamer with CREATE2.
         merkleStreamerLL = new SablierV2MerkleStreamerLL{salt: salt} (
