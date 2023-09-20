@@ -20,7 +20,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
         bool cancelable = defaults.CANCELABLE();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         string memory ipfsCID = defaults.IPFS_CID();
-        uint256 aggregateAmount = defaults.AGGREGATE_TOTAL_AMOUNT();
+        uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
 
         vm.expectRevert();
@@ -56,7 +56,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
             streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),
             ipfsCID: defaults.IPFS_CID(),
-            aggregateAmount: defaults.AGGREGATE_TOTAL_AMOUNT(),
+            aggregateAmount: defaults.AGGREGATE_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()
         });
 
