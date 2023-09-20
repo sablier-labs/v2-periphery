@@ -6,6 +6,7 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2MerkleStreamerFactory } from "./interfaces/ISablierV2MerkleStreamerFactory.sol";
+import { ISablierV2MerkleStreamer } from "./interfaces/ISablierV2MerkleStreamer.sol";
 import { ISablierV2MerkleStreamerLL } from "./interfaces/ISablierV2MerkleStreamerLL.sol";
 import { SablierV2MerkleStreamerLL } from "./SablierV2MerkleStreamerLL.sol";
 
@@ -17,7 +18,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice The list of Merkle streamers created by the admin.
-    mapping(address admin => ISablierV2MerkleStreamerLL[] contracts) private _merkleStreamers;
+    mapping(address admin => ISablierV2MerkleStreamer[] contracts) private _merkleStreamers;
 
     /*//////////////////////////////////////////////////////////////////////////
                            USER-FACING CONSTANT FUNCTIONS
@@ -28,7 +29,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
         external
         view
         override
-        returns (ISablierV2MerkleStreamerLL[] memory merkleStreamers)
+        returns (ISablierV2MerkleStreamer[] memory merkleStreamers)
     {
         merkleStreamers = _merkleStreamers[admin];
     }

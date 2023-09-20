@@ -5,6 +5,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
+import { ISablierV2MerkleStreamer } from "./ISablierV2MerkleStreamer.sol";
 import { ISablierV2MerkleStreamerLL } from "./ISablierV2MerkleStreamerLL.sol";
 
 /// @title ISablierV2MerkleStreamerFactory
@@ -36,7 +37,7 @@ interface ISablierV2MerkleStreamerFactory {
     function getMerkleStreamers(address admin)
         external
         view
-        returns (ISablierV2MerkleStreamerLL[] memory merkleStreamers);
+        returns (ISablierV2MerkleStreamer[] memory merkleStreamers);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
