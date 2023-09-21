@@ -53,7 +53,7 @@ interface ISablierV2MerkleStreamerFactory {
     /// @param streamDurations The durations for each stream due to the recipient.
     /// @param cancelable Indicates if each stream will be cancelable.
     /// @param ipfsCID Metadata parameter emitted for indexing purposes.
-    /// @param aggregateAmount Total amount of ERC-20 assets to be streamed by all recipients.
+    /// @param aggregateAmount Total amount of ERC-20 assets to be streamed to all recipients.
     /// @param recipientsCount Total number of recipients eligible to claim.
     /// @return merkleStreamerLL The address of the newly created Merkle streamer contract.
     function createMerkleStreamerLL(
