@@ -42,7 +42,7 @@ contract Defaults is Merkle, PermitSignature {
                                   MERKLE-STREAMER
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint256 public constant CAMPAIGN_TOTAL_AMOUNT = CLAIM_AMOUNT * RECIPIENTS_COUNT;
+    uint256 public constant AGGREGATE_AMOUNT = CLAIM_AMOUNT * RECIPIENTS_COUNT;
     bool public constant CANCELABLE = false;
     uint128 public constant CLAIM_AMOUNT = 10_000e18;
     uint40 public immutable EXPIRATION;

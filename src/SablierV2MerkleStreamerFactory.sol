@@ -6,6 +6,7 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2MerkleStreamerFactory } from "./interfaces/ISablierV2MerkleStreamerFactory.sol";
+import { ISablierV2MerkleStreamer } from "./interfaces/ISablierV2MerkleStreamer.sol";
 import { ISablierV2MerkleStreamerLL } from "./interfaces/ISablierV2MerkleStreamerLL.sol";
 import { SablierV2MerkleStreamerLL } from "./SablierV2MerkleStreamerLL.sol";
 
@@ -17,7 +18,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice The list of Merkle streamers created by the admin.
-    mapping(address admin => ISablierV2MerkleStreamerLL[] contracts) private _merkleStreamers;
+    mapping(address admin => ISablierV2MerkleStreamer[] contracts) private _merkleStreamers;
 
     /*//////////////////////////////////////////////////////////////////////////
                            USER-FACING CONSTANT FUNCTIONS
@@ -28,7 +29,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
         external
         view
         override
-        returns (ISablierV2MerkleStreamerLL[] memory merkleStreamers)
+        returns (ISablierV2MerkleStreamer[] memory merkleStreamers)
     {
         merkleStreamers = _merkleStreamers[admin];
     }
@@ -47,14 +48,14 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
         LockupLinear.Durations memory streamDurations,
         bool cancelable,
         string memory ipfsCID,
-        uint256 campaignTotalAmount,
+        uint256 aggregateAmount,
         uint256 recipientsCount
     )
         external
         returns (ISablierV2MerkleStreamerLL merkleStreamerLL)
     {
         // Hash the parameters to generate a salt.
-        bytes32 salt = keccak256(abi.encodePacked(lockupLinear, initialAdmin, asset, merkleRoot, expiration));
+        bytes32 salt = keccak256(abi.encodePacked(initialAdmin, lockupLinear, asset, merkleRoot, expiration));
 
         // Deploy the Merkle streamer with CREATE2.
         merkleStreamerLL = new SablierV2MerkleStreamerLL{salt: salt} (
@@ -80,7 +81,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
             streamDurations,
             cancelable,
             ipfsCID,
-            campaignTotalAmount,
+            aggregateAmount,
             recipientsCount
         );
     }

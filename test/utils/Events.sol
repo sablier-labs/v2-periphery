@@ -20,7 +20,7 @@ abstract contract Events {
         LockupLinear.Durations streamDurations,
         bool cancelable,
         string ipfsCID,
-        uint256 campaignTotalAmount,
+        uint256 aggregateAmount,
         uint256 recipientsCount
     );
     event List(address indexed admin, address indexed addr);
