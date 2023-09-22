@@ -35,7 +35,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         LockupLinear.Stream actualStream;
         uint128[] amounts;
         ISablierV2MerkleStreamerLL merkleStreamerLL;
-        uint256 campaignTotalAmount;
+        uint256 aggregateAmount;
         uint128 clawbackAmount;
         uint256 recipientsCount;
         uint256 expectedStreamId;
@@ -66,9 +66,9 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         for (uint256 i = 0; i < vars.recipientsCount; ++i) {
             vars.indexes[i] = params.leafData[i].index;
 
-            // Bound each leaf amount so that `campaignTotalAmount` does not overflow.
+            // Bound each leaf amount so that `aggregateAmount` does not overflow.
             vars.amounts[i] = uint128(_bound(params.leafData[i].amount, 1, MAX_UINT256 / vars.recipientsCount - 1));
-            vars.campaignTotalAmount += params.leafData[i].amount;
+            vars.aggregateAmount += params.leafData[i].amount;
 
             // Avoid zero recipient addresses.
             uint256 boundedRecipientSeed = _bound(params.leafData[i].recipientSeed, 1, MAX_UINT256);
@@ -89,7 +89,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),
             ipfsCID: defaults.IPFS_CID(),
-            campaignTotalAmount: vars.campaignTotalAmount,
+            aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount
         });
 
@@ -102,12 +102,12 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),
             ipfsCID: defaults.IPFS_CID(),
-            campaignTotalAmount: vars.campaignTotalAmount,
+            aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount
         });
 
         // Fund the Merkle streamer.
-        deal({ token: address(asset), to: address(vars.merkleStreamerLL), give: vars.campaignTotalAmount });
+        deal({ token: address(asset), to: address(vars.merkleStreamerLL), give: vars.aggregateAmount });
 
         assertGt(address(vars.merkleStreamerLL).code.length, 0, "MerkleStreamerLL contract not created");
         assertEq(

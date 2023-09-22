@@ -399,7 +399,7 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         internal
         returns (address)
     {
-        bytes32 salt = keccak256(abi.encodePacked(lockupLinear, admin, asset, merkleRoot, expiration));
+        bytes32 salt = keccak256(abi.encodePacked(admin, lockupLinear, asset, merkleRoot, expiration));
         bytes32 creationBytecodeHash = keccak256(getMerkleStreamerLLBytecode(admin, merkleRoot, expiration));
         return computeCreate2Address({
             salt: salt,
