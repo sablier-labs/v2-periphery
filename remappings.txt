@@ -7,6 +7,5 @@
 @sablier/v2-core-test/=lib/v2-core/test/
 @uniswap/permit2/=lib/permit2/src/
 @uniswap/permit2-test/=lib/permit2/test/
-murky/=lib/murky/src/
 forge-std/=lib/forge-std/src/
 solady/=lib/solady/src/

@@ -47,6 +47,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
         uint40 expiration,
         LockupLinear.Durations memory streamDurations,
         bool cancelable,
+        bool transferable,
         string memory ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount
@@ -65,7 +66,8 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
             merkleRoot,
             expiration,
             streamDurations,
-            cancelable
+            cancelable,
+            transferable
         );
 
         // Effects: append the streamer in the admin's list.
@@ -80,6 +82,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
             expiration,
             streamDurations,
             cancelable,
+            transferable,
             ipfsCID,
             aggregateAmount,
             recipientsCount

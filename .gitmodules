@@ -23,6 +23,6 @@
   path = "lib/solady"
   url = "https://github.com/Vectorized/solady"
 [submodule "lib/v2-core"]
-  branch = "release"
+  branch = "main"
   path = "lib/v2-core"
   url = "https://github.com/sablier-labs/v2-core"

@@ -18,6 +18,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
         bytes32 merkleRoot = defaults.merkleRoot();
         uint40 expiration = defaults.EXPIRATION();
         bool cancelable = defaults.CANCELABLE();
+        bool transferable = defaults.TRANSFERABLE();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         string memory ipfsCID = defaults.IPFS_CID();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
@@ -31,6 +32,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
             merkleRoot: merkleRoot,
             expiration: expiration,
             cancelable: cancelable,
+            transferable: transferable,
             streamDurations: streamDurations,
             ipfsCID: ipfsCID,
             aggregateAmount: aggregateAmount,
@@ -55,6 +57,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
             expiration: expiration,
             streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),
+            transferable: defaults.TRANSFERABLE(),
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()

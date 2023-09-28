@@ -19,6 +19,7 @@ abstract contract Events {
         uint40 expiration,
         LockupLinear.Durations streamDurations,
         bool cancelable,
+        bool transferable,
         string ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount

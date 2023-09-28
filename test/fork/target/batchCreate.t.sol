@@ -64,7 +64,8 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             segments: params.segments,
             sender: address(userProxy),
             startTime: params.startTime,
-            totalAmount: params.perStreamAmount
+            totalAmount: params.perStreamAmount,
+            transferable: true
         });
         Batch.CreateWithMilestones[] memory batchParams = BatchBuilder.fillBatch(createWithMilestones, params.batchSize);
         bytes memory transferData = target == targetPermit2
@@ -143,7 +144,8 @@ abstract contract BatchCreate_Fork_Test is Fork_Test, PermitSignature {
             recipient: params.recipient,
             sender: address(userProxy),
             range: params.range,
-            totalAmount: params.perStreamAmount
+            totalAmount: params.perStreamAmount,
+            transferable: true
         });
         Batch.CreateWithRange[] memory batchParams = BatchBuilder.fillBatch(createParams, params.batchSize);
         bytes memory transferData = target == targetPermit2
