@@ -62,7 +62,8 @@ contract SablierV2Batch is ISablierV2Batch {
                     durations: batch[i].durations,
                     recipient: batch[i].recipient,
                     sender: batch[i].sender,
-                    totalAmount: batch[i].totalAmount
+                    totalAmount: batch[i].totalAmount,
+                    transferable: batch[i].transferable
                 })
             );
 
@@ -115,7 +116,8 @@ contract SablierV2Batch is ISablierV2Batch {
                     range: batch[i].range,
                     recipient: batch[i].recipient,
                     sender: batch[i].sender,
-                    totalAmount: batch[i].totalAmount
+                    totalAmount: batch[i].totalAmount,
+                    transferable: batch[i].transferable
                 })
             );
 
@@ -172,7 +174,8 @@ contract SablierV2Batch is ISablierV2Batch {
                     recipient: batch[i].recipient,
                     segments: batch[i].segments,
                     sender: batch[i].sender,
-                    totalAmount: batch[i].totalAmount
+                    totalAmount: batch[i].totalAmount,
+                    transferable: batch[i].transferable
                 })
             );
 
@@ -226,7 +229,8 @@ contract SablierV2Batch is ISablierV2Batch {
                     segments: batch[i].segments,
                     sender: batch[i].sender,
                     startTime: batch[i].startTime,
-                    totalAmount: batch[i].totalAmount
+                    totalAmount: batch[i].totalAmount,
+                    transferable: batch[i].transferable
                 })
             );
 

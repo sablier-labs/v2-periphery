@@ -24,6 +24,7 @@ interface ISablierV2MerkleStreamerFactory {
         uint40 expiration,
         LockupLinear.Durations streamDurations,
         bool cancelable,
+        bool transferable,
         string ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount
@@ -52,6 +53,7 @@ interface ISablierV2MerkleStreamerFactory {
     /// @param expiration The expiration of the streaming campaign, as a Unix timestamp.
     /// @param streamDurations The durations for each stream due to the recipient.
     /// @param cancelable Indicates if each stream will be cancelable.
+    /// @param transferable Indicates if each stream NFT will be transferable.
     /// @param ipfsCID Metadata parameter emitted for indexing purposes.
     /// @param aggregateAmount Total amount of ERC-20 assets to be streamed to all recipients.
     /// @param recipientsCount Total number of recipients eligible to claim.
@@ -64,6 +66,7 @@ interface ISablierV2MerkleStreamerFactory {
         uint40 expiration,
         LockupLinear.Durations memory streamDurations,
         bool cancelable,
+        bool transferable,
         string memory ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount

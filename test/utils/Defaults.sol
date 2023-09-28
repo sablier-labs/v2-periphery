@@ -52,6 +52,7 @@ contract Defaults is Merkle, PermitSignature {
     uint256 public constant INDEX4 = 4;
     string public IPFS_CID = "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR";
     uint256 public constant RECIPIENTS_COUNT = 4;
+    bool public constant TRANSFERABLE = false;
 
     function index1Proof() public view returns (bytes32[] memory) {
         return getProof(leaves(), 0);
@@ -183,7 +184,8 @@ contract Defaults is Merkle, PermitSignature {
             recipient: users.recipient0.addr,
             segments: segmentsWithDeltas(),
             sender: address(proxy),
-            totalAmount: PER_STREAM_AMOUNT
+            totalAmount: PER_STREAM_AMOUNT,
+            transferable: true
         });
     }
 
@@ -200,7 +202,8 @@ contract Defaults is Merkle, PermitSignature {
             segments: segments(),
             sender: address(proxy),
             startTime: START_TIME,
-            totalAmount: PER_STREAM_AMOUNT
+            totalAmount: PER_STREAM_AMOUNT,
+            transferable: true
         });
     }
 
@@ -260,7 +263,8 @@ contract Defaults is Merkle, PermitSignature {
             durations: durations(),
             recipient: users.recipient0.addr,
             sender: address(proxy),
-            totalAmount: PER_STREAM_AMOUNT
+            totalAmount: PER_STREAM_AMOUNT,
+            transferable: true
         });
     }
 
@@ -276,7 +280,8 @@ contract Defaults is Merkle, PermitSignature {
             range: linearRange(),
             recipient: users.recipient0.addr,
             sender: address(proxy),
-            totalAmount: PER_STREAM_AMOUNT
+            totalAmount: PER_STREAM_AMOUNT,
+            transferable: true
         });
     }
 

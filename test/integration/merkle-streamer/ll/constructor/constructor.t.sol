@@ -14,6 +14,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         uint256 actualAllowance;
         address actualAsset;
         bool actualCancelable;
+        bool actualTransferable;
         LockupLinear.Durations actualDurations;
         uint40 actualExpiration;
         address actualLockupLinear;
@@ -22,6 +23,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         uint256 expectedAllowance;
         address expectedAsset;
         bool expectedCancelable;
+        bool expectedTransferable;
         LockupLinear.Durations expectedDurations;
         uint40 expectedExpiration;
         address expectedLockupLinear;
@@ -36,7 +38,8 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
             defaults.merkleRoot(),
             defaults.EXPIRATION(),
             defaults.durations(),
-            defaults.CANCELABLE()
+            defaults.CANCELABLE(), 
+            defaults.TRANSFERABLE()
         );
 
         Vars memory vars;
@@ -56,6 +59,10 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         vars.actualCancelable = constructedStreamerLL.cancelable();
         vars.expectedCancelable = defaults.CANCELABLE();
         assertEq(vars.actualCancelable, vars.expectedCancelable, "cancelable");
+
+        vars.actualTransferable = constructedStreamerLL.transferable();
+        vars.expectedTransferable = defaults.TRANSFERABLE();
+        assertEq(vars.actualTransferable, vars.expectedTransferable, "transferable");
 
         vars.actualExpiration = constructedStreamerLL.expiration();
         vars.expectedExpiration = defaults.EXPIRATION();

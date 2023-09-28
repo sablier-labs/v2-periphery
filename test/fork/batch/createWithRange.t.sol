@@ -53,7 +53,8 @@ abstract contract CreateWithRange_Batch_Fork_Test is Fork_Test {
             recipient: params.recipient,
             sender: params.sender,
             range: params.range,
-            totalAmount: params.perStreamAmount
+            totalAmount: params.perStreamAmount,
+            transferable: true
         });
         Batch.CreateWithRange[] memory batchParams = BatchBuilder.fillBatch(createParams, params.batchSize);
 

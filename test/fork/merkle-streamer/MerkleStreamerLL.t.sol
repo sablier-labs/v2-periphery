@@ -88,6 +88,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             expiration: params.expiration,
             streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),
+            transferable: defaults.TRANSFERABLE(),
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount
@@ -101,6 +102,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             expiration: params.expiration,
             streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),
+            transferable: defaults.TRANSFERABLE(),
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount
@@ -145,6 +147,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             isCancelable: defaults.CANCELABLE(),
             isDepleted: false,
             isStream: true,
+            isTransferable: defaults.TRANSFERABLE(),
             sender: params.admin,
             startTime: uint40(block.timestamp),
             wasCanceled: false

@@ -416,8 +416,16 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         internal
         returns (bytes memory)
     {
-        bytes memory constructorArgs =
-            abi.encode(admin, lockupLinear, asset, merkleRoot, expiration, defaults.durations(), defaults.CANCELABLE());
+        bytes memory constructorArgs = abi.encode(
+            admin,
+            lockupLinear,
+            asset,
+            merkleRoot,
+            expiration,
+            defaults.durations(),
+            defaults.CANCELABLE(),
+            defaults.TRANSFERABLE()
+        );
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2MerkleStreamerLL).creationCode, constructorArgs);
         } else {

@@ -35,6 +35,9 @@ abstract contract SablierV2MerkleStreamer is
     /// @inheritdoc ISablierV2MerkleStreamer
     bytes32 public immutable override merkleRoot;
 
+    /// @inheritdoc ISablierV2MerkleStreamer
+    bool public immutable override transferable;
+
     /*//////////////////////////////////////////////////////////////////////////
                                   INTERNAL STORAGE
     //////////////////////////////////////////////////////////////////////////*/
@@ -47,12 +50,20 @@ abstract contract SablierV2MerkleStreamer is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Constructs the contract by initializing the immutable state variables.
-    constructor(address initialAdmin, IERC20 asset_, bytes32 merkleRoot_, uint40 expiration_, bool cancelable_) {
+    constructor(
+        address initialAdmin,
+        IERC20 asset_,
+        bytes32 merkleRoot_,
+        uint40 expiration_,
+        bool cancelable_,
+        bool transferable_
+    ) {
         admin = initialAdmin;
         asset = asset_;
         merkleRoot = merkleRoot_;
         expiration = expiration_;
         cancelable = cancelable_;
+        transferable = transferable_;
     }
 
     /*//////////////////////////////////////////////////////////////////////////

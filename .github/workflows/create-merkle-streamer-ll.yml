@@ -42,7 +42,7 @@ jobs:
           forge script script/CreateMerkleStreamerLL.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
-          --sig "run(address,(address,address,address,bytes32,uint40,(uint40,uint40),bool,string,uint256,uint256))"
+          --sig "run(address,(address,address,address,bytes32,uint40,(uint40,uint40),bool,bool,string,uint256,uint256))"
           -vvvv
           "${{ inputs.params }}"
 

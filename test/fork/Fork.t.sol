@@ -6,6 +6,7 @@ import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/src/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
+import { Precompiles as V2CorePrecompiles } from "@sablier/v2-core-test/utils/Precompiles.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Fuzzers as V2CoreFuzzers } from "@sablier/v2-core-test/utils/Fuzzers.sol";
@@ -101,14 +102,14 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         assumeNoBlacklisted(address(asset), recipient);
     }
 
-    /// @dev Loads all dependencies pre-deployed on Goerli.
+    /// @dev Loads all dependencies pre-deployed on Mainnet.
     function loadDependencies() private {
         weth = IWrappedNativeAsset(WETH_ADDRESS);
         proxyRegistry = IPRBProxyRegistry(0x584009E9eDe26e212182c9745F5c000191296a78);
         aliceProxy = loadOrDeployProxy(users.alice.addr);
         permit2 = IAllowanceTransfer(0x000000000022D473030F116dDEE9F6B43aC78BA3);
-        lockupDynamic = ISablierV2LockupDynamic(0x39EFdC3dbB57B2388CcC4bb40aC4CB1226Bc9E44);
-        lockupLinear = ISablierV2LockupLinear(0xB10daee1FCF62243aE27776D7a92D39dC8740f95);
+        // TODO: update the contract addresses once they are deployed.
+        (, lockupDynamic, lockupLinear,) = new V2CorePrecompiles().deployCore(users.admin.addr);
     }
 
     /// @dev Retrieves the proxy and deploys one if none is found.

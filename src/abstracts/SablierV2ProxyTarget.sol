@@ -215,7 +215,8 @@ abstract contract SablierV2ProxyTarget is
                     durations: batch[i].durations,
                     recipient: batch[i].recipient,
                     sender: batch[i].sender,
-                    totalAmount: batch[i].totalAmount
+                    totalAmount: batch[i].totalAmount,
+                    transferable: batch[i].transferable
                 })
             );
 
@@ -270,7 +271,8 @@ abstract contract SablierV2ProxyTarget is
                     range: batch[i].range,
                     recipient: batch[i].recipient,
                     sender: batch[i].sender,
-                    totalAmount: batch[i].totalAmount
+                    totalAmount: batch[i].totalAmount,
+                    transferable: batch[i].transferable
                 })
             );
 
@@ -441,7 +443,8 @@ abstract contract SablierV2ProxyTarget is
                     recipient: batch[i].recipient,
                     segments: batch[i].segments,
                     sender: batch[i].sender,
-                    totalAmount: batch[i].totalAmount
+                    totalAmount: batch[i].totalAmount,
+                    transferable: batch[i].transferable
                 })
             );
 
@@ -497,7 +500,8 @@ abstract contract SablierV2ProxyTarget is
                     segments: batch[i].segments,
                     sender: batch[i].sender,
                     startTime: batch[i].startTime,
-                    totalAmount: batch[i].totalAmount
+                    totalAmount: batch[i].totalAmount,
+                    transferable: batch[i].transferable
                 })
             );
 
