@@ -71,7 +71,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             vars.aggregateAmount += params.leafData[i].amount;
 
             // Avoid zero recipient addresses.
-            uint256 boundedRecipientSeed = _bound(params.leafData[i].recipientSeed, 1, MAX_UINT256);
+            uint256 boundedRecipientSeed = _bound(params.leafData[i].recipientSeed, 1, type(uint160).max);
             vars.recipients[i] = address(uint160(boundedRecipientSeed));
         }
 
