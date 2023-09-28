@@ -60,7 +60,8 @@ abstract contract CreateWithMilestones_Batch_Fork_Test is Fork_Test {
             segments: params.segments,
             sender: params.sender,
             startTime: params.startTime,
-            totalAmount: params.perStreamAmount
+            totalAmount: params.perStreamAmount,
+            transferable: true
         });
         Batch.CreateWithMilestones[] memory batchParams = BatchBuilder.fillBatch(createWithMilestones, params.batchSize);
 

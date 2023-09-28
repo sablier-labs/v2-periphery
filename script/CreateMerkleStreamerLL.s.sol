@@ -18,6 +18,7 @@ contract CreateMerkleStreamerLL is BaseScript {
         uint40 expiration;
         LockupLinear.Durations streamDurations;
         bool cancelable;
+        bool transferable;
         string ipfsCID;
         uint256 campaignTotalAmount;
         uint256 recipientsCount;
@@ -39,6 +40,7 @@ contract CreateMerkleStreamerLL is BaseScript {
             params.expiration,
             params.streamDurations,
             params.cancelable,
+            params.transferable,
             params.ipfsCID,
             params.campaignTotalAmount,
             params.recipientsCount

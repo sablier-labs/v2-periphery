@@ -117,6 +117,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
             isCancelable: defaults.CANCELABLE(),
             isDepleted: false,
             isStream: true,
+            isTransferable: defaults.TRANSFERABLE(),
             sender: users.admin.addr,
             startTime: uint40(block.timestamp),
             wasCanceled: false

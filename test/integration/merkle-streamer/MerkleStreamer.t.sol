@@ -45,6 +45,7 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
             merkleRoot: defaults.merkleRoot(),
             expiration: expiration,
             cancelable: defaults.CANCELABLE(),
+            transferable: defaults.TRANSFERABLE(),
             streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),

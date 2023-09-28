@@ -45,9 +45,10 @@ contract SablierV2MerkleStreamerLL is
         bytes32 merkleRoot_,
         uint40 expiration_,
         LockupLinear.Durations memory streamDurations_,
-        bool cancelable_
+        bool cancelable_,
+        bool transferable_
     )
-        SablierV2MerkleStreamer(initialAdmin, asset_, merkleRoot_, expiration_, cancelable_)
+        SablierV2MerkleStreamer(initialAdmin, asset_, merkleRoot_, expiration_, cancelable_, transferable_)
     {
         lockupLinear = lockupLinear_;
         streamDurations = streamDurations_;
@@ -89,7 +90,8 @@ contract SablierV2MerkleStreamerLL is
                 durations: streamDurations,
                 recipient: recipient,
                 sender: admin,
-                totalAmount: amount
+                totalAmount: amount,
+                transferable: transferable
             })
         );
 

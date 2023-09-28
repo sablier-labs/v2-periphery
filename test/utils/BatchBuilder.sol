@@ -39,7 +39,8 @@ library BatchBuilder {
             recipient: params.recipient,
             segments: params.segments,
             sender: params.sender,
-            totalAmount: params.totalAmount
+            totalAmount: params.totalAmount,
+            transferable: params.transferable
         });
         batch = fillBatch(batchSingle, batchSize);
     }
@@ -77,7 +78,8 @@ library BatchBuilder {
             durations: params.durations,
             recipient: params.recipient,
             sender: params.sender,
-            totalAmount: params.totalAmount
+            totalAmount: params.totalAmount,
+            transferable: params.transferable
         });
         batch = fillBatch(batchSingle, batchSize);
     }
@@ -116,7 +118,8 @@ library BatchBuilder {
             segments: params.segments,
             sender: params.sender,
             startTime: params.startTime,
-            totalAmount: params.totalAmount
+            totalAmount: params.totalAmount,
+            transferable: params.transferable
         });
         batch = fillBatch(batchSingle, batchSize);
     }
@@ -154,7 +157,8 @@ library BatchBuilder {
             range: params.range,
             recipient: params.recipient,
             sender: params.sender,
-            totalAmount: params.totalAmount
+            totalAmount: params.totalAmount,
+            transferable: params.transferable
         });
         batch = fillBatch(batchSingle, batchSize);
     }
