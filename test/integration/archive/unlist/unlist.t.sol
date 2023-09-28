@@ -29,14 +29,10 @@ contract Unlist_Integration_Test is Integration_Test {
     }
 
     function test_Unlist() external whenCallerAdmin givenAddressListed {
-        archive.unlist(address(lockupLinear));
-        bool isListed = archive.isListed(address(lockupLinear));
-        assertFalse(isListed, "isListed");
-    }
-
-    function test_Unlist_Event() external whenCallerAdmin givenAddressListed {
         vm.expectEmit({ emitter: address(archive) });
         emit Unlist({ admin: users.admin.addr, addr: address(lockupLinear) });
         archive.unlist(address(lockupLinear));
+        bool isListed = archive.isListed(address(lockupLinear));
+        assertFalse(isListed, "isListed");
     }
 }
