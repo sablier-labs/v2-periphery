@@ -15,8 +15,8 @@ dependencies:
     specifier: 1.0.2
     version: 1.0.2(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1)
   '@uniswap/permit2':
-    specifier: github:sablier-labs/permit2#4ea99fe3a01bb526cba6370f1e07d247a718ea51
-    version: github.com/sablier-labs/permit2/4ea99fe3a01bb526cba6370f1e07d247a718ea51
+    specifier: github:Uniswap/permit2#cc56ad0f3439c502c246fc5cfcc3db92bb8b7219
+    version: github.com/Uniswap/permit2/cc56ad0f3439c502c246fc5cfcc3db92bb8b7219
   solhint:
     specifier: ^3.6.2
     version: 3.6.2
@@ -458,8 +458,8 @@ packages:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
     dev: false
 
-  github.com/sablier-labs/permit2/4ea99fe3a01bb526cba6370f1e07d247a718ea51:
-    resolution: {tarball: https://codeload.github.com/sablier-labs/permit2/tar.gz/4ea99fe3a01bb526cba6370f1e07d247a718ea51}
+  github.com/Uniswap/permit2/cc56ad0f3439c502c246fc5cfcc3db92bb8b7219:
+    resolution: {tarball: https://codeload.github.com/Uniswap/permit2/tar.gz/cc56ad0f3439c502c246fc5cfcc3db92bb8b7219}
     name: '@uniswap/permit2'
     version: 1.0.0
     dev: false
