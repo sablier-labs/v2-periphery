@@ -17,6 +17,7 @@ The format is based on [Common Changelog](https://common-changelog.org).
 - **Breaking**: Change `permit2Params` to `transferData`, which has type `bytes`
   ([#161](https://github.com/sablier-labs/v2-periphery/pull/161))
 - Bump V2 Core ([#191](https://github.com/sablier-labs/v2-periphery/pull/191))
+- Install `permit2` depencency from Uniswap repository ([#198](https://github.com/sablier-labs/v2-periphery/pull/198))
 - Upgrade Solidity to `0.8.21` ([#187](https://github.com/sablier-labs/v2-periphery/pull/187))
 
 ### Added
