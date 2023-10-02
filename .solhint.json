@@ -9,7 +9,6 @@
     "custom-errors": "off",
     "func-name-mixedcase": "off",
     "func-visibility": ["error", { "ignoreConstructors": true }],
-    "immutable-vars-naming": "off",
     "max-line-length": ["error", 123],
     "named-parameters-mapping": "warn",
     "no-empty-blocks": "off",
