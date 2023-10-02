@@ -16,5 +16,5 @@ interface ISablierV2ProxyPlugin is
     IPRBProxyPlugin // 0 inherited components
 {
     /// @notice Retrieves the address of the archive contract.
-    function archive() external view returns (ISablierV2Archive);
+    function ARCHIVE() external view returns (ISablierV2Archive);
 }
