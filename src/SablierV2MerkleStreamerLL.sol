@@ -23,7 +23,7 @@ contract SablierV2MerkleStreamerLL is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleStreamerLL
-    ISablierV2LockupLinear public immutable override lockupLinear;
+    ISablierV2LockupLinear public immutable override LOCKUP_LINEAR;
 
     /*//////////////////////////////////////////////////////////////////////////
                                 USER-FACING STORAGE
@@ -40,21 +40,21 @@ contract SablierV2MerkleStreamerLL is
     /// contract.
     constructor(
         address initialAdmin,
-        ISablierV2LockupLinear lockupLinear_,
-        IERC20 asset_,
-        bytes32 merkleRoot_,
-        uint40 expiration_,
+        ISablierV2LockupLinear lockupLinear,
+        IERC20 asset,
+        bytes32 merkleRoot,
+        uint40 expiration,
         LockupLinear.Durations memory streamDurations_,
-        bool cancelable_,
-        bool transferable_
+        bool cancelable,
+        bool transferable
     )
-        SablierV2MerkleStreamer(initialAdmin, asset_, merkleRoot_, expiration_, cancelable_, transferable_)
+        SablierV2MerkleStreamer(initialAdmin, asset, merkleRoot, expiration, cancelable, transferable)
     {
-        lockupLinear = lockupLinear_;
+        LOCKUP_LINEAR = lockupLinear;
         streamDurations = streamDurations_;
 
         // Max approve the Sablier contract to spend funds from the Merkle streamer.
-        asset.forceApprove(address(lockupLinear), type(uint256).max);
+        ASSET.forceApprove(address(LOCKUP_LINEAR), type(uint256).max);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -82,16 +82,16 @@ contract SablierV2MerkleStreamerLL is
         _setClaimed(index);
 
         // Interactions: create the stream via {SablierV2LockupLinear}.
-        streamId = lockupLinear.createWithDurations(
+        streamId = LOCKUP_LINEAR.createWithDurations(
             LockupLinear.CreateWithDurations({
-                asset: asset,
+                asset: ASSET,
                 broker: Broker({ account: address(0), fee: ud60x18(0) }),
-                cancelable: cancelable,
+                cancelable: CANCELABLE,
                 durations: streamDurations,
                 recipient: recipient,
                 sender: admin,
                 totalAmount: amount,
-                transferable: transferable
+                transferable: TRANSFERABLE
             })
         );
 

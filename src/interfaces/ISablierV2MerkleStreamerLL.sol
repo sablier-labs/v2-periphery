@@ -13,7 +13,7 @@ interface ISablierV2MerkleStreamerLL is ISablierV2MerkleStreamer {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice The address of the {SablierV2LockupLinear} contract.
-    function lockupLinear() external view returns (ISablierV2LockupLinear);
+    function LOCKUP_LINEAR() external view returns (ISablierV2LockupLinear);
 
     /// @notice The total streaming duration of each stream.
     function streamDurations() external view returns (uint40 cliff, uint40 duration);
