@@ -48,27 +48,27 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         vars.expectedAdmin = users.admin.addr;
         assertEq(vars.actualAdmin, vars.expectedAdmin, "admin");
 
-        vars.actualAsset = address(constructedStreamerLL.asset());
+        vars.actualAsset = address(constructedStreamerLL.ASSET());
         vars.expectedAsset = address(asset);
         assertEq(vars.actualAsset, vars.expectedAsset, "asset");
 
-        vars.actualMerkleRoot = constructedStreamerLL.merkleRoot();
+        vars.actualMerkleRoot = constructedStreamerLL.MERKLE_ROOT();
         vars.expectedMerkleRoot = defaults.merkleRoot();
         assertEq(vars.actualMerkleRoot, vars.expectedMerkleRoot, "merkleRoot");
 
-        vars.actualCancelable = constructedStreamerLL.cancelable();
+        vars.actualCancelable = constructedStreamerLL.CANCELABLE();
         vars.expectedCancelable = defaults.CANCELABLE();
         assertEq(vars.actualCancelable, vars.expectedCancelable, "cancelable");
 
-        vars.actualTransferable = constructedStreamerLL.transferable();
+        vars.actualTransferable = constructedStreamerLL.TRANSFERABLE();
         vars.expectedTransferable = defaults.TRANSFERABLE();
         assertEq(vars.actualTransferable, vars.expectedTransferable, "transferable");
 
-        vars.actualExpiration = constructedStreamerLL.expiration();
+        vars.actualExpiration = constructedStreamerLL.EXPIRATION();
         vars.expectedExpiration = defaults.EXPIRATION();
         assertEq(vars.actualExpiration, vars.expectedExpiration, "expiration");
 
-        vars.actualLockupLinear = address(constructedStreamerLL.lockupLinear());
+        vars.actualLockupLinear = address(constructedStreamerLL.LOCKUP_LINEAR());
         vars.expectedLockupLinear = address(lockupLinear);
         assertEq(vars.actualLockupLinear, vars.expectedLockupLinear, "lockupLinear");
 

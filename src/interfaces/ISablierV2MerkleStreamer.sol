@@ -28,16 +28,16 @@ interface ISablierV2MerkleStreamer is IAdminable {
 
     /// @notice The streamed ERC-20 asset.
     /// @dev This is an immutable state variable.
-    function asset() external returns (IERC20);
+    function ASSET() external returns (IERC20);
 
     /// @notice A flag indicating whether the streams can be canceled.
     /// @dev This is an immutable state variable.
-    function cancelable() external returns (bool);
+    function CANCELABLE() external returns (bool);
 
     /// @notice The cut-off point for the Merkle streamer, as a Unix timestamp. A value of zero means there
     /// is no expiration.
     /// @dev This is an immutable state variable.
-    function expiration() external returns (uint40);
+    function EXPIRATION() external returns (uint40);
 
     /// @notice Returns a flag indicating whether a claim has been made for a given index.
     /// @dev Uses a bitmap to save gas.
@@ -49,11 +49,11 @@ interface ISablierV2MerkleStreamer is IAdminable {
 
     /// @notice The root of the Merkle tree used to validate the claims.
     /// @dev This is an immutable state variable.
-    function merkleRoot() external returns (bytes32);
+    function MERKLE_ROOT() external returns (bytes32);
 
     /// @notice A flag indicating whether the stream NFTs are transferable.
     /// @dev This is an immutable state variable.
-    function transferable() external returns (bool);
+    function TRANSFERABLE() external returns (bool);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS

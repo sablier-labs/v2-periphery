@@ -44,14 +44,14 @@ contract SablierV2ProxyPlugin is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2ProxyPlugin
-    ISablierV2Archive public immutable override archive;
+    ISablierV2Archive public immutable override ARCHIVE;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
-    constructor(ISablierV2Archive archive_) {
-        archive = archive_;
+    constructor(ISablierV2Archive archive) {
+        ARCHIVE = archive;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ contract SablierV2ProxyPlugin is
         onlyDelegateCall
     {
         // Checks: the caller is an address listed in the archive.
-        if (!archive.isListed(msg.sender)) {
+        if (!ARCHIVE.isListed(msg.sender)) {
             revert Errors.SablierV2ProxyPlugin_UnknownCaller(msg.sender);
         }
 

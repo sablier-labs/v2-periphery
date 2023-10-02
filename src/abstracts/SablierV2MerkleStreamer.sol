@@ -24,19 +24,19 @@ abstract contract SablierV2MerkleStreamer is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleStreamer
-    IERC20 public immutable override asset;
+    IERC20 public immutable override ASSET;
 
     /// @inheritdoc ISablierV2MerkleStreamer
-    bool public immutable override cancelable;
+    bool public immutable override CANCELABLE;
 
     /// @inheritdoc ISablierV2MerkleStreamer
-    uint40 public immutable override expiration;
+    uint40 public immutable override EXPIRATION;
 
     /// @inheritdoc ISablierV2MerkleStreamer
-    bytes32 public immutable override merkleRoot;
+    bytes32 public immutable override MERKLE_ROOT;
 
     /// @inheritdoc ISablierV2MerkleStreamer
-    bool public immutable override transferable;
+    bool public immutable override TRANSFERABLE;
 
     /*//////////////////////////////////////////////////////////////////////////
                                   INTERNAL STORAGE
@@ -52,18 +52,18 @@ abstract contract SablierV2MerkleStreamer is
     /// @dev Constructs the contract by initializing the immutable state variables.
     constructor(
         address initialAdmin,
-        IERC20 asset_,
-        bytes32 merkleRoot_,
-        uint40 expiration_,
-        bool cancelable_,
-        bool transferable_
+        IERC20 asset,
+        bytes32 merkleRoot,
+        uint40 expiration,
+        bool cancelable,
+        bool transferable
     ) {
         admin = initialAdmin;
-        asset = asset_;
-        merkleRoot = merkleRoot_;
-        expiration = expiration_;
-        cancelable = cancelable_;
-        transferable = transferable_;
+        ASSET = asset;
+        MERKLE_ROOT = merkleRoot;
+        EXPIRATION = expiration;
+        CANCELABLE = cancelable;
+        TRANSFERABLE = transferable;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ abstract contract SablierV2MerkleStreamer is
 
     /// @inheritdoc ISablierV2MerkleStreamer
     function hasExpired() public view override returns (bool) {
-        return expiration > 0 && expiration <= block.timestamp;
+        return EXPIRATION > 0 && EXPIRATION <= block.timestamp;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -90,12 +90,12 @@ abstract contract SablierV2MerkleStreamer is
         if (!hasExpired()) {
             revert Errors.SablierV2MerkleStreamer_CampaignNotExpired({
                 currentTime: block.timestamp,
-                expiration: expiration
+                expiration: EXPIRATION
             });
         }
 
         // Effects: transfer the tokens to the provided address.
-        asset.safeTransfer(to, amount);
+        ASSET.safeTransfer(to, amount);
 
         // Log the clawback.
         emit Clawback(admin, to, amount);
@@ -111,7 +111,7 @@ abstract contract SablierV2MerkleStreamer is
         if (hasExpired()) {
             revert Errors.SablierV2MerkleStreamer_CampaignExpired({
                 currentTime: block.timestamp,
-                expiration: expiration
+                expiration: EXPIRATION
             });
         }
 
@@ -121,7 +121,7 @@ abstract contract SablierV2MerkleStreamer is
         }
 
         // Checks: the input claim is included in the Merkle tree.
-        if (!MerkleProof.verify(merkleProof, merkleRoot, leaf)) {
+        if (!MerkleProof.verify(merkleProof, MERKLE_ROOT, leaf)) {
             revert Errors.SablierV2MerkleStreamer_InvalidProof();
         }
     }
