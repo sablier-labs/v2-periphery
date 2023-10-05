@@ -43,7 +43,7 @@ abstract contract SablierV2MerkleStreamer is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Packed booleans that record the history of claims.
-    BitMaps.BitMap private _claimedBitMap;
+    BitMaps.BitMap internal _claimedBitMap;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
@@ -124,15 +124,5 @@ abstract contract SablierV2MerkleStreamer is
         if (!MerkleProof.verify(merkleProof, MERKLE_ROOT, leaf)) {
             revert Errors.SablierV2MerkleStreamer_InvalidProof();
         }
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                          INTERNAL NON-CONSTANT FUNCTIONS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @notice Marks an index as claimed in the bitmap.
-    /// @param index The index of the recipient to mark as claimed.
-    function _setClaimed(uint256 index) internal {
-        _claimedBitMap.set(index);
     }
 }
