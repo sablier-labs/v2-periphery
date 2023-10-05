@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19;
 
+import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
@@ -16,6 +17,7 @@ contract SablierV2MerkleStreamerLL is
     ISablierV2MerkleStreamerLL, // 2 inherited components
     SablierV2MerkleStreamer // 4 inherited components
 {
+    using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -79,7 +81,7 @@ contract SablierV2MerkleStreamerLL is
         _checkClaim(index, leaf, merkleProof);
 
         // Effects: mark the index as claimed.
-        _setClaimed(index);
+        _claimedBitMap.set(index);
 
         // Interactions: create the stream via {SablierV2LockupLinear}.
         streamId = LOCKUP_LINEAR.createWithDurations(
