@@ -85,6 +85,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             admin: params.admin,
             lockupLinear: lockupLinear,
             asset: asset,
+            merkleRoot: vars.merkleRoot,
             expiration: params.expiration,
             streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),

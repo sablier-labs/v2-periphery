@@ -54,6 +54,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
             admin: admin,
             lockupLinear: lockupLinear,
             asset: asset,
+            merkleRoot: defaults.merkleRoot(),
             expiration: expiration,
             streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),
