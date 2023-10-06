@@ -75,7 +75,7 @@ contract SablierV2MerkleStreamerLL is
         returns (uint256 streamId)
     {
         // Generate the Merkle tree leaf by hashing the corresponding parameters.
-        bytes32 leaf = keccak256(abi.encodePacked(index, recipient, amount));
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(index, recipient, amount))));
 
         // Checks: validate the function.
         _checkClaim(index, leaf, merkleProof);

@@ -6,7 +6,7 @@ pragma solidity >=0.8.19;
 library MerkleBuilder {
     /// @dev Function that hashes together the data needed for a Merkle tree leaf.
     function computeLeaf(uint256 index, address recipient, uint128 amount) internal pure returns (bytes32 leaf) {
-        leaf = keccak256(abi.encodePacked(index, recipient, amount));
+        leaf = keccak256(bytes.concat(keccak256(abi.encode(index, recipient, amount))));
     }
 
     /// @dev A batch function for `computeLeaf`.
