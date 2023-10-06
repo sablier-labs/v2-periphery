@@ -79,6 +79,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
             initialAdmin,
             lockupLinear,
             asset,
+            merkleRoot,
             expiration,
             streamDurations,
             cancelable,
