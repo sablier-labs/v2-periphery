@@ -27,31 +27,33 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         address admin;
         uint40 expiration;
         LeafData[] leafData;
-        uint256 leafPos;
+        uint256 beforeSortPos;
     }
 
     struct Vars {
         uint256 actualStreamId;
         LockupLinear.Stream actualStream;
         uint128[] amounts;
-        ISablierV2MerkleStreamerLL merkleStreamerLL;
         uint256 aggregateAmount;
         uint128 clawbackAmount;
-        uint256 recipientsCount;
-        uint256 expectedStreamId;
         address expectedStreamerLL;
         LockupLinear.Stream expectedStream;
+        uint256 expectedStreamId;
         uint256[] indexes;
+        uint256 leafPos;
+        bytes32 leafToClaim;
         bytes32[] leaves;
+        ISablierV2MerkleStreamerLL merkleStreamerLL;
         bytes32 merkleRoot;
         address[] recipients;
+        uint256 recipientsCount;
     }
 
     function testForkFuzz_MerkleStreamerLL(Params memory params) external {
         vm.assume(params.admin != address(0) && params.admin != users.admin.addr);
         vm.assume(params.expiration == 0 || params.expiration > block.timestamp);
         vm.assume(params.leafData.length > 1);
-        params.leafPos = _bound(params.leafPos, 0, params.leafData.length - 1);
+        params.beforeSortPos = _bound(params.beforeSortPos, 0, params.leafData.length - 1);
         assumeNoBlacklisted({ token: address(asset), addr: params.admin });
 
         /*//////////////////////////////////////////////////////////////////////////
@@ -75,7 +77,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             vars.recipients[i] = address(uint160(boundedRecipientSeed));
         }
 
-        vars.leaves = MerkleBuilder.computeLeaves(vars.indexes, vars.recipients, vars.amounts);
+        vars.leaves = MerkleBuilder.sort(MerkleBuilder.computeLeaves(vars.indexes, vars.recipients, vars.amounts));
         vars.merkleRoot = getRoot(vars.leaves);
 
         vars.expectedStreamerLL = computeMerkleStreamerLLAddress(params.admin, vars.merkleRoot, params.expiration);
@@ -123,25 +125,32 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
                                           CLAIM
         //////////////////////////////////////////////////////////////////////////*/
 
-        assertFalse(vars.merkleStreamerLL.hasClaimed(vars.indexes[params.leafPos]));
+        assertFalse(vars.merkleStreamerLL.hasClaimed(vars.indexes[params.beforeSortPos]));
+
+        vars.leafToClaim = MerkleBuilder.computeLeaf(
+            vars.indexes[params.beforeSortPos],
+            vars.recipients[params.beforeSortPos],
+            vars.amounts[params.beforeSortPos]
+        );
+        vars.leafPos = MerkleBuilder.binarySearch(vars.leaves, vars.leafToClaim);
 
         vars.expectedStreamId = lockupLinear.nextStreamId();
         emit Claim(
-            vars.indexes[params.leafPos],
-            vars.recipients[params.leafPos],
-            vars.amounts[params.leafPos],
+            vars.indexes[params.beforeSortPos],
+            vars.recipients[params.beforeSortPos],
+            vars.amounts[params.beforeSortPos],
             vars.expectedStreamId
         );
         vars.actualStreamId = vars.merkleStreamerLL.claim({
-            index: vars.indexes[params.leafPos],
-            recipient: vars.recipients[params.leafPos],
-            amount: vars.amounts[params.leafPos],
-            merkleProof: getProof(vars.leaves, params.leafPos)
+            index: vars.indexes[params.beforeSortPos],
+            recipient: vars.recipients[params.beforeSortPos],
+            amount: vars.amounts[params.beforeSortPos],
+            merkleProof: getProof(vars.leaves, vars.leafPos)
         });
 
         vars.actualStream = lockupLinear.getStream(vars.actualStreamId);
         vars.expectedStream = LockupLinear.Stream({
-            amounts: Lockup.Amounts({ deposited: vars.amounts[params.leafPos], refunded: 0, withdrawn: 0 }),
+            amounts: Lockup.Amounts({ deposited: vars.amounts[params.beforeSortPos], refunded: 0, withdrawn: 0 }),
             asset: asset,
             cliffTime: uint40(block.timestamp) + defaults.CLIFF_DURATION(),
             endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
@@ -154,7 +163,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             wasCanceled: false
         });
 
-        assertTrue(vars.merkleStreamerLL.hasClaimed(vars.indexes[params.leafPos]));
+        assertTrue(vars.merkleStreamerLL.hasClaimed(vars.indexes[params.beforeSortPos]));
         assertEq(vars.actualStreamId, vars.expectedStreamId);
         assertEq(vars.actualStream, vars.expectedStream);
 

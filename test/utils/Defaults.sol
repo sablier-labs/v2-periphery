@@ -55,27 +55,36 @@ contract Defaults is Merkle, PermitSignature {
     bool public constant TRANSFERABLE = false;
 
     function index1Proof() public view returns (bytes32[] memory) {
-        return getProof(leaves(), 0);
+        bytes32 leaf = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
+        uint256 pos = MerkleBuilder.binarySearch(leaves(), leaf);
+        return getProof(leaves(), pos);
     }
 
     function index2Proof() public view returns (bytes32[] memory) {
-        return getProof(leaves(), 1);
+        bytes32 leaf = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIM_AMOUNT);
+        uint256 pos = MerkleBuilder.binarySearch(leaves(), leaf);
+        return getProof(leaves(), pos);
     }
 
     function index3Proof() public view returns (bytes32[] memory) {
-        return getProof(leaves(), 2);
+        bytes32 leaf = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIM_AMOUNT);
+        uint256 pos = MerkleBuilder.binarySearch(leaves(), leaf);
+        return getProof(leaves(), pos);
     }
 
     function index4Proof() public view returns (bytes32[] memory) {
-        return getProof(leaves(), 3);
+        bytes32 leaf = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
+        uint256 pos = MerkleBuilder.binarySearch(leaves(), leaf);
+        return getProof(leaves(), pos);
     }
 
-    function leaves() public view returns (bytes32[] memory leaves_) {
-        leaves_ = new bytes32[](RECIPIENTS_COUNT);
+    function leaves() public view returns (bytes32[] memory) {
+        bytes32[] memory leaves_ = new bytes32[](RECIPIENTS_COUNT);
         leaves_[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
         leaves_[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIM_AMOUNT);
         leaves_[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIM_AMOUNT);
         leaves_[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
+        return MerkleBuilder.sort(leaves_);
     }
 
     function merkleRoot() public view returns (bytes32) {
