@@ -8,8 +8,8 @@ import { MerkleBuilder } from "./MerkleBuilder.sol";
 
 contract MerkleBuilder_Test is PRBTest, StdUtils {
     function testFuzz_ComputeLeaf(uint256 index, address recipient, uint128 amount) external {
-        bytes32 actualLeaf = MerkleBuilder.computeLeaf(index, recipient, amount);
-        bytes32 expectedLeaf = keccak256(bytes.concat(keccak256(abi.encode(index, recipient, amount))));
+        uint256 actualLeaf = MerkleBuilder.computeLeaf(index, recipient, amount);
+        uint256 expectedLeaf = uint256(keccak256(bytes.concat(keccak256(abi.encode(index, recipient, amount)))));
         assertEq(actualLeaf, expectedLeaf, "computeLeaf");
     }
 
@@ -32,12 +32,13 @@ contract MerkleBuilder_Test is PRBTest, StdUtils {
             amounts[i] = params[i].amounts;
         }
 
-        bytes32[] memory actualLeaves = new bytes32[](count);
+        uint256[] memory actualLeaves = new uint256[](count);
         actualLeaves = MerkleBuilder.computeLeaves(indexes, recipients, amounts);
 
-        bytes32[] memory expectedLeaves = new bytes32[](count);
+        uint256[] memory expectedLeaves = new uint256[](count);
         for (uint256 i = 0; i < count; ++i) {
-            expectedLeaves[i] = keccak256(bytes.concat(keccak256(abi.encode(indexes[i], recipients[i], amounts[i]))));
+            expectedLeaves[i] =
+                uint256(keccak256(bytes.concat(keccak256(abi.encode(indexes[i], recipients[i], amounts[i])))));
         }
 
         assertEq(actualLeaves, expectedLeaves, "computeLeaves");
