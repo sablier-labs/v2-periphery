@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19 <0.9.0;
 
+import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
 import { ud2x18, UD60x18 } from "@sablier/v2-core/src/types/Math.sol";
@@ -19,6 +20,8 @@ import { Users } from "./Types.sol";
 
 /// @notice Contract with default values for testing.
 contract Defaults is Merkle, PermitSignature {
+    using MerkleBuilder for uint256[];
+
     /*//////////////////////////////////////////////////////////////////////////
                                  GENERIC CONSTANTS
     //////////////////////////////////////////////////////////////////////////*/
@@ -51,44 +54,43 @@ contract Defaults is Merkle, PermitSignature {
     uint256 public constant INDEX3 = 3;
     uint256 public constant INDEX4 = 4;
     string public IPFS_CID = "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR";
+    uint256[] public leaves = new uint256[](RECIPIENTS_COUNT);
+    bytes32 public merkleRoot;
     uint256 public constant RECIPIENTS_COUNT = 4;
     bool public constant TRANSFERABLE = false;
 
     function index1Proof() public view returns (bytes32[] memory) {
-        bytes32 leaf = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
-        uint256 pos = MerkleBuilder.binarySearch(leaves(), leaf);
-        return getProof(leaves(), pos);
+        uint256 leaf = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
+        uint256 pos = Arrays.findUpperBound(leaves, leaf);
+        return getProof(leaves.toBytes32(), pos);
     }
 
     function index2Proof() public view returns (bytes32[] memory) {
-        bytes32 leaf = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIM_AMOUNT);
-        uint256 pos = MerkleBuilder.binarySearch(leaves(), leaf);
-        return getProof(leaves(), pos);
+        uint256 leaf = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIM_AMOUNT);
+        uint256 pos = Arrays.findUpperBound(leaves, leaf);
+        return getProof(leaves.toBytes32(), pos);
     }
 
     function index3Proof() public view returns (bytes32[] memory) {
-        bytes32 leaf = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIM_AMOUNT);
-        uint256 pos = MerkleBuilder.binarySearch(leaves(), leaf);
-        return getProof(leaves(), pos);
+        uint256 leaf = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIM_AMOUNT);
+        uint256 pos = Arrays.findUpperBound(leaves, leaf);
+        return getProof(leaves.toBytes32(), pos);
     }
 
     function index4Proof() public view returns (bytes32[] memory) {
-        bytes32 leaf = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
-        uint256 pos = MerkleBuilder.binarySearch(leaves(), leaf);
-        return getProof(leaves(), pos);
+        uint256 leaf = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
+        uint256 pos = Arrays.findUpperBound(leaves, leaf);
+        return getProof(leaves.toBytes32(), pos);
     }
 
-    function leaves() public view returns (bytes32[] memory) {
-        bytes32[] memory leaves_ = new bytes32[](RECIPIENTS_COUNT);
-        leaves_[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
-        leaves_[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIM_AMOUNT);
-        leaves_[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIM_AMOUNT);
-        leaves_[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
-        return MerkleBuilder.sort(leaves_);
-    }
+    function _initMerkleTree() internal {
+        leaves[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
+        leaves[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIM_AMOUNT);
+        leaves[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIM_AMOUNT);
+        leaves[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
 
-    function merkleRoot() public view returns (bytes32) {
-        return getRoot(leaves());
+        MerkleBuilder.sortLeaves(leaves);
+        merkleRoot = getRoot(leaves.toBytes32());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -158,6 +160,8 @@ contract Defaults is Merkle, PermitSignature {
         CLIFF_TIME = START_TIME + CLIFF_DURATION;
         END_TIME = START_TIME + TOTAL_DURATION;
         EXPIRATION = uint40(block.timestamp) + 12 weeks;
+
+        _initMerkleTree();
     }
 
     /*//////////////////////////////////////////////////////////////////////////

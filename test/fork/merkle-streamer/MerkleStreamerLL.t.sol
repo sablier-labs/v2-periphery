@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
+import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
@@ -10,6 +11,8 @@ import { MerkleBuilder } from "../../utils/MerkleBuilder.sol";
 import { Fork_Test } from "../Fork.t.sol";
 
 abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
+    using MerkleBuilder for uint256[];
+
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 
     function setUp() public virtual override {
@@ -41,13 +44,15 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         uint256 expectedStreamId;
         uint256[] indexes;
         uint256 leafPos;
-        bytes32 leafToClaim;
-        bytes32[] leaves;
+        uint256 leafToClaim;
         ISablierV2MerkleStreamerLL merkleStreamerLL;
         bytes32 merkleRoot;
         address[] recipients;
         uint256 recipientsCount;
     }
+
+    // We need the leaves as storage variable so that we can use Arrays.findUpperBound function.
+    uint256[] public leaves;
 
     function testForkFuzz_MerkleStreamerLL(Params memory params) external {
         vm.assume(params.admin != address(0) && params.admin != users.admin.addr);
@@ -77,8 +82,10 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             vars.recipients[i] = address(uint160(boundedRecipientSeed));
         }
 
-        vars.leaves = MerkleBuilder.sort(MerkleBuilder.computeLeaves(vars.indexes, vars.recipients, vars.amounts));
-        vars.merkleRoot = getRoot(vars.leaves);
+        leaves = new uint256[](vars.recipientsCount);
+        leaves = MerkleBuilder.computeLeaves(vars.indexes, vars.recipients, vars.amounts);
+        MerkleBuilder.sortLeaves(leaves);
+        vars.merkleRoot = getRoot(leaves.toBytes32());
 
         vars.expectedStreamerLL = computeMerkleStreamerLLAddress(params.admin, vars.merkleRoot, params.expiration);
         vm.expectEmit({ emitter: address(merkleStreamerFactory) });
@@ -132,7 +139,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             vars.recipients[params.beforeSortPos],
             vars.amounts[params.beforeSortPos]
         );
-        vars.leafPos = MerkleBuilder.binarySearch(vars.leaves, vars.leafToClaim);
+        vars.leafPos = Arrays.findUpperBound(leaves, vars.leafToClaim);
 
         vars.expectedStreamId = lockupLinear.nextStreamId();
         emit Claim(
@@ -145,7 +152,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             index: vars.indexes[params.beforeSortPos],
             recipient: vars.recipients[params.beforeSortPos],
             amount: vars.amounts[params.beforeSortPos],
-            merkleProof: getProof(vars.leaves, vars.leafPos)
+            merkleProof: getProof(leaves.toBytes32(), vars.leafPos)
         });
 
         vars.actualStream = lockupLinear.getStream(vars.actualStreamId);
