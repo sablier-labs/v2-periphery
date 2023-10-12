@@ -84,6 +84,8 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
 
         leaves = new uint256[](vars.recipientsCount);
         leaves = MerkleBuilder.computeLeaves(vars.indexes, vars.recipients, vars.amounts);
+
+        // Sort the leaves in ascending order to align with the structure of production Merkle trees.
         MerkleBuilder.sortLeaves(leaves);
         vars.merkleRoot = getRoot(leaves.toBytes32());
 
