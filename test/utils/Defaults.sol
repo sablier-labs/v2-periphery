@@ -57,7 +57,45 @@ contract Defaults is Merkle, PermitSignature {
     uint256 public constant RECIPIENTS_COUNT = 4;
     bool public constant TRANSFERABLE = false;
     uint256[] public LEAVES = new uint256[](RECIPIENTS_COUNT);
-    bytes32 public MERKLE_ROOT;
+    bytes32 public immutable MERKLE_ROOT;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                     VARIABLES
+    //////////////////////////////////////////////////////////////////////////*/
+
+    IERC20 private asset;
+    IPRBProxy private proxy;
+    IAllowanceTransfer private permit2;
+    Users private users;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    constructor(Users memory users_, IERC20 asset_, IAllowanceTransfer permit2_, IPRBProxy proxy_) {
+        users = users_;
+        asset = asset_;
+        permit2 = permit2_;
+        proxy = proxy_;
+
+        // Initialize the immutables.
+        START_TIME = uint40(block.timestamp) + 100 seconds;
+        CLIFF_TIME = START_TIME + CLIFF_DURATION;
+        END_TIME = START_TIME + TOTAL_DURATION;
+        EXPIRATION = uint40(block.timestamp) + 12 weeks;
+
+        // Initialize the Merkle tree.
+        LEAVES[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
+        LEAVES[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIM_AMOUNT);
+        LEAVES[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIM_AMOUNT);
+        LEAVES[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
+        MerkleBuilder.sortLeaves(LEAVES);
+        MERKLE_ROOT = getRoot(LEAVES.toBytes32());
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                  MERKLE-STREAMER
+    //////////////////////////////////////////////////////////////////////////*/
 
     function index1Proof() public view returns (bytes32[] memory) {
         uint256 leaf = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
@@ -81,16 +119,6 @@ contract Defaults is Merkle, PermitSignature {
         uint256 leaf = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
         uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
         return getProof(LEAVES.toBytes32(), pos);
-    }
-
-    function _initMerkleTree() internal {
-        LEAVES[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
-        LEAVES[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIM_AMOUNT);
-        LEAVES[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIM_AMOUNT);
-        LEAVES[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
-
-        MerkleBuilder.sortLeaves(LEAVES);
-        MERKLE_ROOT = getRoot(LEAVES.toBytes32());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -134,40 +162,6 @@ contract Defaults is Merkle, PermitSignature {
             })
         });
         return abi.encode(permit2Params_);
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                     VARIABLES
-    //////////////////////////////////////////////////////////////////////////*/
-
-    IERC20 private asset;
-    IPRBProxy private proxy;
-    IAllowanceTransfer private permit2;
-    Users private users;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                    CONSTRUCTOR
-    //////////////////////////////////////////////////////////////////////////*/
-
-    constructor(Users memory users_, IERC20 asset_, IAllowanceTransfer permit2_, IPRBProxy proxy_) {
-        users = users_;
-        asset = asset_;
-        permit2 = permit2_;
-        proxy = proxy_;
-
-        // Initialize the immutables.
-        START_TIME = uint40(block.timestamp) + 100 seconds;
-        CLIFF_TIME = START_TIME + CLIFF_DURATION;
-        END_TIME = START_TIME + TOTAL_DURATION;
-        EXPIRATION = uint40(block.timestamp) + 12 weeks;
-
-        // Initialize the Merkle tree.
-        LEAVES[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1.addr, CLAIM_AMOUNT);
-        LEAVES[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2.addr, CLAIM_AMOUNT);
-        LEAVES[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3.addr, CLAIM_AMOUNT);
-        LEAVES[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4.addr, CLAIM_AMOUNT);
-        MerkleBuilder.sortLeaves(LEAVES);
-        MERKLE_ROOT = getRoot(LEAVES.toBytes32());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
