@@ -6,9 +6,9 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataType
 
 import { Errors } from "src/libraries/Errors.sol";
 
-import { Integration_Test } from "../../Integration.t.sol";
+import { Target_Integration_Test } from "../Target.t.sol";
 
-abstract contract Burn_Integration_Test is Integration_Test {
+abstract contract Burn_Integration_Test is Target_Integration_Test {
     function setUp() public virtual override { }
 
     function test_RevertWhen_NotDelegateCalled() external {

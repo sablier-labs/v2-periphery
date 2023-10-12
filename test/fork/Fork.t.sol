@@ -56,14 +56,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         // Label the contracts.
         labelContracts();
 
-        // Make Alice the default caller.
-        vm.startPrank({ msgSender: users.alice.addr });
-
-        // Approve {Permit2} to transfer Alice's assets.
-        maxApprovePermit2();
-
-        // Approve Alice's Proxy to spend assets from Alice.
-        asset.approve({ spender: address(aliceProxy), amount: MAX_UINT256 });
+        // Approve the relevant contracts.
+        approveContracts();
     }
 
     /*//////////////////////////////////////////////////////////////////////////

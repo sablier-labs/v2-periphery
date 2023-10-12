@@ -25,6 +25,22 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
         });
     }
 
+    function computeMerkleStreamerLLAddress() internal returns (address) {
+        return computeMerkleStreamerLLAddress(users.admin.addr, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+    }
+
+    function computeMerkleStreamerLLAddress(address admin) internal returns (address) {
+        return computeMerkleStreamerLLAddress(admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+    }
+
+    function computeMerkleStreamerLLAddress(address admin, uint40 expiration) internal returns (address) {
+        return computeMerkleStreamerLLAddress(admin, defaults.MERKLE_ROOT(), expiration);
+    }
+
+    function computeMerkleStreamerLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
+        return computeMerkleStreamerLLAddress(admin, merkleRoot, defaults.EXPIRATION());
+    }
+
     function createMerkleStreamerLL() internal returns (ISablierV2MerkleStreamerLL) {
         return createMerkleStreamerLL(users.admin.addr, defaults.EXPIRATION());
     }

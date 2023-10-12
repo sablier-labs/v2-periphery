@@ -307,7 +307,7 @@ contract Defaults is Merkle, PermitSignature {
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                              SABLIER-V2-PROXY-TARGET
+                                        BATCH
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Returns a default-size batch of `Batch.CreateWithDeltas` parameters.

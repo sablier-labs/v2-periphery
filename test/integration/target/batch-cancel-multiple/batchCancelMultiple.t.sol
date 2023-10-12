@@ -7,9 +7,9 @@ import { Lockup } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Integration_Test } from "../../Integration.t.sol";
+import { Target_Integration_Test } from "../Target.t.sol";
 
-abstract contract BatchCancelMultiple_Integration_Test is Integration_Test {
+abstract contract BatchCancelMultiple_Integration_Test is Target_Integration_Test {
     function setUp() public virtual override { }
 
     function test_RevertWhen_NotDelegateCalled() external {
