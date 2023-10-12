@@ -14,7 +14,6 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataType
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
-import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
@@ -35,12 +34,13 @@ import { SablierV2ProxyTargetPush } from "src/SablierV2ProxyTargetPush.sol";
 import { WLC } from "./mocks/WLC.sol";
 import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
+import { DeployPrecompiled } from "./utils/DeployPrecompiled.sol";
 import { Events } from "./utils/Events.sol";
 import { Merkle } from "./utils/Murky.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
-abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtils {
+abstract contract Base_Test is Assertions, DeployPrecompiled, Events, Merkle, V2CoreUtils {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
@@ -64,9 +64,9 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
     ISablierV2ProxyPlugin internal plugin;
     IPRBProxyRegistry internal proxyRegistry;
     ISablierV2ProxyTarget internal target;
-    SablierV2ProxyTargetApprove internal targetApprove;
-    SablierV2ProxyTargetPermit2 internal targetPermit2;
-    SablierV2ProxyTargetPush internal targetPush;
+    ISablierV2ProxyTarget internal targetApprove;
+    ISablierV2ProxyTarget internal targetPermit2;
+    ISablierV2ProxyTarget internal targetPush;
     IWrappedNativeAsset internal weth;
     WLC internal wlc;
 
@@ -100,7 +100,7 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
         vm.startPrank({ msgSender: users.recipient0.addr });
         asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
 
-        // Approve Permit2, SablierV2Batch and Alice's Proxy to spend assets from Alice (the proxy owner).
+        // Approve Permit2, Batch and Alice's Proxy to spend assets from Alice (the proxy owner).
         changePrank({ msgSender: users.alice.addr });
         asset.approve({ spender: address(batch), amount: MAX_UINT256 });
         asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
@@ -125,68 +125,11 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
             targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
             targetPush = new SablierV2ProxyTargetPush();
         } else {
-            archive = deployPrecompiledArchive(users.admin.addr);
-            batch = deployPrecompiledBatch();
-            merkleStreamerFactory = deployPrecompiledMerkleStreamerFactory();
-            plugin = deployPrecompiledProxyPlugin(archive);
-            targetApprove = deployPrecompiledProxyTargetApprove();
-            targetPermit2 = deployPrecompiledProxyTargetPermit2(permit2);
-            targetPush = deployPrecompiledProxyTargetPush();
+            (archive, batch, merkleStreamerFactory, plugin, targetApprove, targetPermit2, targetPush) =
+                deployPrecompiledPeriphery(users.admin.addr, permit2);
         }
         // The default target.
         target = targetApprove;
-    }
-
-    /// @dev Deploys {SablierV2Archive} from a source precompiled with `--via-ir`.
-    function deployPrecompiledArchive(address initialAdmin) internal returns (ISablierV2Archive) {
-        return ISablierV2Archive(
-            deployCode("out-optimized/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(initialAdmin))
-        );
-    }
-
-    /// @dev Deploys {SablierV2Batch} from a source precompiled with `--via-ir`.
-    function deployPrecompiledBatch() internal returns (ISablierV2Batch) {
-        return ISablierV2Batch(deployCode("out-optimized/SablierV2Batch.sol/SablierV2Batch.json"));
-    }
-
-    /// @dev Deploys {SablierV2MerkleStreamerFactory} from a source precompiled with `--via-ir`.
-    function deployPrecompiledMerkleStreamerFactory() internal returns (ISablierV2MerkleStreamerFactory) {
-        return ISablierV2MerkleStreamerFactory(
-            deployCode("out-optimized/SablierV2MerkleStreamerFactory.sol/SablierV2MerkleStreamerFactory.json")
-        );
-    }
-
-    /// @dev Deploys {SablierV2ProxyPlugin} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyPlugin(ISablierV2Archive archive_) internal returns (ISablierV2ProxyPlugin) {
-        return ISablierV2ProxyPlugin(
-            deployCode("out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(archive_))
-        );
-    }
-
-    /// @dev Deploys {SablierV2ProxyTargetApprove} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyTargetApprove() internal returns (SablierV2ProxyTargetApprove) {
-        return SablierV2ProxyTargetApprove(
-            deployCode("out-optimized/SablierV2ProxyTargetApprove.sol/SablierV2ProxyTargetApprove.json")
-        );
-    }
-
-    /// @dev Deploys {SablierV2ProxyTargetPermit2} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyTargetPermit2(IAllowanceTransfer permit2_)
-        internal
-        returns (SablierV2ProxyTargetPermit2)
-    {
-        return SablierV2ProxyTargetPermit2(
-            deployCode(
-                "out-optimized/SablierV2ProxyTargetPermit2.sol/SablierV2ProxyTargetPermit2.json", abi.encode(permit2_)
-            )
-        );
-    }
-
-    /// @dev Deploys {deployPrecompiledProxyTargetPush} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyTargetPush() internal returns (SablierV2ProxyTargetPush) {
-        return SablierV2ProxyTargetPush(
-            deployCode("out-optimized/SablierV2ProxyTargetPush.sol/SablierV2ProxyTargetPush.json")
-        );
     }
 
     /// @dev Labels the most relevant contracts.
