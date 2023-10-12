@@ -134,7 +134,7 @@ contract SablierV2Batch is ISablierV2Batch {
 
     /// @inheritdoc ISablierV2Batch
     function createWithDeltas(
-        ISablierV2LockupDynamic dynamic,
+        ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
         Batch.CreateWithDeltas[] calldata batch
     )
@@ -160,13 +160,13 @@ contract SablierV2Batch is ISablierV2Batch {
         }
 
         // Perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
-        _handleTransfer(address(dynamic), asset, transferAmount);
+        _handleTransfer(address(lockupDynamic), asset, transferAmount);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
         for (i = 0; i < batchSize;) {
             // Create the stream.
-            streamIds[i] = dynamic.createWithDeltas(
+            streamIds[i] = lockupDynamic.createWithDeltas(
                 LockupDynamic.CreateWithDeltas({
                     asset: asset,
                     broker: batch[i].broker,
@@ -188,7 +188,7 @@ contract SablierV2Batch is ISablierV2Batch {
 
     /// @inheritdoc ISablierV2Batch
     function createWithMilestones(
-        ISablierV2LockupDynamic dynamic,
+        ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
         Batch.CreateWithMilestones[] calldata batch
     )
@@ -214,13 +214,13 @@ contract SablierV2Batch is ISablierV2Batch {
         }
 
         // Perform the ERC-20 transfer and approve {SablierV2LockupDynamic} to spend the amount of assets.
-        _handleTransfer(address(dynamic), asset, transferAmount);
+        _handleTransfer(address(lockupDynamic), asset, transferAmount);
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
         for (i = 0; i < batchSize;) {
             // Create the stream.
-            streamIds[i] = dynamic.createWithMilestones(
+            streamIds[i] = lockupDynamic.createWithMilestones(
                 LockupDynamic.CreateWithMilestones({
                     asset: asset,
                     broker: batch[i].broker,
