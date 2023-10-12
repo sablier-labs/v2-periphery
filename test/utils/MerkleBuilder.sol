@@ -6,7 +6,7 @@ import { LibSort } from "solady/utils/LibSort.sol";
 
 /// @dev A helper library for building Merkle leaves, roots, and proofs.
 library MerkleBuilder {
-    /// @dev Function that hashes together the data needed for a Merkle tree leaf.
+    /// @dev Function that double hashes the data needed for a Merkle tree leaf.
     function computeLeaf(uint256 index, address recipient, uint128 amount) internal pure returns (uint256 leaf) {
         leaf = uint256(keccak256(bytes.concat(keccak256(abi.encode(index, recipient, amount)))));
     }
@@ -29,8 +29,8 @@ library MerkleBuilder {
         }
     }
 
-    /// @dev Function that sorts a storage array of `uint256` in ascending order. We need this function because
-    /// `LibSort` does not support storage arrays.
+    /// @dev Function that convert a storage array to memory and sorts it in ascending order. We need this
+    /// because `LibSort` does not support storage arrays.
     function sortLeaves(uint256[] storage leaves) internal {
         uint256 leavesCount = leaves.length;
 
@@ -50,10 +50,10 @@ library MerkleBuilder {
     }
 
     /// @dev Function that converts an array of `uint256` to an array of `bytes32`.
-    function toBytes32(uint256[] storage _arr) internal view returns (bytes32[] memory arr) {
-        arr = new bytes32[](_arr.length);
-        for (uint256 i = 0; i < _arr.length; ++i) {
-            arr[i] = bytes32(_arr[i]);
+    function toBytes32(uint256[] storage arr_) internal view returns (bytes32[] memory arr) {
+        arr = new bytes32[](arr_.length);
+        for (uint256 i = 0; i < arr_.length; ++i) {
+            arr[i] = bytes32(arr_[i]);
         }
     }
 }

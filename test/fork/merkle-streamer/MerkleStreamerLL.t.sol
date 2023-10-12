@@ -30,7 +30,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         address admin;
         uint40 expiration;
         LeafData[] leafData;
-        uint256 beforeSortPos;
+        uint256 posBeforeSort;
     }
 
     struct Vars {
@@ -51,14 +51,14 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         uint256 recipientsCount;
     }
 
-    // We need the leaves as storage variable so that we can use Arrays.findUpperBound function.
+    // We need the leaves as a storage variable so that we can use OpenZeppelin's {Arrays.findUpperBound}.
     uint256[] public leaves;
 
     function testForkFuzz_MerkleStreamerLL(Params memory params) external {
         vm.assume(params.admin != address(0) && params.admin != users.admin.addr);
         vm.assume(params.expiration == 0 || params.expiration > block.timestamp);
         vm.assume(params.leafData.length > 1);
-        params.beforeSortPos = _bound(params.beforeSortPos, 0, params.leafData.length - 1);
+        params.posBeforeSort = _bound(params.posBeforeSort, 0, params.leafData.length - 1);
         assumeNoBlacklisted({ token: address(asset), addr: params.admin });
 
         /*//////////////////////////////////////////////////////////////////////////
@@ -132,32 +132,32 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
                                           CLAIM
         //////////////////////////////////////////////////////////////////////////*/
 
-        assertFalse(vars.merkleStreamerLL.hasClaimed(vars.indexes[params.beforeSortPos]));
+        assertFalse(vars.merkleStreamerLL.hasClaimed(vars.indexes[params.posBeforeSort]));
 
         vars.leafToClaim = MerkleBuilder.computeLeaf(
-            vars.indexes[params.beforeSortPos],
-            vars.recipients[params.beforeSortPos],
-            vars.amounts[params.beforeSortPos]
+            vars.indexes[params.posBeforeSort],
+            vars.recipients[params.posBeforeSort],
+            vars.amounts[params.posBeforeSort]
         );
         vars.leafPos = Arrays.findUpperBound(leaves, vars.leafToClaim);
 
         vars.expectedStreamId = lockupLinear.nextStreamId();
         emit Claim(
-            vars.indexes[params.beforeSortPos],
-            vars.recipients[params.beforeSortPos],
-            vars.amounts[params.beforeSortPos],
+            vars.indexes[params.posBeforeSort],
+            vars.recipients[params.posBeforeSort],
+            vars.amounts[params.posBeforeSort],
             vars.expectedStreamId
         );
         vars.actualStreamId = vars.merkleStreamerLL.claim({
-            index: vars.indexes[params.beforeSortPos],
-            recipient: vars.recipients[params.beforeSortPos],
-            amount: vars.amounts[params.beforeSortPos],
+            index: vars.indexes[params.posBeforeSort],
+            recipient: vars.recipients[params.posBeforeSort],
+            amount: vars.amounts[params.posBeforeSort],
             merkleProof: getProof(leaves.toBytes32(), vars.leafPos)
         });
 
         vars.actualStream = lockupLinear.getStream(vars.actualStreamId);
         vars.expectedStream = LockupLinear.Stream({
-            amounts: Lockup.Amounts({ deposited: vars.amounts[params.beforeSortPos], refunded: 0, withdrawn: 0 }),
+            amounts: Lockup.Amounts({ deposited: vars.amounts[params.posBeforeSort], refunded: 0, withdrawn: 0 }),
             asset: asset,
             cliffTime: uint40(block.timestamp) + defaults.CLIFF_DURATION(),
             endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
@@ -170,7 +170,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             wasCanceled: false
         });
 
-        assertTrue(vars.merkleStreamerLL.hasClaimed(vars.indexes[params.beforeSortPos]));
+        assertTrue(vars.merkleStreamerLL.hasClaimed(vars.indexes[params.posBeforeSort]));
         assertEq(vars.actualStreamId, vars.expectedStreamId);
         assertEq(vars.actualStream, vars.expectedStream);
 

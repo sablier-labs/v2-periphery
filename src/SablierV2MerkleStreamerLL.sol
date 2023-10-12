@@ -74,7 +74,8 @@ contract SablierV2MerkleStreamerLL is
         override
         returns (uint256 streamId)
     {
-        // Generate the Merkle tree leaf by hashing the corresponding parameters.
+        // Generate the Merkle tree leaf by hashing the corresponding parameters. Hashing twice prevents second
+        // preimage attacks.
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(index, recipient, amount))));
 
         // Checks: validate the function.

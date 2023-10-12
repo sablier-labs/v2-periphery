@@ -15,7 +15,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
 
     /// @dev This test works because a default Merkle streamer is deployed in {Integration_Test.setUp}
     function test_RevertGiven_AlreadyDeployed() external {
-        bytes32 merkleRoot = defaults.merkleRoot();
+        bytes32 merkleRoot = defaults.MERKLE_ROOT();
         uint40 expiration = defaults.EXPIRATION();
         bool cancelable = defaults.CANCELABLE();
         bool transferable = defaults.TRANSFERABLE();
@@ -54,7 +54,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
             admin: admin,
             lockupLinear: lockupLinear,
             asset: asset,
-            merkleRoot: defaults.merkleRoot(),
+            merkleRoot: defaults.MERKLE_ROOT(),
             expiration: expiration,
             streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),

@@ -35,10 +35,10 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
             users.admin.addr,
             lockupLinear,
             asset,
-            defaults.merkleRoot(),
+            defaults.MERKLE_ROOT(),
             defaults.EXPIRATION(),
             defaults.durations(),
-            defaults.CANCELABLE(), 
+            defaults.CANCELABLE(),
             defaults.TRANSFERABLE()
         );
 
@@ -53,7 +53,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         assertEq(vars.actualAsset, vars.expectedAsset, "asset");
 
         vars.actualMerkleRoot = constructedStreamerLL.MERKLE_ROOT();
-        vars.expectedMerkleRoot = defaults.merkleRoot();
+        vars.expectedMerkleRoot = defaults.MERKLE_ROOT();
         assertEq(vars.actualMerkleRoot, vars.expectedMerkleRoot, "merkleRoot");
 
         vars.actualCancelable = constructedStreamerLL.CANCELABLE();
