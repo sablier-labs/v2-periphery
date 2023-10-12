@@ -15,7 +15,8 @@ contract OnStreamCanceled_Integration_Test is Integration_Test {
         Integration_Test.setUp();
         proxyRegistry.installPlugin(plugin);
 
-        streamId = createWithRange();
+        asset.approve({ spender: address(lockupLinear), amount: MAX_UINT256 });
+        streamId = lockupLinear.createWithRange(defaults.createWithRange());
 
         // List the {LockupLinear} contract in the archive.
         changePrank({ msgSender: users.admin.addr });

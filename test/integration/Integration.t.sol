@@ -34,16 +34,8 @@ abstract contract Integration_Test is Base_Test {
         // Label the contracts.
         labelContracts();
 
-        // Approve Permit2 to spend assets from the stream's recipient and Alice (the proxy owner).
-        vm.startPrank({ msgSender: users.recipient0.addr });
-        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
-
-        changePrank({ msgSender: users.alice.addr });
-        asset.approve({ spender: address(batch), amount: MAX_UINT256 });
-        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
-
-        // Approve Alice's Proxy to spend assets from Alice.
-        asset.approve({ spender: address(aliceProxy), amount: MAX_UINT256 });
+        // Approve the relevant contracts.
+        approveContracts();
     }
 
     /*//////////////////////////////////////////////////////////////////////////
