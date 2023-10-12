@@ -42,7 +42,7 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
             initialAdmin: admin,
             lockupLinear: lockupLinear,
             asset: asset,
-            merkleRoot: defaults.merkleRoot(),
+            merkleRoot: defaults.MERKLE_ROOT(),
             expiration: expiration,
             cancelable: defaults.CANCELABLE(),
             transferable: defaults.TRANSFERABLE(),

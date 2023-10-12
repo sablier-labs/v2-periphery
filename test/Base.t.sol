@@ -376,15 +376,15 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
     //////////////////////////////////////////////////////////////////////////*/
 
     function computeMerkleStreamerLLAddress() internal returns (address) {
-        return computeMerkleStreamerLLAddress(users.admin.addr, defaults.merkleRoot(), defaults.EXPIRATION());
+        return computeMerkleStreamerLLAddress(users.admin.addr, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
     function computeMerkleStreamerLLAddress(address admin) internal returns (address) {
-        return computeMerkleStreamerLLAddress(admin, defaults.merkleRoot(), defaults.EXPIRATION());
+        return computeMerkleStreamerLLAddress(admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
     function computeMerkleStreamerLLAddress(address admin, uint40 expiration) internal returns (address) {
-        return computeMerkleStreamerLLAddress(admin, defaults.merkleRoot(), expiration);
+        return computeMerkleStreamerLLAddress(admin, defaults.MERKLE_ROOT(), expiration);
     }
 
     function computeMerkleStreamerLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
