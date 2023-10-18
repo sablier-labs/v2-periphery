@@ -34,13 +34,13 @@ import { SablierV2ProxyTargetPush } from "src/SablierV2ProxyTargetPush.sol";
 import { WLC } from "./mocks/WLC.sol";
 import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
-import { DeployPrecompiled } from "./utils/DeployPrecompiled.sol";
+import { DeployOptimized } from "./utils/DeployOptimized.sol";
 import { Events } from "./utils/Events.sol";
 import { Merkle } from "./utils/Murky.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
-abstract contract Base_Test is Assertions, DeployPrecompiled, Events, Merkle, V2CoreUtils {
+abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2CoreUtils {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
@@ -64,9 +64,9 @@ abstract contract Base_Test is Assertions, DeployPrecompiled, Events, Merkle, V2
     ISablierV2ProxyPlugin internal plugin;
     IPRBProxyRegistry internal proxyRegistry;
     ISablierV2ProxyTarget internal target;
-    ISablierV2ProxyTarget internal targetApprove;
-    ISablierV2ProxyTarget internal targetPermit2;
-    ISablierV2ProxyTarget internal targetPush;
+    SablierV2ProxyTargetApprove internal targetApprove;
+    SablierV2ProxyTargetPermit2 internal targetPermit2;
+    SablierV2ProxyTargetPush internal targetPush;
     IWrappedNativeAsset internal weth;
     WLC internal wlc;
 

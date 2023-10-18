@@ -8,12 +8,11 @@ import { ISablierV2Archive } from "../../src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2Batch } from "../../src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2MerkleStreamerFactory } from "../../src/interfaces/ISablierV2MerkleStreamerFactory.sol";
 import { ISablierV2ProxyPlugin } from "../../src/interfaces/ISablierV2ProxyPlugin.sol";
-import { ISablierV2ProxyTarget } from "../../src/interfaces/ISablierV2ProxyTarget.sol";
 import { SablierV2ProxyTargetApprove } from "../../src/SablierV2ProxyTargetApprove.sol";
 import { SablierV2ProxyTargetPermit2 } from "../../src/SablierV2ProxyTargetPermit2.sol";
 import { SablierV2ProxyTargetPush } from "../../src/SablierV2ProxyTargetPush.sol";
 
-contract DeployPrecompiled is StdCheats {
+abstract contract DeployOptimized is StdCheats {
     /// @dev Deploys {SablierV2Archive} from a source precompiled with `--via-ir`.
     function deployPrecompiledArchive(address initialAdmin) internal returns (ISablierV2Archive) {
         return ISablierV2Archive(
@@ -85,9 +84,9 @@ contract DeployPrecompiled is StdCheats {
             ISablierV2Batch,
             ISablierV2MerkleStreamerFactory,
             ISablierV2ProxyPlugin,
-            ISablierV2ProxyTarget,
-            ISablierV2ProxyTarget,
-            ISablierV2ProxyTarget
+            SablierV2ProxyTargetApprove,
+            SablierV2ProxyTargetPermit2,
+            SablierV2ProxyTargetPush
         )
     {
         ISablierV2Archive archive_ = deployPrecompiledArchive(initialAdmin_);
