@@ -14,7 +14,6 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataType
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
-import { StdCheats } from "forge-std/StdCheats.sol";
 
 import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
@@ -35,12 +34,13 @@ import { SablierV2ProxyTargetPush } from "src/SablierV2ProxyTargetPush.sol";
 import { WLC } from "./mocks/WLC.sol";
 import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
+import { DeployOptimized } from "./utils/DeployOptimized.sol";
 import { Events } from "./utils/Events.sol";
 import { Merkle } from "./utils/Murky.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
-abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtils {
+abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2CoreUtils {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
@@ -94,6 +94,19 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
                                      HELPERS
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @dev Approves relevant contracts to spend assets from some users.
+    function approveContracts() internal {
+        // Approve Permit2 to spend assets from the stream's recipient.
+        vm.startPrank({ msgSender: users.recipient0.addr });
+        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
+
+        // Approve Permit2, Batch and Alice's Proxy to spend assets from Alice (the proxy owner).
+        changePrank({ msgSender: users.alice.addr });
+        asset.approve({ spender: address(batch), amount: MAX_UINT256 });
+        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
+        asset.approve({ spender: address(aliceProxy), amount: MAX_UINT256 });
+    }
+
     /// @dev Generates a user, labels its address, and funds it with ETH.
     function createUser(string memory name) internal returns (Account memory user) {
         user = makeAccount(name);
@@ -112,68 +125,11 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
             targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
             targetPush = new SablierV2ProxyTargetPush();
         } else {
-            archive = deployPrecompiledArchive(users.admin.addr);
-            batch = deployPrecompiledBatch();
-            merkleStreamerFactory = deployPrecompiledMerkleStreamerFactory();
-            plugin = deployPrecompiledProxyPlugin(archive);
-            targetApprove = deployPrecompiledProxyTargetApprove();
-            targetPermit2 = deployPrecompiledProxyTargetPermit2(permit2);
-            targetPush = deployPrecompiledProxyTargetPush();
+            (archive, batch, merkleStreamerFactory, plugin, targetApprove, targetPermit2, targetPush) =
+                deployOptimizedPeriphery(users.admin.addr, permit2);
         }
         // The default target.
         target = targetApprove;
-    }
-
-    /// @dev Deploys {SablierV2Archive} from a source precompiled with `--via-ir`.
-    function deployPrecompiledArchive(address initialAdmin) internal returns (ISablierV2Archive) {
-        return ISablierV2Archive(
-            deployCode("out-optimized/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(initialAdmin))
-        );
-    }
-
-    /// @dev Deploys {SablierV2Batch} from a source precompiled with `--via-ir`.
-    function deployPrecompiledBatch() internal returns (ISablierV2Batch) {
-        return ISablierV2Batch(deployCode("out-optimized/SablierV2Batch.sol/SablierV2Batch.json"));
-    }
-
-    /// @dev Deploys {SablierV2MerkleStreamerFactory} from a source precompiled with `--via-ir`.
-    function deployPrecompiledMerkleStreamerFactory() internal returns (ISablierV2MerkleStreamerFactory) {
-        return ISablierV2MerkleStreamerFactory(
-            deployCode("out-optimized/SablierV2MerkleStreamerFactory.sol/SablierV2MerkleStreamerFactory.json")
-        );
-    }
-
-    /// @dev Deploys {SablierV2ProxyPlugin} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyPlugin(ISablierV2Archive archive_) internal returns (ISablierV2ProxyPlugin) {
-        return ISablierV2ProxyPlugin(
-            deployCode("out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(archive_))
-        );
-    }
-
-    /// @dev Deploys {SablierV2ProxyTargetApprove} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyTargetApprove() internal returns (SablierV2ProxyTargetApprove) {
-        return SablierV2ProxyTargetApprove(
-            deployCode("out-optimized/SablierV2ProxyTargetApprove.sol/SablierV2ProxyTargetApprove.json")
-        );
-    }
-
-    /// @dev Deploys {SablierV2ProxyTargetPermit2} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyTargetPermit2(IAllowanceTransfer permit2_)
-        internal
-        returns (SablierV2ProxyTargetPermit2)
-    {
-        return SablierV2ProxyTargetPermit2(
-            deployCode(
-                "out-optimized/SablierV2ProxyTargetPermit2.sol/SablierV2ProxyTargetPermit2.json", abi.encode(permit2_)
-            )
-        );
-    }
-
-    /// @dev Deploys {deployPrecompiledProxyTargetPush} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyTargetPush() internal returns (SablierV2ProxyTargetPush) {
-        return SablierV2ProxyTargetPush(
-            deployCode("out-optimized/SablierV2ProxyTargetPush.sol/SablierV2ProxyTargetPush.json")
-        );
     }
 
     /// @dev Labels the most relevant contracts.
@@ -375,22 +331,6 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
                                   MERKLE-STREAMER
     //////////////////////////////////////////////////////////////////////////*/
 
-    function computeMerkleStreamerLLAddress() internal returns (address) {
-        return computeMerkleStreamerLLAddress(users.admin.addr, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
-    }
-
-    function computeMerkleStreamerLLAddress(address admin) internal returns (address) {
-        return computeMerkleStreamerLLAddress(admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
-    }
-
-    function computeMerkleStreamerLLAddress(address admin, uint40 expiration) internal returns (address) {
-        return computeMerkleStreamerLLAddress(admin, defaults.MERKLE_ROOT(), expiration);
-    }
-
-    function computeMerkleStreamerLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
-        return computeMerkleStreamerLLAddress(admin, merkleRoot, defaults.EXPIRATION());
-    }
-
     function computeMerkleStreamerLLAddress(
         address admin,
         bytes32 merkleRoot,
@@ -434,135 +374,5 @@ abstract contract Base_Test is Assertions, Events, Merkle, StdCheats, V2CoreUtil
                 constructorArgs
             );
         }
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                       TARGET
-    //////////////////////////////////////////////////////////////////////////*/
-
-    function batchCreateWithDeltas() internal returns (uint256[] memory) {
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithDeltas,
-            (lockupDynamic, asset, defaults.batchCreateWithDeltas(), getTransferData(defaults.TOTAL_TRANSFER_AMOUNT()))
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256[]));
-    }
-
-    function batchCreateWithDurations() internal returns (uint256[] memory) {
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithDurations,
-            (
-                lockupLinear,
-                asset,
-                defaults.batchCreateWithDurations(),
-                getTransferData(defaults.TOTAL_TRANSFER_AMOUNT())
-            )
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256[]));
-    }
-
-    function batchCreateWithMilestones() internal returns (uint256[] memory) {
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones,
-            (
-                lockupDynamic,
-                asset,
-                defaults.batchCreateWithMilestones(),
-                getTransferData(defaults.TOTAL_TRANSFER_AMOUNT())
-            )
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256[]));
-    }
-
-    function batchCreateWithMilestones(uint256 batchSize) internal returns (uint256[] memory) {
-        uint128 totalTransferAmount = uint128(batchSize) * defaults.PER_STREAM_AMOUNT();
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithMilestones,
-            (lockupDynamic, asset, defaults.batchCreateWithMilestones(batchSize), getTransferData(totalTransferAmount))
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256[]));
-    }
-
-    function batchCreateWithRange() internal returns (uint256[] memory) {
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithRange,
-            (lockupLinear, asset, defaults.batchCreateWithRange(), getTransferData(defaults.TOTAL_TRANSFER_AMOUNT()))
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256[]));
-    }
-
-    function batchCreateWithRange(uint256 batchSize) internal returns (uint256[] memory) {
-        uint128 totalTransferAmount = uint128(batchSize) * defaults.PER_STREAM_AMOUNT();
-        bytes memory data = abi.encodeCall(
-            target.batchCreateWithRange,
-            (lockupLinear, asset, defaults.batchCreateWithRange(batchSize), getTransferData(totalTransferAmount))
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256[]));
-    }
-
-    function createWithDeltas() internal returns (uint256) {
-        bytes memory data = abi.encodeCall(
-            target.createWithDeltas,
-            (lockupDynamic, defaults.createWithDeltas(), getTransferData(defaults.PER_STREAM_AMOUNT()))
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256));
-    }
-
-    function createWithDurations() internal returns (uint256) {
-        bytes memory data = abi.encodeCall(
-            target.createWithDurations,
-            (lockupLinear, defaults.createWithDurations(), getTransferData(defaults.PER_STREAM_AMOUNT()))
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256));
-    }
-
-    function createWithMilestones() internal returns (uint256) {
-        bytes memory data = abi.encodeCall(
-            target.createWithMilestones,
-            (lockupDynamic, defaults.createWithMilestones(), getTransferData(defaults.PER_STREAM_AMOUNT()))
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256));
-    }
-
-    function createWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal returns (uint256) {
-        bytes memory data = abi.encodeCall(
-            target.createWithMilestones, (lockupDynamic, params, getTransferData(defaults.PER_STREAM_AMOUNT()))
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256));
-    }
-
-    function createWithRange() internal returns (uint256) {
-        bytes memory data = abi.encodeCall(
-            target.createWithRange,
-            (lockupLinear, defaults.createWithRange(), getTransferData(defaults.PER_STREAM_AMOUNT()))
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256));
-    }
-
-    function createWithRange(LockupLinear.CreateWithRange memory params) internal returns (uint256) {
-        bytes memory data = abi.encodeCall(
-            target.createWithRange, (lockupLinear, params, getTransferData(defaults.PER_STREAM_AMOUNT()))
-        );
-        bytes memory response = aliceProxy.execute(address(target), data);
-        return abi.decode(response, (uint256));
-    }
-
-    function getTransferData(uint160 amount) internal view returns (bytes memory) {
-        if (target == targetPermit2) {
-            return defaults.permit2Params(amount);
-        }
-        // The {ProxyTargetApprove} contract does not require any transfer data.
-        return bytes("");
     }
 }

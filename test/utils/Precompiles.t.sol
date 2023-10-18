@@ -28,26 +28,26 @@ contract Precompiles_Test is Base_Test {
 
     function test_DeployArchive() external onlyTestOptimizedProfile {
         address actualArchive = address(precompiles.deployArchive(users.admin.addr));
-        address expectedArchive = address(deployPrecompiledArchive(users.admin.addr));
+        address expectedArchive = address(deployOptimizedArchive(users.admin.addr));
         assertEq(actualArchive.code, expectedArchive.code, "bytecodes mismatch");
     }
 
     function test_DeployBatch() external onlyTestOptimizedProfile {
         address actualBatch = address(precompiles.deployBatch());
-        address expectedBatch = address(deployPrecompiledBatch());
+        address expectedBatch = address(deployOptimizedBatch());
         assertEq(actualBatch.code, expectedBatch.code, "bytecodes mismatch");
     }
 
     function test_DeployMerkleStreamerFactory() external onlyTestOptimizedProfile {
         address actualFactory = address(precompiles.deployMerkleStreamerFactory());
-        address expectedFactory = address(deployPrecompiledMerkleStreamerFactory());
+        address expectedFactory = address(deployOptimizedMerkleStreamerFactory());
         assertEq(actualFactory.code, expectedFactory.code, "bytecodes mismatch");
     }
 
     function test_DeployProxyPlugin() external onlyTestOptimizedProfile {
-        ISablierV2Archive archive = deployPrecompiledArchive(users.admin.addr);
+        ISablierV2Archive archive = deployOptimizedArchive(users.admin.addr);
         address actualProxyPlugin = address(precompiles.deployProxyPlugin(archive));
-        address expectedProxyPlugin = address(deployPrecompiledProxyPlugin(archive));
+        address expectedProxyPlugin = address(deployOptimizedProxyPlugin(archive));
         bytes memory expectedProxyPluginCode =
             adjustBytecode(expectedProxyPlugin.code, expectedProxyPlugin, actualProxyPlugin);
         assertEq(actualProxyPlugin.code, expectedProxyPluginCode, "bytecodes mismatch");
@@ -55,7 +55,7 @@ contract Precompiles_Test is Base_Test {
 
     function test_DeployProxyTargetApprove() external onlyTestOptimizedProfile {
         address actualProxyTargetApprove = address(precompiles.deployProxyTargetApprove());
-        address expectedProxyTargetApprove = address(deployPrecompiledProxyTargetApprove());
+        address expectedProxyTargetApprove = address(deployOptimizedProxyTargetApprove());
         bytes memory expectedProxyTargetCode =
             adjustBytecode(expectedProxyTargetApprove.code, expectedProxyTargetApprove, actualProxyTargetApprove);
         assertEq(actualProxyTargetApprove.code, expectedProxyTargetCode, "bytecodes mismatch");
@@ -64,7 +64,7 @@ contract Precompiles_Test is Base_Test {
     function test_DeployProxyTargetPermit2() external onlyTestOptimizedProfile {
         IAllowanceTransfer permit2 = IAllowanceTransfer(new DeployPermit2().run());
         address actualProxyTargetPermit2 = address(precompiles.deployProxyTargetPermit2(permit2));
-        address expectedProxyTargetPermit2 = address(deployPrecompiledProxyTargetPermit2(permit2));
+        address expectedProxyTargetPermit2 = address(deployOptimizedProxyTargetPermit2(permit2));
         bytes memory expectedProxyTargetCode =
             adjustBytecode(expectedProxyTargetPermit2.code, expectedProxyTargetPermit2, actualProxyTargetPermit2);
         assertEq(actualProxyTargetPermit2.code, expectedProxyTargetCode, "bytecodes mismatch");
@@ -72,7 +72,7 @@ contract Precompiles_Test is Base_Test {
 
     function test_DeployProxyTargetPush() external onlyTestOptimizedProfile {
         address actualProxyTargetPush = address(precompiles.deployProxyTargetPush());
-        address expectedProxyTargetPush = address(deployPrecompiledProxyTargetPush());
+        address expectedProxyTargetPush = address(deployOptimizedProxyTargetPush());
         bytes memory expectedProxyTargetCode =
             adjustBytecode(expectedProxyTargetPush.code, expectedProxyTargetPush, actualProxyTargetPush);
         assertEq(actualProxyTargetPush.code, expectedProxyTargetCode, "bytecodes mismatch");
@@ -88,16 +88,16 @@ contract Precompiles_Test is Base_Test {
         ISablierV2ProxyTarget actualProxyTargetApprove;
         ISablierV2ProxyTarget actualProxyTargetPermit2;
         ISablierV2ProxyTarget actualProxyTargetPush;
-        address expectedArchive;
-        address expectedBatch;
-        address expectedMerkleStreamerFactory;
-        address expectedProxyPlugin;
-        bytes expectedLockupDynamicCode;
-        address expectedProxyTargetApprove;
+        ISablierV2Archive expectedArchive;
+        ISablierV2Batch expectedBatch;
+        ISablierV2MerkleStreamerFactory expectedMerkleStreamerFactory;
+        ISablierV2ProxyPlugin expectedProxyPlugin;
+        bytes expectedProxyPluginCode;
+        ISablierV2ProxyTarget expectedProxyTargetApprove;
         bytes expectedProxyTargetApproveCode;
-        address expectedProxyTargetPermit2;
+        ISablierV2ProxyTarget expectedProxyTargetPermit2;
         bytes expectedProxyTargetPermit2Code;
-        address expectedProxyTargetPush;
+        ISablierV2ProxyTarget expectedProxyTargetPush;
         bytes expectedProxyTargetPushCode;
     }
 
@@ -115,44 +115,52 @@ contract Precompiles_Test is Base_Test {
             vars.actualProxyTargetPush
         ) = precompiles.deployPeriphery(users.admin.addr, permit2);
 
-        vars.expectedArchive = address(deployPrecompiledArchive(users.admin.addr));
-        assertEq(address(vars.actualArchive).code, vars.expectedArchive.code, "bytecodes mismatch");
+        (
+            vars.expectedArchive,
+            vars.expectedBatch,
+            vars.expectedMerkleStreamerFactory,
+            vars.expectedProxyPlugin,
+            vars.expectedProxyTargetApprove,
+            vars.expectedProxyTargetPermit2,
+            vars.expectedProxyTargetPush
+        ) = deployOptimizedPeriphery(users.admin.addr, permit2);
 
-        vars.expectedBatch = address(deployPrecompiledBatch());
-        assertEq(address(vars.actualBatch).code, vars.expectedBatch.code, "bytecodes mismatch");
-
-        vars.expectedMerkleStreamerFactory = address(deployPrecompiledMerkleStreamerFactory());
+        assertEq(address(vars.actualArchive).code, address(vars.expectedArchive).code, "bytecodes mismatch");
+        assertEq(address(vars.actualBatch).code, address(vars.expectedBatch).code, "bytecodes mismatch");
         assertEq(
             address(vars.actualMerkleStreamerFactory).code,
             address(vars.expectedMerkleStreamerFactory).code,
             "bytecodes mismatch"
         );
 
-        vars.expectedProxyPlugin = address(deployPrecompiledProxyPlugin(vars.actualArchive));
-        vars.expectedLockupDynamicCode =
-            adjustBytecode(vars.expectedProxyPlugin.code, vars.expectedProxyPlugin, address(vars.actualProxyPlugin));
-        assertEq(address(vars.actualProxyPlugin).code, vars.expectedLockupDynamicCode, "bytecodes mismatch");
-
-        vars.expectedProxyTargetApprove = address(deployPrecompiledProxyTargetApprove());
+        // We need to deploy the Proxy Plugin again here because the address of the Archive passed inside the
+        // `deployOptimizedPeriphery` function is `vars.expectedProxyPlugin`. Otherwise we cannot adjust the
+        // bytecode correctly.
+        vars.expectedProxyPlugin = deployOptimizedProxyPlugin(vars.actualArchive);
+        vars.expectedProxyPluginCode = adjustBytecode(
+            address(vars.expectedProxyPlugin).code, address(vars.expectedProxyPlugin), address(vars.actualProxyPlugin)
+        );
         vars.expectedProxyTargetApproveCode = adjustBytecode(
-            vars.expectedProxyTargetApprove.code,
-            vars.expectedProxyTargetApprove,
+            address(vars.expectedProxyTargetApprove).code,
+            address(vars.expectedProxyTargetApprove),
             address(vars.actualProxyTargetApprove)
         );
-        assertEq(address(vars.actualProxyTargetApprove).code, vars.expectedProxyTargetApproveCode, "bytecodes mismatch");
 
-        vars.expectedProxyTargetPermit2 = address(deployPrecompiledProxyTargetPermit2(permit2));
         vars.expectedProxyTargetPermit2Code = adjustBytecode(
-            vars.expectedProxyTargetPermit2.code,
-            vars.expectedProxyTargetPermit2,
+            address(vars.expectedProxyTargetPermit2).code,
+            address(vars.expectedProxyTargetPermit2),
             address(vars.actualProxyTargetPermit2)
         );
-        assertEq(address(vars.actualProxyTargetPermit2).code, vars.expectedProxyTargetPermit2Code, "bytecodes mismatch");
 
-        vars.expectedProxyTargetPush = address(deployPrecompiledProxyTargetPush());
         vars.expectedProxyTargetPushCode = adjustBytecode(
-            vars.expectedProxyTargetPush.code, vars.expectedProxyTargetPush, address(vars.actualProxyTargetPush)
+            address(vars.expectedProxyTargetPush).code,
+            address(vars.expectedProxyTargetPush),
+            address(vars.actualProxyTargetPush)
         );
+
+        assertEq(address(vars.actualProxyPlugin).code, vars.expectedProxyPluginCode, "bytecodes mismatch");
+        assertEq(address(vars.actualProxyTargetApprove).code, vars.expectedProxyTargetApproveCode, "bytecodes mismatch");
+        assertEq(address(vars.actualProxyTargetPermit2).code, vars.expectedProxyTargetPermit2Code, "bytecodes mismatch");
         assertEq(address(vars.actualProxyTargetPush).code, vars.expectedProxyTargetPushCode, "bytecodes mismatch");
     }
 

@@ -8,14 +8,14 @@ import { LockupLinear, LockupDynamic } from "@sablier/v2-core/src/types/DataType
 
 import { Errors } from "src/libraries/Errors.sol";
 
-import { Integration_Test } from "../../Integration.t.sol";
+import { Target_Integration_Test } from "../Target.t.sol";
 
 /// @dev This contracts tests the following functions:
 /// - `cancelAndCreateWithDeltas`
 /// - `cancelAndCreateWithDurations`
 /// - `cancelAndCreateWithMilestones`
 /// - `cancelAndCreateWithRange`
-abstract contract CancelAndCreate_Integration_Test is Integration_Test {
+abstract contract CancelAndCreate_Integration_Test is Target_Integration_Test {
     function setUp() public virtual override { }
 
     modifier whenDelegateCalled() {

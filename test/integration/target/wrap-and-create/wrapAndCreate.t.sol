@@ -6,14 +6,14 @@ import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataType
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { Errors } from "src/libraries/Errors.sol";
 
-import { Integration_Test } from "../../Integration.t.sol";
+import { Target_Integration_Test } from "../Target.t.sol";
 
 /// @dev This contracts tests the following functions:
 /// - `wrapAndCreateWithDeltas`
 /// - `wrapAndCreateWithDurations`
 /// - `wrapAndCreateWithMilestones`
 /// - `wrapAndCreateWithRange`
-abstract contract WrapAndCreate_Integration_Test is Integration_Test {
+abstract contract WrapAndCreate_Integration_Test is Target_Integration_Test {
     function setUp() public virtual override { }
 
     modifier whenDelegateCalled() {
