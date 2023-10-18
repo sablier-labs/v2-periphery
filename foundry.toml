@@ -5,10 +5,8 @@
   evm_version = "paris"
   fs_permissions = [{ access = "read", path = "out-optimized" }]
   gas_reports = [
-    "SablierV2Archive",
     "SablierV2MerkleStreamerFactory",
     "SablierV2MerkleStreamerLL",
-    "SablierV2ProxyPlugin",
     "SablierV2ProxyTarget",
   ]
   libs = ["lib"]

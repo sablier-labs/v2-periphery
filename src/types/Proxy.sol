@@ -8,5 +8,4 @@ pragma solidity >=0.8.19;
 // that users don't have to install PRBProxy separately.
 
 import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
-import { IPRBProxyPlugin } from "@prb/proxy/src/interfaces/IPRBProxyPlugin.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/src/interfaces/IPRBProxyRegistry.sol";

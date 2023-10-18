@@ -17,10 +17,6 @@ env:
 on:
   workflow_dispatch:
     inputs:
-      admin:
-        default: "0xF3663da48030b6c88535413Fd643aB0B5F3496ff"
-        description: "Initial protocol admin."
-        required: false
       chain:
         default: "goerli"
         description: "Chain name as defined in the Foundry config."
@@ -48,10 +44,9 @@ jobs:
           forge script script/DeployPeriphery.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
-          --sig "run(address,address)"
+          --sig "run(address)"
           --verify
           -vvvv
-          "${{ inputs.admin }}"
           "${{ inputs.permit2 }}"
 
       - name: "Add workflow summary"

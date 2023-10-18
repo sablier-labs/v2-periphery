@@ -9,14 +9,12 @@ import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { SablierV2MerkleStreamerFactory } from "../src/SablierV2MerkleStreamerFactory.sol";
-import { SablierV2Archive } from "../src/SablierV2Archive.sol";
 import { SablierV2Batch } from "../src/SablierV2Batch.sol";
-import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTargetApprove } from "../src/SablierV2ProxyTargetApprove.sol";
 import { SablierV2ProxyTargetPermit2 } from "../src/SablierV2ProxyTargetPermit2.sol";
 import { SablierV2ProxyTargetPush } from "../src/SablierV2ProxyTargetPush.sol";
 
-/// @notice Deploys the Sablier V2 Protocol and lists the streaming contracts in the archive.
+/// @notice Deploys the Sablier V2 Protocol.
 contract DeployProtocol is BaseScript {
     function run(
         address initialAdmin,
@@ -31,10 +29,8 @@ contract DeployProtocol is BaseScript {
             SablierV2LockupDynamic lockupDynamic,
             SablierV2LockupLinear lockupLinear,
             SablierV2NFTDescriptor nftDescriptor,
-            SablierV2Archive archive,
             SablierV2Batch batch,
             SablierV2MerkleStreamerFactory merkleStreamerFactory,
-            SablierV2ProxyPlugin plugin,
             SablierV2ProxyTargetApprove targetApprove,
             SablierV2ProxyTargetPermit2 targetPermit2,
             SablierV2ProxyTargetPush targetPush
@@ -46,15 +42,8 @@ contract DeployProtocol is BaseScript {
         lockupDynamic = new SablierV2LockupDynamic(initialAdmin, comptroller, nftDescriptor, maxSegmentCount);
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
 
-        // Deploy V2 Periphery. The Archive needs its own context block to prevent Stack Too Deep.
-        {
-            archive = new SablierV2Archive(initialAdmin);
-            archive.list(address(lockupDynamic));
-            archive.list(address(lockupLinear));
-        }
         batch = new SablierV2Batch();
         merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
-        plugin = new SablierV2ProxyPlugin(archive);
         targetApprove = new SablierV2ProxyTargetApprove();
         targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
         targetPush = new SablierV2ProxyTargetPush();
