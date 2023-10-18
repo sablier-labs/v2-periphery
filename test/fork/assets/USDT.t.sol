@@ -6,7 +6,6 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { CreateWithMilestones_Batch_Fork_Test } from "../batch/createWithMilestones.t.sol";
 import { CreateWithRange_Batch_Fork_Test } from "../batch/createWithRange.t.sol";
 import { MerkleStreamerLL_Fork_Test } from "../merkle-streamer/MerkleStreamerLL.t.sol";
-import { OnStreamCanceled_Fork_Test } from "../plugin/onStreamCanceled.t.sol";
 import {
     BatchCancelMultiple_TargetApprove_Fork_Test,
     BatchCreate_TargetApprove_Fork_Test
@@ -36,5 +35,3 @@ contract USDT_CreateWithMilestones_Batch_Fork_Test is CreateWithMilestones_Batch
 contract USDT_CreateWithRange_Batch_Fork_Test is CreateWithRange_Batch_Fork_Test(usdt) { }
 
 contract USDT_MerkleStreamerLL_Fork_Test is MerkleStreamerLL_Fork_Test(usdt) { }
-
-contract USDT_OnStreamCanceled_Plugin_Fork_Test is OnStreamCanceled_Fork_Test(usdt) { }
