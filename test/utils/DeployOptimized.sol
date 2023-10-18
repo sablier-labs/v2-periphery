@@ -13,41 +13,41 @@ import { SablierV2ProxyTargetPermit2 } from "../../src/SablierV2ProxyTargetPermi
 import { SablierV2ProxyTargetPush } from "../../src/SablierV2ProxyTargetPush.sol";
 
 abstract contract DeployOptimized is StdCheats {
-    /// @dev Deploys {SablierV2Archive} from a source precompiled with `--via-ir`.
-    function deployPrecompiledArchive(address initialAdmin) internal returns (ISablierV2Archive) {
+    /// @dev Deploys {SablierV2Archive} from a optimized source compiled with `--via-ir`.
+    function deployOptimizedArchive(address initialAdmin) internal returns (ISablierV2Archive) {
         return ISablierV2Archive(
             deployCode("out-optimized/SablierV2Archive.sol/SablierV2Archive.json", abi.encode(initialAdmin))
         );
     }
 
-    /// @dev Deploys {SablierV2Batch} from a source precompiled with `--via-ir`.
-    function deployPrecompiledBatch() internal returns (ISablierV2Batch) {
+    /// @dev Deploys {SablierV2Batch} from a optimized source compiled with `--via-ir`.
+    function deployOptimizedBatch() internal returns (ISablierV2Batch) {
         return ISablierV2Batch(deployCode("out-optimized/SablierV2Batch.sol/SablierV2Batch.json"));
     }
 
-    /// @dev Deploys {SablierV2MerkleStreamerFactory} from a source precompiled with `--via-ir`.
-    function deployPrecompiledMerkleStreamerFactory() internal returns (ISablierV2MerkleStreamerFactory) {
+    /// @dev Deploys {SablierV2MerkleStreamerFactory} from a optimized source compiled with `--via-ir`.
+    function deployOptimizedMerkleStreamerFactory() internal returns (ISablierV2MerkleStreamerFactory) {
         return ISablierV2MerkleStreamerFactory(
             deployCode("out-optimized/SablierV2MerkleStreamerFactory.sol/SablierV2MerkleStreamerFactory.json")
         );
     }
 
-    /// @dev Deploys {SablierV2ProxyPlugin} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyPlugin(ISablierV2Archive archive_) internal returns (ISablierV2ProxyPlugin) {
+    /// @dev Deploys {SablierV2ProxyPlugin} from a optimized source compiled with `--via-ir`.
+    function deployOptimizedProxyPlugin(ISablierV2Archive archive_) internal returns (ISablierV2ProxyPlugin) {
         return ISablierV2ProxyPlugin(
             deployCode("out-optimized/SablierV2ProxyPlugin.sol/SablierV2ProxyPlugin.json", abi.encode(archive_))
         );
     }
 
-    /// @dev Deploys {SablierV2ProxyTargetApprove} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyTargetApprove() internal returns (SablierV2ProxyTargetApprove) {
+    /// @dev Deploys {SablierV2ProxyTargetApprove} from a optimized source compiled with `--via-ir`.
+    function deployOptimizedProxyTargetApprove() internal returns (SablierV2ProxyTargetApprove) {
         return SablierV2ProxyTargetApprove(
             deployCode("out-optimized/SablierV2ProxyTargetApprove.sol/SablierV2ProxyTargetApprove.json")
         );
     }
 
-    /// @dev Deploys {SablierV2ProxyTargetPermit2} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyTargetPermit2(IAllowanceTransfer permit2_)
+    /// @dev Deploys {SablierV2ProxyTargetPermit2} from a optimized source compiled with `--via-ir`.
+    function deployOptimizedProxyTargetPermit2(IAllowanceTransfer permit2_)
         internal
         returns (SablierV2ProxyTargetPermit2)
     {
@@ -58,14 +58,14 @@ abstract contract DeployOptimized is StdCheats {
         );
     }
 
-    /// @dev Deploys {deployPrecompiledProxyTargetPush} from a source precompiled with `--via-ir`.
-    function deployPrecompiledProxyTargetPush() internal returns (SablierV2ProxyTargetPush) {
+    /// @dev Deploys {SablierV2ProxyTargetPush} from a optimized source compiled with `--via-ir`.
+    function deployOptimizedProxyTargetPush() internal returns (SablierV2ProxyTargetPush) {
         return SablierV2ProxyTargetPush(
             deployCode("out-optimized/SablierV2ProxyTargetPush.sol/SablierV2ProxyTargetPush.json")
         );
     }
 
-    /// @notice Deploys all V2 Periphery contracts from a source precompiled with `--via-ir` in the following order:
+    /// @notice Deploys all V2 Periphery contracts from a optimized source in the following order:
     ///
     /// 1. {SablierV2Archive}
     /// 2. {SablierV2Batch}
@@ -74,8 +74,8 @@ abstract contract DeployOptimized is StdCheats {
     /// 5. {SablierV2ProxyTargetApprove}
     /// 6. {SablierV2ProxyTargetPermit2}
     /// 7. {SablierV2ProxyTargetPush}
-    function deployPrecompiledPeriphery(
-        address initialAdmin_,
+    function deployOptimizedPeriphery(
+        address initialAdmin,
         IAllowanceTransfer permit2_
     )
         internal
@@ -89,15 +89,15 @@ abstract contract DeployOptimized is StdCheats {
             SablierV2ProxyTargetPush
         )
     {
-        ISablierV2Archive archive_ = deployPrecompiledArchive(initialAdmin_);
+        ISablierV2Archive archive_ = deployOptimizedArchive(initialAdmin);
         return (
             archive_,
-            deployPrecompiledBatch(),
-            deployPrecompiledMerkleStreamerFactory(),
-            deployPrecompiledProxyPlugin(archive_),
-            deployPrecompiledProxyTargetApprove(),
-            deployPrecompiledProxyTargetPermit2(permit2_),
-            deployPrecompiledProxyTargetPush()
+            deployOptimizedBatch(),
+            deployOptimizedMerkleStreamerFactory(),
+            deployOptimizedProxyPlugin(archive_),
+            deployOptimizedProxyTargetApprove(),
+            deployOptimizedProxyTargetPermit2(permit2_),
+            deployOptimizedProxyTargetPush()
         );
     }
 }

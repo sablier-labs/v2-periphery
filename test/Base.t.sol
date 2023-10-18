@@ -126,7 +126,7 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
             targetPush = new SablierV2ProxyTargetPush();
         } else {
             (archive, batch, merkleStreamerFactory, plugin, targetApprove, targetPermit2, targetPush) =
-                deployPrecompiledPeriphery(users.admin.addr, permit2);
+                deployOptimizedPeriphery(users.admin.addr, permit2);
         }
         // The default target.
         target = targetApprove;
