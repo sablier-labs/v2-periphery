@@ -11,26 +11,26 @@ import { SablierV2ProxyTargetPermit2 } from "../../src/SablierV2ProxyTargetPermi
 import { SablierV2ProxyTargetPush } from "../../src/SablierV2ProxyTargetPush.sol";
 
 abstract contract DeployOptimized is StdCheats {
-    /// @dev Deploys {SablierV2Batch} from a optimized source compiled with `--via-ir`.
+    /// @dev Deploys {SablierV2Batch} from an optimized source compiled with `--via-ir`.
     function deployOptimizedBatch() internal returns (ISablierV2Batch) {
         return ISablierV2Batch(deployCode("out-optimized/SablierV2Batch.sol/SablierV2Batch.json"));
     }
 
-    /// @dev Deploys {SablierV2MerkleStreamerFactory} from a optimized source compiled with `--via-ir`.
+    /// @dev Deploys {SablierV2MerkleStreamerFactory} from an optimized source compiled with `--via-ir`.
     function deployOptimizedMerkleStreamerFactory() internal returns (ISablierV2MerkleStreamerFactory) {
         return ISablierV2MerkleStreamerFactory(
             deployCode("out-optimized/SablierV2MerkleStreamerFactory.sol/SablierV2MerkleStreamerFactory.json")
         );
     }
 
-    /// @dev Deploys {SablierV2ProxyTargetApprove} from a optimized source compiled with `--via-ir`.
+    /// @dev Deploys {SablierV2ProxyTargetApprove} from an optimized source compiled with `--via-ir`.
     function deployOptimizedProxyTargetApprove() internal returns (SablierV2ProxyTargetApprove) {
         return SablierV2ProxyTargetApprove(
             deployCode("out-optimized/SablierV2ProxyTargetApprove.sol/SablierV2ProxyTargetApprove.json")
         );
     }
 
-    /// @dev Deploys {SablierV2ProxyTargetPermit2} from a optimized source compiled with `--via-ir`.
+    /// @dev Deploys {SablierV2ProxyTargetPermit2} from an optimized source compiled with `--via-ir`.
     function deployOptimizedProxyTargetPermit2(IAllowanceTransfer permit2_)
         internal
         returns (SablierV2ProxyTargetPermit2)
@@ -42,7 +42,7 @@ abstract contract DeployOptimized is StdCheats {
         );
     }
 
-    /// @dev Deploys {SablierV2ProxyTargetPush} from a optimized source compiled with `--via-ir`.
+    /// @dev Deploys {SablierV2ProxyTargetPush} from an optimized source compiled with `--via-ir`.
     function deployOptimizedProxyTargetPush() internal returns (SablierV2ProxyTargetPush) {
         return SablierV2ProxyTargetPush(
             deployCode("out-optimized/SablierV2ProxyTargetPush.sol/SablierV2ProxyTargetPush.json")

@@ -108,7 +108,7 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         deal({ token: address(asset), to: user.addr, give: 1_000_000e18 });
     }
 
-    /// @dev Conditionally deploy V2 Periphery normally or from a optimized source compiled with `--via-ir`.
+    /// @dev Conditionally deploy V2 Periphery normally or from an optimized source compiled with `--via-ir`.
     function deployPeripheryConditionally() internal {
         if (!isTestOptimizedProfile()) {
             batch = new SablierV2Batch();
