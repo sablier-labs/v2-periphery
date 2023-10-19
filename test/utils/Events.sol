@@ -25,6 +25,4 @@ abstract contract Events {
         uint256 aggregateAmount,
         uint256 recipientsCount
     );
-    event List(address indexed admin, address indexed addr);
-    event Unlist(address indexed admin, address indexed addr);
 }

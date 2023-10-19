@@ -34,6 +34,8 @@ The format is based on [Common Changelog](https://common-changelog.org).
 
 ### Removed
 
+- **Breaking**: Remove `ProxyPlugin` and `Archive` contracts
+  ([#213](https://github.com/sablier-labs/v2-periphery/pull/213))
 - Remove `@openzeppelin/contracts` from Node.js peer dependencies
   ([#194](https://github.com/sablier-labs/v2-periphery/pull/194))
 

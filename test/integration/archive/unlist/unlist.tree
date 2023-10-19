@@ -1,9 +1,0 @@
-unlist.t.sol
-├── when the caller is not the admin
-│  └── it should revert
-└── when the caller is the admin
-   ├── given the address is not listed
-   │  └── it should do nothing
-   └── given the address is listed
-      ├── it should unlist the address
-      └── it should emit an {Unlist} event

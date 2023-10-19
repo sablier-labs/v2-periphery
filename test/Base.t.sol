@@ -15,18 +15,14 @@ import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransf
 
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
 
-import { ISablierV2Archive } from "src/interfaces/ISablierV2Archive.sol";
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2MerkleStreamerFactory } from "src/interfaces/ISablierV2MerkleStreamerFactory.sol";
 import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
-import { ISablierV2ProxyPlugin } from "src/interfaces/ISablierV2ProxyPlugin.sol";
 import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
 import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
-import { SablierV2Archive } from "src/SablierV2Archive.sol";
 import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2MerkleStreamerFactory } from "src/SablierV2MerkleStreamerFactory.sol";
 import { SablierV2MerkleStreamerLL } from "src/SablierV2MerkleStreamerLL.sol";
-import { SablierV2ProxyPlugin } from "src/SablierV2ProxyPlugin.sol";
 import { SablierV2ProxyTargetApprove } from "src/SablierV2ProxyTargetApprove.sol";
 import { SablierV2ProxyTargetPermit2 } from "src/SablierV2ProxyTargetPermit2.sol";
 import { SablierV2ProxyTargetPush } from "src/SablierV2ProxyTargetPush.sol";
@@ -51,7 +47,6 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    ISablierV2Archive internal archive;
     IPRBProxy internal aliceProxy;
     IERC20 internal asset;
     ISablierV2Batch internal batch;
@@ -61,7 +56,6 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
     ISablierV2MerkleStreamerFactory internal merkleStreamerFactory;
     ISablierV2MerkleStreamerLL internal merkleStreamerLL;
     IAllowanceTransfer internal permit2;
-    ISablierV2ProxyPlugin internal plugin;
     IPRBProxyRegistry internal proxyRegistry;
     ISablierV2ProxyTarget internal target;
     SablierV2ProxyTargetApprove internal targetApprove;
@@ -114,19 +108,16 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         deal({ token: address(asset), to: user.addr, give: 1_000_000e18 });
     }
 
-    /// @dev Conditionally deploy V2 Periphery normally or from a source precompiled with `--via-ir`.
+    /// @dev Conditionally deploy V2 Periphery normally or from an optimized source compiled with `--via-ir`.
     function deployPeripheryConditionally() internal {
         if (!isTestOptimizedProfile()) {
-            archive = new SablierV2Archive(users.admin.addr);
             batch = new SablierV2Batch();
             merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
-            plugin = new SablierV2ProxyPlugin(archive);
             targetApprove = new SablierV2ProxyTargetApprove();
             targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
             targetPush = new SablierV2ProxyTargetPush();
         } else {
-            (archive, batch, merkleStreamerFactory, plugin, targetApprove, targetPermit2, targetPush) =
-                deployOptimizedPeriphery(users.admin.addr, permit2);
+            (batch, merkleStreamerFactory, targetApprove, targetPermit2, targetPush) = deployOptimizedPeriphery(permit2);
         }
         // The default target.
         target = targetApprove;
@@ -135,7 +126,6 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
     /// @dev Labels the most relevant contracts.
     function labelContracts() internal {
         vm.label({ account: address(aliceProxy), newLabel: "Alice's Proxy" });
-        vm.label({ account: address(archive), newLabel: "Archive" });
         vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
         vm.label({ account: address(merkleStreamerFactory), newLabel: "MerkleStreamerFactory" });
         vm.label({ account: address(merkleStreamerLL), newLabel: "MerkleStreamerLL" });
@@ -143,7 +133,6 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
         vm.label({ account: address(permit2), newLabel: "Permit2" });
-        vm.label({ account: address(plugin), newLabel: "ProxyPlugin" });
         vm.label({ account: address(targetApprove), newLabel: "ProxyTargetApprove" });
         vm.label({ account: address(targetPermit2), newLabel: "ProxyTargetPermit2" });
         vm.label({ account: address(targetPush), newLabel: "ProxyTargetPush" });
