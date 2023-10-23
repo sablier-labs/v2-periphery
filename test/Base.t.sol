@@ -13,6 +13,7 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
+import { Assertions as V2CoreAssertions } from "@sablier/v2-core-test/utils/Assertions.sol";
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
 
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
@@ -28,7 +29,6 @@ import { SablierV2ProxyTargetPermit2 } from "src/SablierV2ProxyTargetPermit2.sol
 import { SablierV2ProxyTargetPush } from "src/SablierV2ProxyTargetPush.sol";
 
 import { WLC } from "./mocks/WLC.sol";
-import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
 import { Events } from "./utils/Events.sol";
@@ -36,7 +36,7 @@ import { Merkle } from "./utils/Murky.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
-abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2CoreUtils {
+abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions, V2CoreUtils {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
