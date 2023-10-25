@@ -177,7 +177,6 @@ contract WithdrawMultipleToRecipient_TargetApprove_Integration_Test is
     }
 }
 
-
 contract WrapAndCreate_TargetApprove_Integration_Test is
     TargetApprove_Integration_Test,
     WrapAndCreate_Integration_Test
