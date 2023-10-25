@@ -87,6 +87,21 @@ interface ISablierV2ProxyTarget {
     )
         external;
 
+    /// @notice Withdraws assets from streams to the recipient.
+    ///
+    /// @dev Notes:
+    /// - Retrieves the recipient of each stream from {ISablierV2Lockup.getRecipient}.
+    ///
+    /// Requirements:
+    /// - Must be delegate called.
+    ///
+    function withdrawMultipleToRecipient(
+        ISablierV2Lockup lockup,
+        uint256[] calldata streamIds,
+        uint128[] calldata amounts
+    )
+        external;
+
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/

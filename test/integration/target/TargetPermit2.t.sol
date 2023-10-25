@@ -19,6 +19,8 @@ import { Withdraw_Integration_Test } from "./withdraw/withdraw.t.sol";
 import { WithdrawMax_Integration_Test } from "./withdraw-max/withdrawMax.t.sol";
 import { WithdrawMaxAndTransfer_Integration_Test } from "./withdraw-max-and-transfer/withdrawMaxAndTransfer.t.sol";
 import { WithdrawMultiple_Integration_Test } from "./withdraw-multiple/withdrawMultiple.t.sol";
+import { WithdrawMultipleToRecipient_Integration_Test } from
+    "./withdraw-multiple-to-recipient/withdrawMultipleToRecipient.t.sol";
 import { WrapAndCreate_Integration_Test } from "./wrap-and-create/wrapAndCreate.t.sol";
 
 abstract contract TargetPermit2_Integration_Test is Integration_Test {
@@ -158,6 +160,20 @@ contract WithdrawMultiple_TargetPermit2_Integration_Test is
     function setUp() public virtual override(TargetPermit2_Integration_Test, WithdrawMultiple_Integration_Test) {
         TargetPermit2_Integration_Test.setUp();
         WithdrawMultiple_Integration_Test.setUp();
+    }
+}
+
+contract WithdrawMultipleToRecipient_TargetPermit2_Integration_Test is
+    TargetPermit2_Integration_Test,
+    WithdrawMultipleToRecipient_Integration_Test
+{
+    function setUp()
+        public
+        virtual
+        override(TargetPermit2_Integration_Test, WithdrawMultipleToRecipient_Integration_Test)
+    {
+        TargetPermit2_Integration_Test.setUp();
+        WithdrawMultipleToRecipient_Integration_Test.setUp();
     }
 }
 

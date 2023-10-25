@@ -167,6 +167,39 @@ abstract contract SablierV2ProxyTarget is
         lockup.withdrawMultiple(streamIds, to, amounts);
     }
 
+    /// @inheritdoc ISablierV2ProxyTarget
+    function withdrawMultipleToRecipient(
+        ISablierV2Lockup lockup,
+        uint256[] calldata streamIds,
+        uint128[] calldata amounts
+    )
+        external
+        onlyDelegateCall
+    {
+        // Checks: there is an equal number of `streamIds` and `amounts`.
+        uint256 streamIdsCount = streamIds.length;
+        uint256 amountsCount = amounts.length;
+        if (streamIdsCount != amountsCount) {
+            revert Errors.SablierV2ProxyTarget_WithdrawArrayCountsNotEqual(streamIdsCount, amountsCount);
+        }
+
+        address to;
+
+        // Iterate over the provided array of stream ids and withdraw from each stream.
+        for (uint256 i = 0; i < streamIdsCount;) {
+            // Retrieve the recipient of the stream.
+            to = lockup.getRecipient(streamIds[i]);
+
+            // Checks, Effects and Interactions: check the parameters and make the withdrawal.
+            lockup.withdraw(streamIds[i], to, amounts[i]);
+
+            // Increment the loop iterator.
+            unchecked {
+                i += 1;
+            }
+        }
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/

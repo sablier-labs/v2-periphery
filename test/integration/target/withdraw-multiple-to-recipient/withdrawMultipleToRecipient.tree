@@ -1,0 +1,8 @@
+withdrawMultipleToRecipient.t.sol
+├── when not delegate called
+│  └── it should revert
+└── when delegate called
+   ├── when the input array counts are not equal
+   │  └── it should revert
+   └── when the input array counts are equal
+      └── it should withdraw from multiple streams to recipients

@@ -42,4 +42,8 @@ library Errors {
 
     /// @notice Thrown when trying to wrap and create a stream and the credit amount is not equal to `msg.value`.
     error SablierV2ProxyTarget_CreditAmountMismatch(uint256 msgValue, uint256 creditAmount);
+
+    /// @notice Thrown when trying to withdraw from multiple streams and the number of stream ids does
+    /// not match the number of withdraw amounts.
+    error SablierV2ProxyTarget_WithdrawArrayCountsNotEqual(uint256 streamIdsCount, uint256 amountsCount);
 }
