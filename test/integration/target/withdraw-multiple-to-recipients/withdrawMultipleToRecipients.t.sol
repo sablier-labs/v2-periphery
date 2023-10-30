@@ -7,14 +7,14 @@ import { Errors } from "src/libraries/Errors.sol";
 
 import { Target_Integration_Test } from "../Target.t.sol";
 
-abstract contract WithdrawMultipleToRecipient_Integration_Test is Target_Integration_Test {
+abstract contract WithdrawMultipleToRecipients_Integration_Test is Target_Integration_Test {
     function setUp() public virtual override { }
 
     function test_RevertWhen_NotDelegateCalled() external {
         uint256[] memory streamIds;
         uint128[] memory amounts;
         vm.expectRevert(Errors.CallNotDelegateCall.selector);
-        target.withdrawMultipleToRecipient(lockupLinear, streamIds, amounts);
+        target.withdrawMultipleToRecipients(lockupLinear, streamIds, amounts);
     }
 
     modifier whenDelegateCalled() {
@@ -29,7 +29,7 @@ abstract contract WithdrawMultipleToRecipient_Integration_Test is Target_Integra
                 Errors.SablierV2ProxyTarget_WithdrawArrayCountsNotEqual.selector, streamIds.length, amounts.length
             )
         );
-        bytes memory data = abi.encodeCall(target.withdrawMultipleToRecipient, (lockupLinear, streamIds, amounts));
+        bytes memory data = abi.encodeCall(target.withdrawMultipleToRecipients, (lockupLinear, streamIds, amounts));
         aliceProxy.execute(address(target), data);
     }
 
@@ -37,10 +37,10 @@ abstract contract WithdrawMultipleToRecipient_Integration_Test is Target_Integra
         _;
     }
 
-    function test_WithdrawMultipleToRecipient_ArrayCountsZero() external whenDelegateCalled whenArrayCountsAreEqual {
+    function test_WithdrawMultipleToRecipients_ArrayCountsZero() external whenDelegateCalled whenArrayCountsAreEqual {
         uint256[] memory streamIds = new uint256[](0);
         uint128[] memory amounts = new uint128[](0);
-        bytes memory data = abi.encodeCall(target.withdrawMultipleToRecipient, (lockupLinear, streamIds, amounts));
+        bytes memory data = abi.encodeCall(target.withdrawMultipleToRecipients, (lockupLinear, streamIds, amounts));
         aliceProxy.execute(address(target), data);
     }
 
@@ -48,27 +48,27 @@ abstract contract WithdrawMultipleToRecipient_Integration_Test is Target_Integra
         _;
     }
 
-    function test_WithdrawMultipleToRecipient_LockupDynamic()
+    function test_WithdrawMultipleToRecipients_LockupDynamic()
         external
         whenDelegateCalled
         whenArrayCountsAreEqual
         whenArrayCountsNotZero
     {
         uint256[] memory streamIds = batchCreateWithMilestones();
-        test_WithdrawMultipleToRecipient(lockupDynamic, streamIds);
+        test_WithdrawMultipleToRecipients(lockupDynamic, streamIds);
     }
 
-    function test_WithdrawMultipleToRecipient_LockupLinear()
+    function test_WithdrawMultipleToRecipients_LockupLinear()
         external
         whenDelegateCalled
         whenArrayCountsAreEqual
         whenArrayCountsNotZero
     {
         uint256[] memory streamIds = batchCreateWithRange();
-        test_WithdrawMultipleToRecipient(lockupLinear, streamIds);
+        test_WithdrawMultipleToRecipients(lockupLinear, streamIds);
     }
 
-    function test_WithdrawMultipleToRecipient(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {
+    function test_WithdrawMultipleToRecipients(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {
         // Simulate the passage of time.
         vm.warp(defaults.CLIFF_TIME());
 
@@ -83,7 +83,7 @@ abstract contract WithdrawMultipleToRecipient_Integration_Test is Target_Integra
             amounts[i] = withdrawAmount;
         }
 
-        bytes memory data = abi.encodeCall(target.withdrawMultipleToRecipient, (lockup, streamIds, amounts));
+        bytes memory data = abi.encodeCall(target.withdrawMultipleToRecipients, (lockup, streamIds, amounts));
         aliceProxy.execute(address(target), data);
 
         // Assert that the withdrawn amount has been updated for all streams.

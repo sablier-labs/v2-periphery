@@ -94,7 +94,7 @@ interface ISablierV2ProxyTarget {
     ///
     /// Requirements:
     /// - Must be delegate called.
-    function withdrawMultipleToRecipient(
+    function withdrawMultipleToRecipients(
         ISablierV2Lockup lockup,
         uint256[] calldata streamIds,
         uint128[] calldata amounts

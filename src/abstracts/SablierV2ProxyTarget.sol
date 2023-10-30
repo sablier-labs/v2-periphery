@@ -168,7 +168,7 @@ abstract contract SablierV2ProxyTarget is
     }
 
     /// @inheritdoc ISablierV2ProxyTarget
-    function withdrawMultipleToRecipient(
+    function withdrawMultipleToRecipients(
         ISablierV2Lockup lockup,
         uint256[] calldata streamIds,
         uint128[] calldata amounts

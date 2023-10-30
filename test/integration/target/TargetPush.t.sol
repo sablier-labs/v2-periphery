@@ -19,8 +19,8 @@ import { Withdraw_Integration_Test } from "./withdraw/withdraw.t.sol";
 import { WithdrawMax_Integration_Test } from "./withdraw-max/withdrawMax.t.sol";
 import { WithdrawMaxAndTransfer_Integration_Test } from "./withdraw-max-and-transfer/withdrawMaxAndTransfer.t.sol";
 import { WithdrawMultiple_Integration_Test } from "./withdraw-multiple/withdrawMultiple.t.sol";
-import { WithdrawMultipleToRecipient_Integration_Test } from
-    "./withdraw-multiple-to-recipient/withdrawMultipleToRecipient.t.sol";
+import { WithdrawMultipleToRecipients_Integration_Test } from
+    "./withdraw-multiple-to-recipients/withdrawMultipleToRecipients.t.sol";
 import { WrapAndCreate_Integration_Test } from "./wrap-and-create/wrapAndCreate.t.sol";
 
 abstract contract TargetPush_Integration_Test is Integration_Test {
@@ -153,17 +153,17 @@ contract WithdrawMultiple_TargetPush_Integration_Test is
     }
 }
 
-contract WithdrawMultipleToRecipient_TargetPush_Integration_Test is
+contract WithdrawMultipleToRecipients_TargetPush_Integration_Test is
     TargetPush_Integration_Test,
-    WithdrawMultipleToRecipient_Integration_Test
+    WithdrawMultipleToRecipients_Integration_Test
 {
     function setUp()
         public
         virtual
-        override(TargetPush_Integration_Test, WithdrawMultipleToRecipient_Integration_Test)
+        override(TargetPush_Integration_Test, WithdrawMultipleToRecipients_Integration_Test)
     {
         TargetPush_Integration_Test.setUp();
-        WithdrawMultipleToRecipient_Integration_Test.setUp();
+        WithdrawMultipleToRecipients_Integration_Test.setUp();
     }
 }
 
