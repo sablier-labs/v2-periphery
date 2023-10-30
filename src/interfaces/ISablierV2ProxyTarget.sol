@@ -87,7 +87,7 @@ interface ISablierV2ProxyTarget {
     )
         external;
 
-    /// @notice Withdraws assets from streams to the recipient.
+    /// @notice Withdraws assets to the recipient of each stream.
     ///
     /// @dev Notes:
     /// - Retrieves the recipient of each stream using {ISablierV2Lockup.getRecipient}.
