@@ -3,7 +3,6 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { ISablierV2MerkleStreamer } from "src/interfaces/ISablierV2MerkleStreamer.sol";
 import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
 
 import { MerkleStreamer_Integration_Test } from "../../MerkleStreamer.t.sol";
@@ -65,11 +64,8 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
         });
 
         address actualStreamerLL = address(createMerkleStreamerLL(admin, expiration));
-        ISablierV2MerkleStreamer[] memory expectedMerkleStreamers = merkleStreamerFactory.getMerkleStreamers(admin);
+
         assertGt(actualStreamerLL.code.length, 0, "MerkleStreamerLL contract not created");
         assertEq(actualStreamerLL, expectedStreamerLL, "MerkleStreamerLL contract does not match computed address");
-        assertEq(
-            actualStreamerLL, address(expectedMerkleStreamers[0]), "MerkleStreamerLL contract not stored in the mapping"
-        );
     }
 }
