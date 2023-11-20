@@ -3,6 +3,7 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IAdminable } from "@sablier/v2-core/src/interfaces/IAdminable.sol";
+import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 
 /// @title ISablierV2MerkleStreamer
 /// @notice A contract that lets user claim Sablier streams using Merkle proofs. An interesting use case for
@@ -46,6 +47,9 @@ interface ISablierV2MerkleStreamer is IAdminable {
 
     /// @notice Returns a flag indicating whether the Merkle streamer has expired.
     function hasExpired() external view returns (bool);
+
+    /// @notice The address of the {SablierV2Lockup} contract.
+    function LOCKUP() external returns (ISablierV2Lockup);
 
     /// @notice The root of the Merkle tree used to validate the claims.
     /// @dev This is an immutable state variable.
