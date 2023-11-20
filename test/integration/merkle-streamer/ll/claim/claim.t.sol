@@ -2,6 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { ud } from "@sablier/v2-core/src/types/Math.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 
@@ -12,7 +13,19 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         MerkleStreamer_Integration_Test.setUp();
     }
 
-    function test_RevertWhen_CampaignExpired() external {
+    function test_RevertGiven_ProtocolFeeNotZero() external {
+        bytes32[] memory merkleProof;
+        changePrank({ msgSender: users.admin.addr });
+        comptroller.setProtocolFee({ asset: asset, newProtocolFee: ud(0.03e18) });
+        vm.expectRevert(Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero.selector);
+        merkleStreamerLL.claim({ index: 1, recipient: users.recipient1.addr, amount: 1, merkleProof: merkleProof });
+    }
+
+    modifier givenProtocolFeeZero() {
+        _;
+    }
+
+    function test_RevertGiven_CampaignExpired() external givenProtocolFeeZero {
         uint40 expiration = defaults.EXPIRATION();
         uint256 warpTime = expiration + 1 seconds;
         bytes32[] memory merkleProof;
@@ -27,7 +40,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         _;
     }
 
-    function test_RevertGiven_AlreadyClaimed() external givenCampaignNotExpired {
+    function test_RevertGiven_AlreadyClaimed() external givenCampaignNotExpired givenProtocolFeeZero {
         claimLL();
         uint256 index1 = defaults.INDEX1();
         uint128 amount = defaults.CLAIM_AMOUNT();
@@ -47,6 +60,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
     function test_RevertWhen_InvalidIndex()
         external
         givenCampaignNotExpired
+        givenProtocolFeeZero
         givenNotClaimed
         givenNotIncludedInMerkleTree
     {
@@ -60,6 +74,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
     function test_RevertWhen_InvalidRecipient()
         external
         givenCampaignNotExpired
+        givenProtocolFeeZero
         givenNotClaimed
         givenNotIncludedInMerkleTree
     {
@@ -74,6 +89,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
     function test_RevertWhen_InvalidAmount()
         external
         givenCampaignNotExpired
+        givenProtocolFeeZero
         givenNotClaimed
         givenNotIncludedInMerkleTree
     {
@@ -87,6 +103,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
     function test_RevertWhen_InvalidMerkleProof()
         external
         givenCampaignNotExpired
+        givenProtocolFeeZero
         givenNotClaimed
         givenNotIncludedInMerkleTree
     {
@@ -101,7 +118,13 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         _;
     }
 
-    function test_Claim() external givenCampaignNotExpired givenNotClaimed givenIncludedInMerkleTree {
+    function test_Claim()
+        external
+        givenCampaignNotExpired
+        givenProtocolFeeZero
+        givenNotClaimed
+        givenIncludedInMerkleTree
+    {
         uint256 expectedStreamId = lockupLinear.nextStreamId();
 
         vm.expectEmit({ emitter: address(merkleStreamerLL) });

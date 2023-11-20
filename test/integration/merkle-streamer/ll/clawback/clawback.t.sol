@@ -2,6 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { Errors as V2CoreErrors } from "@sablier/v2-core/src/libraries/Errors.sol";
+import { ud } from "@sablier/v2-core/src/types/Math.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 
@@ -23,7 +24,11 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
         _;
     }
 
-    function test_RevertWhen_CampaignNotExpired() external whenCallerAdmin {
+    modifier givenProtocolFeeZero() {
+        _;
+    }
+
+    function test_RevertGiven_CampaignNotExpired() external whenCallerAdmin givenProtocolFeeZero {
         vm.expectRevert(
             abi.encodeWithSelector(
                 Errors.SablierV2MerkleStreamer_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
@@ -33,15 +38,34 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
     }
 
     modifier givenCampaignExpired() {
+        // Make a claim to have a different contract balance.
+        claimLL();
+        vm.warp({ timestamp: defaults.EXPIRATION() + 1 seconds });
         _;
     }
 
-    function testFuzz_Clawback(address to) external whenCallerAdmin givenCampaignExpired {
+    function test_Clawback() external whenCallerAdmin givenProtocolFeeZero givenCampaignExpired {
+        test_Clawback(users.admin.addr);
+    }
+
+    modifier givenProtocolFeeNotZero() {
+        comptroller.setProtocolFee({ asset: asset, newProtocolFee: ud(0.03e18) });
+        _;
+    }
+
+    function testFuzz_Clawback_CampaignNotExpired(address to) external whenCallerAdmin givenProtocolFeeNotZero {
         vm.assume(to != address(0));
-        claimLL();
+        test_Clawback(to);
+    }
+
+    function testFuzz_Clawback(address to) external whenCallerAdmin givenCampaignExpired givenProtocolFeeNotZero {
+        vm.assume(to != address(0));
+        test_Clawback(to);
+    }
+
+    function test_Clawback(address to) internal {
         uint128 clawbackAmount = uint128(asset.balanceOf(address(merkleStreamerLL)));
         expectCallToTransfer({ to: to, amount: clawbackAmount });
-        vm.warp({ timestamp: defaults.EXPIRATION() + 1 seconds });
         vm.expectEmit({ emitter: address(merkleStreamerLL) });
         emit Clawback({ admin: users.admin.addr, to: to, amount: clawbackAmount });
         merkleStreamerLL.clawback({ to: to, amount: clawbackAmount });

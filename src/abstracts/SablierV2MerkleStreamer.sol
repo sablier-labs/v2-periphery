@@ -6,6 +6,8 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import { Adminable } from "@sablier/v2-core/src/abstracts/Adminable.sol";
+import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
+import { UD60x18, ud } from "@sablier/v2-core/src/types/Math.sol";
 
 import { ISablierV2MerkleStreamer } from "../interfaces/ISablierV2MerkleStreamer.sol";
 import { Errors } from "../libraries/Errors.sol";
@@ -33,6 +35,9 @@ abstract contract SablierV2MerkleStreamer is
     uint40 public immutable override EXPIRATION;
 
     /// @inheritdoc ISablierV2MerkleStreamer
+    ISablierV2Lockup public immutable override LOCKUP;
+
+    /// @inheritdoc ISablierV2MerkleStreamer
     bytes32 public immutable override MERKLE_ROOT;
 
     /// @inheritdoc ISablierV2MerkleStreamer
@@ -53,6 +58,7 @@ abstract contract SablierV2MerkleStreamer is
     constructor(
         address initialAdmin,
         IERC20 asset,
+        ISablierV2Lockup lockup,
         bytes32 merkleRoot,
         uint40 expiration,
         bool cancelable,
@@ -60,6 +66,7 @@ abstract contract SablierV2MerkleStreamer is
     ) {
         admin = initialAdmin;
         ASSET = asset;
+        LOCKUP = lockup;
         MERKLE_ROOT = merkleRoot;
         EXPIRATION = expiration;
         CANCELABLE = cancelable;
@@ -86,8 +93,12 @@ abstract contract SablierV2MerkleStreamer is
 
     /// @inheritdoc ISablierV2MerkleStreamer
     function clawback(address to, uint128 amount) external override onlyAdmin {
-        // Checks: the campaign has expired.
-        if (!hasExpired()) {
+        // Safe Interactions: query the protocol fee. This is safe because it's a known Sablier contract that does
+        // not call other unknown contracts.
+        UD60x18 expectedFee = LOCKUP.comptroller().protocolFees(ASSET);
+
+        // Checks: if the protocol fee is not greater than zero, the campaign must be expired.
+        if (!expectedFee.gt(ud(0)) && !hasExpired()) {
             revert Errors.SablierV2MerkleStreamer_CampaignNotExpired({
                 currentTime: block.timestamp,
                 expiration: EXPIRATION
@@ -107,6 +118,15 @@ abstract contract SablierV2MerkleStreamer is
 
     /// @dev Validates the parameters of the `claim` function, which is implemented by child contracts.
     function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal view {
+        // Safe Interactions: query the protocol fee. This is safe because it's a known Sablier contract that does
+        // not call other unknown contracts.
+        UD60x18 expectedFee = LOCKUP.comptroller().protocolFees(ASSET);
+
+        // Checks: the protocol fee is zero.
+        if (expectedFee.gt(ud(0))) {
+            revert Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero();
+        }
+
         // Checks: the campaign has not expired.
         if (hasExpired()) {
             revert Errors.SablierV2MerkleStreamer_CampaignExpired({

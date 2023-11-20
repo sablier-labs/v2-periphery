@@ -7,6 +7,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
 import { IPRBProxyRegistry } from "@prb/proxy/src/interfaces/IPRBProxyRegistry.sol";
+import { ISablierV2Comptroller } from "@sablier/v2-core/src/interfaces/ISablierV2Comptroller.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
@@ -50,6 +51,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     IPRBProxy internal aliceProxy;
     IERC20 internal asset;
     ISablierV2Batch internal batch;
+    ISablierV2Comptroller internal comptroller;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
@@ -130,6 +132,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         vm.label({ account: address(merkleStreamerFactory), newLabel: "MerkleStreamerFactory" });
         vm.label({ account: address(merkleStreamerLL), newLabel: "MerkleStreamerLL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
+        vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
         vm.label({ account: address(permit2), newLabel: "Permit2" });

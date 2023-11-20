@@ -48,6 +48,6 @@ abstract contract Integration_Test is Base_Test {
         proxyRegistry = new PRBProxyPrecompiles().deployRegistry();
         aliceProxy = proxyRegistry.deployFor(users.alice.addr);
         permit2 = IAllowanceTransfer(new DeployPermit2().run());
-        (, lockupDynamic, lockupLinear,) = new V2CorePrecompiles().deployCore(users.admin.addr);
+        (comptroller, lockupDynamic, lockupLinear,) = new V2CorePrecompiles().deployCore(users.admin.addr);
     }
 }
