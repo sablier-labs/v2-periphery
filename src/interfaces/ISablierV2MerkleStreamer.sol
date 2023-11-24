@@ -10,8 +10,7 @@ import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lock
 /// MerkleStream is airstreams, which is a portmanteau of "airdrop" and "stream". This is an airdrop model where the
 /// tokens are distributed over time, as opposed to all at once.
 /// @dev This is the base interface for MerkleStreamer contracts. See the Sablier docs for more guidance on how
-/// streaming
-/// works: https://docs.sablier.com/
+/// streaming works: https://docs.sablier.com/.
 interface ISablierV2MerkleStreamer is IAdminable {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
