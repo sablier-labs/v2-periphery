@@ -335,7 +335,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                 asset,
                 merkleRoot,
                 expiration,
-                keccak256(abi.encode(defaults.durations())),
+                abi.encode(defaults.durations()),
                 defaults.CANCELABLE(),
                 defaults.TRANSFERABLE()
             )
