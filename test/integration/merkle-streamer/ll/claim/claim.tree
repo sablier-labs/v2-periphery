@@ -1,13 +1,13 @@
 claim.t.sol
-├── given the protocol fee is greater than zero
+├── given the campaign has expired
 │  └── it should revert
-└── given the protocol fee is not greater than zero
-   ├── given the campaign has expired
+└── given the campaign has not expired
+   ├── given the recipient has claimed
    │  └── it should revert
-   └── given the campaign has not expired
-      ├── given the recipient has claimed
+   └── given the recipient has not claimed
+      ├── given the protocol fee is greater than zero
       │  └── it should revert
-      └── given the recipient has not claimed
+      └── given the protocol fee is not greater than zero
          ├── given the claim is not included in the Merkle tree
          │  ├── when the index is not valid
          │  │  └── it should revert

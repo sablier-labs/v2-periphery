@@ -97,8 +97,8 @@ abstract contract SablierV2MerkleStreamer is
         // not call other unknown contracts.
         UD60x18 protocolFee = LOCKUP.comptroller().protocolFees(ASSET);
 
-        // Checks: if the protocol fee is not greater than zero, the campaign must be expired.
-        if (!protocolFee.gt(ud(0)) && !hasExpired()) {
+        // Checks: the campaign is not expired and the protocol fee is zero.
+        if (!hasExpired() && !protocolFee.gt(ud(0))) {
             revert Errors.SablierV2MerkleStreamer_CampaignNotExpired({
                 currentTime: block.timestamp,
                 expiration: EXPIRATION
@@ -118,15 +118,6 @@ abstract contract SablierV2MerkleStreamer is
 
     /// @dev Validates the parameters of the `claim` function, which is implemented by child contracts.
     function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal view {
-        // Safe Interactions: query the protocol fee. This is safe because it's a known Sablier contract that does
-        // not call other unknown contracts.
-        UD60x18 protocolFee = LOCKUP.comptroller().protocolFees(ASSET);
-
-        // Checks: the protocol fee is zero.
-        if (protocolFee.gt(ud(0))) {
-            revert Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero();
-        }
-
         // Checks: the campaign has not expired.
         if (hasExpired()) {
             revert Errors.SablierV2MerkleStreamer_CampaignExpired({
@@ -138,6 +129,15 @@ abstract contract SablierV2MerkleStreamer is
         // Checks: the index has not been claimed.
         if (_claimedBitMap.get(index)) {
             revert Errors.SablierV2MerkleStreamer_StreamClaimed(index);
+        }
+
+        // Safe Interactions: query the protocol fee. This is safe because it's a known Sablier contract that does
+        // not call other unknown contracts.
+        UD60x18 protocolFee = LOCKUP.comptroller().protocolFees(ASSET);
+
+        // Checks: the protocol fee is zero.
+        if (protocolFee.gt(ud(0))) {
+            revert Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero();
         }
 
         // Checks: the input claim is included in the Merkle tree.

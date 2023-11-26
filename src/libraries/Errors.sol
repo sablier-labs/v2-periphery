@@ -30,9 +30,6 @@ library Errors {
     /// @notice Thrown when trying to claim with an invalid Merkle proof.
     error SablierV2MerkleStreamer_InvalidProof();
 
-    /// @notice Thrown when trying to clawback when the protocol fee is zero.
-    error SablierV2MerkleStreamer_ProtocolFeeZero();
-
     /// @notice Thrown when trying to claim when the protocol fee is not zero.
     error SablierV2MerkleStreamer_ProtocolFeeNotZero();
 
