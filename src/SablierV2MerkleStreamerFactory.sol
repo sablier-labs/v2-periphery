@@ -63,22 +63,15 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
                 asset,
                 merkleRoot,
                 expiration,
-                keccak256(abi.encode(streamDurations)),
+                abi.encode(streamDurations),
                 cancelable,
                 transferable
             )
         );
 
         // Deploy the Merkle streamer with CREATE2.
-        merkleStreamerLL = new SablierV2MerkleStreamerLL{salt: salt} (
-            initialAdmin,
-            lockupLinear,
-            asset,
-            merkleRoot,
-            expiration,
-            streamDurations,
-            cancelable,
-            transferable
+        merkleStreamerLL = new SablierV2MerkleStreamerLL{ salt: salt }(
+            initialAdmin, lockupLinear, asset, merkleRoot, expiration, streamDurations, cancelable, transferable
         );
 
         // Effects: append the streamer in the admin's list.
