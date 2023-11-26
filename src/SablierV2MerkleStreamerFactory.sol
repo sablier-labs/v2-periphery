@@ -6,34 +6,12 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2MerkleStreamerFactory } from "./interfaces/ISablierV2MerkleStreamerFactory.sol";
-import { ISablierV2MerkleStreamer } from "./interfaces/ISablierV2MerkleStreamer.sol";
 import { ISablierV2MerkleStreamerLL } from "./interfaces/ISablierV2MerkleStreamerLL.sol";
 import { SablierV2MerkleStreamerLL } from "./SablierV2MerkleStreamerLL.sol";
 
 /// @title SablierV2MerkleStreamerFactory
 /// @notice See the documentation in {ISablierV2MerkleStreamerFactory}.
 contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
-    /*//////////////////////////////////////////////////////////////////////////
-                                  INTERNAL STORAGE
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @notice The list of Merkle streamers created by the admin.
-    mapping(address admin => ISablierV2MerkleStreamer[] contracts) private _merkleStreamers;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                           USER-FACING CONSTANT FUNCTIONS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @notice inheritdoc ISablierV2MerkleStreamerFactory
-    function getMerkleStreamers(address admin)
-        external
-        view
-        override
-        returns (ISablierV2MerkleStreamer[] memory merkleStreamers)
-    {
-        merkleStreamers = _merkleStreamers[admin];
-    }
-
     /*//////////////////////////////////////////////////////////////////////////
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
@@ -69,9 +47,6 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
             cancelable,
             transferable
         );
-
-        // Effects: append the streamer in the admin's list.
-        _merkleStreamers[initialAdmin].push(merkleStreamerLL);
 
         // Log the creation of the Merkle streamer, including some metadata that is not stored on-chain.
         emit CreateMerkleStreamerLL(
