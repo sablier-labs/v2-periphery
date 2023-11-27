@@ -47,7 +47,7 @@ contract SablierV2Batch is ISablierV2Batch {
             }
         }
 
-        // Transfers the assets to the proxy and approves the Sablier contract to spend them.
+        // Transfers the assets to the batch and approves the Sablier contract to spend them.
         _handleTransfer(address(lockupLinear), asset, transferAmount);
 
         // Create a stream for each element in the parameter array.
@@ -101,7 +101,7 @@ contract SablierV2Batch is ISablierV2Batch {
             }
         }
 
-        // Transfers the assets to the proxy and approve the Sablier contract to spend them.
+        // Transfers the assets to the batch and approve the Sablier contract to spend them.
         _handleTransfer(address(lockupLinear), asset, transferAmount);
 
         // Create a stream for each element in the parameter array.
@@ -245,7 +245,7 @@ contract SablierV2Batch is ISablierV2Batch {
                                   HELPER FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function to approve a Sablier contract to spend funds from the proxy. If the current allowance
+    /// @dev Helper function to approve a Sablier contract to spend funds from the batch. If the current allowance
     /// is insufficient, this function approves Sablier to spend the exact `amount`.
     /// The {SafeERC20.forceApprove} function is used to handle special ERC-20 assets (e.g. USDT) that require the
     /// current allowance to be zero before setting it to a non-zero value.
