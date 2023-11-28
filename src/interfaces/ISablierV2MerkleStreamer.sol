@@ -66,9 +66,12 @@ interface ISablierV2MerkleStreamer is IAdminable {
     ///
     /// @dev Emits a {Clawback} event.
     ///
+    /// Notes:
+    /// - If the protocol is not zero, the expiration check is not made.
+    ///
     /// Requirements:
     /// - The caller must be the admin.
-    /// - The Merkle streamer must have expired.
+    /// - The campaign must either be expired or not have an expiration.
     ///
     /// @param to The address to receive the tokens.
     /// @param amount The amount of tokens to claw back.

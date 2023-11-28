@@ -131,6 +131,11 @@ abstract contract SablierV2MerkleStreamer is
             revert Errors.SablierV2MerkleStreamer_StreamClaimed(index);
         }
 
+        // Checks: the input claim is included in the Merkle tree.
+        if (!MerkleProof.verify(merkleProof, MERKLE_ROOT, leaf)) {
+            revert Errors.SablierV2MerkleStreamer_InvalidProof();
+        }
+
         // Safe Interactions: query the protocol fee. This is safe because it's a known Sablier contract that does
         // not call other unknown contracts.
         UD60x18 protocolFee = LOCKUP.comptroller().protocolFees(ASSET);
@@ -138,11 +143,6 @@ abstract contract SablierV2MerkleStreamer is
         // Checks: the protocol fee is zero.
         if (protocolFee.gt(ud(0))) {
             revert Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero();
-        }
-
-        // Checks: the input claim is included in the Merkle tree.
-        if (!MerkleProof.verify(merkleProof, MERKLE_ROOT, leaf)) {
-            revert Errors.SablierV2MerkleStreamer_InvalidProof();
         }
     }
 }

@@ -41,18 +41,6 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         _;
     }
 
-    function test_RevertGiven_ProtocolFeeNotZero() external givenCampaignNotExpired givenNotClaimed {
-        bytes32[] memory merkleProof;
-        changePrank({ msgSender: users.admin.addr });
-        comptroller.setProtocolFee({ asset: asset, newProtocolFee: ud(0.03e18) });
-        vm.expectRevert(Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero.selector);
-        merkleStreamerLL.claim({ index: 1, recipient: users.recipient1.addr, amount: 1, merkleProof: merkleProof });
-    }
-
-    modifier givenProtocolFeeZero() {
-        _;
-    }
-
     modifier givenNotIncludedInMerkleTree() {
         _;
     }
@@ -61,7 +49,6 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         external
         givenCampaignNotExpired
         givenNotClaimed
-        givenProtocolFeeZero
         givenNotIncludedInMerkleTree
     {
         uint256 invalidIndex = 1337;
@@ -75,7 +62,6 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         external
         givenCampaignNotExpired
         givenNotClaimed
-        givenProtocolFeeZero
         givenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
@@ -90,7 +76,6 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         external
         givenCampaignNotExpired
         givenNotClaimed
-        givenProtocolFeeZero
         givenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
@@ -104,7 +89,6 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         external
         givenCampaignNotExpired
         givenNotClaimed
-        givenProtocolFeeZero
         givenNotIncludedInMerkleTree
     {
         uint256 index1 = defaults.INDEX1();
@@ -118,12 +102,35 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         _;
     }
 
+    function test_RevertGiven_ProtocolFeeNotZero()
+        external
+        givenCampaignNotExpired
+        givenNotClaimed
+        givenIncludedInMerkleTree
+    {
+        uint128 claimAmount = defaults.CLAIM_AMOUNT();
+        bytes32[] memory merkleProof = defaults.index1Proof();
+        changePrank({ msgSender: users.admin.addr });
+        comptroller.setProtocolFee({ asset: asset, newProtocolFee: ud(0.1e18) });
+        vm.expectRevert(Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero.selector);
+        merkleStreamerLL.claim({
+            index: 1,
+            recipient: users.recipient1.addr,
+            amount: claimAmount,
+            merkleProof: merkleProof
+        });
+    }
+
+    modifier givenProtocolFeeZero() {
+        _;
+    }
+
     function test_Claim()
         external
         givenCampaignNotExpired
         givenNotClaimed
-        givenProtocolFeeZero
         givenIncludedInMerkleTree
+        givenProtocolFeeZero
     {
         uint256 expectedStreamId = lockupLinear.nextStreamId();
 
