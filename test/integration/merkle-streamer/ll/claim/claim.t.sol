@@ -2,6 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { ud } from "@sablier/v2-core/src/types/Math.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 
@@ -12,7 +13,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         MerkleStreamer_Integration_Test.setUp();
     }
 
-    function test_RevertWhen_CampaignExpired() external {
+    function test_RevertGiven_CampaignExpired() external {
         uint40 expiration = defaults.EXPIRATION();
         uint256 warpTime = expiration + 1 seconds;
         bytes32[] memory merkleProof;
@@ -101,7 +102,36 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         _;
     }
 
-    function test_Claim() external givenCampaignNotExpired givenNotClaimed givenIncludedInMerkleTree {
+    function test_RevertGiven_ProtocolFeeNotZero()
+        external
+        givenCampaignNotExpired
+        givenNotClaimed
+        givenIncludedInMerkleTree
+    {
+        uint128 claimAmount = defaults.CLAIM_AMOUNT();
+        bytes32[] memory merkleProof = defaults.index1Proof();
+        changePrank({ msgSender: users.admin.addr });
+        comptroller.setProtocolFee({ asset: asset, newProtocolFee: ud(0.1e18) });
+        vm.expectRevert(Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero.selector);
+        merkleStreamerLL.claim({
+            index: 1,
+            recipient: users.recipient1.addr,
+            amount: claimAmount,
+            merkleProof: merkleProof
+        });
+    }
+
+    modifier givenProtocolFeeZero() {
+        _;
+    }
+
+    function test_Claim()
+        external
+        givenCampaignNotExpired
+        givenNotClaimed
+        givenIncludedInMerkleTree
+        givenProtocolFeeZero
+    {
         uint256 expectedStreamId = lockupLinear.nextStreamId();
 
         vm.expectEmit({ emitter: address(merkleStreamerLL) });
