@@ -3,14 +3,14 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IAdminable } from "@sablier/v2-core/src/interfaces/IAdminable.sol";
+import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 
 /// @title ISablierV2MerkleStreamer
 /// @notice A contract that lets user claim Sablier streams using Merkle proofs. An interesting use case for
 /// MerkleStream is airstreams, which is a portmanteau of "airdrop" and "stream". This is an airdrop model where the
 /// tokens are distributed over time, as opposed to all at once.
 /// @dev This is the base interface for MerkleStreamer contracts. See the Sablier docs for more guidance on how
-/// streaming
-/// works: https://docs.sablier.com/
+/// streaming works: https://docs.sablier.com/.
 interface ISablierV2MerkleStreamer is IAdminable {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
@@ -47,6 +47,9 @@ interface ISablierV2MerkleStreamer is IAdminable {
     /// @notice Returns a flag indicating whether the Merkle streamer has expired.
     function hasExpired() external view returns (bool);
 
+    /// @notice The address of the {SablierV2Lockup} contract.
+    function LOCKUP() external returns (ISablierV2Lockup);
+
     /// @notice The root of the Merkle tree used to validate the claims.
     /// @dev This is an immutable state variable.
     function MERKLE_ROOT() external returns (bytes32);
@@ -63,9 +66,12 @@ interface ISablierV2MerkleStreamer is IAdminable {
     ///
     /// @dev Emits a {Clawback} event.
     ///
+    /// Notes:
+    /// - If the protocol is not zero, the expiration check is not made.
+    ///
     /// Requirements:
     /// - The caller must be the admin.
-    /// - The Merkle streamer must have expired.
+    /// - The campaign must either be expired or not have an expiration.
     ///
     /// @param to The address to receive the tokens.
     /// @param amount The amount of tokens to claw back.

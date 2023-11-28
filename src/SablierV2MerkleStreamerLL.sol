@@ -6,7 +6,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { Broker, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
-import { ud60x18 } from "@sablier/v2-core/src/types/Math.sol";
+import { ud } from "@sablier/v2-core/src/types/Math.sol";
 
 import { SablierV2MerkleStreamer } from "./abstracts/SablierV2MerkleStreamer.sol";
 import { ISablierV2MerkleStreamerLL } from "./interfaces/ISablierV2MerkleStreamerLL.sol";
@@ -50,7 +50,7 @@ contract SablierV2MerkleStreamerLL is
         bool cancelable,
         bool transferable
     )
-        SablierV2MerkleStreamer(initialAdmin, asset, merkleRoot, expiration, cancelable, transferable)
+        SablierV2MerkleStreamer(initialAdmin, asset, lockupLinear, merkleRoot, expiration, cancelable, transferable)
     {
         LOCKUP_LINEAR = lockupLinear;
         streamDurations = streamDurations_;
@@ -88,7 +88,7 @@ contract SablierV2MerkleStreamerLL is
         streamId = LOCKUP_LINEAR.createWithDurations(
             LockupLinear.CreateWithDurations({
                 asset: ASSET,
-                broker: Broker({ account: address(0), fee: ud60x18(0) }),
+                broker: Broker({ account: address(0), fee: ud(0) }),
                 cancelable: CANCELABLE,
                 durations: streamDurations,
                 recipient: recipient,

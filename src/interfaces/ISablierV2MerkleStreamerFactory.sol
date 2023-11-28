@@ -8,7 +8,7 @@ import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { ISablierV2MerkleStreamerLL } from "./ISablierV2MerkleStreamerLL.sol";
 
 /// @title ISablierV2MerkleStreamerFactory
-/// @notice Deploys new Lockup Linear Merkle streamers via CREATE2 and stores them for future reference.
+/// @notice Deploys new Lockup Linear Merkle streamers via CREATE2.
 interface ISablierV2MerkleStreamerFactory {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
