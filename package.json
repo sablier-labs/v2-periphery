@@ -27,6 +27,7 @@
   ],
   "homepage": "https://github.com/sablier-labs/v2-periphery#readme",
   "keywords": [
+    "asset-distribution",
     "asset-streaming",
     "blockchain",
     "cryptoasset-streaming",
@@ -39,7 +40,11 @@
     "sablier-v2",
     "smart-contracts",
     "solidity",
-    "token-streaming"
+    "token-distribution",
+    "token-streaming",
+    "token-vesting",
+    "vesting",
+    "web3"
   ],
   "peerDependencies": {
     "@prb/proxy": "4.0.1",
