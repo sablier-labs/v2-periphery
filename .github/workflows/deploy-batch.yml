@@ -11,14 +11,14 @@ env:
   API_KEY_SNOWTRACE: ${{ secrets.API_KEY_SNOWTRACE }}
   FOUNDRY_PROFILE: "optimized"
   MNEMONIC: ${{ secrets.MNEMONIC }}
-  RPC_URL_GOERLI: ${{ secrets.RPC_URL_GOERLI }}
   RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
+  RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
 
 on:
   workflow_dispatch:
     inputs:
       chain:
-        default: "goerli"
+        default: "sepolia"
         description: "Chain name as defined in the Foundry config."
         required: false
 

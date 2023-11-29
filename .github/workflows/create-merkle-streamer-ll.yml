@@ -11,7 +11,7 @@ env:
     API_KEY_SNOWTRACE: ${{ secrets.API_KEY_SNOWTRACE }}
     FOUNDRY_PROFILE: "optimized"
     MNEMONIC: ${{ secrets.MNEMONIC }}
-    RPC_URL_GOERLI: ${{ secrets.RPC_URL_GOERLI }}
+    RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
     RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
 
 on:
@@ -21,7 +21,7 @@ on:
         description: "Parameters needed for the script, as comma-separated tupples."
         required: true
       chain:
-        default: "goerli"
+        default: "sepolia"
         description: "Chain name as defined in the Foundry config."
         required: false
 

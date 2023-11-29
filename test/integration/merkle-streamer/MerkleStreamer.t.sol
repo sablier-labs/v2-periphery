@@ -19,14 +19,14 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
     function claimLL() internal returns (uint256) {
         return merkleStreamerLL.claim({
             index: defaults.INDEX1(),
-            recipient: users.recipient1.addr,
+            recipient: users.recipient1,
             amount: defaults.CLAIM_AMOUNT(),
             merkleProof: defaults.index1Proof()
         });
     }
 
     function computeMerkleStreamerLLAddress() internal returns (address) {
-        return computeMerkleStreamerLLAddress(users.admin.addr, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+        return computeMerkleStreamerLLAddress(users.admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
     function computeMerkleStreamerLLAddress(address admin) internal returns (address) {
@@ -42,7 +42,7 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
     }
 
     function createMerkleStreamerLL() internal returns (ISablierV2MerkleStreamerLL) {
-        return createMerkleStreamerLL(users.admin.addr, defaults.EXPIRATION());
+        return createMerkleStreamerLL(users.admin, defaults.EXPIRATION());
     }
 
     function createMerkleStreamerLL(address admin) internal returns (ISablierV2MerkleStreamerLL) {
@@ -50,7 +50,7 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
     }
 
     function createMerkleStreamerLL(uint40 expiration) internal returns (ISablierV2MerkleStreamerLL) {
-        return createMerkleStreamerLL(users.admin.addr, expiration);
+        return createMerkleStreamerLL(users.admin, expiration);
     }
 
     function createMerkleStreamerLL(address admin, uint40 expiration) internal returns (ISablierV2MerkleStreamerLL) {

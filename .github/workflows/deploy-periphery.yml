@@ -11,19 +11,15 @@ env:
   API_KEY_SNOWTRACE: ${{ secrets.API_KEY_SNOWTRACE }}
   FOUNDRY_PROFILE: "optimized"
   MNEMONIC: ${{ secrets.MNEMONIC }}
-  RPC_URL_GOERLI: ${{ secrets.RPC_URL_GOERLI }}
   RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
+  RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
 
 on:
   workflow_dispatch:
     inputs:
       chain:
-        default: "goerli"
+        default: "sepolia"
         description: "Chain name as defined in the Foundry config."
-        required: false
-      permit2:
-        default: "0x000000000022D473030F116dDEE9F6B43aC78BA3"
-        description: "The address of the Permit2 contract."
         required: false
 
 
@@ -44,10 +40,9 @@ jobs:
           forge script script/DeployPeriphery.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
-          --sig "run(address)"
+          --sig "run()"
           --verify
           -vvvv
-          "${{ inputs.permit2 }}"
 
       - name: "Add workflow summary"
         run: |
