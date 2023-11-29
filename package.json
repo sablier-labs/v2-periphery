@@ -13,12 +13,11 @@
     "@openzeppelin/contracts": "4.9.2",
     "@prb/proxy": "4.0.1",
     "@sablier/v2-core": "1.0.2",
-    "@uniswap/permit2": "github:Uniswap/permit2#cc56ad0f3439c502c246fc5cfcc3db92bb8b7219",
-    "solhint": "^3.6.2"
+    "@uniswap/permit2": "github:Uniswap/permit2#cc56ad0f3439c502c246fc5cfcc3db92bb8b7219"
   },
   "devDependencies": {
     "prettier": "^2.8.8",
-    "solhint-community": "3.7.0-rc00"
+    "solhint": "^3.6.2"
   },
   "files": [
     "artifacts",
