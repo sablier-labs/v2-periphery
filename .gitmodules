@@ -6,14 +6,6 @@
   branch = "release-v4.9"
   path = "lib/openzeppelin-contracts"
   url = "https://github.com/OpenZeppelin/openzeppelin-contracts"
-[submodule "lib/permit2"]
-  branch = "main"
-  path = "lib/permit2"
-  url = "https://github.com/uniswap/permit2"
-[submodule "lib/prb-proxy"]
-  branch = "release-v4"
-  path = "lib/prb-proxy"
-  url = "https://github.com/PaulRBerg/prb-proxy"
 [submodule "lib/prb-test"]
   branch = "release-v0"
   path = "lib/prb-test"

@@ -32,7 +32,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
 
     function test_Constructor() external {
         SablierV2MerkleStreamerLL constructedStreamerLL = new SablierV2MerkleStreamerLL(
-            users.admin.addr,
+            users.admin,
             lockupLinear,
             asset,
             defaults.MERKLE_ROOT(),
@@ -45,7 +45,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         Vars memory vars;
 
         vars.actualAdmin = constructedStreamerLL.admin();
-        vars.expectedAdmin = users.admin.addr;
+        vars.expectedAdmin = users.admin;
         assertEq(vars.actualAdmin, vars.expectedAdmin, "admin");
 
         vars.actualAsset = address(constructedStreamerLL.ASSET());

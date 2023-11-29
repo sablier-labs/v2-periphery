@@ -21,7 +21,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         vm.expectRevert(
             abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_CampaignExpired.selector, warpTime, expiration)
         );
-        merkleStreamerLL.claim({ index: 1, recipient: users.recipient1.addr, amount: 1, merkleProof: merkleProof });
+        merkleStreamerLL.claim({ index: 1, recipient: users.recipient1, amount: 1, merkleProof: merkleProof });
     }
 
     modifier givenCampaignNotExpired() {
@@ -34,7 +34,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_StreamClaimed.selector, index1));
-        merkleStreamerLL.claim(index1, users.recipient1.addr, amount, merkleProof);
+        merkleStreamerLL.claim(index1, users.recipient1, amount, merkleProof);
     }
 
     modifier givenNotClaimed() {
@@ -55,7 +55,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_InvalidProof.selector));
-        merkleStreamerLL.claim(invalidIndex, users.recipient1.addr, amount, merkleProof);
+        merkleStreamerLL.claim(invalidIndex, users.recipient1, amount, merkleProof);
     }
 
     function test_RevertWhen_InvalidRecipient()
@@ -82,7 +82,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint128 invalidAmount = 1337;
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_InvalidProof.selector));
-        merkleStreamerLL.claim(index1, users.recipient1.addr, invalidAmount, merkleProof);
+        merkleStreamerLL.claim(index1, users.recipient1, invalidAmount, merkleProof);
     }
 
     function test_RevertWhen_InvalidMerkleProof()
@@ -95,7 +95,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory invalidMerkleProof = defaults.index2Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_InvalidProof.selector));
-        merkleStreamerLL.claim(index1, users.recipient1.addr, amount, invalidMerkleProof);
+        merkleStreamerLL.claim(index1, users.recipient1, amount, invalidMerkleProof);
     }
 
     modifier givenIncludedInMerkleTree() {
@@ -110,15 +110,10 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
     {
         uint128 claimAmount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
-        changePrank({ msgSender: users.admin.addr });
+        changePrank({ msgSender: users.admin });
         comptroller.setProtocolFee({ asset: asset, newProtocolFee: ud(0.1e18) });
         vm.expectRevert(Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero.selector);
-        merkleStreamerLL.claim({
-            index: 1,
-            recipient: users.recipient1.addr,
-            amount: claimAmount,
-            merkleProof: merkleProof
-        });
+        merkleStreamerLL.claim({ index: 1, recipient: users.recipient1, amount: claimAmount, merkleProof: merkleProof });
     }
 
     modifier givenProtocolFeeZero() {
@@ -135,7 +130,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint256 expectedStreamId = lockupLinear.nextStreamId();
 
         vm.expectEmit({ emitter: address(merkleStreamerLL) });
-        emit Claim(defaults.INDEX1(), users.recipient1.addr, defaults.CLAIM_AMOUNT(), expectedStreamId);
+        emit Claim(defaults.INDEX1(), users.recipient1, defaults.CLAIM_AMOUNT(), expectedStreamId);
         uint256 actualStreamId = claimLL();
 
         LockupLinear.Stream memory actualStream = lockupLinear.getStream(actualStreamId);
@@ -148,7 +143,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
             isDepleted: false,
             isStream: true,
             isTransferable: defaults.TRANSFERABLE(),
-            sender: users.admin.addr,
+            sender: users.admin,
             startTime: uint40(block.timestamp),
             wasCanceled: false
         });
