@@ -259,7 +259,7 @@ contract SablierV2Batch is ISablierV2Batch {
     /// @dev Helper function to transfer assets from the caller to the batch contract and approve the Sablier contract.
     function _handleTransfer(address sablierContract, IERC20 asset, uint256 amount) internal {
         // Transfer the assets to the batch contract.
-        asset.transferFrom({ from: msg.sender, to: address(this), amount: amount });
+        asset.safeTransferFrom({ from: msg.sender, to: address(this), value: amount });
 
         // Approve the Sablier contract to spend funds.
         _approve(sablierContract, asset, amount);
