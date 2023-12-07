@@ -2,7 +2,7 @@
 // solhint-disable reason-string
 pragma solidity >=0.8.19;
 
-import { LibSort } from "solady/utils/LibSort.sol";
+import { LibSort } from "solady/src/utils/LibSort.sol";
 
 /// @dev A helper library for building Merkle leaves, roots, and proofs.
 library MerkleBuilder {

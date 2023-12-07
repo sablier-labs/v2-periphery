@@ -11,11 +11,15 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "4.9.2",
+    "@prb/math": "4.0.2",
     "@sablier/v2-core": "1.0.2"
   },
   "devDependencies": {
+    "@prb/test": "0.6.4",
+    "forge-std": "github:foundry-rs/forge-std#e8a047e3f40f13fa37af6fe14e6e06283d9a060e",
     "prettier": "^2.8.8",
-    "solhint": "^3.6.2"
+    "solady": "0.0.129",
+    "solhint": "^4.0.0"
   },
   "files": [
     "artifacts",

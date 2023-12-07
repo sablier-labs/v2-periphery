@@ -3,7 +3,8 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { ud2x18, UD60x18 } from "@sablier/v2-core/src/types/Math.sol";
+import { ud2x18 } from "@prb/math/src/UD2x18.sol";
+import { UD60x18 } from "@prb/math/src/UD60x18.sol";
 import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { StdCheats } from "forge-std/StdCheats.sol";
+import { StdCheats } from "forge-std/src/StdCheats.sol";
 
 import { ISablierV2Batch } from "../../src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2MerkleStreamerFactory } from "../../src/interfaces/ISablierV2MerkleStreamerFactory.sol";

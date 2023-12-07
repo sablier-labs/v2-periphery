@@ -1,7 +1,7 @@
-@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
-@prb/test/=lib/prb-test/src/
+@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/
+@prb/math/=node_modules/@prb/math/
+@prb/test/=node_modules/@prb/test/
 @sablier/v2-core/=lib/v2-core/
-@sablier/v2-core-script/=lib/v2-core/script/
 @sablier/v2-core-test/=lib/v2-core/test/
-forge-std/=lib/forge-std/src/
-solady/=lib/solady/src/
+forge-std/=node_modules/forge-std/
+solady/=node_modules/solady/
