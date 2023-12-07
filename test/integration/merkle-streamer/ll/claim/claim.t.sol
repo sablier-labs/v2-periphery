@@ -2,7 +2,7 @@
 pragma solidity >=0.8.19 <0.9.0;
 
 import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
-import { ud } from "@sablier/v2-core/src/types/Math.sol";
+import { ud } from "@prb/math/src/UD60x18.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 

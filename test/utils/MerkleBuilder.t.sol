@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19;
 
-import { PRBTest } from "@prb/test/PRBTest.sol";
-import { StdUtils } from "forge-std/StdUtils.sol";
+import { PRBTest } from "@prb/test/src/PRBTest.sol";
+import { StdUtils } from "forge-std/src/StdUtils.sol";
 
 import { MerkleBuilder } from "./MerkleBuilder.sol";
 

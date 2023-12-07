@@ -5,7 +5,7 @@ import { SablierV2Comptroller } from "@sablier/v2-core/src/SablierV2Comptroller.
 import { SablierV2LockupDynamic } from "@sablier/v2-core/src/SablierV2LockupDynamic.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/src/SablierV2LockupLinear.sol";
 import { SablierV2NFTDescriptor } from "@sablier/v2-core/src/SablierV2NFTDescriptor.sol";
-import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
+import { BaseScript } from "./Base.s.sol";
 
 import { SablierV2MerkleStreamerFactory } from "../src/SablierV2MerkleStreamerFactory.sol";
 import { SablierV2Batch } from "../src/SablierV2Batch.sol";
