@@ -4,6 +4,8 @@
 # Options:
 #  --deterministic Deploy using the deterministic script.
 #  --broadcast Broadcast the deployment and verify on Etherscan.
+#  --with-gas-price Specify gas price for transaction.
+#  --all Deploy on all chains.
 # Example: ./shell/deploy-multi-chains.sh # Default deploys only to Sepolia
 # Example: ./shell/deploy-multi-chains.sh --broadcast arbitrum_one mainnet
 # Example: ./shell/deploy-multi-chains.sh --deterministic --broadcast mainnet
@@ -16,6 +18,16 @@
 # Strict mode: https://gist.github.com/vncsna/64825d5609c146e80de8b1fd623011ca
 set -euo pipefail
 
+# color codes
+EC='\033[0;31m' # Error Color
+SC='\033[0;32m' # Success Color
+WC='\033[0;33m' # Warn Color
+IC='\033[0;36m' # Info Color
+NC='\033[0m' # No Color
+
+# Unicode characters for tick
+TICK="\xE2\x9C\x94"
+
 # Create deployments directory
 deployments=./deployments
 rm -rf $deployments
@@ -26,7 +38,6 @@ ARBITRUM_CHAIN_ID="42161"
 AVALANCHE_CHAIN_ID="43114"
 BASE_CHAIN_ID="8453"
 BSC_CHAIN_ID="56"
-GOERLI_CHAIN_ID="5"
 GNOSIS_CHAIN_ID="100"
 MAINNET_CHAIN_ID="1"
 OPTIMISM_CHAIN_ID="10"
@@ -39,18 +50,26 @@ ARBITRUM_COMPTROLLER="0x17Ec73692F0aDf7E7C554822FBEAACB4BE781762"
 AVALANCHE_COMPTROLLER="0x66F5431B0765D984f82A4fc4551b2c9ccF7eAC9C"
 BASE_COMPTROLLER="0x7Faaedd40B1385C118cA7432952D9DC6b5CbC49e"
 BSC_COMPTROLLER="0x33511f69A784Fd958E6713aCaC7c9dCF1A5578E8"
-MAINNET_COMPTROLLER="0xC3Be6BffAeab7B297c03383B4254aa3Af2b9a5BA"
 GNOSIS_COMPTROLLER="0x73962c44c0fB4cC5e4545FB91732a5c5e87F55C2"
+MAINNET_COMPTROLLER="0xC3Be6BffAeab7B297c03383B4254aa3Af2b9a5BA"
 OPTIMISM_COMPTROLLER="0x1EECb6e6EaE6a1eD1CCB4323F3a146A7C5443A10"
 POLYGON_COMPTROLLER="0x9761692EDf10F5F2A69f0150e2fd50dcecf05F2E"
 SCROLL_COMPTROLLER="0x859708495E3B3c61Bbe19e6E3E1F41dE3A5C5C5b"
 SEPOLIA_COMPTROLLER="0x2006d43E65e66C5FF20254836E63947FA8bAaD68"
 
+# Source the .env file to load the variables
+if [ -f .env ]; then
+    source .env
+else
+    echo -e "${EC}Error: .env file not found${NC}"
+    exit 1
+fi
+
 # Define chain configurations
 declare -A chains
 chains["arbitrum_one"]="$ARBITRUM_RPC_URL $ARBISCAN_API_KEY $ARBITRUM_CHAIN_ID $ARBITRUM_ADMIN $ARBITRUM_COMPTROLLER"
 chains["avalanche"]="$AVALANCHE_RPC_URL $SNOWTRACE_API_KEY $AVALANCHE_CHAIN_ID $AVALANCHE_ADMIN $AVALANCHE_COMPTROLLER"
-chains["base"]="$BASE_RPC_URL $BASESCAN_API_KEY $BASE_CHAIN_ID $BASE_ADMIN $BASE_ADMIN $BASE_COMPTROLLER"
+chains["base"]="$BASE_RPC_URL $BASESCAN_API_KEY $BASE_CHAIN_ID $BASE_ADMIN $BASE_COMPTROLLER"
 chains["bnb_smart_chain"]="$BSC_RPC_URL $BSCSCAN_API_KEY $BSC_CHAIN_ID $BSC_ADMIN $BSC_COMPTROLLER"
 chains["gnosis"]="$GNOSIS_RPC_URL $GNOSISSCAN_API_KEY $GNOSIS_CHAIN_ID $GNOSIS_ADMIN $GNOSIS_COMPTROLLER"
 chains["mainnet"]="$MAINNET_RPC_URL $ETHERSCAN_API_KEY $MAINNET_CHAIN_ID $MAINNET_ADMIN $MAINNET_COMPTROLLER"
@@ -69,6 +88,9 @@ DETERMINISTIC_DEPLOYMENT=false
 WITH_GAS_PRICE=false
 GAS_PRICE=0
 
+# Flag for all chains
+ON_ALL_CHAINS=false
+
 # Requested chains
 requested_chains=()
 
@@ -84,7 +106,7 @@ for ((i=1; i<=$#; i++)); do
     # Check for '--broadcast' flag in the arguments
     if [[ $arg == "--deterministic" ]]; then
         DETERMINISTIC_DEPLOYMENT=true
-    fi      
+    fi
 
     # Check for '--with-gas-price' flag in the arguments
     if [[ $arg == "--with-gas-price" ]]; then
@@ -93,18 +115,19 @@ for ((i=1; i<=$#; i++)); do
         ((i++))
         GAS_PRICE=${!i}
         if ! [[ $GAS_PRICE =~ ^[0-9]+$ ]]; then
-            echo "Error: Gas price must be a number."
+            echo -e "${EC}Error: Invalid value for --with-gas-price, must be number${NC}"
             exit 1
         fi
     fi
 
     # Check for '--all' flag in the arguments
     if [[ $arg == "--all" ]]; then
+        ON_ALL_CHAINS=true
         requested_chains=("${!chains[@]}")
     fi
 
     # Check for passed chains
-    if [[ $arg != "--all" && $arg != "--deterministic" && $arg != "--broadcast"  && $arg != "--with-gas-price" ]]; then
+    if [[ $arg != "--all" && $arg != "--deterministic" && $arg != "--broadcast"  && $arg != "--with-gas-price" && $ON_ALL_CHAINS == false ]]; then
         requested_chains+=("$arg")
     fi
 done
@@ -122,29 +145,29 @@ FOUNDRY_PROFILE=optimized forge build
 for chain in "${requested_chains[@]}"; do
     # Check if the requested chain is defined
     if [[ ! -v "chains[$chain]" ]]; then
-        echo "Chain configuration for '$chain' not found."
+        echo -e "\n${WC}Warning: Chain configuration for '$chain' not found.${NC}"
         continue
     fi
 
     # Split the configuration into RPC, API key and the Chain ID
-    IFS=' ' read -r rpc_url api_key chain_id admin comptroller<<< "${chains[$chain]}"
+    IFS=' ' read -r rpc_url api_key chain_id admin comptroller <<< "${chains[$chain]}"
 
     # Declare a deployment command
     deployment_command="";
 
     # Choose the script based on the flag
     if [[ $DETERMINISTIC_DEPLOYMENT == true ]]; then
-        echo "Deploying deterministic contracts to $chain..."
+        echo -e "\n${IC}Deploying deterministic contracts to $chain...${NC}"
         # Construct the command
         deployment_command="forge script script/DeployDeterministicProtocol2.s.sol \
         --rpc-url $rpc_url \
         --sig run(string,address,address) \
-        \"ChainID $chain_id, Version 1.1.0\" \
+        \"ChainID_${chain_id}_Version_1.1.0\" \
         $admin \
         $comptroller \
         -vvv"
     else
-        echo "Deploying contracts to $chain..."
+        echo -e "\n${IC}Deploying contracts to $chain...${NC}"
         # Construct the command
         deployment_command="forge script script/DeployProtocol2.s.sol \
         --rpc-url $rpc_url \
@@ -155,17 +178,17 @@ for chain in "${requested_chains[@]}"; do
     fi
 
     # Append additional options if broadcast is enabled
-    if [[ $BROADCAST_DEPLOYMENT == true ]]; then    
-        echo "This deployment is broadcasted on $chain"
+    if [[ $BROADCAST_DEPLOYMENT == true ]]; then
+        echo -e "${SC}+${NC} This deployment is broadcasted on $chain"
         deployment_command+=" --broadcast --verify --etherscan-api-key \"$api_key\""
     else
-        echo "This deployment is simulated on $chain"
+        echo -e "${SC}+${NC} Simulated on $chain"
     fi
 
     # Append additional options if gas price is enabled
     if [[ $WITH_GAS_PRICE == true ]]; then
         gas_price_in_gwei=$(echo "scale=2; $GAS_PRICE / 1000000000" | bc)
-        echo "This deployment is using gas price of $gas_price_in_gwei gwei"
+        echo -e "${SC}+${NC} Using gas price of $gas_price_in_gwei gwei"
         deployment_command+=" --with-gas-price $GAS_PRICE"
     fi
 
@@ -192,7 +215,7 @@ for chain in "${requested_chains[@]}"; do
         echo "SablierV2MerkleStreamerFactory = $merkleStreamerFactory_address"
     } >> "$chain_file"
 
-    echo "Deployment for $chain done. Addresses saved in $chain_file"
+    echo -e "${SC}$TICK Deployed on $chain. Addresses saved in $chain_file${NC}"
 done
 
-echo "All deployments completed."
+echo -e "\nAll deployments completed."
