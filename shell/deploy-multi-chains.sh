@@ -115,7 +115,7 @@ for ((i=1; i<=$#; i++)); do
     fi
 
     # Check for passed chains
-    if [[ $arg != "--all" && $arg != "--deterministic" && $arg != "--broadcast"  && $arg != "--with-gas-price" && $ON_ALL_CHAINS == false ]]; then
+    if [[ $arg != "--all" && $arg != "--deterministic" && $arg != "--broadcast" && $arg != "--with-gas-price" && $ON_ALL_CHAINS == false ]]; then
         requested_chains+=("$arg")
     fi
 done
@@ -184,17 +184,11 @@ for chain in "${requested_chains[@]}"; do
     touch "$chain_file"
 
     # Extract and save contract addresses
-    nftDescriptor_address=$(echo "$output" | awk '/nftDescriptor: contract/{print $NF}')
-    lockupLinear_address=$(echo "$output" | awk '/lockupLinear: contract/{print $NF}')
-    lockupDynamic_address=$(echo "$output" | awk '/lockupDynamic: contract/{print $NF}')
     batch_address=$(echo "$output" | awk '/batch: contract/{print $NF}')
     merkleStreamerFactory_address=$(echo "$output" | awk '/merkleStreamerFactory: contract/{print $NF}')
 
     # Save to the chain file
     {
-        echo "NFTDescriptor = $nftDescriptor_address"
-        echo "LockupLinear = $lockupLinear_address"
-        echo "LockupDynamic = $lockupDynamic_address"
         echo "SablierV2Batch = $batch_address"
         echo "SablierV2MerkleStreamerFactory = $merkleStreamerFactory_address"
     } >> "$chain_file"
