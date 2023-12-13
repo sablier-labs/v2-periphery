@@ -159,21 +159,17 @@ for chain in "${requested_chains[@]}"; do
     if [[ $DETERMINISTIC_DEPLOYMENT == true ]]; then
         echo -e "\n${IC}Deploying deterministic contracts to $chain...${NC}"
         # Construct the command
-        deployment_command="forge script script/DeployDeterministicProtocol2.s.sol \
+        deployment_command="forge script script/DeployDeterministicPeriphery.s.sol \
         --rpc-url $rpc_url \
-        --sig run(string,address,address) \
+        --sig run(string) \
         \"ChainID_${chain_id}_Version_1.1.0\" \
-        $admin \
-        $comptroller \
         -vvv"
     else
         echo -e "\n${IC}Deploying contracts to $chain...${NC}"
         # Construct the command
-        deployment_command="forge script script/DeployProtocol2.s.sol \
+        deployment_command="forge script script/DeployPeriphery.s.sol \
         --rpc-url $rpc_url \
-        --sig run(address,address) \
-        $admin \
-        $comptroller \
+        --sig run() \
         -vvv"
     fi
 
