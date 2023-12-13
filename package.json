@@ -12,7 +12,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "4.9.2",
     "@prb/math": "4.0.2",
-    "@sablier/v2-core": "1.0.2"
+    "@sablier/v2-core": "1.1.1"
   },
   "devDependencies": {
     "@prb/test": "0.6.4",
@@ -24,6 +24,7 @@
   "files": [
     "artifacts",
     "src",
+    "test/utils",
     "CHANGELOG.md"
   ],
   "homepage": "https://github.com/sablier-labs/v2-periphery#readme",
@@ -48,7 +49,7 @@
     "web3"
   ],
   "peerDependencies": {
-    "@sablier/v2-core": "1.0.2"
+    "@sablier/v2-core": "1.1.1"
   },
   "publishConfig": {
     "access": "public"

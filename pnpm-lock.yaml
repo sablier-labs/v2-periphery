@@ -12,8 +12,8 @@ dependencies:
     specifier: 4.0.2
     version: 4.0.2
   '@sablier/v2-core':
-    specifier: 1.0.2
-    version: 1.0.2(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.2)
+    specifier: 1.1.1
+    version: 1.1.1(@prb/math@4.0.2)
 
 devDependencies:
   '@prb/test':
@@ -88,11 +88,10 @@ packages:
     resolution: {integrity: sha512-P0tTMsB6XQ0Wp61EYdXJYFhsOVGyZvcOFub2y9yk0sF+GYDusctR7DzEI+vOP0SILm3knFkEJASjewHEBppdRQ==}
     dev: true
 
-  /@sablier/v2-core@1.0.2(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.2):
-    resolution: {integrity: sha512-BjobBTRLuh38fQsHtFGVsQI1XN9JXatldxbS+aFxlhYaU77fQimCejYrBqP7W1wQZnBAvdXRdKNPUskdUpM5nw==}
+  /@sablier/v2-core@1.1.1(@prb/math@4.0.2):
+    resolution: {integrity: sha512-gi9tYlNm5z29tfRwU/RM3Ljo/yvCpy4cmLosAYkhBTcdheZkqfkhZLgSKFv2OVq+0aKxH+YvzqGlt/ZtDhAeXg==}
     peerDependencies:
-      '@openzeppelin/contracts': 4.9.2
-      '@prb/math': 4.0.1
+      '@prb/math': 4.0.x
     dependencies:
       '@openzeppelin/contracts': 4.9.2
       '@prb/math': 4.0.2

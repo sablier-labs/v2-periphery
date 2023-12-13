@@ -10,8 +10,8 @@ import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablie
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { Assertions as V2CoreAssertions } from "@sablier/v2-core-test/utils/Assertions.sol";
-import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
+import { Assertions as V2CoreAssertions } from "@sablier/v2-core/test/utils/Assertions.sol";
+import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
 
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2MerkleStreamerFactory } from "src/interfaces/ISablierV2MerkleStreamerFactory.sol";
