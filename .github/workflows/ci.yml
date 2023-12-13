@@ -51,8 +51,6 @@ jobs:
       steps:
         - name: "Check out the repo"
           uses: "actions/checkout@v3"
-          with:
-            submodules: "recursive"
 
         - name: "Install Foundry"
           uses: "foundry-rs/foundry-toolchain@v1"
@@ -80,12 +78,13 @@ jobs:
         - name: "Build the test contracts"
           run: "FOUNDRY_PROFILE=test-optimized forge build"   
 
-        - name: "Cache the build so that it can be re-used by the other jobs"
+        - name: "Cache the build and the node modules so that they can be re-used by the other jobs"
           uses: "actions/cache/save@v3"
           with:
-            key: "foundry-build-${{ github.sha }}"
+            key: "build-and-modules-${{ github.sha }}"
             path: |
               cache
+              node_modules
               out
               out-optimized
 
@@ -106,19 +105,18 @@ jobs:
     steps:
       - name: "Check out the repo"
         uses: "actions/checkout@v3"
-        with:
-          submodules: "recursive"
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Restore the cached build"
+      - name: "Restore the cached build and the node modules"
         uses: "actions/cache/restore@v3"
         with:
           fail-on-cache-miss: true
-          key: "foundry-build-${{ github.sha }}"
+          key: "build-and-modules-${{ github.sha }}"
           path: |
             cache
+            node_modules
             out
             out-optimized
 
@@ -136,19 +134,18 @@ jobs:
     steps:
       - name: "Check out the repo"
         uses: "actions/checkout@v3"
-        with:
-          submodules: "recursive"
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Restore the cached build"
+      - name: "Restore the cached build and the node modules"
         uses: "actions/cache/restore@v3"
         with:
           fail-on-cache-miss: true
-          key: "foundry-build-${{ github.sha }}"
+          key: "build-and-modules-${{ github.sha }}"
           path: |
             cache
+            node_modules
             out
             out-optimized
 
@@ -166,19 +163,18 @@ jobs:
     steps:
       - name: "Check out the repo"
         uses: "actions/checkout@v3"
-        with:
-          submodules: "recursive"
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Restore the cached build"
+      - name: "Restore the cached build and the node modules"
         uses: "actions/cache/restore@v3"
         with:
           fail-on-cache-miss: true
-          key: "foundry-build-${{ github.sha }}"
+          key: "build-and-modules-${{ github.sha }}"
           path: |
             cache
+            node_modules
             out
             out-optimized
 
@@ -199,9 +195,18 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v3"  
+
+      - name: "Restore the cached build and the node modules"
+        uses: "actions/cache/restore@v3"
         with:
-          submodules: "recursive"
+          fail-on-cache-miss: true
+          key: "build-and-modules-${{ github.sha }}"
+          path: |
+            cache
+            node_modules
+            out
+            out-optimized
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
