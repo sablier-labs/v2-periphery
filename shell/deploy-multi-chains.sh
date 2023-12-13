@@ -150,7 +150,7 @@ for chain in "${requested_chains[@]}"; do
         deployment_command="forge script script/DeployDeterministicPeriphery.s.sol \
         --rpc-url $rpc_url \
         --sig run(string) \
-        \"ChainID_${chain_id}_Version_1.1.0\" \
+        \'ChainID $chain_id, Version 1.1.0\' \
         -vvv"
     else
         echo -e "\n${IC}Deploying contracts to $chain...${NC}"
