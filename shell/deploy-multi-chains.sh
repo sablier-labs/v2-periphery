@@ -14,6 +14,7 @@
 
 # Pre-requisites:
 # - foundry (https://getfoundry.sh)
+# - bash version >=4.0.0
 
 # Strict mode: https://gist.github.com/vncsna/64825d5609c146e80de8b1fd623011ca
 set -euo pipefail
@@ -50,6 +51,14 @@ if [ -f .env ]; then
     source .env
 else
     echo -e "${EC}Error: .env file not found${NC}"
+    exit 1
+fi
+
+# Check: required Bash >=4.0.0 for associative arrays
+if ((BASH_VERSINFO[0] < 4)); then
+    echo -e "${EC}Error:\nThis script requires Bash version 4.0.0 or higher.
+    \nYou are currently using Bash version ${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}.${BASH_VERSINFO[2]}.
+    \nPlease upgrade your Bash version and try again.${NC}"
     exit 1
 fi
 
