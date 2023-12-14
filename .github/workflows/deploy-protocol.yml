@@ -12,7 +12,7 @@ env:
   FOUNDRY_OPTIMIZER_RUNS: "1000" # needed to compile V2 Core
   FOUNDRY_PROFILE: "optimized"
   MNEMONIC: ${{ secrets.MNEMONIC }}
-  RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
+  MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
   RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
 
 on:

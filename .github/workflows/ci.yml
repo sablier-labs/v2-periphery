@@ -5,7 +5,7 @@ concurrency:
   group: ${{github.workflow}}-${{github.ref}}
 
 env:
-  RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
+  MAINNET_RPC_URL: ${{ secrets.MAINNET_RPC_URL }}
 
 on:
   workflow_dispatch:
