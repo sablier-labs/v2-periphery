@@ -1,14 +1,10 @@
 [profile.default]
   auto_detect_solc = false
-  block_timestamp = 1_682_899_200 # May 1, 2023 at 00:00 GMT
+  block_timestamp = 1_682_899_200                                               # May 1, 2023 at 00:00 GMT
   bytecode_hash = "none"
   evm_version = "paris"
   fs_permissions = [{ access = "read", path = "out-optimized" }]
-  gas_reports = [
-    "SablierV2MerkleStreamerFactory",
-    "SablierV2MerkleStreamerLL",
-    "SablierV2ProxyTarget",
-  ]
+  gas_reports = ["SablierV2MerkleStreamerFactory", "SablierV2MerkleStreamerLL"]
   libs = ["lib"]
   optimizer = true
   optimizer_runs = 10_000
@@ -73,4 +69,4 @@
   mainnet = "${RPC_URL_MAINNET}"
   optimism = "https://optimism-mainnet.infura.io/v3/${API_KEY_INFURA}"
   polygon = "https://polygon-mainnet.infura.io/v3/${API_KEY_INFURA}"
-  sepolia = "https://sepolia.infura.io/v3/${API_KEY_INFURA}"
+  sepolia = "${RPC_URL_SEPOLIA}"

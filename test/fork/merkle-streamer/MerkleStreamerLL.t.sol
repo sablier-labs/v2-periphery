@@ -55,7 +55,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
     uint256[] public leaves;
 
     function testForkFuzz_MerkleStreamerLL(Params memory params) external {
-        vm.assume(params.admin != address(0) && params.admin != users.admin.addr);
+        vm.assume(params.admin != address(0) && params.admin != users.admin);
         vm.assume(params.expiration == 0 || params.expiration > block.timestamp);
         vm.assume(params.leafData.length > 1);
         params.posBeforeSort = _bound(params.posBeforeSort, 0, params.leafData.length - 1);

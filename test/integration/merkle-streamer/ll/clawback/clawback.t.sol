@@ -14,13 +14,13 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
     }
 
     function test_RevertWhen_CallerNotAdmin() external {
-        changePrank({ msgSender: users.eve.addr });
-        vm.expectRevert(abi.encodeWithSelector(V2CoreErrors.CallerNotAdmin.selector, users.admin.addr, users.eve.addr));
-        merkleStreamerLL.clawback({ to: users.eve.addr, amount: 1 });
+        changePrank({ msgSender: users.eve });
+        vm.expectRevert(abi.encodeWithSelector(V2CoreErrors.CallerNotAdmin.selector, users.admin, users.eve));
+        merkleStreamerLL.clawback({ to: users.eve, amount: 1 });
     }
 
     modifier whenCallerAdmin() {
-        changePrank({ msgSender: users.admin.addr });
+        changePrank({ msgSender: users.admin });
         _;
     }
 
@@ -34,7 +34,7 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
                 Errors.SablierV2MerkleStreamer_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
             )
         );
-        merkleStreamerLL.clawback({ to: users.admin.addr, amount: 1 });
+        merkleStreamerLL.clawback({ to: users.admin, amount: 1 });
     }
 
     modifier givenCampaignExpired() {
@@ -45,7 +45,7 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
     }
 
     function test_Clawback() external whenCallerAdmin givenProtocolFeeZero givenCampaignExpired {
-        test_Clawback(users.admin.addr);
+        test_Clawback(users.admin);
     }
 
     modifier givenProtocolFeeNotZero() {
@@ -67,7 +67,7 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
         uint128 clawbackAmount = uint128(asset.balanceOf(address(merkleStreamerLL)));
         expectCallToTransfer({ to: to, amount: clawbackAmount });
         vm.expectEmit({ emitter: address(merkleStreamerLL) });
-        emit Clawback({ admin: users.admin.addr, to: to, amount: clawbackAmount });
+        emit Clawback({ admin: users.admin, to: to, amount: clawbackAmount });
         merkleStreamerLL.clawback({ to: to, amount: clawbackAmount });
     }
 }

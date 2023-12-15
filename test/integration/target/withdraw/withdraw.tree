@@ -1,5 +1,0 @@
-withdraw.t.sol
-├── when not delegate called
-│  └── it should revert
-└── when delegate called
-   └── it should withdraw from the stream

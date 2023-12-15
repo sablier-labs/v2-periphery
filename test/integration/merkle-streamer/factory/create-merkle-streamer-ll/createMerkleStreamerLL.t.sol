@@ -25,7 +25,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
 
         vm.expectRevert();
         merkleStreamerFactory.createMerkleStreamerLL({
-            initialAdmin: users.admin.addr,
+            initialAdmin: users.admin,
             lockupLinear: lockupLinear,
             asset: asset,
             merkleRoot: merkleRoot,
@@ -44,7 +44,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
     }
 
     function testFuzz_CreateMerkleStreamerLL(address admin, uint40 expiration) external givenNotAlreadyDeployed {
-        vm.assume(admin != users.admin.addr);
+        vm.assume(admin != users.admin);
         address expectedStreamerLL = computeMerkleStreamerLLAddress(admin, expiration);
 
         vm.expectEmit({ emitter: address(merkleStreamerFactory) });

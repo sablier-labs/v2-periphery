@@ -5,14 +5,10 @@ pragma solidity >=0.8.19 <0.9.0;
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
-import { IPRBProxyRegistry } from "@prb/proxy/src/interfaces/IPRBProxyRegistry.sol";
 import { ISablierV2Comptroller } from "@sablier/v2-core/src/interfaces/ISablierV2Comptroller.sol";
-import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
-import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
 
 import { Assertions as V2CoreAssertions } from "@sablier/v2-core-test/utils/Assertions.sol";
 import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
@@ -20,16 +16,10 @@ import { Utils as V2CoreUtils } from "@sablier/v2-core-test/utils/Utils.sol";
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2MerkleStreamerFactory } from "src/interfaces/ISablierV2MerkleStreamerFactory.sol";
 import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
-import { ISablierV2ProxyTarget } from "src/interfaces/ISablierV2ProxyTarget.sol";
-import { IWrappedNativeAsset } from "src/interfaces/IWrappedNativeAsset.sol";
 import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2MerkleStreamerFactory } from "src/SablierV2MerkleStreamerFactory.sol";
 import { SablierV2MerkleStreamerLL } from "src/SablierV2MerkleStreamerLL.sol";
-import { SablierV2ProxyTargetApprove } from "src/SablierV2ProxyTargetApprove.sol";
-import { SablierV2ProxyTargetPermit2 } from "src/SablierV2ProxyTargetPermit2.sol";
-import { SablierV2ProxyTargetPush } from "src/SablierV2ProxyTargetPush.sol";
 
-import { WLC } from "./mocks/WLC.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
 import { Events } from "./utils/Events.sol";
@@ -48,7 +38,6 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    IPRBProxy internal aliceProxy;
     IERC20 internal asset;
     ISablierV2Batch internal batch;
     ISablierV2Comptroller internal comptroller;
@@ -57,14 +46,6 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     ISablierV2LockupLinear internal lockupLinear;
     ISablierV2MerkleStreamerFactory internal merkleStreamerFactory;
     ISablierV2MerkleStreamerLL internal merkleStreamerLL;
-    IAllowanceTransfer internal permit2;
-    IPRBProxyRegistry internal proxyRegistry;
-    ISablierV2ProxyTarget internal target;
-    SablierV2ProxyTargetApprove internal targetApprove;
-    SablierV2ProxyTargetPermit2 internal targetPermit2;
-    SablierV2ProxyTargetPush internal targetPush;
-    IWrappedNativeAsset internal weth;
-    WLC internal wlc;
 
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION
@@ -92,22 +73,17 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     /// @dev Approves relevant contracts to spend assets from some users.
     function approveContracts() internal {
-        // Approve Permit2 to spend assets from the stream's recipient.
-        vm.startPrank({ msgSender: users.recipient0.addr });
-        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
-
-        // Approve Permit2, Batch and Alice's Proxy to spend assets from Alice (the proxy owner).
-        changePrank({ msgSender: users.alice.addr });
+        // Approve Batch to spend assets from Alice.
+        changePrank({ msgSender: users.alice });
         asset.approve({ spender: address(batch), amount: MAX_UINT256 });
-        asset.approve({ spender: address(permit2), amount: MAX_UINT256 });
-        asset.approve({ spender: address(aliceProxy), amount: MAX_UINT256 });
     }
 
     /// @dev Generates a user, labels its address, and funds it with ETH.
-    function createUser(string memory name) internal returns (Account memory user) {
-        user = makeAccount(name);
-        vm.deal({ account: user.addr, newBalance: 100_000 ether });
-        deal({ token: address(asset), to: user.addr, give: 1_000_000e18 });
+    function createUser(string memory name) internal returns (address payable) {
+        address user = makeAddr(name);
+        vm.deal({ account: user, newBalance: 100_000 ether });
+        deal({ token: address(asset), to: user, give: 1_000_000e18 });
+        return payable(user);
     }
 
     /// @dev Conditionally deploy V2 Periphery normally or from an optimized source compiled with `--via-ir`.
@@ -115,19 +91,13 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         if (!isTestOptimizedProfile()) {
             batch = new SablierV2Batch();
             merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
-            targetApprove = new SablierV2ProxyTargetApprove();
-            targetPermit2 = new SablierV2ProxyTargetPermit2(permit2);
-            targetPush = new SablierV2ProxyTargetPush();
         } else {
-            (batch, merkleStreamerFactory, targetApprove, targetPermit2, targetPush) = deployOptimizedPeriphery(permit2);
+            (batch, merkleStreamerFactory) = deployOptimizedPeriphery();
         }
-        // The default target.
-        target = targetApprove;
     }
 
     /// @dev Labels the most relevant contracts.
     function labelContracts() internal {
-        vm.label({ account: address(aliceProxy), newLabel: "Alice's Proxy" });
         vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
         vm.label({ account: address(merkleStreamerFactory), newLabel: "MerkleStreamerFactory" });
         vm.label({ account: address(merkleStreamerLL), newLabel: "MerkleStreamerLL" });
@@ -135,55 +105,11 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
-        vm.label({ account: address(permit2), newLabel: "Permit2" });
-        vm.label({ account: address(targetApprove), newLabel: "ProxyTargetApprove" });
-        vm.label({ account: address(targetPermit2), newLabel: "ProxyTargetPermit2" });
-        vm.label({ account: address(targetPush), newLabel: "ProxyTargetPush" });
-        vm.label({ account: address(wlc), newLabel: "WLC" });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CALL EXPECTS
     //////////////////////////////////////////////////////////////////////////*/
-
-    /// @dev Expects a call to {ISablierV2Lockup.cancel}.
-    function expectCallToCancel(ISablierV2Lockup lockup, uint256 streamId) internal {
-        vm.expectCall({ callee: address(lockup), data: abi.encodeCall(ISablierV2Lockup.cancel, (streamId)) });
-    }
-
-    /// @dev Expect calls to {ISablierV2Lockup.cancel}, {IERC20.transfer}, and {IERC20.transferFrom}.
-    function expectCallsToCancelAndTransfer(
-        ISablierV2Lockup cancelContract,
-        ISablierV2Lockup createContract,
-        uint256 streamId
-    )
-        internal
-    {
-        expectCallToCancel(cancelContract, streamId);
-
-        // Asset flow: Sablier → proxy → proxy owner
-        // Expect transfers from Sablier to the proxy, and then from the proxy to the proxy owner.
-        expectCallToTransfer({ to: address(aliceProxy), amount: defaults.PER_STREAM_AMOUNT() });
-        expectCallToTransfer({ to: users.alice.addr, amount: defaults.PER_STREAM_AMOUNT() });
-
-        // Asset flow: proxy owner → proxy → Sablier
-        // Expect transfers from the proxy owner to the proxy, and then from the proxy to the Sablier contract.
-        expectCallToTransferFrom({
-            from: users.alice.addr,
-            to: address(aliceProxy),
-            amount: defaults.PER_STREAM_AMOUNT()
-        });
-        expectCallToTransferFrom({
-            from: address(aliceProxy),
-            to: address(createContract),
-            amount: defaults.PER_STREAM_AMOUNT()
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2Lockup.cancelMultiple}.
-    function expectCallToCancelMultiple(ISablierV2Lockup lockup, uint256[] memory streamIds) internal {
-        vm.expectCall({ callee: address(lockup), data: abi.encodeCall(ISablierV2Lockup.cancelMultiple, (streamIds)) });
-    }
 
     /// @dev Expects a call to {ISablierV2LockupDynamic.createWithDeltas}.
     function expectCallToCreateWithDeltas(LockupDynamic.CreateWithDeltas memory params) internal {
@@ -224,9 +150,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     /// @dev Expects a call to {IERC20.transfer}.
     function expectCallToTransfer(address asset_, address to, uint256 amount) internal {
-        if (target != targetPush) {
-            vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
-        }
+        vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
     /// @dev Expects a call to {IERC20.transferFrom}.
@@ -236,9 +160,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     /// @dev Expects a call to {IERC20.transferFrom}.
     function expectCallToTransferFrom(address asset_, address from, address to, uint256 amount) internal {
-        if (target != targetPush) {
-            vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
-        }
+        vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
 
     /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithDeltas}, each with the specified

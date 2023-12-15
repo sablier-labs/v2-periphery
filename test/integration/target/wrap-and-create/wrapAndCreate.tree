@@ -1,8 +1,0 @@
-wrapAndCreate.t.sol
-├── when not delegate called
-│  └── it should revert
-└── when delegate called
-   ├── when the credit amount is not equal to msg.value
-   │  └── it should revert
-   └── when the credit amount is equal to msg.value
-      └── it should wrap the native asset payment and create the stream

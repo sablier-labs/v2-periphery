@@ -8,15 +8,9 @@ dependencies:
   '@openzeppelin/contracts':
     specifier: 4.9.2
     version: 4.9.2
-  '@prb/proxy':
-    specifier: 4.0.1
-    version: 4.0.1
   '@sablier/v2-core':
     specifier: 1.0.2
     version: 1.0.2(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1)
-  '@uniswap/permit2':
-    specifier: github:Uniswap/permit2#cc56ad0f3439c502c246fc5cfcc3db92bb8b7219
-    version: github.com/Uniswap/permit2/cc56ad0f3439c502c246fc5cfcc3db92bb8b7219
 
 devDependencies:
   prettier:
@@ -55,10 +49,6 @@ packages:
 
   /@prb/math@4.0.1:
     resolution: {integrity: sha512-ANTz2KMV+dMdZ57mWgDTR6jZo5uQzUczQEHCxd7CvJZZ9yafnfPhUUILHvvigIOZ85fZbTPVkC8YoRG1z5Qf7g==}
-    dev: false
-
-  /@prb/proxy@4.0.1:
-    resolution: {integrity: sha512-uphCpNzkhT3aKia5/KKJz2eHyeYGnJeiFt3IeehtylaXxfOK3iS1bsxljyR+XjtzldSA6aWtiKg0MnhEHw/IWg==}
     dev: false
 
   /@sablier/v2-core@1.0.2(@openzeppelin/contracts@4.9.2)(@prb/math@4.0.1):
@@ -492,9 +482,3 @@ packages:
   /yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
     dev: true
-
-  github.com/Uniswap/permit2/cc56ad0f3439c502c246fc5cfcc3db92bb8b7219:
-    resolution: {tarball: https://codeload.github.com/Uniswap/permit2/tar.gz/cc56ad0f3439c502c246fc5cfcc3db92bb8b7219}
-    name: '@uniswap/permit2'
-    version: 1.0.0
-    dev: false

@@ -24,7 +24,7 @@ contract CreateWithMilestones_Integration_Test is Integration_Test {
     function test_BatchCreateWithMilestones() external whenBatchSizeNotZero {
         // Asset flow: Alice → batch → Sablier
         // Expect transfers from Alice to the batch, and then from the batch to the Sablier contract.
-        expectCallToTransferFrom({ from: users.alice.addr, to: address(batch), amount: defaults.TOTAL_TRANSFER_AMOUNT() });
+        expectCallToTransferFrom({ from: users.alice, to: address(batch), amount: defaults.TOTAL_TRANSFER_AMOUNT() });
         expectMultipleCallsToCreateWithMilestones({
             count: defaults.BATCH_SIZE(),
             params: defaults.createWithMilestones()
