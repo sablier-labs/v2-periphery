@@ -10,13 +10,11 @@ The format is based on [Common Changelog](https://common-changelog.org).
 [1.0.1]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/sablier-labs/v2-periphery/releases/tag/v1.0.0
 
-## [1.1.0] - 2023-10-19
+## [1.1.0] - 2023-12-16
 
 ### Changed
 
-- **Breaking**: Change `permit2Params` to `transferData`, which has type `bytes`
-  ([#161](https://github.com/sablier-labs/v2-periphery/pull/161))
-- Install `permit2` dependency from Uniswap repository ([#198](https://github.com/sablier-labs/v2-periphery/pull/198))
+- Update import paths to use Node.js dependencies([#236](https://github.com/sablier-labs/v2-periphery/pull/236))
 - Upgrade Solidity to `0.8.21` ([#187](https://github.com/sablier-labs/v2-periphery/pull/187))
 - Upgrade to latest V2 Core ([#191](https://github.com/sablier-labs/v2-periphery/pull/191))
 
@@ -28,14 +26,11 @@ The format is based on [Common Changelog](https://common-changelog.org).
   ([#174](https://github.com/sablier-labs/v2-periphery/pull/174),
   [#186](https://github.com/sablier-labs/v2-periphery/pull/186) and
   [#190](https://github.com/sablier-labs/v2-periphery/pull/190))
-- Add `withdrawMultiple` in targets ([#160](https://github.com/sablier-labs/v2-periphery/pull/160))
-- Implement a push-based model for the proxy target ([#173](https://github.com/sablier-labs/v2-periphery/pull/173))
-- Implement a proxy target with approvals ([#161](https://github.com/sablier-labs/v2-periphery/pull/161))
 
 ### Removed
 
-- **Breaking**: Remove `ProxyPlugin` and `Archive` contracts
-  ([#213](https://github.com/sablier-labs/v2-periphery/pull/213))
+- **Breaking**: Remove proxy architecture ([#213](https://github.com/sablier-labs/v2-periphery/pull/213) and
+  [#226](https://github.com/sablier-labs/v2-periphery/pull/226))
 - Remove `@openzeppelin/contracts` from Node.js peer dependencies
   ([#194](https://github.com/sablier-labs/v2-periphery/pull/194))
 
