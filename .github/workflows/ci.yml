@@ -51,8 +51,6 @@ jobs:
       steps:
         - name: "Check out the repo"
           uses: "actions/checkout@v3"
-          with:
-            submodules: "recursive"
 
         - name: "Install Foundry"
           uses: "foundry-rs/foundry-toolchain@v1"
@@ -77,11 +75,18 @@ jobs:
         - name: "Generate and prepare the contract artifacts"
           run: "./shell/prepare-artifacts.sh"
 
-        - name: "Cache the build so that it can be re-used by the other jobs"
+        - name: "Build the test contracts"
+          run: "FOUNDRY_PROFILE=test-optimized forge build"   
+
+        - name: "Cache the build and the node modules so that they can be re-used by the other jobs"
           uses: "actions/cache/save@v3"
           with:
-            path: "out-optimized"
-            key: "foundry-build-${{ github.sha }}"
+            key: "build-and-modules-${{ github.sha }}"
+            path: |
+              cache
+              node_modules
+              out
+              out-optimized
 
         - name: "Store the contract artifacts in CI"
           uses: "actions/upload-artifact@v3"
@@ -100,18 +105,20 @@ jobs:
     steps:
       - name: "Check out the repo"
         uses: "actions/checkout@v3"
-        with:
-          submodules: "recursive"
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Restore the cached build"
+      - name: "Restore the cached build and the node modules"
         uses: "actions/cache/restore@v3"
         with:
           fail-on-cache-miss: true
-          key: "foundry-build-${{ github.sha }}"
-          path: "out-optimized"
+          key: "build-and-modules-${{ github.sha }}"
+          path: |
+            cache
+            node_modules
+            out
+            out-optimized
 
       - name: "Run the integration tests against the optimized build"
         run: "FOUNDRY_PROFILE=test-optimized forge test --match-path \"test/integration/**/*.sol\""
@@ -127,18 +134,20 @@ jobs:
     steps:
       - name: "Check out the repo"
         uses: "actions/checkout@v3"
-        with:
-          submodules: "recursive"
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Restore the cached build"
+      - name: "Restore the cached build and the node modules"
         uses: "actions/cache/restore@v3"
         with:
           fail-on-cache-miss: true
-          key: "foundry-build-${{ github.sha }}"
-          path: "out-optimized"
+          key: "build-and-modules-${{ github.sha }}"
+          path: |
+            cache
+            node_modules
+            out
+            out-optimized
 
       - name: "Run the utils tests against the optimized build"
         run: "FOUNDRY_PROFILE=test-optimized forge test --match-path \"test/utils/**/*.sol\""
@@ -154,18 +163,20 @@ jobs:
     steps:
       - name: "Check out the repo"
         uses: "actions/checkout@v3"
-        with:
-          submodules: "recursive"
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Restore the cached build"
+      - name: "Restore the cached build and the node modules"
         uses: "actions/cache/restore@v3"
         with:
           fail-on-cache-miss: true
-          key: "foundry-build-${{ github.sha }}"
-          path: "out-optimized"
+          key: "build-and-modules-${{ github.sha }}"
+          path: |
+            cache
+            node_modules
+            out
+            out-optimized
 
       - name: "Generate fuzz seed that changes weekly to avoid burning through RPC allowance"
         run: |
@@ -184,9 +195,18 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v3"  
+
+      - name: "Restore the cached build and the node modules"
+        uses: "actions/cache/restore@v3"
         with:
-          submodules: "recursive"
+          fail-on-cache-miss: true
+          key: "build-and-modules-${{ github.sha }}"
+          path: |
+            cache
+            node_modules
+            out
+            out-optimized
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"

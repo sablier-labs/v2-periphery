@@ -1,24 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.19 <0.9.0;
 
+import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { IPRBProxy } from "@prb/proxy/src/interfaces/IPRBProxy.sol";
-import { ud2x18, UD60x18 } from "@sablier/v2-core/src/types/Math.sol";
+import { ud2x18 } from "@prb/math/src/UD2x18.sol";
+import { UD60x18 } from "@prb/math/src/UD60x18.sol";
 import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
-import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
-import { PermitSignature } from "@uniswap/permit2-test/utils/PermitSignature.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
-import { Permit2Params } from "src/types/Permit2.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";
+import { Merkle } from "./Murky.sol";
+import { MerkleBuilder } from "./MerkleBuilder.sol";
 import { Users } from "./Types.sol";
 
 /// @notice Contract with default values for testing.
-contract Defaults is PermitSignature {
+contract Defaults is Merkle {
+    using MerkleBuilder for uint256[];
+
     /*//////////////////////////////////////////////////////////////////////////
-                                 GENERIC CONSTANTS
+                                      GENERICS
     //////////////////////////////////////////////////////////////////////////*/
 
     uint64 public constant BATCH_SIZE = 10;
@@ -37,74 +39,79 @@ contract Defaults is PermitSignature {
     uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
-                                 PERMIT2 CONSTANTS
+                                  MERKLE-STREAMER
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint48 public constant PERMIT2_EXPIRATION = type(uint48).max;
-    uint256 public constant PERMIT2_SIG_DEADLINE = type(uint48).max;
+    uint256 public constant AGGREGATE_AMOUNT = CLAIM_AMOUNT * RECIPIENTS_COUNT;
+    bool public constant CANCELABLE = false;
+    uint128 public constant CLAIM_AMOUNT = 10_000e18;
+    uint40 public immutable EXPIRATION;
+    uint256 public constant INDEX1 = 1;
+    uint256 public constant INDEX2 = 2;
+    uint256 public constant INDEX3 = 3;
+    uint256 public constant INDEX4 = 4;
+    string public constant IPFS_CID = "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR";
+    uint256 public constant RECIPIENTS_COUNT = 4;
+    bool public constant TRANSFERABLE = false;
+    uint256[] public LEAVES = new uint256[](RECIPIENTS_COUNT);
+    bytes32 public immutable MERKLE_ROOT;
 
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
     IERC20 private asset;
-    IPRBProxy private proxy;
-    IAllowanceTransfer private permit2;
     Users private users;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
-    constructor(Users memory users_, IERC20 asset_, IAllowanceTransfer permit2_, IPRBProxy proxy_) {
+    constructor(Users memory users_, IERC20 asset_) {
         users = users_;
         asset = asset_;
-        permit2 = permit2_;
-        proxy = proxy_;
 
         // Initialize the immutables.
         START_TIME = uint40(block.timestamp) + 100 seconds;
         CLIFF_TIME = START_TIME + CLIFF_DURATION;
         END_TIME = START_TIME + TOTAL_DURATION;
+        EXPIRATION = uint40(block.timestamp) + 12 weeks;
+
+        // Initialize the Merkle tree.
+        LEAVES[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1, CLAIM_AMOUNT);
+        LEAVES[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2, CLAIM_AMOUNT);
+        LEAVES[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3, CLAIM_AMOUNT);
+        LEAVES[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4, CLAIM_AMOUNT);
+        MerkleBuilder.sortLeaves(LEAVES);
+        MERKLE_ROOT = getRoot(LEAVES.toBytes32());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                       PARAMS
+                                  MERKLE-STREAMER
     //////////////////////////////////////////////////////////////////////////*/
 
-    function permit2Params(uint160 amount) public view returns (Permit2Params memory permit2Params_) {
-        permit2Params_ = permit2Params(users.alice.addr, address(proxy), amount, users.alice.key);
+    function index1Proof() public view returns (bytes32[] memory) {
+        uint256 leaf = MerkleBuilder.computeLeaf(INDEX1, users.recipient1, CLAIM_AMOUNT);
+        uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
+        return getProof(LEAVES.toBytes32(), pos);
     }
 
-    function permit2Params(
-        address user,
-        address spender,
-        uint160 amount,
-        uint256 privateKey
-    )
-        public
-        view
-        returns (Permit2Params memory permit2Params_)
-    {
-        (,, uint48 nonce) = permit2.allowance({ user: user, token: address(asset), spender: spender });
-        IAllowanceTransfer.PermitSingle memory permitSingle = IAllowanceTransfer.PermitSingle({
-            details: IAllowanceTransfer.PermitDetails({
-                amount: amount,
-                expiration: PERMIT2_EXPIRATION,
-                nonce: nonce,
-                token: address(asset)
-            }),
-            sigDeadline: PERMIT2_SIG_DEADLINE,
-            spender: spender
-        });
-        permit2Params_ = Permit2Params({
-            permitSingle: permitSingle,
-            signature: getPermitSignature({
-                permit: permitSingle,
-                privateKey: privateKey,
-                domainSeparator: permit2.DOMAIN_SEPARATOR()
-            })
-        });
+    function index2Proof() public view returns (bytes32[] memory) {
+        uint256 leaf = MerkleBuilder.computeLeaf(INDEX2, users.recipient2, CLAIM_AMOUNT);
+        uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
+        return getProof(LEAVES.toBytes32(), pos);
+    }
+
+    function index3Proof() public view returns (bytes32[] memory) {
+        uint256 leaf = MerkleBuilder.computeLeaf(INDEX3, users.recipient3, CLAIM_AMOUNT);
+        uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
+        return getProof(LEAVES.toBytes32(), pos);
+    }
+
+    function index4Proof() public view returns (bytes32[] memory) {
+        uint256 leaf = MerkleBuilder.computeLeaf(INDEX4, users.recipient4, CLAIM_AMOUNT);
+        uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
+        return getProof(LEAVES.toBytes32(), pos);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -117,7 +124,7 @@ contract Defaults is PermitSignature {
     }
 
     function broker() public view returns (Broker memory) {
-        return Broker({ account: users.broker.addr, fee: BROKER_FEE });
+        return Broker({ account: users.broker, fee: BROKER_FEE });
     }
 
     function incrementalStreamIds() public pure returns (uint256[] memory streamIds) {
@@ -137,10 +144,11 @@ contract Defaults is PermitSignature {
             asset: asset_,
             broker: broker(),
             cancelable: true,
-            recipient: users.recipient.addr,
-            segments: segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 }),
-            sender: address(proxy),
-            totalAmount: PER_STREAM_AMOUNT
+            recipient: users.recipient0,
+            segments: segmentsWithDeltas(),
+            sender: users.alice,
+            totalAmount: PER_STREAM_AMOUNT,
+            transferable: true
         });
     }
 
@@ -153,11 +161,12 @@ contract Defaults is PermitSignature {
             asset: asset_,
             broker: broker(),
             cancelable: true,
-            recipient: users.recipient.addr,
+            recipient: users.recipient0,
             segments: segments(),
-            sender: address(proxy),
+            sender: users.alice,
             startTime: START_TIME,
-            totalAmount: PER_STREAM_AMOUNT
+            totalAmount: PER_STREAM_AMOUNT,
+            transferable: true
         });
     }
 
@@ -181,11 +190,16 @@ contract Defaults is PermitSignature {
     }
 
     /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
+    function segmentsWithDeltas() public pure returns (LockupDynamic.SegmentWithDelta[] memory) {
+        return segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 });
+    }
+
+    /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
     function segmentsWithDeltas(
         uint128 amount0,
         uint128 amount1
     )
-        private
+        public
         pure
         returns (LockupDynamic.SegmentWithDelta[] memory segments_)
     {
@@ -210,9 +224,10 @@ contract Defaults is PermitSignature {
             broker: broker(),
             cancelable: true,
             durations: durations(),
-            recipient: users.recipient.addr,
-            sender: address(proxy),
-            totalAmount: PER_STREAM_AMOUNT
+            recipient: users.recipient0,
+            sender: users.alice,
+            totalAmount: PER_STREAM_AMOUNT,
+            transferable: true
         });
     }
 
@@ -226,13 +241,14 @@ contract Defaults is PermitSignature {
             broker: broker(),
             cancelable: true,
             range: linearRange(),
-            recipient: users.recipient.addr,
-            sender: address(proxy),
-            totalAmount: PER_STREAM_AMOUNT
+            recipient: users.recipient0,
+            sender: users.alice,
+            totalAmount: PER_STREAM_AMOUNT,
+            transferable: true
         });
     }
 
-    function durations() private pure returns (LockupLinear.Durations memory) {
+    function durations() public pure returns (LockupLinear.Durations memory) {
         return LockupLinear.Durations({ cliff: CLIFF_DURATION, total: TOTAL_DURATION });
     }
 
@@ -241,7 +257,7 @@ contract Defaults is PermitSignature {
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                              SABLIER-V2-PROXY-TARGET
+                                        BATCH
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Returns a default-size batch of `Batch.CreateWithDeltas` parameters.

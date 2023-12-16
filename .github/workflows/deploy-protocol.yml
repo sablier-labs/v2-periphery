@@ -12,6 +12,8 @@ env:
   FOUNDRY_OPTIMIZER_RUNS: "1000" # needed to compile V2 Core
   FOUNDRY_PROFILE: "optimized"
   MNEMONIC: ${{ secrets.MNEMONIC }}
+  RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
+  RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
 
 on:
   workflow_dispatch:
@@ -21,16 +23,12 @@ on:
         description: "Initial protocol admin."
         required: false
       chain:
-        default: "goerli"
+        default: "sepolia"
         description: "Chain name as defined in the Foundry config."
         required: false
       max-segment-count:
         default: "300"
         description: "Maximum number of segments allowed in a stream."
-        required: false
-      permit2:
-        default: "0x000000000022D473030F116dDEE9F6B43aC78BA3"
-        description: "The permit2 address."
         required: false
 
 jobs:
@@ -50,12 +48,11 @@ jobs:
           forge script script/DeployProtocol.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
-          --sig "run(address,uint256,address)"
+          --sig "run(address,uint256)"
           --verify
           -vvvv
           "${{ inputs.admin }}"
           "${{ inputs.max-segment-count }}"
-          "${{ inputs.permit2 }}"
 
       - name: "Add workflow summary"
         run: |

@@ -45,9 +45,6 @@ Vulnerabilities contingent upon the occurrence of any of the following also are 
 Sablier V2 Periphery has been developed with a number of technical assumptions in mind. For a disclosure to qualify as a
 vulnerability, it must adhere to these assumptions as well:
 
-- Every user creating streams via `SablierV2ProxyTarget` has a `SablierV2ProxyPlugin` contract installed for the
-  `onStreamCanceled` method.
-- All relevant Sablier contracts are listed in the `SablierV2Archive` contract.
 - [All assumptions](https://github.com/sablier-labs/v2-core/blob/main/SECURITY.md) in Sablier V2 Core apply to Sablier
   V2 Periphery as well.
 

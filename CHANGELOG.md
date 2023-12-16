@@ -4,10 +4,35 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Common Changelog](https://common-changelog.org).
 
+[1.1.0]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/sablier-labs/v2-periphery/releases/tag/v1.0.0
+
+## [1.1.0] - 2023-12-16
+
+### Changed
+
+- Update import paths to use Node.js dependencies([#236](https://github.com/sablier-labs/v2-periphery/pull/236))
+- Upgrade Solidity to `0.8.21` ([#187](https://github.com/sablier-labs/v2-periphery/pull/187))
+- Upgrade to latest V2 Core ([#191](https://github.com/sablier-labs/v2-periphery/pull/191))
+
+### Added
+
+- Add a contract that can batch create streams without a proxy
+  ([#177](https://github.com/sablier-labs/v2-periphery/pull/177))
+- Add `MerkleStreamer` contract for the LockupLinear model
+  ([#174](https://github.com/sablier-labs/v2-periphery/pull/174),
+  [#186](https://github.com/sablier-labs/v2-periphery/pull/186) and
+  [#190](https://github.com/sablier-labs/v2-periphery/pull/190))
+
+### Removed
+
+- **Breaking**: Remove proxy architecture ([#213](https://github.com/sablier-labs/v2-periphery/pull/213) and
+  [#226](https://github.com/sablier-labs/v2-periphery/pull/226))
+- Remove `@openzeppelin/contracts` from Node.js peer dependencies
+  ([#194](https://github.com/sablier-labs/v2-periphery/pull/194))
 
 ## [1.0.3] - 2023-08-17
 

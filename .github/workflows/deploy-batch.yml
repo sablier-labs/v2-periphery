@@ -1,0 +1,49 @@
+name: "Deploy Batch"
+
+env:
+  API_KEY_ARBISCAN: ${{ secrets.API_KEY_ARBISCAN }}
+  API_KEY_BSCSCAN: ${{ secrets.API_KEY_BSCSCAN }}
+  API_KEY_ETHERSCAN: ${{ secrets.API_KEY_ETHERSCAN }}
+  API_KEY_GNOSISSCAN: ${{ secrets.API_KEY_GNOSISSCAN }}
+  API_KEY_INFURA: ${{ secrets.API_KEY_INFURA }}
+  API_KEY_OPTIMISTIC_ETHERSCAN: ${{ secrets.API_KEY_OPTIMISTIC_ETHERSCAN }}
+  API_KEY_POLYGONSCAN: ${{ secrets.API_KEY_POLYGONSCAN }}
+  API_KEY_SNOWTRACE: ${{ secrets.API_KEY_SNOWTRACE }}
+  FOUNDRY_PROFILE: "optimized"
+  MNEMONIC: ${{ secrets.MNEMONIC }}
+  RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
+  RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      chain:
+        default: "sepolia"
+        description: "Chain name as defined in the Foundry config."
+        required: false
+
+jobs:
+  deploy-batch:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v3"
+        with:
+          submodules: "recursive"
+
+      - name: "Install Foundry"
+        uses: "foundry-rs/foundry-toolchain@v1"
+
+      - name: "Deploy the SablierV2Batch contract"
+        run: >-
+          forge script script/DeployBatch.s.sol
+          --broadcast
+          --rpc-url "${{ inputs.chain }}"
+          --sig "run()"
+          --verify
+          -vvvv
+
+      - name: "Add workflow summary"
+        run: |
+          echo "## Result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Done" >> $GITHUB_STEP_SUMMARY

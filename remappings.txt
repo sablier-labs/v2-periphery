@@ -1,11 +1,6 @@
-@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
-@prb/proxy/=lib/prb-proxy/
-@prb/proxy-test/=lib/prb-proxy/test/
-@prb/test/=lib/prb-test/src/
-@sablier/v2-core/=lib/v2-core/
-@sablier/v2-core-script/=lib/v2-core/script/
-@sablier/v2-core-test/=lib/v2-core/test/
-@uniswap/permit2/=lib/permit2/src/
-@uniswap/permit2-test/=lib/permit2/test/
-forge-std/=lib/forge-std/src/
-solady/=lib/solady/src/
+@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/
+@prb/math/=node_modules/@prb/math/
+@prb/test/=node_modules/@prb/test/
+@sablier/v2-core/=node_modules/@sablier/v2-core/
+forge-std/=node_modules/forge-std/
+solady/=node_modules/solady/

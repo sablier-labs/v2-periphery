@@ -1,7 +1,7 @@
 {
   "name": "@sablier/v2-periphery",
   "description": "Peripheral smart contracts for interacting with Sablier V2",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "author": {
     "name": "Sablier Labs Ltd",
     "url": "https://sablier.com"
@@ -11,21 +11,25 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "4.9.2",
-    "@prb/proxy": "4.0.1",
-    "@sablier/v2-core": "1.0.2",
-    "@uniswap/permit2": "github:sablier-labs/permit2#4ea99fe3a01bb526cba6370f1e07d247a718ea51"
+    "@prb/math": "4.0.2",
+    "@sablier/v2-core": "1.1.1"
   },
   "devDependencies": {
+    "@prb/test": "0.6.4",
+    "forge-std": "github:foundry-rs/forge-std#e8a047e3f40f13fa37af6fe14e6e06283d9a060e",
     "prettier": "^2.8.8",
-    "solhint-community": "^3.7.0-rc00"
+    "solady": "0.0.129",
+    "solhint": "^4.0.0"
   },
   "files": [
     "artifacts",
     "src",
+    "test/utils",
     "CHANGELOG.md"
   ],
   "homepage": "https://github.com/sablier-labs/v2-periphery#readme",
   "keywords": [
+    "asset-distribution",
     "asset-streaming",
     "blockchain",
     "cryptoasset-streaming",
@@ -38,12 +42,14 @@
     "sablier-v2",
     "smart-contracts",
     "solidity",
-    "token-streaming"
+    "token-distribution",
+    "token-streaming",
+    "token-vesting",
+    "vesting",
+    "web3"
   ],
   "peerDependencies": {
-    "@openzeppelin/contracts": "4.9.2",
-    "@prb/proxy": "4.0.1",
-    "@sablier/v2-core": "1.0.1"
+    "@sablier/v2-core": "1.1.1"
   },
   "publishConfig": {
     "access": "public"

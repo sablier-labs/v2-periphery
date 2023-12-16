@@ -5,19 +5,16 @@ import { SablierV2Comptroller } from "@sablier/v2-core/src/SablierV2Comptroller.
 import { SablierV2LockupDynamic } from "@sablier/v2-core/src/SablierV2LockupDynamic.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/src/SablierV2LockupLinear.sol";
 import { SablierV2NFTDescriptor } from "@sablier/v2-core/src/SablierV2NFTDescriptor.sol";
-import { BaseScript } from "@sablier/v2-core-script/Base.s.sol";
-import { IAllowanceTransfer } from "@uniswap/permit2/interfaces/IAllowanceTransfer.sol";
+import { BaseScript } from "./Base.s.sol";
 
-import { SablierV2Archive } from "../src/SablierV2Archive.sol";
-import { SablierV2ProxyPlugin } from "../src/SablierV2ProxyPlugin.sol";
-import { SablierV2ProxyTarget } from "../src/SablierV2ProxyTarget.sol";
+import { SablierV2MerkleStreamerFactory } from "../src/SablierV2MerkleStreamerFactory.sol";
+import { SablierV2Batch } from "../src/SablierV2Batch.sol";
 
-/// @notice Deploys the Sablier V2 Protocol and lists the streaming contracts in the archive.
+/// @notice Deploys the Sablier V2 Protocol.
 contract DeployProtocol is BaseScript {
     function run(
         address initialAdmin,
-        uint256 maxSegmentCount,
-        IAllowanceTransfer permit2
+        uint256 maxSegmentCount
     )
         public
         virtual
@@ -27,9 +24,8 @@ contract DeployProtocol is BaseScript {
             SablierV2LockupDynamic lockupDynamic,
             SablierV2LockupLinear lockupLinear,
             SablierV2NFTDescriptor nftDescriptor,
-            SablierV2Archive archive,
-            SablierV2ProxyPlugin plugin,
-            SablierV2ProxyTarget target
+            SablierV2Batch batch,
+            SablierV2MerkleStreamerFactory merkleStreamerFactory
         )
     {
         // Deploy V2 Core.
@@ -38,13 +34,7 @@ contract DeployProtocol is BaseScript {
         lockupDynamic = new SablierV2LockupDynamic(initialAdmin, comptroller, nftDescriptor, maxSegmentCount);
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
 
-        // Deploy V2 Periphery.
-        archive = new SablierV2Archive(initialAdmin);
-        plugin = new SablierV2ProxyPlugin(archive);
-        target = new SablierV2ProxyTarget(permit2);
-
-        // List the streaming contracts.
-        archive.list(address(lockupDynamic));
-        archive.list(address(lockupLinear));
+        batch = new SablierV2Batch();
+        merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
     }
 }

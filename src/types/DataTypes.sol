@@ -15,6 +15,7 @@ library Batch {
     struct CreateWithDeltas {
         address sender;
         bool cancelable;
+        bool transferable;
         address recipient;
         uint128 totalAmount;
         Broker broker;
@@ -28,6 +29,7 @@ library Batch {
         address recipient;
         uint128 totalAmount;
         bool cancelable;
+        bool transferable;
         LockupLinear.Durations durations;
         Broker broker;
     }
@@ -38,6 +40,7 @@ library Batch {
         address sender;
         uint40 startTime;
         bool cancelable;
+        bool transferable;
         address recipient;
         uint128 totalAmount;
         Broker broker;
@@ -50,6 +53,7 @@ library Batch {
         address recipient;
         uint128 totalAmount;
         bool cancelable;
+        bool transferable;
         LockupLinear.Range range;
         Broker broker;
     }
