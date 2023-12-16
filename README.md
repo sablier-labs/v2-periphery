@@ -16,6 +16,22 @@ In-depth documentation is available at [docs.sablier.com](https://docs.sablier.c
 
 ## Install
 
+### Node.js (recommended)
+
+Sablier V2 Periphery is available as a Node.js package:
+
+```shell
+yarn add @sablier/v2-periphery
+```
+
+Then, add these to your `remappings.txt` file:
+
+```text
+@sablier/v2-core/=node_modules/@sablier/v2-core/
+@sablier/v2-periphery/=node_modules/@sablier/v2-periphery/
+@openzeppelin/contracts/=node_modules/@openzeppelin/contracts/
+```
+
 ### Foundry
 
 First, run the install step:
@@ -24,18 +40,18 @@ First, run the install step:
 forge install sablier-labs/v2-periphery
 ```
 
-Then, add the following line to your `remappings.txt` file:
+Second, you need to install the project's dependencies:
 
-```text
-@sablier/v2-periphery/=lib/v2-periphery/
+```sh
+forge install --no-commit sablier-labs/v2-core OpenZeppelin/openzeppelin-contracts@v4.9.2
 ```
 
-### Node.js
+Finally, add these to your `remappings.txt` file:
 
-Sablier V2 Periphery is available as a Node.js package:
-
-```shell
-pnpm add @sablier/v2-periphery
+```text
+@sablier/v2-core/=lib/v2-core/
+@sablier/v2-periphery/=lib/v2-periphery/
+@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
 ```
 
 ## Security
