@@ -1,10 +1,14 @@
 [profile.default]
   auto_detect_solc = false
-  block_timestamp = 1_682_899_200                                               # May 1, 2023 at 00:00 GMT
+  block_timestamp = 1_682_899_200 # May 1, 2023 at 00:00 GMT
   bytecode_hash = "none"
   evm_version = "paris"
   fs_permissions = [{ access = "read", path = "out-optimized" }]
-  gas_reports = ["SablierV2MerkleStreamerFactory", "SablierV2MerkleStreamerLL"]
+  gas_reports = [
+    "SablierV2Batch",
+    "SablierV2MerkleStreamerFactory",
+    "SablierV2MerkleStreamerLL",
+  ]
   libs = ["lib"]
   optimizer = true
   optimizer_runs = 10_000
