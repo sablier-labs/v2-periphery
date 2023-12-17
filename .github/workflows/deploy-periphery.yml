@@ -12,7 +12,6 @@ env:
   FOUNDRY_PROFILE: "optimized"
   MNEMONIC: ${{ secrets.MNEMONIC }}
   RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
-  RPC_URL_SEPOLIA: ${{ secrets.RPC_URL_SEPOLIA }}
 
 on:
   workflow_dispatch:

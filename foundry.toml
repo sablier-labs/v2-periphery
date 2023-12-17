@@ -71,4 +71,4 @@
   mainnet = "${RPC_URL_MAINNET}"
   optimism = "https://optimism-mainnet.infura.io/v3/${API_KEY_INFURA}"
   polygon = "https://polygon-mainnet.infura.io/v3/${API_KEY_INFURA}"
-  sepolia = "${RPC_URL_SEPOLIA}"
+  sepolia = "https://sepolia.infura.io/v3/${API_KEY_INFURA}"
