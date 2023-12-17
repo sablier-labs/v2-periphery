@@ -20,7 +20,7 @@ devDependencies:
     specifier: 0.6.4
     version: 0.6.4
   forge-std:
-    specifier: github:foundry-rs/forge-std#e8a047e3f40f13fa37af6fe14e6e06283d9a060e
+    specifier: github:foundry-rs/forge-std#v1.5.6
     version: github.com/foundry-rs/forge-std/e8a047e3f40f13fa37af6fe14e6e06283d9a060e
   prettier:
     specifier: ^2.8.8
