@@ -10,19 +10,19 @@ The format is based on [Common Changelog](https://common-changelog.org).
 [1.0.1]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/sablier-labs/v2-periphery/releases/tag/v1.0.0
 
-## [1.1.0] - 2023-12-16
+## [1.1.0] - 2023-12-17
 
 ### Changed
 
-- Update import paths to use Node.js dependencies([#236](https://github.com/sablier-labs/v2-periphery/pull/236))
+- **Breaking** Upgrade to V2 Core v1.1.0 ([#191](https://github.com/sablier-labs/v2-periphery/pull/191))
+- Refactor import paths to use Node.js dependencies([#236](https://github.com/sablier-labs/v2-periphery/pull/236))
 - Upgrade Solidity to `0.8.21` ([#187](https://github.com/sablier-labs/v2-periphery/pull/187))
-- Upgrade to latest V2 Core ([#191](https://github.com/sablier-labs/v2-periphery/pull/191))
 
 ### Added
 
 - Add a contract that can batch create streams without a proxy
   ([#177](https://github.com/sablier-labs/v2-periphery/pull/177))
-- Add `MerkleStreamer` contract for the LockupLinear model
+- Add `MerkleStreamer` contract for the `LockupLinear` model
   ([#174](https://github.com/sablier-labs/v2-periphery/pull/174),
   [#186](https://github.com/sablier-labs/v2-periphery/pull/186) and
   [#190](https://github.com/sablier-labs/v2-periphery/pull/190))
