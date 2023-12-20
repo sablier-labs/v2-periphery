@@ -9,7 +9,6 @@
     "SablierV2MerkleStreamerFactory",
     "SablierV2MerkleStreamerLL",
   ]
-  libs = ["lib"]
   optimizer = true
   optimizer_runs = 10_000
   out = "out"
