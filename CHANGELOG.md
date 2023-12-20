@@ -4,19 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Common Changelog](https://common-changelog.org).
 
+[1.1.1]: https://github.com/sablier-labs/v2-periphery/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/sablier-labs/v2-periphery/releases/tag/v1.0.0
 
+## [1.1.1] - 2023-12-20
+
+### Changed
+
+- Upgrade to V2 Core v1.1.2 ([#244](https://github.com/sablier-labs/v2-periphery/pull/244))
+- Use Solidity v0.8.23 ([#244](https://github.com/sablier-labs/v2-periphery/pull/244))
+
 ## [1.1.0] - 2023-12-17
 
 ### Changed
 
-- **Breaking** Upgrade to V2 Core v1.1.0 ([#191](https://github.com/sablier-labs/v2-periphery/pull/191))
+- **Breaking** Upgrade to V2 Core v1.1.1 ([#191](https://github.com/sablier-labs/v2-periphery/pull/191),
+  [#236](https://github.com/sablier-labs/v2-periphery/pull/236))
 - Refactor import paths to use Node.js dependencies([#236](https://github.com/sablier-labs/v2-periphery/pull/236))
-- Upgrade Solidity to `0.8.21` ([#187](https://github.com/sablier-labs/v2-periphery/pull/187))
+- Use Solidity v0.8.21 ([#187](https://github.com/sablier-labs/v2-periphery/pull/187))
 
 ### Added
 
