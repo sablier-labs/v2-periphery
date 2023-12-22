@@ -23,7 +23,6 @@ abstract contract MurkyBase {
      * PROOF VERIFICATION *
      *
      */
-
     function verifyProof(bytes32 root, bytes32[] memory proof, bytes32 valueToProve) external pure returns (bool) {
         // proof length must be less than max array size
         bytes32 rollingHash = valueToProve;
@@ -41,7 +40,6 @@ abstract contract MurkyBase {
      * PROOF GENERATION *
      *
      */
-
     function getRoot(bytes32[] memory data) public pure returns (bytes32) {
         require(data.length > 1, "won't generate root for single leaf");
         while (data.length > 1) {
