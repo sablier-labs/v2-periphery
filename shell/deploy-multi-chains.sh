@@ -150,30 +150,30 @@ for chain in "${requested_chains[@]}"; do
     IFS=' ' read -r rpc_url api_key chain_id <<< "${chains[$chain]}"
 
     # Declare a deployment command
-    deployment_command="";
+    declare -a deployment_command
 
     # Choose the script based on the flag
     if [[ $DETERMINISTIC_DEPLOYMENT == true ]]; then
         echo -e "\n${IC}Deploying deterministic contracts to $chain...${NC}"
         # Construct the command
-        deployment_command="forge script script/DeployDeterministicPeriphery.s.sol \
-        --rpc-url $rpc_url \
-        --sig run(string) \
-        \'ChainID $chain_id, Version 1.1.0\' \
-        -vvv"
+        deployment_command=("forge" "script" "script/DeployDeterministicPeriphery.s.sol")
+        deployment_command+=("--rpc-url" "${rpc_url}")
+        deployment_command+=("--sig" "run(string)")
+        deployment_command+=("ChainID ${chain_id}, Version 1.1.0")
+        deployment_command+=("-vvv")
     else
         echo -e "\n${IC}Deploying contracts to $chain...${NC}"
         # Construct the command
-        deployment_command="forge script script/DeployPeriphery.s.sol \
-        --rpc-url $rpc_url \
-        --sig run() \
-        -vvv"
+        deployment_command=("forge" "script" "script/DeployPeriphery.s.sol")
+        deployment_command+=("--rpc-url" "${rpc_url}")
+        deployment_command+=("--sig" "run()")
+        deployment_command+=("-vvv")
     fi
 
     # Append additional options if broadcast is enabled
     if [[ $BROADCAST_DEPLOYMENT == true ]]; then
         echo -e "${SC}+${NC} This deployment is broadcasted on $chain"
-        deployment_command+=" --broadcast --verify --etherscan-api-key \"$api_key\""
+        deployment_command+=("--broadcast" "--verify" "--etherscan-api-key" "${api_key}")
     else
         echo -e "${SC}+${NC} Simulated on $chain"
     fi
@@ -182,11 +182,11 @@ for chain in "${requested_chains[@]}"; do
     if [[ $WITH_GAS_PRICE == true ]]; then
         gas_price_in_gwei=$(echo "scale=2; $GAS_PRICE / 1000000000" | bc)
         echo -e "${SC}+${NC} Using gas price of $gas_price_in_gwei gwei"
-        deployment_command+=" --with-gas-price $GAS_PRICE"
+        deployment_command+=("--with-gas-price" "${GAS_PRICE}")
     fi
 
     # Run the deployment command
-    output=$(FOUNDRY_PROFILE=optimized $deployment_command)
+    output=$(FOUNDRY_PROFILE=optimized "${deployment_command[@]}")
 
     # Create a file for the chain
     chain_file="$deployments/$chain.txt"
