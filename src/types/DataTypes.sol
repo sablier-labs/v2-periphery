@@ -54,7 +54,7 @@ library Batch {
         uint128 totalAmount;
         bool cancelable;
         bool transferable;
-        Broker broker;
         LockupLinear.Range range;
+        Broker broker;
     }
 }
