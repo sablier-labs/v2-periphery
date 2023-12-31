@@ -14,12 +14,12 @@ library Batch {
     /// @notice A struct encapsulating all parameters of {SablierV2LockupDynamic.createWithDelta} except for the asset.
     struct CreateWithDeltas {
         address sender;
-        bool cancelable;
-        bool transferable;
         address recipient;
         uint128 totalAmount;
-        Broker broker;
+        bool cancelable;
+        bool transferable;
         LockupDynamic.SegmentWithDelta[] segments;
+        Broker broker;
     }
 
     /// @notice A struct encapsulating all parameters of {SablierV2LockupLinear.createWithDurations} except for the
@@ -38,13 +38,13 @@ library Batch {
     /// asset.
     struct CreateWithMilestones {
         address sender;
+        address recipient;
+        uint128 totalAmount;
         uint40 startTime;
         bool cancelable;
         bool transferable;
-        address recipient;
-        uint128 totalAmount;
-        Broker broker;
         LockupDynamic.Segment[] segments;
+        Broker broker;
     }
 
     /// @notice A struct encapsulating all parameters of {SablierV2LockupLinear.createWithRange} except for the asset.
