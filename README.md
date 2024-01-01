@@ -20,10 +20,10 @@ In-depth documentation is available at [docs.sablier.com](https://docs.sablier.c
 
 This is the recommended approach.
 
-Install Sablier V2 Periphery as a Node.js package:
+Install Sablier V2 Periphery using your favorite package manager, e.g., with Bun:
 
 ```shell
-yarn add @sablier/v2-periphery
+bun add @sablier/v2-periphery
 ```
 
 Then, if you are using Foundry, add these to your `remappings.txt` file:
@@ -35,6 +35,8 @@ Then, if you are using Foundry, add these to your `remappings.txt` file:
 ```
 
 ### Git Submodules
+
+This installation method is not recommended, but it is available for those who prefer it.
 
 First, install the submodule using Forge:
 
