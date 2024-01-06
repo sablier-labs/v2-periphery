@@ -27,8 +27,8 @@ abstract contract MurkyBase {
         // proof length must be less than max array size
         bytes32 rollingHash = valueToProve;
         uint256 length = proof.length;
-        unchecked {
-            for (uint256 i = 0; i < length; ++i) {
+        for (uint256 i = 0; i < length; ++i) {
+            unchecked {
                 rollingHash = hashLeafPairs(rollingHash, proof[i]);
             }
         }
