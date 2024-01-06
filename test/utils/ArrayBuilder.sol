@@ -14,9 +14,7 @@ library ArrayBuilder {
     {
         streamIds = new uint256[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            unchecked {
-                streamIds[i] = firstStreamId + i;
-            }
+            streamIds[i] = firstStreamId + i;
         }
     }
 }
