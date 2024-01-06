@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // solhint-disable code-complexity,no-inline-assembly,reason-string
-pragma solidity >=0.8.19;
+pragma solidity >=0.8.22;
 
 /// @dev Credits to https://github.com/dmfxyz/murky
 abstract contract MurkyBase {

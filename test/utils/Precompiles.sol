@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // solhint-disable max-line-length,no-inline-assembly,reason-string
-pragma solidity >=0.8.19;
+pragma solidity >=0.8.22;
 
 import { ISablierV2Batch } from "../../src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2MerkleStreamerFactory } from "../../src/interfaces/ISablierV2MerkleStreamerFactory.sol";
