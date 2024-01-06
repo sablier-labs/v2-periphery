@@ -40,10 +40,9 @@ contract SablierV2Batch is ISablierV2Batch {
         // transactions will revert if there is overflow.
         uint256 i;
         uint256 transferAmount;
-        for (i = 0; i < batchSize;) {
+        for (i = 0; i < batchSize; ++i) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
-                i += 1;
             }
         }
 
@@ -52,7 +51,7 @@ contract SablierV2Batch is ISablierV2Batch {
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
-        for (i = 0; i < batchSize;) {
+        for (i = 0; i < batchSize; ++i) {
             // Create the stream.
             streamIds[i] = lockupLinear.createWithDurations(
                 LockupLinear.CreateWithDurations({
@@ -66,11 +65,6 @@ contract SablierV2Batch is ISablierV2Batch {
                     transferable: batch[i].transferable
                 })
             );
-
-            // Increment the for loop iterator.
-            unchecked {
-                i += 1;
-            }
         }
     }
 
@@ -94,10 +88,9 @@ contract SablierV2Batch is ISablierV2Batch {
         // transactions will revert if there is overflow.
         uint256 i;
         uint256 transferAmount;
-        for (i = 0; i < batchSize;) {
+        for (i = 0; i < batchSize; ++i) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
-                i += 1;
             }
         }
 
@@ -106,7 +99,7 @@ contract SablierV2Batch is ISablierV2Batch {
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
-        for (i = 0; i < batchSize;) {
+        for (i = 0; i < batchSize; ++i) {
             // Create the stream.
             streamIds[i] = lockupLinear.createWithRange(
                 LockupLinear.CreateWithRange({
@@ -120,11 +113,6 @@ contract SablierV2Batch is ISablierV2Batch {
                     transferable: batch[i].transferable
                 })
             );
-
-            // Increment the for loop iterator.
-            unchecked {
-                i += 1;
-            }
         }
     }
 
@@ -152,10 +140,9 @@ contract SablierV2Batch is ISablierV2Batch {
         // transactions will revert if there is overflow.
         uint256 i;
         uint256 transferAmount;
-        for (i = 0; i < batchSize;) {
+        for (i = 0; i < batchSize; ++i) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
-                i += 1;
             }
         }
 
@@ -164,7 +151,7 @@ contract SablierV2Batch is ISablierV2Batch {
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
-        for (i = 0; i < batchSize;) {
+        for (i = 0; i < batchSize; ++i) {
             // Create the stream.
             streamIds[i] = lockupDynamic.createWithDeltas(
                 LockupDynamic.CreateWithDeltas({
@@ -178,11 +165,6 @@ contract SablierV2Batch is ISablierV2Batch {
                     transferable: batch[i].transferable
                 })
             );
-
-            // Increment the for loop iterator.
-            unchecked {
-                i += 1;
-            }
         }
     }
 
@@ -206,10 +188,9 @@ contract SablierV2Batch is ISablierV2Batch {
         // transactions will revert if there is overflow.
         uint256 i;
         uint256 transferAmount;
-        for (i = 0; i < batchSize;) {
+        for (i = 0; i < batchSize; ++i) {
             unchecked {
                 transferAmount += batch[i].totalAmount;
-                i += 1;
             }
         }
 
@@ -218,7 +199,7 @@ contract SablierV2Batch is ISablierV2Batch {
 
         // Create a stream for each element in the parameter array.
         streamIds = new uint256[](batchSize);
-        for (i = 0; i < batchSize;) {
+        for (i = 0; i < batchSize; ++i) {
             // Create the stream.
             streamIds[i] = lockupDynamic.createWithMilestones(
                 LockupDynamic.CreateWithMilestones({
@@ -233,11 +214,6 @@ contract SablierV2Batch is ISablierV2Batch {
                     transferable: batch[i].transferable
                 })
             );
-
-            // Increment the for loop iterator.
-            unchecked {
-                i += 1;
-            }
         }
     }
 
