@@ -17,9 +17,7 @@ library BatchBuilder {
     {
         batch = new Batch.CreateWithDeltas[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            unchecked {
-                batch[i] = batchSingle;
-            }
+            batch[i] = batchSingle;
         }
     }
 
@@ -56,9 +54,7 @@ library BatchBuilder {
     {
         batch = new Batch.CreateWithDurations[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            unchecked {
-                batch[i] = batchSingle;
-            }
+            batch[i] = batchSingle;
         }
     }
 
@@ -95,9 +91,7 @@ library BatchBuilder {
     {
         batch = new Batch.CreateWithMilestones[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            unchecked {
-                batch[i] = batchSingle;
-            }
+            batch[i] = batchSingle;
         }
     }
 
@@ -135,9 +129,7 @@ library BatchBuilder {
     {
         batch = new Batch.CreateWithRange[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            unchecked {
-                batch[i] = batchSingle;
-            }
+            batch[i] = batchSingle;
         }
     }
 
