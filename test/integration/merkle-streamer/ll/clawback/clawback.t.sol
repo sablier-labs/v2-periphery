@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.19 <0.9.0;
+pragma solidity >=0.8.22 <0.9.0;
 
 import { Errors as V2CoreErrors } from "@sablier/v2-core/src/libraries/Errors.sol";
 import { ud } from "@prb/math/src/UD60x18.sol";

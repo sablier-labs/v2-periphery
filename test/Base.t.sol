@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 // solhint-disable max-states-count
-pragma solidity >=0.8.19 <0.9.0;
+pragma solidity >=0.8.22 <0.9.0;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
