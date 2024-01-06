@@ -16,8 +16,8 @@ library BatchBuilder {
         returns (Batch.CreateWithDeltas[] memory batch)
     {
         batch = new Batch.CreateWithDeltas[](batchSize);
-        unchecked {
-            for (uint256 i = 0; i < batchSize; ++i) {
+        for (uint256 i = 0; i < batchSize; ++i) {
+            unchecked {
                 batch[i] = batchSingle;
             }
         }
@@ -55,8 +55,8 @@ library BatchBuilder {
         returns (Batch.CreateWithDurations[] memory batch)
     {
         batch = new Batch.CreateWithDurations[](batchSize);
-        unchecked {
-            for (uint256 i = 0; i < batchSize; ++i) {
+        for (uint256 i = 0; i < batchSize; ++i) {
+            unchecked {
                 batch[i] = batchSingle;
             }
         }
@@ -94,8 +94,8 @@ library BatchBuilder {
         returns (Batch.CreateWithMilestones[] memory batch)
     {
         batch = new Batch.CreateWithMilestones[](batchSize);
-        unchecked {
-            for (uint256 i = 0; i < batchSize; ++i) {
+        for (uint256 i = 0; i < batchSize; ++i) {
+            unchecked {
                 batch[i] = batchSingle;
             }
         }
@@ -134,8 +134,8 @@ library BatchBuilder {
         returns (Batch.CreateWithRange[] memory batch)
     {
         batch = new Batch.CreateWithRange[](batchSize);
-        unchecked {
-            for (uint256 i = 0; i < batchSize; ++i) {
+        for (uint256 i = 0; i < batchSize; ++i) {
+            unchecked {
                 batch[i] = batchSingle;
             }
         }

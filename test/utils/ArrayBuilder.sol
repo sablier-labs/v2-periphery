@@ -13,8 +13,8 @@ library ArrayBuilder {
         returns (uint256[] memory streamIds)
     {
         streamIds = new uint256[](batchSize);
-        unchecked {
-            for (uint256 i = 0; i < batchSize; ++i) {
+        for (uint256 i = 0; i < batchSize; ++i) {
+            unchecked {
                 streamIds[i] = firstStreamId + i;
             }
         }
