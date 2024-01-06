@@ -56,14 +56,14 @@ contract SablierV2Batch is ISablierV2Batch {
             // Create the stream.
             streamIds[i] = lockupLinear.createWithDurations(
                 LockupLinear.CreateWithDurations({
-                    asset: asset,
-                    broker: batch[i].broker,
-                    cancelable: batch[i].cancelable,
-                    durations: batch[i].durations,
-                    recipient: batch[i].recipient,
                     sender: batch[i].sender,
+                    recipient: batch[i].recipient,
                     totalAmount: batch[i].totalAmount,
-                    transferable: batch[i].transferable
+                    asset: asset,
+                    cancelable: batch[i].cancelable,
+                    transferable: batch[i].transferable,
+                    durations: batch[i].durations,
+                    broker: batch[i].broker
                 })
             );
 
@@ -110,14 +110,14 @@ contract SablierV2Batch is ISablierV2Batch {
             // Create the stream.
             streamIds[i] = lockupLinear.createWithRange(
                 LockupLinear.CreateWithRange({
-                    asset: asset,
-                    broker: batch[i].broker,
-                    cancelable: batch[i].cancelable,
-                    range: batch[i].range,
-                    recipient: batch[i].recipient,
                     sender: batch[i].sender,
+                    recipient: batch[i].recipient,
                     totalAmount: batch[i].totalAmount,
-                    transferable: batch[i].transferable
+                    asset: asset,
+                    cancelable: batch[i].cancelable,
+                    transferable: batch[i].transferable,
+                    range: batch[i].range,
+                    broker: batch[i].broker
                 })
             );
 
@@ -168,14 +168,14 @@ contract SablierV2Batch is ISablierV2Batch {
             // Create the stream.
             streamIds[i] = lockupDynamic.createWithDeltas(
                 LockupDynamic.CreateWithDeltas({
-                    asset: asset,
-                    broker: batch[i].broker,
-                    cancelable: batch[i].cancelable,
-                    recipient: batch[i].recipient,
-                    segments: batch[i].segments,
                     sender: batch[i].sender,
+                    recipient: batch[i].recipient,
                     totalAmount: batch[i].totalAmount,
-                    transferable: batch[i].transferable
+                    asset: asset,
+                    cancelable: batch[i].cancelable,
+                    transferable: batch[i].transferable,
+                    segments: batch[i].segments,
+                    broker: batch[i].broker
                 })
             );
 
@@ -222,15 +222,15 @@ contract SablierV2Batch is ISablierV2Batch {
             // Create the stream.
             streamIds[i] = lockupDynamic.createWithMilestones(
                 LockupDynamic.CreateWithMilestones({
-                    asset: asset,
-                    broker: batch[i].broker,
-                    cancelable: batch[i].cancelable,
-                    recipient: batch[i].recipient,
-                    segments: batch[i].segments,
                     sender: batch[i].sender,
-                    startTime: batch[i].startTime,
+                    recipient: batch[i].recipient,
                     totalAmount: batch[i].totalAmount,
-                    transferable: batch[i].transferable
+                    asset: asset,
+                    cancelable: batch[i].cancelable,
+                    transferable: batch[i].transferable,
+                    startTime: batch[i].startTime,
+                    segments: batch[i].segments,
+                    broker: batch[i].broker
                 })
             );
 
