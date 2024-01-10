@@ -3,7 +3,6 @@ pragma solidity >=0.8.22;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IAdminable } from "@sablier/v2-core/src/interfaces/IAdminable.sol";
-import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 
 /// @title ISablierV2MerkleStreamer
 /// @notice A contract that lets user claim Sablier streams using Merkle proofs. An interesting use case for
@@ -62,9 +61,6 @@ interface ISablierV2MerkleStreamer is IAdminable {
     /// @notice Claws back the unclaimed tokens from the Merkle streamer.
     ///
     /// @dev Emits a {Clawback} event.
-    ///
-    /// Notes:
-    /// - If the protocol is not zero, the expiration check is not made.
     ///
     /// Requirements:
     /// - The caller must be the admin.
