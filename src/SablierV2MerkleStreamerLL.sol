@@ -50,7 +50,7 @@ contract SablierV2MerkleStreamerLL is
         bool cancelable,
         bool transferable
     )
-        SablierV2MerkleStreamer(initialAdmin, asset, lockupLinear, merkleRoot, expiration, cancelable, transferable)
+        SablierV2MerkleStreamer(initialAdmin, asset, merkleRoot, expiration, cancelable, transferable)
     {
         LOCKUP_LINEAR = lockupLinear;
         streamDurations = streamDurations_;

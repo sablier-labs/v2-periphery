@@ -2,7 +2,6 @@
 pragma solidity >=0.8.22 <0.9.0;
 
 import { Errors as V2CoreErrors } from "@sablier/v2-core/src/libraries/Errors.sol";
-import { ud } from "@prb/math/src/UD60x18.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 
@@ -24,11 +23,7 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
         _;
     }
 
-    modifier givenProtocolFeeZero() {
-        _;
-    }
-
-    function test_RevertGiven_CampaignNotExpired() external whenCallerAdmin givenProtocolFeeZero {
+    function test_RevertGiven_CampaignNotExpired() external whenCallerAdmin {
         vm.expectRevert(
             abi.encodeWithSelector(
                 Errors.SablierV2MerkleStreamer_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
@@ -44,21 +39,11 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
         _;
     }
 
-    function test_Clawback() external whenCallerAdmin givenProtocolFeeZero givenCampaignExpired {
+    function test_Clawback() external whenCallerAdmin givenCampaignExpired {
         test_Clawback(users.admin);
     }
 
-    modifier givenProtocolFeeNotZero() {
-        comptroller.setProtocolFee({ asset: asset, newProtocolFee: ud(0.03e18) });
-        _;
-    }
-
-    function testFuzz_Clawback_CampaignNotExpired(address to) external whenCallerAdmin givenProtocolFeeNotZero {
-        vm.assume(to != address(0));
-        test_Clawback(to);
-    }
-
-    function testFuzz_Clawback(address to) external whenCallerAdmin givenCampaignExpired givenProtocolFeeNotZero {
+    function testFuzz_Clawback(address to) external whenCallerAdmin givenCampaignExpired {
         vm.assume(to != address(0));
         test_Clawback(to);
     }
