@@ -47,9 +47,6 @@ interface ISablierV2MerkleStreamer is IAdminable {
     /// @notice Returns a flag indicating whether the Merkle streamer has expired.
     function hasExpired() external view returns (bool);
 
-    /// @notice The address of the {SablierV2Lockup} contract.
-    function LOCKUP() external returns (ISablierV2Lockup);
-
     /// @notice The root of the Merkle tree used to validate the claims.
     /// @dev This is an immutable state variable.
     function MERKLE_ROOT() external returns (bytes32);
