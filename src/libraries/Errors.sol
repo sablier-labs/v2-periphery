@@ -23,9 +23,6 @@ library Errors {
     /// @notice Thrown when trying to claim with an invalid Merkle proof.
     error SablierV2MerkleStreamer_InvalidProof();
 
-    /// @notice Thrown when trying to claim when the protocol fee is not zero.
-    error SablierV2MerkleStreamer_ProtocolFeeNotZero();
-
     /// @notice Thrown when trying to claim the same stream more than once.
     error SablierV2MerkleStreamer_StreamClaimed(uint256 index);
 }
