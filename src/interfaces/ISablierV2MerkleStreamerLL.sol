@@ -29,7 +29,6 @@ interface ISablierV2MerkleStreamerLL is ISablierV2MerkleStreamer {
     /// Requirements:
     /// - The campaign must not have expired.
     /// - The stream must not have been claimed already.
-    /// - The protocol fee must be zero.
     /// - The Merkle proof must be valid.
     ///
     /// @param index The index of the recipient in the Merkle tree.
