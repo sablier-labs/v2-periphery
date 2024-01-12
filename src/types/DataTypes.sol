@@ -40,9 +40,9 @@ library Batch {
         address sender;
         address recipient;
         uint128 totalAmount;
-        uint40 startTime;
         bool cancelable;
         bool transferable;
+        uint40 startTime;
         LockupDynamic.Segment[] segments;
         Broker broker;
     }

@@ -47,14 +47,14 @@ abstract contract CreateWithRange_Batch_Fork_Test is Fork_Test {
         asset.approve({ spender: address(batch), amount: totalTransferAmount });
 
         LockupLinear.CreateWithRange memory createParams = LockupLinear.CreateWithRange({
-            asset: asset,
-            broker: defaults.broker(),
-            cancelable: true,
-            recipient: params.recipient,
             sender: params.sender,
-            range: params.range,
+            recipient: params.recipient,
             totalAmount: params.perStreamAmount,
-            transferable: true
+            asset: asset,
+            cancelable: true,
+            transferable: true,
+            range: params.range,
+            broker: defaults.broker()
         });
         Batch.CreateWithRange[] memory batchParams = BatchBuilder.fillBatch(createParams, params.batchSize);
 
