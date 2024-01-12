@@ -87,14 +87,14 @@ contract SablierV2MerkleStreamerLL is
         // Interactions: create the stream via {SablierV2LockupLinear}.
         streamId = LOCKUP_LINEAR.createWithDurations(
             LockupLinear.CreateWithDurations({
-                asset: ASSET,
-                broker: Broker({ account: address(0), fee: ud(0) }),
-                cancelable: CANCELABLE,
-                durations: streamDurations,
-                recipient: recipient,
                 sender: admin,
+                recipient: recipient,
                 totalAmount: amount,
-                transferable: TRANSFERABLE
+                asset: ASSET,
+                cancelable: CANCELABLE,
+                transferable: TRANSFERABLE,
+                durations: streamDurations,
+                broker: Broker({ account: address(0), fee: ud(0) })
             })
         );
 

@@ -32,13 +32,13 @@ library BatchBuilder {
     {
         batch = new Batch.CreateWithDeltas[](batchSize);
         Batch.CreateWithDeltas memory batchSingle = Batch.CreateWithDeltas({
-            broker: params.broker,
-            cancelable: params.cancelable,
-            recipient: params.recipient,
-            segments: params.segments,
             sender: params.sender,
+            recipient: params.recipient,
             totalAmount: params.totalAmount,
-            transferable: params.transferable
+            cancelable: params.cancelable,
+            transferable: params.transferable,
+            segments: params.segments,
+            broker: params.broker
         });
         batch = fillBatch(batchSingle, batchSize);
     }
@@ -69,13 +69,13 @@ library BatchBuilder {
     {
         batch = new Batch.CreateWithDurations[](batchSize);
         Batch.CreateWithDurations memory batchSingle = Batch.CreateWithDurations({
-            broker: params.broker,
-            cancelable: params.cancelable,
-            durations: params.durations,
-            recipient: params.recipient,
             sender: params.sender,
+            recipient: params.recipient,
             totalAmount: params.totalAmount,
-            transferable: params.transferable
+            cancelable: params.cancelable,
+            transferable: params.transferable,
+            durations: params.durations,
+            broker: params.broker
         });
         batch = fillBatch(batchSingle, batchSize);
     }
@@ -106,14 +106,14 @@ library BatchBuilder {
     {
         batch = new Batch.CreateWithMilestones[](batchSize);
         Batch.CreateWithMilestones memory batchSingle = Batch.CreateWithMilestones({
-            broker: params.broker,
-            cancelable: params.cancelable,
-            recipient: params.recipient,
-            segments: params.segments,
             sender: params.sender,
-            startTime: params.startTime,
+            recipient: params.recipient,
             totalAmount: params.totalAmount,
-            transferable: params.transferable
+            cancelable: params.cancelable,
+            transferable: params.transferable,
+            startTime: params.startTime,
+            segments: params.segments,
+            broker: params.broker
         });
         batch = fillBatch(batchSingle, batchSize);
     }
@@ -144,13 +144,13 @@ library BatchBuilder {
     {
         batch = new Batch.CreateWithRange[](batchSize);
         Batch.CreateWithRange memory batchSingle = Batch.CreateWithRange({
-            broker: params.broker,
-            cancelable: params.cancelable,
-            range: params.range,
-            recipient: params.recipient,
             sender: params.sender,
+            recipient: params.recipient,
             totalAmount: params.totalAmount,
-            transferable: params.transferable
+            cancelable: params.cancelable,
+            transferable: params.transferable,
+            range: params.range,
+            broker: params.broker
         });
         batch = fillBatch(batchSingle, batchSize);
     }

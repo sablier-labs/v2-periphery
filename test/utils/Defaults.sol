@@ -141,14 +141,14 @@ contract Defaults is Merkle {
 
     function createWithDeltas(IERC20 asset_) public view returns (LockupDynamic.CreateWithDeltas memory) {
         return LockupDynamic.CreateWithDeltas({
-            asset: asset_,
-            broker: broker(),
-            cancelable: true,
-            recipient: users.recipient0,
-            segments: segmentsWithDeltas(),
             sender: users.alice,
+            recipient: users.recipient0,
             totalAmount: PER_STREAM_AMOUNT,
-            transferable: true
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            segments: segmentsWithDeltas(),
+            broker: broker()
         });
     }
 
@@ -158,15 +158,15 @@ contract Defaults is Merkle {
 
     function createWithMilestones(IERC20 asset_) public view returns (LockupDynamic.CreateWithMilestones memory) {
         return LockupDynamic.CreateWithMilestones({
-            asset: asset_,
-            broker: broker(),
-            cancelable: true,
-            recipient: users.recipient0,
-            segments: segments(),
             sender: users.alice,
-            startTime: START_TIME,
+            recipient: users.recipient0,
             totalAmount: PER_STREAM_AMOUNT,
-            transferable: true
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            startTime: START_TIME,
+            segments: segments(),
+            broker: broker()
         });
     }
 
@@ -220,14 +220,14 @@ contract Defaults is Merkle {
 
     function createWithDurations(IERC20 asset_) public view returns (LockupLinear.CreateWithDurations memory) {
         return LockupLinear.CreateWithDurations({
-            asset: asset_,
-            broker: broker(),
-            cancelable: true,
-            durations: durations(),
-            recipient: users.recipient0,
             sender: users.alice,
+            recipient: users.recipient0,
             totalAmount: PER_STREAM_AMOUNT,
-            transferable: true
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            durations: durations(),
+            broker: broker()
         });
     }
 
@@ -237,14 +237,14 @@ contract Defaults is Merkle {
 
     function createWithRange(IERC20 asset_) public view returns (LockupLinear.CreateWithRange memory) {
         return LockupLinear.CreateWithRange({
-            asset: asset_,
-            broker: broker(),
-            cancelable: true,
-            range: linearRange(),
-            recipient: users.recipient0,
             sender: users.alice,
+            recipient: users.recipient0,
             totalAmount: PER_STREAM_AMOUNT,
-            transferable: true
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            range: linearRange(),
+            broker: broker()
         });
     }
 

@@ -53,15 +53,15 @@ abstract contract CreateWithMilestones_Batch_Fork_Test is Fork_Test {
         asset.approve({ spender: address(batch), amount: totalTransferAmount });
 
         LockupDynamic.CreateWithMilestones memory createWithMilestones = LockupDynamic.CreateWithMilestones({
-            asset: asset,
-            broker: defaults.broker(),
-            cancelable: true,
-            recipient: params.recipient,
-            segments: params.segments,
             sender: params.sender,
-            startTime: params.startTime,
+            recipient: params.recipient,
             totalAmount: params.perStreamAmount,
-            transferable: true
+            asset: asset,
+            cancelable: true,
+            transferable: true,
+            startTime: params.startTime,
+            segments: params.segments,
+            broker: defaults.broker()
         });
         Batch.CreateWithMilestones[] memory batchParams = BatchBuilder.fillBatch(createWithMilestones, params.batchSize);
 
