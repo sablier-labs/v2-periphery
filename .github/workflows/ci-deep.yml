@@ -1,67 +1,42 @@
 name: "CI Deep"
 
-env:
-  RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
-
 on:
   schedule:
     - cron: "0 3 * * 0" # at 3:00am UTC every Sunday
   workflow_dispatch:
     inputs:
+      integrationFuzzRuns:
+        default: "100000"
+        description: "Integration: number of fuzz runs."
+        required: false
       forkFuzzRuns:
-        default: "250"
-        description: "Number of fuzz runs for each fork test."
+        default: "1000"
+        description: "Fork: number of fuzz runs."
         required: false
 
 jobs:
   lint:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: "Check out the repo"
-        uses: "actions/checkout@v4"
+    uses: "sablier-labs/reusable-workflows/.github/workflows/forge-lint.yml@main"
 
-      - name: "Install Foundry"
-        uses: "foundry-rs/foundry-toolchain@v1"
+  build:
+    uses: "sablier-labs/reusable-workflows/.github/workflows/forge-build.yml@main"
 
-      - name: "Install Bun"
-        uses: "oven-sh/setup-bun@v1"
+  test-integration:
+    needs: ["lint", "build"]
+    uses: "sablier-labs/reusable-workflows/.github/workflows/forge-test.yml@main"
+    with:
+      foundry-fuzz-runs: ${{ inputs.integrationFuzzRuns || 100000 }}
+      foundry-profile: "test-optimized"
+      match-path: "test/integration/**/*.sol"
+      name: "Integration tests"
 
-      - name: "Install the Node.js dependencies"
-        run: "bun install --frozen-lockfile"
-
-      - name: "Lint the code"
-        run: "bun run lint"
-
-      - name: "Add lint summary"
-        run: |
-          echo "## Lint result" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
-
-  test:
-    env:
-      FOUNDRY_FUZZ_RUNS: ${{ inputs.forkFuzzRuns || '250' }}
-    needs: "lint"
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: "Check out the repo"
-        uses: "actions/checkout@v4"
-
-      - name: "Install Foundry"
-        uses: "foundry-rs/foundry-toolchain@v1"
-
-      - name: "Install Bun"
-        uses: "oven-sh/setup-bun@v1"
-
-      - name: "Install the Node.js dependencies"
-        run: "bun install --frozen-lockfile"
-
-      - name: "Produce an optimized build with --via-ir"
-        run: "FOUNDRY_PROFILE=optimized forge build"
-
-      - name: "Run the fork tests against the optimized build"
-        run: "FOUNDRY_PROFILE=test-optimized forge test --match-path \"test/fork/**/*.sol\""
-
-      - name: "Add test summary"
-        run: |
-          echo "## Fork tests result" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+  test-fork:
+    needs: ["lint", "build"]
+    secrets:
+      RPC_URL_MAINNET: ${{ secrets.RPC_URL_MAINNET }}
+    uses: "sablier-labs/reusable-workflows/.github/workflows/forge-test.yml@main"
+    with:
+      foundry-fuzz-runs: ${{ inputs.forkFuzzRuns || 1000 }}
+      foundry-profile: "test-optimized"
+      match-path: "test/fork/**/*.sol"
+      name: "Fork tests"
