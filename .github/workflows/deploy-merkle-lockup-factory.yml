@@ -1,4 +1,4 @@
-name: "Deploy Merkle Streamer Factory"
+name: "Deploy Merkle Lockup Factory"
 
 env:
   API_KEY_INFURA: ${{ secrets.API_KEY_INFURA }}
@@ -15,7 +15,7 @@ on:
         required: false
 
 jobs:
-  deploy-merkle-streamer-factory:
+  deploy-merkle-lockup-factory:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
@@ -24,9 +24,9 @@ jobs:
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Deploy the SablierV2MerkleStreamerFactory contract"
+      - name: "Deploy the SablierV2MerkleLockupFactory contract"
         run: >-
-          forge script script/DeployMerkleStreamerFactory.s.sol
+          forge script script/DeployMerkleLockupFactory.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
           --sig "run()"

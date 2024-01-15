@@ -4,12 +4,12 @@ pragma solidity >=0.8.22 <0.9.0;
 import { BaseScript } from "./Base.s.sol";
 
 import { SablierV2Batch } from "../src/SablierV2Batch.sol";
-import { SablierV2MerkleStreamerFactory } from "../src/SablierV2MerkleStreamerFactory.sol";
+import { SablierV2MerkleLockupFactory } from "../src/SablierV2MerkleLockupFactory.sol";
 
 /// @notice Deploys all V2 Periphery contracts at deterministic addresses across chains, in the following order:
 ///
 /// 1. {SablierV2Batch}
-/// 2. {SablierV2MerkleStreamerFactory}
+/// 2. {SablierV2MerkleLockupFactory}
 ///
 /// @dev Reverts if any contract has already been deployed.
 contract DeployDeterministicPeriphery is BaseScript {
@@ -19,9 +19,9 @@ contract DeployDeterministicPeriphery is BaseScript {
         public
         virtual
         broadcast
-        returns (SablierV2Batch batch, SablierV2MerkleStreamerFactory merkleStreamerFactory)
+        returns (SablierV2Batch batch, SablierV2MerkleLockupFactory merkleLockupFactory)
     {
         batch = new SablierV2Batch{ salt: bytes32(abi.encodePacked(create2Salt)) }();
-        merkleStreamerFactory = new SablierV2MerkleStreamerFactory{ salt: bytes32(abi.encodePacked(create2Salt)) }();
+        merkleLockupFactory = new SablierV2MerkleLockupFactory{ salt: bytes32(abi.encodePacked(create2Salt)) }();
     }
 }

@@ -4,21 +4,21 @@ pragma solidity >=0.8.22;
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 
-import { SablierV2MerkleStreamerLL } from "./SablierV2MerkleStreamerLL.sol";
-import { ISablierV2MerkleStreamerFactory } from "./interfaces/ISablierV2MerkleStreamerFactory.sol";
-import { ISablierV2MerkleStreamerLL } from "./interfaces/ISablierV2MerkleStreamerLL.sol";
-import { MerkleStreamer } from "./types/DataTypes.sol";
+import { SablierV2MerkleLockupLL } from "./SablierV2MerkleLockupLL.sol";
+import { ISablierV2MerkleLockupFactory } from "./interfaces/ISablierV2MerkleLockupFactory.sol";
+import { ISablierV2MerkleLockupLL } from "./interfaces/ISablierV2MerkleLockupLL.sol";
+import { MerkleLockup } from "./types/DataTypes.sol";
 
-/// @title SablierV2MerkleStreamerFactory
-/// @notice See the documentation in {ISablierV2MerkleStreamerFactory}.
-contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
+/// @title SablierV2MerkleLockupFactory
+/// @notice See the documentation in {ISablierV2MerkleLockupFactory}.
+contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
     /*//////////////////////////////////////////////////////////////////////////
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice inheritdoc ISablierV2MerkleStreamerFactory
-    function createMerkleStreamerLL(
-        MerkleStreamer.ConstructorParams memory baseParams,
+    /// @notice inheritdoc ISablierV2MerkleLockupFactory
+    function createMerkleLockupLL(
+        MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations,
         string memory ipfsCID,
@@ -26,7 +26,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
         uint256 recipientsCount
     )
         external
-        returns (ISablierV2MerkleStreamerLL merkleStreamerLL)
+        returns (ISablierV2MerkleLockupLL merkleLockupLL)
     {
         // Hash the parameters to generate a salt.
         bytes32 salt = keccak256(
@@ -43,12 +43,12 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
             )
         );
 
-        // Deploy the Merkle streamer with CREATE2.
-        merkleStreamerLL = new SablierV2MerkleStreamerLL{ salt: salt }(baseParams, lockupLinear, streamDurations);
+        // Deploy the Merkle Lockup contract with CREATE2.
+        merkleLockupLL = new SablierV2MerkleLockupLL{ salt: salt }(baseParams, lockupLinear, streamDurations);
 
         // Using a different function to emit the event to avoid stack too deep error.
-        emit CreateMerkleStreamerLL(
-            merkleStreamerLL, baseParams, lockupLinear, streamDurations, ipfsCID, aggregateAmount, recipientsCount
+        emit CreateMerkleLockupLL(
+            merkleLockupLL, baseParams, lockupLinear, streamDurations, ipfsCID, aggregateAmount, recipientsCount
         );
     }
 }
