@@ -108,17 +108,8 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             recipientsCount: vars.recipientsCount
         });
 
-        MerkleStreamer.CreateWithLockupLinear memory createLLParams = MerkleStreamer.CreateWithLockupLinear({
-            initialAdmin: params.admin,
-            lockupLinear: lockupLinear,
-            asset: asset,
-            name: defaults.NAME_STRING(),
-            merkleRoot: vars.merkleRoot,
-            expiration: params.expiration,
-            streamDurations: defaults.durations(),
-            cancelable: defaults.CANCELABLE(),
-            transferable: defaults.TRANSFERABLE()
-        });
+        MerkleStreamer.CreateWithLockupLinear memory createLLParams =
+            createWithLockupLinear({ admin: params.admin, merkleRoot: vars.merkleRoot, expiration: params.expiration });
 
         vars.merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL({
             createLLParams: createLLParams,
