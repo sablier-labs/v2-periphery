@@ -14,11 +14,11 @@ import { Assertions as V2CoreAssertions } from "@sablier/v2-core/test/utils/Asse
 import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
 
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
-import { ISablierV2MerkleStreamerFactory } from "src/interfaces/ISablierV2MerkleStreamerFactory.sol";
-import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
+import { ISablierV2MerkleLockupFactory } from "src/interfaces/ISablierV2MerkleLockupFactory.sol";
+import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
 import { SablierV2Batch } from "src/SablierV2Batch.sol";
-import { SablierV2MerkleStreamerFactory } from "src/SablierV2MerkleStreamerFactory.sol";
-import { SablierV2MerkleStreamerLL } from "src/SablierV2MerkleStreamerLL.sol";
+import { SablierV2MerkleLockupFactory } from "src/SablierV2MerkleLockupFactory.sol";
+import { SablierV2MerkleLockupLL } from "src/SablierV2MerkleLockupLL.sol";
 
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
@@ -44,8 +44,8 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
-    ISablierV2MerkleStreamerFactory internal merkleStreamerFactory;
-    ISablierV2MerkleStreamerLL internal merkleStreamerLL;
+    ISablierV2MerkleLockupFactory internal merkleLockupFactory;
+    ISablierV2MerkleLockupLL internal merkleLockupLL;
 
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION
@@ -90,17 +90,17 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     function deployPeripheryConditionally() internal {
         if (!isTestOptimizedProfile()) {
             batch = new SablierV2Batch();
-            merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
+            merkleLockupFactory = new SablierV2MerkleLockupFactory();
         } else {
-            (batch, merkleStreamerFactory) = deployOptimizedPeriphery();
+            (batch, merkleLockupFactory) = deployOptimizedPeriphery();
         }
     }
 
     /// @dev Labels the most relevant contracts.
     function labelContracts() internal {
         vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
-        vm.label({ account: address(merkleStreamerFactory), newLabel: "MerkleStreamerFactory" });
-        vm.label({ account: address(merkleStreamerLL), newLabel: "MerkleStreamerLL" });
+        vm.label({ account: address(merkleLockupFactory), newLabel: "MerkleLockupFactory" });
+        vm.label({ account: address(merkleLockupLL), newLabel: "MerkleLockupLL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
@@ -247,10 +247,10 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                  MERKLE-STREAMER
+                                  MERKLE-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    function computeMerkleStreamerLLAddress(
+    function computeMerkleLockupLLAddress(
         address admin,
         bytes32 merkleRoot,
         uint40 expiration
@@ -271,15 +271,15 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                 abi.encode(defaults.durations())
             )
         );
-        bytes32 creationBytecodeHash = keccak256(getMerkleStreamerLLBytecode(admin, merkleRoot, expiration));
+        bytes32 creationBytecodeHash = keccak256(getMerkleLockupLLBytecode(admin, merkleRoot, expiration));
         return computeCreate2Address({
             salt: salt,
             initcodeHash: creationBytecodeHash,
-            deployer: address(merkleStreamerFactory)
+            deployer: address(merkleLockupFactory)
         });
     }
 
-    function getMerkleStreamerLLBytecode(
+    function getMerkleLockupLLBytecode(
         address admin,
         bytes32 merkleRoot,
         uint40 expiration
@@ -290,11 +290,10 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         bytes memory constructorArgs =
             abi.encode(defaults.baseParams(admin, merkleRoot, expiration), lockupLinear, defaults.durations());
         if (!isTestOptimizedProfile()) {
-            return bytes.concat(type(SablierV2MerkleStreamerLL).creationCode, constructorArgs);
+            return bytes.concat(type(SablierV2MerkleLockupLL).creationCode, constructorArgs);
         } else {
             return bytes.concat(
-                vm.getCode("out-optimized/SablierV2MerkleStreamerLL.sol/SablierV2MerkleStreamerLL.json"),
-                constructorArgs
+                vm.getCode("out-optimized/SablierV2MerkleLockupLL.sol/SablierV2MerkleLockupLL.json"), constructorArgs
             );
         }
     }

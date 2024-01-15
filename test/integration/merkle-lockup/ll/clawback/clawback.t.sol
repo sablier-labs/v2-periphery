@@ -5,17 +5,17 @@ import { Errors as V2CoreErrors } from "@sablier/v2-core/src/libraries/Errors.so
 
 import { Errors } from "src/libraries/Errors.sol";
 
-import { MerkleStreamer_Integration_Test } from "../../MerkleStreamer.t.sol";
+import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
+contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
     function setUp() public virtual override {
-        MerkleStreamer_Integration_Test.setUp();
+        MerkleLockup_Integration_Test.setUp();
     }
 
     function test_RevertWhen_CallerNotAdmin() external {
         changePrank({ msgSender: users.eve });
         vm.expectRevert(abi.encodeWithSelector(V2CoreErrors.CallerNotAdmin.selector, users.admin, users.eve));
-        merkleStreamerLL.clawback({ to: users.eve, amount: 1 });
+        merkleLockupLL.clawback({ to: users.eve, amount: 1 });
     }
 
     modifier whenCallerAdmin() {
@@ -26,10 +26,10 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
     function test_RevertGiven_CampaignNotExpired() external whenCallerAdmin {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleStreamer_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
+                Errors.SablierV2MerkleLockup_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
             )
         );
-        merkleStreamerLL.clawback({ to: users.admin, amount: 1 });
+        merkleLockupLL.clawback({ to: users.admin, amount: 1 });
     }
 
     modifier givenCampaignExpired() {
@@ -49,10 +49,10 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
     }
 
     function test_Clawback(address to) internal {
-        uint128 clawbackAmount = uint128(asset.balanceOf(address(merkleStreamerLL)));
+        uint128 clawbackAmount = uint128(asset.balanceOf(address(merkleLockupLL)));
         expectCallToTransfer({ to: to, amount: clawbackAmount });
-        vm.expectEmit({ emitter: address(merkleStreamerLL) });
+        vm.expectEmit({ emitter: address(merkleLockupLL) });
         emit Clawback({ admin: users.admin, to: to, amount: clawbackAmount });
-        merkleStreamerLL.clawback({ to: to, amount: clawbackAmount });
+        merkleLockupLL.clawback({ to: to, amount: clawbackAmount });
     }
 }

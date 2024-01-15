@@ -62,11 +62,11 @@ library Batch {
     }
 }
 
-library MerkleStreamer {
-    /// @notice Struct encapsulating the base constructor parameter of a {SablierV2MerkleStreamer} contract.
-    /// @param initialAdmin The initial admin of the Merkle streamer contract.
+library MerkleLockup {
+    /// @notice Struct encapsulating the base constructor parameter of a {SablierV2MerkleLockup} contract.
+    /// @param initialAdmin The initial admin of the Merkle Lockup contract.
     /// @param asset The address of the streamed ERC-20 asset.
-    /// @param name The name of the Merkle streamer contract.
+    /// @param name The name of the campaign.
     /// @param merkleRoot The Merkle root of the claim data.
     /// @param expiration The expiration of the streaming campaign, as a Unix timestamp.
     /// @param cancelable Indicates if each stream will be cancelable.

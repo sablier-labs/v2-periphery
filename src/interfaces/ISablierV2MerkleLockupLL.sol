@@ -3,11 +3,11 @@ pragma solidity >=0.8.22;
 
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 
-import { ISablierV2MerkleStreamer } from "./ISablierV2MerkleStreamer.sol";
+import { ISablierV2MerkleLockup } from "./ISablierV2MerkleLockup.sol";
 
-/// @title ISablierV2MerkleStreamerLL
-/// @notice Merkle streamer that creates Lockup Linear streams.
-interface ISablierV2MerkleStreamerLL is ISablierV2MerkleStreamer {
+/// @title ISablierV2MerkleLockupLL
+/// @notice Merkle Lockup that creates Lockup Linear streams.
+interface ISablierV2MerkleLockupLL is ISablierV2MerkleLockup {
     /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
