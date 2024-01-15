@@ -7,8 +7,8 @@
   fs_permissions = [{ access = "read", path = "out-optimized" }]
   gas_reports = [
     "SablierV2Batch",
-    "SablierV2MerkleStreamerFactory",
-    "SablierV2MerkleStreamerLL",
+    "SablierV2MerkleLockupFactory",
+    "SablierV2MerkleLockupLL",
   ]
   optimizer = true
   optimizer_runs = 10_000

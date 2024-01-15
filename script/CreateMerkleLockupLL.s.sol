@@ -6,13 +6,13 @@ import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { BaseScript } from "./Base.s.sol";
 
-import { ISablierV2MerkleStreamerFactory } from "../src/interfaces/ISablierV2MerkleStreamerFactory.sol";
-import { ISablierV2MerkleStreamerLL } from "../src/interfaces/ISablierV2MerkleStreamerLL.sol";
-import { MerkleStreamer } from "../src/types/DataTypes.sol";
+import { ISablierV2MerkleLockupFactory } from "../src/interfaces/ISablierV2MerkleLockupFactory.sol";
+import { ISablierV2MerkleLockupLL } from "../src/interfaces/ISablierV2MerkleLockupLL.sol";
+import { MerkleLockup } from "../src/types/DataTypes.sol";
 
-contract CreateMerkleStreamerLL is BaseScript {
+contract CreateMerkleLockupLL is BaseScript {
     struct Params {
-        MerkleStreamer.ConstructorParams baseParams;
+        MerkleLockup.ConstructorParams constructorParams;
         ISablierV2LockupLinear lockupLinear;
         LockupLinear.Durations streamDurations;
         string ipfsCID;
@@ -21,15 +21,15 @@ contract CreateMerkleStreamerLL is BaseScript {
     }
 
     function run(
-        ISablierV2MerkleStreamerFactory merkleStreamerFactory,
+        ISablierV2MerkleLockupFactory merkleLockupFactory,
         Params calldata params
     )
         public
         broadcast
-        returns (ISablierV2MerkleStreamerLL merkleStreamerLL)
+        returns (ISablierV2MerkleLockupLL merkleLockupLL)
     {
-        merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL(
-            params.baseParams,
+        merkleLockupLL = merkleLockupFactory.createMerkleLockupLL(
+            params.constructorParams,
             params.lockupLinear,
             params.streamDurations,
             params.ipfsCID,

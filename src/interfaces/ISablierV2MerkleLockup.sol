@@ -4,13 +4,13 @@ pragma solidity >=0.8.22;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IAdminable } from "@sablier/v2-core/src/interfaces/IAdminable.sol";
 
-/// @title ISablierV2MerkleStreamer
+/// @title ISablierV2MerkleLockup
 /// @notice A contract that lets user claim Sablier streams using Merkle proofs. An interesting use case for
 /// MerkleStream is airstreams, which is a portmanteau of "airdrop" and "stream". This is an airdrop model where the
 /// tokens are distributed over time, as opposed to all at once.
-/// @dev This is the base interface for MerkleStreamer contracts. See the Sablier docs for more guidance on how
+/// @dev This is the base interface for MerkleLockup contracts. See the Sablier docs for more guidance on how
 /// streaming works: https://docs.sablier.com/.
-interface ISablierV2MerkleStreamer is IAdminable {
+interface ISablierV2MerkleLockup is IAdminable {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
@@ -33,7 +33,7 @@ interface ISablierV2MerkleStreamer is IAdminable {
     /// @dev This is an immutable state variable.
     function CANCELABLE() external returns (bool);
 
-    /// @notice The cut-off point for the Merkle streamer, as a Unix timestamp. A value of zero means there
+    /// @notice The cut-off point for the Merkle Lockup contract, as a Unix timestamp. A value of zero means there
     /// is no expiration.
     /// @dev This is an immutable state variable.
     function EXPIRATION() external returns (uint40);
@@ -46,7 +46,7 @@ interface ISablierV2MerkleStreamer is IAdminable {
     /// @param index The index of the recipient to check.
     function hasClaimed(uint256 index) external returns (bool);
 
-    /// @notice Returns a flag indicating whether the Merkle streamer has expired.
+    /// @notice Returns a flag indicating whether the campaign has expired.
     function hasExpired() external view returns (bool);
 
     /// @notice The root of the Merkle tree used to validate the claims.
@@ -61,7 +61,7 @@ interface ISablierV2MerkleStreamer is IAdminable {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Claws back the unclaimed tokens from the Merkle streamer.
+    /// @notice Claws back the unclaimed tokens from the Merkle Lockup.
     ///
     /// @dev Emits a {Clawback} event.
     ///

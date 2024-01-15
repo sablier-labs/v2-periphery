@@ -7,7 +7,7 @@ import { ud2x18 } from "@prb/math/src/UD2x18.sol";
 import { UD60x18 } from "@prb/math/src/UD60x18.sol";
 import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { Batch, MerkleStreamer } from "src/types/DataTypes.sol";
+import { Batch, MerkleLockup } from "src/types/DataTypes.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";
@@ -39,7 +39,7 @@ contract Defaults is Merkle {
     uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
-                                  MERKLE-STREAMER
+                                  MERKLE-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
     uint256 public constant AGGREGATE_AMOUNT = CLAIM_AMOUNT * RECIPIENTS_COUNT;
@@ -89,7 +89,7 @@ contract Defaults is Merkle {
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                  MERKLE-STREAMER
+                                  MERKLE-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
     function index1Proof() public view returns (bytes32[] memory) {
@@ -116,7 +116,7 @@ contract Defaults is Merkle {
         return getProof(LEAVES.toBytes32(), pos);
     }
 
-    function baseParams() public view returns (MerkleStreamer.ConstructorParams memory) {
+    function baseParams() public view returns (MerkleLockup.ConstructorParams memory) {
         return baseParams(users.admin, MERKLE_ROOT, EXPIRATION);
     }
 
@@ -127,9 +127,9 @@ contract Defaults is Merkle {
     )
         public
         view
-        returns (MerkleStreamer.ConstructorParams memory)
+        returns (MerkleLockup.ConstructorParams memory)
     {
-        return MerkleStreamer.ConstructorParams({
+        return MerkleLockup.ConstructorParams({
             initialAdmin: admin,
             asset: asset,
             name: NAME,

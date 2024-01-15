@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.22 <0.9.0;
 
-import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
+import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
 
-import { MerkleStreamer_Integration_Test } from "../../MerkleStreamer.t.sol";
+import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract HasExpired_Integration_Test is MerkleStreamer_Integration_Test {
+contract HasExpired_Integration_Test is MerkleLockup_Integration_Test {
     function setUp() public virtual override {
-        MerkleStreamer_Integration_Test.setUp();
+        MerkleLockup_Integration_Test.setUp();
     }
 
     function test_HasExpired_ExpirationZero() external {
-        ISablierV2MerkleStreamerLL testStreamer = createMerkleStreamerLL({ expiration: 0 });
-        assertFalse(testStreamer.hasExpired(), "campaign expired");
+        ISablierV2MerkleLockupLL testLockup = createMerkleLockupLL({ expiration: 0 });
+        assertFalse(testLockup.hasExpired(), "campaign expired");
     }
 
     modifier whenExpirationNotZero() {
@@ -20,16 +20,16 @@ contract HasExpired_Integration_Test is MerkleStreamer_Integration_Test {
     }
 
     function test_HasExpired_ExpirationLessThanCurrentTime() external whenExpirationNotZero {
-        assertFalse(merkleStreamerLL.hasExpired(), "campaign expired");
+        assertFalse(merkleLockupLL.hasExpired(), "campaign expired");
     }
 
     function test_HasExpired_ExpirationEqualToCurrentTime() external whenExpirationNotZero {
         vm.warp({ timestamp: defaults.EXPIRATION() });
-        assertTrue(merkleStreamerLL.hasExpired(), "campaign not expired");
+        assertTrue(merkleLockupLL.hasExpired(), "campaign not expired");
     }
 
     function test_HasExpired_ExpirationGreaterThanCurrentTime() external whenExpirationNotZero {
         vm.warp({ timestamp: defaults.EXPIRATION() + 1 seconds });
-        assertTrue(merkleStreamerLL.hasExpired(), "campaign not expired");
+        assertTrue(merkleLockupLL.hasExpired(), "campaign not expired");
     }
 }

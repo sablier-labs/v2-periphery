@@ -1,4 +1,4 @@
-name: "Create Merkle Streamer LockupLinear"
+name: "Create Merkle Lockup LockupLinear"
 
 env:
     API_KEY_INFURA: ${{ secrets.API_KEY_INFURA }}
@@ -18,7 +18,7 @@ on:
         required: false
 
 jobs:
-  create-merkle-streamer-ll:
+  create-merkle-lockup-ll:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
@@ -27,9 +27,9 @@ jobs:
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
 
-      - name: "Create a Merkle streamer contract that uses Sablier V2 Lockup Linear"
+      - name: "Create a Merkle Lockup contract that uses LL"
         run: >-
-          forge script script/CreateMerkleStreamerLL.s.sol
+          forge script script/CreateMerkleLockupLL.s.sol
           --broadcast
           --rpc-url "${{ inputs.chain }}"
           --sig "run(address,(address,address,address,bytes32,uint40,(uint40,uint40),bool,bool,string,uint256,uint256))"
