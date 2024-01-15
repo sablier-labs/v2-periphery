@@ -19,6 +19,7 @@ import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStrea
 import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2MerkleStreamerFactory } from "src/SablierV2MerkleStreamerFactory.sol";
 import { SablierV2MerkleStreamerLL } from "src/SablierV2MerkleStreamerLL.sol";
+import { MerkleStreamer } from "src/types/DataTypes.sol";
 
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
@@ -250,6 +251,28 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                                   MERKLE-STREAMER
     //////////////////////////////////////////////////////////////////////////*/
 
+    function createWithLockupLinear(
+        address admin,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        view
+        returns (MerkleStreamer.CreateWithLockupLinear memory)
+    {
+        return MerkleStreamer.CreateWithLockupLinear({
+            initialAdmin: admin,
+            lockupLinear: lockupLinear,
+            asset: asset,
+            name: defaults.NAME_STRING(),
+            merkleRoot: merkleRoot,
+            expiration: expiration,
+            streamDurations: defaults.durations(),
+            cancelable: defaults.CANCELABLE(),
+            transferable: defaults.TRANSFERABLE()
+        });
+    }
+
     function computeMerkleStreamerLLAddress(
         address admin,
         bytes32 merkleRoot,
@@ -263,6 +286,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                 admin,
                 lockupLinear,
                 asset,
+                defaults.NAME(),
                 merkleRoot,
                 expiration,
                 abi.encode(defaults.durations()),
@@ -286,16 +310,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         internal
         returns (bytes memory)
     {
-        bytes memory constructorArgs = abi.encode(
-            admin,
-            lockupLinear,
-            asset,
-            merkleRoot,
-            expiration,
-            defaults.durations(),
-            defaults.CANCELABLE(),
-            defaults.TRANSFERABLE()
-        );
+        bytes memory constructorArgs = abi.encode(createWithLockupLinear(admin, merkleRoot, expiration));
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2MerkleStreamerLL).creationCode, constructorArgs);
         } else {

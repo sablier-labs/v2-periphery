@@ -3,11 +3,18 @@ pragma solidity >=0.8.22;
 
 import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
 
+import { MerkleStreamer } from "src/types/DataTypes.sol";
+
 import { Integration_Test } from "../Integration.t.sol";
 
 abstract contract MerkleStreamer_Integration_Test is Integration_Test {
+    MerkleStreamer.CreateWithLockupLinear internal defaultCreateLLParams;
+
     function setUp() public virtual override {
         Integration_Test.setUp();
+
+        // Create the default Merkle streamer constructor parameters.
+        defaultCreateLLParams = createWithLockupLinear(users.admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
 
         // Create the default Merkle streamer.
         merkleStreamerLL = createMerkleStreamerLL();
@@ -55,14 +62,7 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
 
     function createMerkleStreamerLL(address admin, uint40 expiration) internal returns (ISablierV2MerkleStreamerLL) {
         return merkleStreamerFactory.createMerkleStreamerLL({
-            initialAdmin: admin,
-            lockupLinear: lockupLinear,
-            asset: asset,
-            merkleRoot: defaults.MERKLE_ROOT(),
-            expiration: expiration,
-            cancelable: defaults.CANCELABLE(),
-            transferable: defaults.TRANSFERABLE(),
-            streamDurations: defaults.durations(),
+            createLLParams: createWithLockupLinear(admin, defaults.MERKLE_ROOT(), expiration),
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()

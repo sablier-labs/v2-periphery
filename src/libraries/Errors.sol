@@ -25,4 +25,7 @@ library Errors {
 
     /// @notice Thrown when trying to claim the same stream more than once.
     error SablierV2MerkleStreamer_StreamClaimed(uint256 index);
+
+    /// @notice Thrown when name of the Merkle Streamer contract is longer than 32 bytes.
+    error SablierV2MerkleStreamer_NameTooLong();
 }

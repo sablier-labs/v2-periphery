@@ -39,6 +39,13 @@ abstract contract SablierV2MerkleStreamer is
     bool public immutable override TRANSFERABLE;
 
     /*//////////////////////////////////////////////////////////////////////////
+                                  PRIVATE CONSTANT
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev The name of the campaign stored as bytes32.
+    bytes32 private immutable _NAME;
+
+    /*//////////////////////////////////////////////////////////////////////////
                                   INTERNAL STORAGE
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -53,13 +60,19 @@ abstract contract SablierV2MerkleStreamer is
     constructor(
         address initialAdmin,
         IERC20 asset,
+        string memory name,
         bytes32 merkleRoot,
         uint40 expiration,
         bool cancelable,
         bool transferable
     ) {
+        if (bytes(name).length > 32) {
+            revert Errors.SablierV2MerkleStreamer_NameTooLong();
+        }
+
         admin = initialAdmin;
         ASSET = asset;
+        _NAME = bytes32(abi.encodePacked(name));
         MERKLE_ROOT = merkleRoot;
         EXPIRATION = expiration;
         CANCELABLE = cancelable;
@@ -78,6 +91,11 @@ abstract contract SablierV2MerkleStreamer is
     /// @inheritdoc ISablierV2MerkleStreamer
     function hasExpired() public view override returns (bool) {
         return EXPIRATION > 0 && EXPIRATION <= block.timestamp;
+    }
+
+    /// @inheritdoc ISablierV2MerkleStreamer
+    function NAME() external view override returns (string memory) {
+        return string(abi.encodePacked(_NAME));
     }
 
     /*//////////////////////////////////////////////////////////////////////////

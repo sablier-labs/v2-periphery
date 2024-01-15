@@ -6,6 +6,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
+import { MerkleStreamer } from "src/types/DataTypes.sol";
 
 import { MerkleBuilder } from "../../utils/MerkleBuilder.sol";
 import { Fork_Test } from "../Fork.t.sol";
@@ -96,6 +97,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             admin: params.admin,
             lockupLinear: lockupLinear,
             asset: asset,
+            name: defaults.NAME_STRING(),
             merkleRoot: vars.merkleRoot,
             expiration: params.expiration,
             streamDurations: defaults.durations(),
@@ -106,15 +108,20 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             recipientsCount: vars.recipientsCount
         });
 
-        vars.merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL({
+        MerkleStreamer.CreateWithLockupLinear memory createLLParams = MerkleStreamer.CreateWithLockupLinear({
             initialAdmin: params.admin,
             lockupLinear: lockupLinear,
             asset: asset,
+            name: defaults.NAME_STRING(),
             merkleRoot: vars.merkleRoot,
             expiration: params.expiration,
             streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),
-            transferable: defaults.TRANSFERABLE(),
+            transferable: defaults.TRANSFERABLE()
+        });
+
+        vars.merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL({
+            createLLParams: createLLParams,
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount

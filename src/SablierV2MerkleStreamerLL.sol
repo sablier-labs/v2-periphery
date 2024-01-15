@@ -10,6 +10,7 @@ import { ud } from "@prb/math/src/UD60x18.sol";
 
 import { SablierV2MerkleStreamer } from "./abstracts/SablierV2MerkleStreamer.sol";
 import { ISablierV2MerkleStreamerLL } from "./interfaces/ISablierV2MerkleStreamerLL.sol";
+import { MerkleStreamer } from "./types/DataTypes.sol";
 
 /// @title SablierV2MerkleStreamerLL
 /// @notice See the documentation in {ISablierV2MerkleStreamerLL}.
@@ -40,20 +41,19 @@ contract SablierV2MerkleStreamerLL is
 
     /// @dev Constructs the contract by initializing the immutable state variables, and max approving the Sablier
     /// contract.
-    constructor(
-        address initialAdmin,
-        ISablierV2LockupLinear lockupLinear,
-        IERC20 asset,
-        bytes32 merkleRoot,
-        uint40 expiration,
-        LockupLinear.Durations memory streamDurations_,
-        bool cancelable,
-        bool transferable
-    )
-        SablierV2MerkleStreamer(initialAdmin, asset, merkleRoot, expiration, cancelable, transferable)
+    constructor(MerkleStreamer.CreateWithLockupLinear memory createParams)
+        SablierV2MerkleStreamer(
+            createParams.initialAdmin,
+            createParams.asset,
+            createParams.name,
+            createParams.merkleRoot,
+            createParams.expiration,
+            createParams.cancelable,
+            createParams.transferable
+        )
     {
-        LOCKUP_LINEAR = lockupLinear;
-        streamDurations = streamDurations_;
+        LOCKUP_LINEAR = createParams.lockupLinear;
+        streamDurations = createParams.streamDurations;
 
         // Max approve the Sablier contract to spend funds from the Merkle streamer.
         ASSET.forceApprove(address(LOCKUP_LINEAR), type(uint256).max);

@@ -14,25 +14,13 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
 
     /// @dev This test works because a default Merkle streamer is deployed in {Integration_Test.setUp}
     function test_RevertGiven_AlreadyDeployed() external {
-        bytes32 merkleRoot = defaults.MERKLE_ROOT();
-        uint40 expiration = defaults.EXPIRATION();
-        bool cancelable = defaults.CANCELABLE();
-        bool transferable = defaults.TRANSFERABLE();
-        LockupLinear.Durations memory streamDurations = defaults.durations();
         string memory ipfsCID = defaults.IPFS_CID();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
 
         vm.expectRevert();
         merkleStreamerFactory.createMerkleStreamerLL({
-            initialAdmin: users.admin,
-            lockupLinear: lockupLinear,
-            asset: asset,
-            merkleRoot: merkleRoot,
-            expiration: expiration,
-            cancelable: cancelable,
-            transferable: transferable,
-            streamDurations: streamDurations,
+            createLLParams: defaultCreateLLParams,
             ipfsCID: ipfsCID,
             aggregateAmount: aggregateAmount,
             recipientsCount: recipientsCount
@@ -53,6 +41,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
             admin: admin,
             lockupLinear: lockupLinear,
             asset: asset,
+            name: defaults.NAME_STRING(),
             merkleRoot: defaults.MERKLE_ROOT(),
             expiration: expiration,
             streamDurations: defaults.durations(),

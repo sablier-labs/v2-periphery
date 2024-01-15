@@ -16,6 +16,7 @@ abstract contract Events {
         address indexed admin,
         ISablierV2LockupLinear indexed lockupLinear,
         IERC20 indexed asset,
+        string name,
         bytes32 merkleRoot,
         uint40 expiration,
         LockupLinear.Durations streamDurations,

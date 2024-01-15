@@ -55,6 +55,8 @@ contract Defaults is Merkle {
     bool public constant TRANSFERABLE = false;
     uint256[] public LEAVES = new uint256[](RECIPIENTS_COUNT);
     bytes32 public immutable MERKLE_ROOT;
+    string public constant NAME_STRING = "Airdrop Campaign";
+    bytes32 public constant NAME = 0x41697264726f702043616d706169676e00000000000000000000000000000000;
 
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
