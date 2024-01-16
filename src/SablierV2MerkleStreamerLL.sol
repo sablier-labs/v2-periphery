@@ -42,6 +42,7 @@ contract SablierV2MerkleStreamerLL is
     /// contract.
     constructor(
         address initialAdmin,
+        bytes32 name_,
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
         bytes32 merkleRoot,
@@ -50,7 +51,7 @@ contract SablierV2MerkleStreamerLL is
         bool cancelable,
         bool transferable
     )
-        SablierV2MerkleStreamer(initialAdmin, asset, merkleRoot, expiration, cancelable, transferable)
+        SablierV2MerkleStreamer(initialAdmin, name_, asset, merkleRoot, expiration, cancelable, transferable)
     {
         LOCKUP_LINEAR = lockupLinear;
         streamDurations = streamDurations_;

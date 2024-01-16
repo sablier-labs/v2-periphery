@@ -14,6 +14,7 @@ abstract contract Events {
     event CreateMerkleStreamerLL(
         ISablierV2MerkleStreamerLL merkleStreamer,
         address indexed admin,
+        string name,
         ISablierV2LockupLinear indexed lockupLinear,
         IERC20 indexed asset,
         bytes32 merkleRoot,

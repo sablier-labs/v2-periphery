@@ -94,6 +94,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         emit CreateMerkleStreamerLL({
             merkleStreamer: ISablierV2MerkleStreamerLL(vars.expectedStreamerLL),
             admin: params.admin,
+            name: defaults.NAME(),
             lockupLinear: lockupLinear,
             asset: asset,
             merkleRoot: vars.merkleRoot,
@@ -106,19 +107,8 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             recipientsCount: vars.recipientsCount
         });
 
-        vars.merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL({
-            initialAdmin: params.admin,
-            lockupLinear: lockupLinear,
-            asset: asset,
-            merkleRoot: vars.merkleRoot,
-            expiration: params.expiration,
-            streamDurations: defaults.durations(),
-            cancelable: defaults.CANCELABLE(),
-            transferable: defaults.TRANSFERABLE(),
-            ipfsCID: defaults.IPFS_CID(),
-            aggregateAmount: vars.aggregateAmount,
-            recipientsCount: vars.recipientsCount
-        });
+        vars.merkleStreamerLL =
+            merkleStreamerFactory.createMerkleStreamerLL(defaults.createLL(params.admin, params.expiration));
 
         // Fund the Merkle streamer.
         deal({ token: address(asset), to: address(vars.merkleStreamerLL), give: vars.aggregateAmount });

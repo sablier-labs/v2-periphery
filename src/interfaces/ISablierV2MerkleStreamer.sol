@@ -50,6 +50,9 @@ interface ISablierV2MerkleStreamer is IAdminable {
     /// @dev This is an immutable state variable.
     function MERKLE_ROOT() external returns (bytes32);
 
+    /// @notice Retrives the name of the campaign.
+    function name() external returns (string memory);
+
     /// @notice A flag indicating whether the stream NFTs are transferable.
     /// @dev This is an immutable state variable.
     function TRANSFERABLE() external returns (bool);

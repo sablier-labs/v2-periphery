@@ -5,9 +5,10 @@ import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ud2x18 } from "@prb/math/src/UD2x18.sol";
 import { UD60x18 } from "@prb/math/src/UD60x18.sol";
+import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { Batch } from "src/types/DataTypes.sol";
+import { Batch, MerkleStreamerFactory } from "src/types/DataTypes.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";
@@ -55,6 +56,8 @@ contract Defaults is Merkle {
     bool public constant TRANSFERABLE = false;
     uint256[] public LEAVES = new uint256[](RECIPIENTS_COUNT);
     bytes32 public immutable MERKLE_ROOT;
+    string public NAME = "Airdrop Campaign";
+    bytes32 public constant NAME_BYTES32 = bytes32(abi.encodePacked("Airdrop Campaign"));
 
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
@@ -62,14 +65,16 @@ contract Defaults is Merkle {
 
     IERC20 private asset;
     Users private users;
+    ISablierV2LockupLinear private lockupLinear;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
-    constructor(Users memory users_, IERC20 asset_) {
+    constructor(Users memory users_, IERC20 asset_, ISablierV2LockupLinear lockupLinear_) {
         users = users_;
         asset = asset_;
+        lockupLinear = lockupLinear_;
 
         // Initialize the immutables.
         START_TIME = uint40(block.timestamp) + 100 seconds;
@@ -112,6 +117,31 @@ contract Defaults is Merkle {
         uint256 leaf = MerkleBuilder.computeLeaf(INDEX4, users.recipient4, CLAIM_AMOUNT);
         uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
         return getProof(LEAVES.toBytes32(), pos);
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                              MERKLE-STREAMER-FACTORY
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function createLL() public view returns (MerkleStreamerFactory.CreateLL memory) {
+        return createLL(users.admin, EXPIRATION);
+    }
+
+    function createLL(address admin, uint40 expiration) public view returns (MerkleStreamerFactory.CreateLL memory) {
+        return MerkleStreamerFactory.CreateLL({
+            initialAdmin: admin,
+            name: NAME,
+            lockupLinear: lockupLinear,
+            asset: asset,
+            merkleRoot: MERKLE_ROOT,
+            expiration: expiration,
+            cancelable: CANCELABLE,
+            transferable: TRANSFERABLE,
+            streamDurations: durations(),
+            ipfsCID: IPFS_CID,
+            aggregateAmount: AGGREGATE_AMOUNT,
+            recipientsCount: RECIPIENTS_COUNT
+        });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

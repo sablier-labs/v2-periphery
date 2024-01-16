@@ -33,6 +33,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
     function test_Constructor() external {
         SablierV2MerkleStreamerLL constructedStreamerLL = new SablierV2MerkleStreamerLL(
             users.admin,
+            defaults.NAME_BYTES32(),
             lockupLinear,
             asset,
             defaults.MERKLE_ROOT(),

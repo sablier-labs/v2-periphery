@@ -25,4 +25,11 @@ library Errors {
 
     /// @notice Thrown when trying to claim the same stream more than once.
     error SablierV2MerkleStreamer_StreamClaimed(uint256 index);
+
+    /*//////////////////////////////////////////////////////////////////////////
+                            SABLIER-V2-MERKLE-STREAMER-FACTORY
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Thrown when trying to create a campaign with a name that is too long.
+    error SablierV2MerkleStreamerFactory_CampaignNameTooLong(uint256 nameLength, uint256 maxLength);
 }

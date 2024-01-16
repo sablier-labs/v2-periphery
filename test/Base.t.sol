@@ -256,6 +256,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         bytes32 salt = keccak256(
             abi.encodePacked(
                 admin,
+                defaults.NAME_BYTES32(),
                 lockupLinear,
                 asset,
                 merkleRoot,
@@ -283,6 +284,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     {
         bytes memory constructorArgs = abi.encode(
             admin,
+            defaults.NAME_BYTES32(),
             lockupLinear,
             asset,
             merkleRoot,

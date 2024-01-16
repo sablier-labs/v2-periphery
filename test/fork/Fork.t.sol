@@ -35,7 +35,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         loadDependencies();
 
         // Deploy the defaults contract and allow it to access cheatcodes.
-        defaults = new Defaults(users, asset);
+        defaults = new Defaults(users, asset, lockupLinear);
         vm.allowCheatcodes(address(defaults));
 
         // Deploy V2 Periphery.

@@ -39,6 +39,13 @@ abstract contract SablierV2MerkleStreamer is
     bool public immutable override TRANSFERABLE;
 
     /*//////////////////////////////////////////////////////////////////////////
+                                  PRIVATE CONSTANT
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev The name of the campaign stored as bytes32.
+    bytes32 private immutable _NAME;
+
+    /*//////////////////////////////////////////////////////////////////////////
                                   INTERNAL STORAGE
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -52,6 +59,7 @@ abstract contract SablierV2MerkleStreamer is
     /// @dev Constructs the contract by initializing the immutable state variables.
     constructor(
         address initialAdmin,
+        bytes32 name_,
         IERC20 asset,
         bytes32 merkleRoot,
         uint40 expiration,
@@ -59,6 +67,7 @@ abstract contract SablierV2MerkleStreamer is
         bool transferable
     ) {
         admin = initialAdmin;
+        _NAME = name_;
         ASSET = asset;
         MERKLE_ROOT = merkleRoot;
         EXPIRATION = expiration;
@@ -78,6 +87,11 @@ abstract contract SablierV2MerkleStreamer is
     /// @inheritdoc ISablierV2MerkleStreamer
     function hasExpired() public view override returns (bool) {
         return EXPIRATION > 0 && EXPIRATION <= block.timestamp;
+    }
+
+    /// @inheritdoc ISablierV2MerkleStreamer
+    function name() external view override returns (string memory) {
+        return string(abi.encodePacked(_NAME));
     }
 
     /*//////////////////////////////////////////////////////////////////////////

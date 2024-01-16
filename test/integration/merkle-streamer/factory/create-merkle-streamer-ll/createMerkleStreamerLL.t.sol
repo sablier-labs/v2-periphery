@@ -4,6 +4,8 @@ pragma solidity >=0.8.22 <0.9.0;
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
+import { Errors } from "src/libraries/Errors.sol";
+import { MerkleStreamerFactory } from "src/types/DataTypes.sol";
 
 import { MerkleStreamer_Integration_Test } from "../../MerkleStreamer.t.sol";
 
@@ -12,31 +14,22 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
         MerkleStreamer_Integration_Test.setUp();
     }
 
+    function test_RevertWhen_CampaignNameTooLong() external {
+        MerkleStreamerFactory.CreateLL memory params = defaults.createLL();
+        params.name = "ThisCampaignNameIsTooLongAndItHasFiftyOneCharacters";
+
+        vm.expectRevert(
+            abi.encodeWithSelector(Errors.SablierV2MerkleStreamerFactory_CampaignNameTooLong.selector, 51, 32)
+        );
+        merkleStreamerFactory.createMerkleStreamerLL(params);
+    }
+
     /// @dev This test works because a default Merkle streamer is deployed in {Integration_Test.setUp}
     function test_RevertGiven_AlreadyDeployed() external {
-        bytes32 merkleRoot = defaults.MERKLE_ROOT();
-        uint40 expiration = defaults.EXPIRATION();
-        bool cancelable = defaults.CANCELABLE();
-        bool transferable = defaults.TRANSFERABLE();
-        LockupLinear.Durations memory streamDurations = defaults.durations();
-        string memory ipfsCID = defaults.IPFS_CID();
-        uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        MerkleStreamerFactory.CreateLL memory params = defaults.createLL();
 
         vm.expectRevert();
-        merkleStreamerFactory.createMerkleStreamerLL({
-            initialAdmin: users.admin,
-            lockupLinear: lockupLinear,
-            asset: asset,
-            merkleRoot: merkleRoot,
-            expiration: expiration,
-            cancelable: cancelable,
-            transferable: transferable,
-            streamDurations: streamDurations,
-            ipfsCID: ipfsCID,
-            aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
-        });
+        merkleStreamerFactory.createMerkleStreamerLL(params);
     }
 
     modifier givenNotAlreadyDeployed() {
@@ -51,6 +44,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
         emit CreateMerkleStreamerLL({
             merkleStreamer: ISablierV2MerkleStreamerLL(expectedStreamerLL),
             admin: admin,
+            name: defaults.NAME(),
             lockupLinear: lockupLinear,
             asset: asset,
             merkleRoot: defaults.MERKLE_ROOT(),
