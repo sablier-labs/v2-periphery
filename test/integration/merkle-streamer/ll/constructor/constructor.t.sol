@@ -33,7 +33,8 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
     }
 
     function test_Constructor() external {
-        SablierV2MerkleStreamerLL constructedStreamerLL = new SablierV2MerkleStreamerLL(defaultCreateLLParams);
+        SablierV2MerkleStreamerLL constructedStreamerLL =
+            new SablierV2MerkleStreamerLL(defaults.createConstructorParams(), lockupLinear, defaults.durations());
 
         Vars memory vars;
 
@@ -45,8 +46,8 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         vars.expectedAsset = address(asset);
         assertEq(vars.actualAsset, vars.expectedAsset, "asset");
 
-        vars.actualName = constructedStreamerLL.NAME();
-        vars.expectedName = defaults.NAME();
+        vars.actualName = constructedStreamerLL.name();
+        vars.expectedName = defaults.NAME_BYTES32();
         assertEq(bytes32(abi.encodePacked(vars.actualName)), vars.expectedName, "name");
 
         vars.actualMerkleRoot = constructedStreamerLL.MERKLE_ROOT();

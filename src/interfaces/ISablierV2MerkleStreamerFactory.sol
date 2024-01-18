@@ -19,14 +19,14 @@ interface ISablierV2MerkleStreamerFactory {
     event CreateMerkleStreamerLL(
         ISablierV2MerkleStreamerLL merkleStreamer,
         address indexed admin,
-        ISablierV2LockupLinear indexed lockupLinear,
         IERC20 indexed asset,
         string name,
         bytes32 merkleRoot,
         uint40 expiration,
-        LockupLinear.Durations streamDurations,
         bool cancelable,
         bool transferable,
+        ISablierV2LockupLinear indexed lockupLinear,
+        LockupLinear.Durations streamDurations,
         string ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount
@@ -38,14 +38,18 @@ interface ISablierV2MerkleStreamerFactory {
 
     /// @notice Creates a new Merkle streamer that uses Lockup Linear.
     /// @dev Emits a {CreateMerkleStreamerLL} event.
-    /// @param createLLParams Struct encapsulating the {SablierV2MerkleStreamerLL} parameters, which are documented in
+    /// @param params Struct encapsulating the {SablierV2MerkleStreamer} parameters, which are documented in
     /// {DataTypes}.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
+    /// @param streamDurations The durations for each stream due to the recipient.
     /// @param ipfsCID Metadata parameter emitted for indexing purposes.
     /// @param aggregateAmount Total amount of ERC-20 assets to be streamed to all recipients.
     /// @param recipientsCount Total number of recipients eligible to claim.
     /// @return merkleStreamerLL The address of the newly created Merkle streamer contract.
     function createMerkleStreamerLL(
-        MerkleStreamer.CreateWithLockupLinear memory createLLParams,
+        MerkleStreamer.ConstructorParams memory params,
+        ISablierV2LockupLinear lockupLinear,
+        LockupLinear.Durations memory streamDurations,
         string memory ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount

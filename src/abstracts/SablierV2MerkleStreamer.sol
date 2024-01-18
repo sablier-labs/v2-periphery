@@ -8,6 +8,7 @@ import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import { Adminable } from "@sablier/v2-core/src/abstracts/Adminable.sol";
 
 import { ISablierV2MerkleStreamer } from "../interfaces/ISablierV2MerkleStreamer.sol";
+import { MerkleStreamer } from "../types/DataTypes.sol";
 import { Errors } from "../libraries/Errors.sol";
 
 /// @title SablierV2MerkleStreamer
@@ -57,26 +58,22 @@ abstract contract SablierV2MerkleStreamer is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Constructs the contract by initializing the immutable state variables.
-    constructor(
-        address initialAdmin,
-        IERC20 asset,
-        string memory name,
-        bytes32 merkleRoot,
-        uint40 expiration,
-        bool cancelable,
-        bool transferable
-    ) {
-        if (bytes(name).length > 32) {
-            revert Errors.SablierV2MerkleStreamer_NameTooLong();
+    constructor(MerkleStreamer.ConstructorParams memory params) {
+        // Checks: the campaign name is not greater than 32 bytes
+        if (bytes(params.name).length > 32) {
+            revert Errors.SablierV2MerkleStreamerFactory_CampaignNameTooLong({
+                nameLength: bytes(params.name).length,
+                maxLength: 32
+            });
         }
 
-        admin = initialAdmin;
-        ASSET = asset;
-        _NAME = bytes32(abi.encodePacked(name));
-        MERKLE_ROOT = merkleRoot;
-        EXPIRATION = expiration;
-        CANCELABLE = cancelable;
-        TRANSFERABLE = transferable;
+        admin = params.initialAdmin;
+        ASSET = params.asset;
+        _NAME = bytes32(abi.encodePacked(params.name));
+        MERKLE_ROOT = params.merkleRoot;
+        EXPIRATION = params.expiration;
+        CANCELABLE = params.cancelable;
+        TRANSFERABLE = params.transferable;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -94,7 +91,7 @@ abstract contract SablierV2MerkleStreamer is
     }
 
     /// @inheritdoc ISablierV2MerkleStreamer
-    function NAME() external view override returns (string memory) {
+    function name() external view override returns (string memory) {
         return string(abi.encodePacked(_NAME));
     }
 

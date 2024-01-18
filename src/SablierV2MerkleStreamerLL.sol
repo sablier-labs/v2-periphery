@@ -41,19 +41,15 @@ contract SablierV2MerkleStreamerLL is
 
     /// @dev Constructs the contract by initializing the immutable state variables, and max approving the Sablier
     /// contract.
-    constructor(MerkleStreamer.CreateWithLockupLinear memory createParams)
-        SablierV2MerkleStreamer(
-            createParams.initialAdmin,
-            createParams.asset,
-            createParams.name,
-            createParams.merkleRoot,
-            createParams.expiration,
-            createParams.cancelable,
-            createParams.transferable
-        )
+    constructor(
+        MerkleStreamer.ConstructorParams memory params,
+        ISablierV2LockupLinear lockupLinear,
+        LockupLinear.Durations memory streamDurations_
+    )
+        SablierV2MerkleStreamer(params)
     {
-        LOCKUP_LINEAR = createParams.lockupLinear;
-        streamDurations = createParams.streamDurations;
+        LOCKUP_LINEAR = lockupLinear;
+        streamDurations = streamDurations_;
 
         // Max approve the Sablier contract to spend funds from the Merkle streamer.
         ASSET.forceApprove(address(LOCKUP_LINEAR), type(uint256).max);

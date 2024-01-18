@@ -1,7 +1,7 @@
 createMerkleStreamerLL.t.sol
-├── when the campaign name is longer than 32 characters
+├── when the campaign name is too long
 │   └── it should revert
-└── when the campaign name is within 32 characters
+└── when the campaign name is not too long
     ├── given the Merkle streamer has been deployed with CREATE2
     │   └── it should revert
     └── given the Merkle streamer has not been deployed

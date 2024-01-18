@@ -95,24 +95,29 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         emit CreateMerkleStreamerLL({
             merkleStreamer: ISablierV2MerkleStreamerLL(vars.expectedStreamerLL),
             admin: params.admin,
-            lockupLinear: lockupLinear,
             asset: asset,
-            name: defaults.NAME_STRING(),
+            name: defaults.NAME(),
             merkleRoot: vars.merkleRoot,
             expiration: params.expiration,
-            streamDurations: defaults.durations(),
             cancelable: defaults.CANCELABLE(),
             transferable: defaults.TRANSFERABLE(),
+            lockupLinear: lockupLinear,
+            streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount
         });
 
-        MerkleStreamer.CreateWithLockupLinear memory createLLParams =
-            createWithLockupLinear({ admin: params.admin, merkleRoot: vars.merkleRoot, expiration: params.expiration });
+        MerkleStreamer.ConstructorParams memory constructorParams = defaults.createConstructorParams({
+            admin: params.admin,
+            merkleRoot: vars.merkleRoot,
+            expiration: params.expiration
+        });
 
         vars.merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL({
-            createLLParams: createLLParams,
+            params: constructorParams,
+            lockupLinear: lockupLinear,
+            streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount

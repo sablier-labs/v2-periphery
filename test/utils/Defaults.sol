@@ -7,7 +7,7 @@ import { ud2x18 } from "@prb/math/src/UD2x18.sol";
 import { UD60x18 } from "@prb/math/src/UD60x18.sol";
 import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { Batch } from "src/types/DataTypes.sol";
+import { Batch, MerkleStreamer } from "src/types/DataTypes.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";
@@ -55,8 +55,8 @@ contract Defaults is Merkle {
     bool public constant TRANSFERABLE = false;
     uint256[] public LEAVES = new uint256[](RECIPIENTS_COUNT);
     bytes32 public immutable MERKLE_ROOT;
-    string public constant NAME_STRING = "Airdrop Campaign";
-    bytes32 public constant NAME = 0x41697264726f702043616d706169676e00000000000000000000000000000000;
+    string public constant NAME = "Airdrop Campaign";
+    bytes32 public constant NAME_BYTES32 = bytes32(abi.encodePacked("Airdrop Campaign"));
 
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
@@ -114,6 +114,30 @@ contract Defaults is Merkle {
         uint256 leaf = MerkleBuilder.computeLeaf(INDEX4, users.recipient4, CLAIM_AMOUNT);
         uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
         return getProof(LEAVES.toBytes32(), pos);
+    }
+
+    function createConstructorParams() public view returns (MerkleStreamer.ConstructorParams memory) {
+        return createConstructorParams(users.admin, MERKLE_ROOT, EXPIRATION);
+    }
+
+    function createConstructorParams(
+        address admin,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        public
+        view
+        returns (MerkleStreamer.ConstructorParams memory)
+    {
+        return MerkleStreamer.ConstructorParams({
+            initialAdmin: admin,
+            asset: asset,
+            name: NAME,
+            merkleRoot: merkleRoot,
+            expiration: expiration,
+            cancelable: CANCELABLE,
+            transferable: TRANSFERABLE
+        });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

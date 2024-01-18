@@ -29,9 +29,6 @@ interface ISablierV2MerkleStreamer is IAdminable {
     /// @dev This is an immutable state variable.
     function ASSET() external returns (IERC20);
 
-    /// @notice The name of the Merkle streamer contract.
-    function NAME() external returns (string memory);
-
     /// @notice A flag indicating whether the streams can be canceled.
     /// @dev This is an immutable state variable.
     function CANCELABLE() external returns (bool);
@@ -40,6 +37,9 @@ interface ISablierV2MerkleStreamer is IAdminable {
     /// is no expiration.
     /// @dev This is an immutable state variable.
     function EXPIRATION() external returns (uint40);
+
+    /// @notice Retrieves the name of the campaign.
+    function name() external returns (string memory);
 
     /// @notice Returns a flag indicating whether a claim has been made for a given index.
     /// @dev Uses a bitmap to save gas.

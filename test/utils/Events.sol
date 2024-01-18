@@ -14,14 +14,14 @@ abstract contract Events {
     event CreateMerkleStreamerLL(
         ISablierV2MerkleStreamerLL merkleStreamer,
         address indexed admin,
-        ISablierV2LockupLinear indexed lockupLinear,
         IERC20 indexed asset,
         string name,
         bytes32 merkleRoot,
         uint40 expiration,
-        LockupLinear.Durations streamDurations,
         bool cancelable,
         bool transferable,
+        ISablierV2LockupLinear indexed lockupLinear,
+        LockupLinear.Durations streamDurations,
         string ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount

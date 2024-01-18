@@ -3,7 +3,6 @@ pragma solidity >=0.8.22;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
-import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 library Batch {
@@ -64,26 +63,20 @@ library Batch {
 }
 
 library MerkleStreamer {
-    /// @notice Struct encapsulating the {SablierV2MerkleStreamerLL} parameters for the
-    /// {SablierV2MerkleStreamerFactory.createMerkleStreamerLL}
-    /// function.
+    /// @notice Struct encapsulating all constructor parameters of {SablierV2MerkleStreamer}.
     /// @param initialAdmin The initial admin of the Merkle streamer contract.
-    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param asset The address of the streamed ERC-20 asset.
     /// @param name The name of the Merkle streamer contract.
     /// @param merkleRoot The Merkle root of the claim data.
     /// @param expiration The expiration of the streaming campaign, as a Unix timestamp.
-    /// @param streamDurations The durations for each stream due to the recipient.
     /// @param cancelable Indicates if each stream will be cancelable.
     /// @param transferable Indicates if each stream NFT will be transferable.
-    struct CreateWithLockupLinear {
+    struct ConstructorParams {
         address initialAdmin;
-        ISablierV2LockupLinear lockupLinear;
         IERC20 asset;
         string name;
         bytes32 merkleRoot;
         uint40 expiration;
-        LockupLinear.Durations streamDurations;
         bool cancelable;
         bool transferable;
     }
