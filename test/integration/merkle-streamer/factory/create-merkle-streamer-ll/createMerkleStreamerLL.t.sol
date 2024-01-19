@@ -15,7 +15,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
     }
 
     function test_RevertWhen_CampaignNameTooLong() external {
-        MerkleStreamer.ConstructorParams memory params = defaults.createConstructorParams();
+        MerkleStreamer.ConstructorParams memory params = defaults.constructorParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         string memory ipfsCID = defaults.IPFS_CID();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
@@ -28,6 +28,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
                 Errors.SablierV2MerkleStreamerFactory_CampaignNameTooLong.selector, bytes(params.name).length, 32
             )
         );
+
         merkleStreamerFactory.createMerkleStreamerLL({
             params: params,
             lockupLinear: lockupLinear,
@@ -44,7 +45,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
 
     /// @dev This test works because a default Merkle streamer is deployed in {Integration_Test.setUp}
     function test_RevertGiven_AlreadyDeployed() external whenCampaignNameIsNotTooLong {
-        MerkleStreamer.ConstructorParams memory params = defaults.createConstructorParams();
+        MerkleStreamer.ConstructorParams memory params = defaults.constructorParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         string memory ipfsCID = defaults.IPFS_CID();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();

@@ -34,7 +34,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
 
     function test_Constructor() external {
         SablierV2MerkleStreamerLL constructedStreamerLL =
-            new SablierV2MerkleStreamerLL(defaults.createConstructorParams(), lockupLinear, defaults.durations());
+            new SablierV2MerkleStreamerLL(defaults.constructorParams(), lockupLinear, defaults.durations());
 
         Vars memory vars;
 

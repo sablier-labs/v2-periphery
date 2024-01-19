@@ -108,7 +108,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             recipientsCount: vars.recipientsCount
         });
 
-        MerkleStreamer.ConstructorParams memory constructorParams = defaults.createConstructorParams({
+        MerkleStreamer.ConstructorParams memory constructorParams = defaults.constructorParams({
             admin: params.admin,
             merkleRoot: vars.merkleRoot,
             expiration: params.expiration
