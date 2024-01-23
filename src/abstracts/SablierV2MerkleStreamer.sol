@@ -40,11 +40,11 @@ abstract contract SablierV2MerkleStreamer is
     bool public immutable override TRANSFERABLE;
 
     /*//////////////////////////////////////////////////////////////////////////
-                                  PRIVATE CONSTANT
+                                  INTERNAL CONSTANT
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev The name of the campaign stored as bytes32.
-    bytes32 private immutable _NAME;
+    bytes32 internal immutable NAME;
 
     /*//////////////////////////////////////////////////////////////////////////
                                   INTERNAL STORAGE
@@ -69,10 +69,10 @@ abstract contract SablierV2MerkleStreamer is
 
         admin = params.initialAdmin;
         ASSET = params.asset;
-        _NAME = bytes32(abi.encodePacked(params.name));
-        MERKLE_ROOT = params.merkleRoot;
-        EXPIRATION = params.expiration;
         CANCELABLE = params.cancelable;
+        EXPIRATION = params.expiration;
+        MERKLE_ROOT = params.merkleRoot;
+        NAME = bytes32(abi.encodePacked(params.name));
         TRANSFERABLE = params.transferable;
     }
 
@@ -92,7 +92,7 @@ abstract contract SablierV2MerkleStreamer is
 
     /// @inheritdoc ISablierV2MerkleStreamer
     function name() external view override returns (string memory) {
-        return string(abi.encodePacked(_NAME));
+        return string(abi.encodePacked(NAME));
     }
 
     /*//////////////////////////////////////////////////////////////////////////
