@@ -11,20 +11,21 @@ library Batch {
         uint256[] streamIds;
     }
 
-    /// @notice A struct encapsulating all parameters of {SablierV2LockupDynamic.createWithDelta} except for the asset.
-    struct CreateWithDeltas {
+    /// @notice A struct encapsulating all parameters of {SablierV2LockupDynamic.createWithDurations} except for the
+    /// asset.
+    struct CreateWithDurationsLD {
         address sender;
         address recipient;
         uint128 totalAmount;
         bool cancelable;
         bool transferable;
-        LockupDynamic.SegmentWithDelta[] segments;
+        LockupDynamic.SegmentWithDuration[] segments;
         Broker broker;
     }
 
     /// @notice A struct encapsulating all parameters of {SablierV2LockupLinear.createWithDurations} except for the
     /// asset.
-    struct CreateWithDurations {
+    struct CreateWithDurationsLL {
         address sender;
         address recipient;
         uint128 totalAmount;
@@ -34,9 +35,9 @@ library Batch {
         Broker broker;
     }
 
-    /// @notice A struct encapsulating all parameters of {SablierV2LockupDynamic.createWithMilestones} except for the
+    /// @notice A struct encapsulating all parameters of {SablierV2LockupDynamic.createWithTimestamps} except for the
     /// asset.
-    struct CreateWithMilestones {
+    struct CreateWithTimestampsLD {
         address sender;
         address recipient;
         uint128 totalAmount;
@@ -47,8 +48,9 @@ library Batch {
         Broker broker;
     }
 
-    /// @notice A struct encapsulating all parameters of {SablierV2LockupLinear.createWithRange} except for the asset.
-    struct CreateWithRange {
+    /// @notice A struct encapsulating all parameters of {SablierV2LockupLinear.createWithTimestamps} except for the
+    /// asset.
+    struct CreateWithTimestampsLL {
         address sender;
         address recipient;
         uint128 totalAmount;

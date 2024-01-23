@@ -21,10 +21,10 @@ contract SablierV2Batch is ISablierV2Batch {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2Batch
-    function createWithDurations(
+    function createWithDurationsLL(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
-        Batch.CreateWithDurations[] calldata batch
+        Batch.CreateWithDurationsLL[] calldata batch
     )
         external
         override
@@ -69,10 +69,10 @@ contract SablierV2Batch is ISablierV2Batch {
     }
 
     /// @inheritdoc ISablierV2Batch
-    function createWithRange(
+    function createWithTimestampsLL(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
-        Batch.CreateWithRange[] calldata batch
+        Batch.CreateWithTimestampsLL[] calldata batch
     )
         external
         override
@@ -101,8 +101,8 @@ contract SablierV2Batch is ISablierV2Batch {
         streamIds = new uint256[](batchSize);
         for (i = 0; i < batchSize; ++i) {
             // Create the stream.
-            streamIds[i] = lockupLinear.createWithRange(
-                LockupLinear.CreateWithRange({
+            streamIds[i] = lockupLinear.createWithTimestamps(
+                LockupLinear.CreateWithTimestamps({
                     sender: batch[i].sender,
                     recipient: batch[i].recipient,
                     totalAmount: batch[i].totalAmount,
@@ -121,10 +121,10 @@ contract SablierV2Batch is ISablierV2Batch {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2Batch
-    function createWithDeltas(
+    function createWithDurationsLD(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
-        Batch.CreateWithDeltas[] calldata batch
+        Batch.CreateWithDurationsLD[] calldata batch
     )
         external
         override
@@ -153,8 +153,8 @@ contract SablierV2Batch is ISablierV2Batch {
         streamIds = new uint256[](batchSize);
         for (i = 0; i < batchSize; ++i) {
             // Create the stream.
-            streamIds[i] = lockupDynamic.createWithDeltas(
-                LockupDynamic.CreateWithDeltas({
+            streamIds[i] = lockupDynamic.createWithDurations(
+                LockupDynamic.CreateWithDurations({
                     sender: batch[i].sender,
                     recipient: batch[i].recipient,
                     totalAmount: batch[i].totalAmount,
@@ -169,10 +169,10 @@ contract SablierV2Batch is ISablierV2Batch {
     }
 
     /// @inheritdoc ISablierV2Batch
-    function createWithMilestones(
+    function createWithTimestampsLD(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
-        Batch.CreateWithMilestones[] calldata batch
+        Batch.CreateWithTimestampsLD[] calldata batch
     )
         external
         override
@@ -201,8 +201,8 @@ contract SablierV2Batch is ISablierV2Batch {
         streamIds = new uint256[](batchSize);
         for (i = 0; i < batchSize; ++i) {
             // Create the stream.
-            streamIds[i] = lockupDynamic.createWithMilestones(
-                LockupDynamic.CreateWithMilestones({
+            streamIds[i] = lockupDynamic.createWithTimestamps(
+                LockupDynamic.CreateWithTimestamps({
                     sender: batch[i].sender,
                     recipient: batch[i].recipient,
                     totalAmount: batch[i].totalAmount,
