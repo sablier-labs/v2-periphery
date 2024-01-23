@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22;
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
@@ -17,15 +16,9 @@ interface ISablierV2MerkleStreamerFactory {
 
     /// @notice Emitted when a Sablier V2 Lockup Linear Merkle streamer is created.
     event CreateMerkleStreamerLL(
-        ISablierV2MerkleStreamerLL merkleStreamer,
-        address indexed admin,
-        IERC20 indexed asset,
-        string name,
-        bytes32 merkleRoot,
-        uint40 expiration,
-        bool cancelable,
-        bool transferable,
-        ISablierV2LockupLinear indexed lockupLinear,
+        ISablierV2MerkleStreamerLL indexed merkleStreamerLL,
+        MerkleStreamer.ConstructorParams indexed constructorParams,
+        ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations streamDurations,
         string ipfsCID,
         uint256 aggregateAmount,

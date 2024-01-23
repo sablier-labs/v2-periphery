@@ -41,6 +41,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         uint256 aggregateAmount;
         uint128 clawbackAmount;
         address expectedStreamerLL;
+        MerkleStreamer.ConstructorParams constructorParams;
         LockupLinear.Stream expectedStream;
         uint256 expectedStreamId;
         uint256[] indexes;
@@ -91,16 +92,17 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         vars.merkleRoot = getRoot(leaves.toBytes32());
 
         vars.expectedStreamerLL = computeMerkleStreamerLLAddress(params.admin, vars.merkleRoot, params.expiration);
+
+        vars.constructorParams = defaults.constructorParams({
+            admin: params.admin,
+            merkleRoot: vars.merkleRoot,
+            expiration: params.expiration
+        });
+
         vm.expectEmit({ emitter: address(merkleStreamerFactory) });
         emit CreateMerkleStreamerLL({
-            merkleStreamer: ISablierV2MerkleStreamerLL(vars.expectedStreamerLL),
-            admin: params.admin,
-            asset: asset,
-            name: defaults.NAME(),
-            merkleRoot: vars.merkleRoot,
-            expiration: params.expiration,
-            cancelable: defaults.CANCELABLE(),
-            transferable: defaults.TRANSFERABLE(),
+            merkleStreamerLL: ISablierV2MerkleStreamerLL(vars.expectedStreamerLL),
+            constructorParams: vars.constructorParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),
@@ -108,14 +110,8 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             recipientsCount: vars.recipientsCount
         });
 
-        MerkleStreamer.ConstructorParams memory constructorParams = defaults.constructorParams({
-            admin: params.admin,
-            merkleRoot: vars.merkleRoot,
-            expiration: params.expiration
-        });
-
         vars.merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL({
-            params: constructorParams,
+            params: vars.constructorParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),

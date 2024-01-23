@@ -47,40 +47,8 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
         merkleStreamerLL = new SablierV2MerkleStreamerLL{ salt: salt }(params, lockupLinear, streamDurations);
 
         // Using a different function to emit the event to avoid stack too deep error.
-        _emitLLEvent(merkleStreamerLL, params, lockupLinear, streamDurations, ipfsCID, aggregateAmount, recipientsCount);
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                          INTERNAL NON-CONSTANT FUNCTIONS
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @dev Helper function to emit the {CreateMerkleStreamerLL} event.
-    function _emitLLEvent(
-        ISablierV2MerkleStreamerLL merkleStreamerLL,
-        MerkleStreamer.ConstructorParams memory params,
-        ISablierV2LockupLinear lockupLinear,
-        LockupLinear.Durations memory streamDurations,
-        string memory ipfsCID,
-        uint256 aggregateAmount,
-        uint256 recipientsCount
-    )
-        internal
-    {
-        // Log the creation of the Merkle streamer, including some metadata that is not stored on-chain.
         emit CreateMerkleStreamerLL(
-            merkleStreamerLL,
-            params.initialAdmin,
-            params.asset,
-            params.name,
-            params.merkleRoot,
-            params.expiration,
-            params.cancelable,
-            params.transferable,
-            lockupLinear,
-            streamDurations,
-            ipfsCID,
-            aggregateAmount,
-            recipientsCount
+            merkleStreamerLL, params, lockupLinear, streamDurations, ipfsCID, aggregateAmount, recipientsCount
         );
     }
 }

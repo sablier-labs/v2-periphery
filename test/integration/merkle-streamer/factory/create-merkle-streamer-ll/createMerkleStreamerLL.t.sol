@@ -77,16 +77,13 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
         vm.assume(admin != users.admin);
         address expectedStreamerLL = computeMerkleStreamerLLAddress(admin, expiration);
 
+        MerkleStreamer.ConstructorParams memory constructorParams =
+            defaults.constructorParams({ admin: admin, merkleRoot: defaults.MERKLE_ROOT(), expiration: expiration });
+
         vm.expectEmit({ emitter: address(merkleStreamerFactory) });
         emit CreateMerkleStreamerLL({
-            merkleStreamer: ISablierV2MerkleStreamerLL(expectedStreamerLL),
-            admin: admin,
-            asset: asset,
-            name: defaults.NAME(),
-            merkleRoot: defaults.MERKLE_ROOT(),
-            expiration: expiration,
-            cancelable: defaults.CANCELABLE(),
-            transferable: defaults.TRANSFERABLE(),
+            merkleStreamerLL: ISablierV2MerkleStreamerLL(expectedStreamerLL),
+            constructorParams: constructorParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),

@@ -19,7 +19,6 @@ import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStrea
 import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2MerkleStreamerFactory } from "src/SablierV2MerkleStreamerFactory.sol";
 import { SablierV2MerkleStreamerLL } from "src/SablierV2MerkleStreamerLL.sol";
-import { MerkleStreamer } from "src/types/DataTypes.sol";
 
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
