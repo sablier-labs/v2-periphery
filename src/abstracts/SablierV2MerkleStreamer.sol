@@ -61,7 +61,7 @@ abstract contract SablierV2MerkleStreamer is
     constructor(MerkleStreamer.ConstructorParams memory params) {
         // Checks: the campaign name is not greater than 32 bytes
         if (bytes(params.name).length > 32) {
-            revert Errors.SablierV2MerkleStreamerFactory_CampaignNameTooLong({
+            revert Errors.SablierV2MerkleStreamer_CampaignNameTooLong({
                 nameLength: bytes(params.name).length,
                 maxLength: 32
             });

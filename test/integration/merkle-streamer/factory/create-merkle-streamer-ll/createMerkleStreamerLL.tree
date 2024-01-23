@@ -6,4 +6,4 @@ createMerkleStreamerLL.t.sol
     │   └── it should revert
     └── given the Merkle streamer has not been deployed
         ├── it should deploy the Merkle streamer
-        └── it should emit an {CreateMerkleStreamerLL} event
+        └── it should emit a {CreateMerkleStreamerLL} event

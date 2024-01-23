@@ -63,7 +63,7 @@ library Batch {
 }
 
 library MerkleStreamer {
-    /// @notice Struct encapsulating all constructor parameters of {SablierV2MerkleStreamer}.
+    /// @notice Struct encapsulating the base constructor parameter of a {SablierV2MerkleStreamer} contract.
     /// @param initialAdmin The initial admin of the Merkle streamer contract.
     /// @param asset The address of the streamed ERC-20 asset.
     /// @param name The name of the Merkle streamer contract.

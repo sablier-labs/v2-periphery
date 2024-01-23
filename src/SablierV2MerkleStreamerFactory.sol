@@ -4,9 +4,9 @@ pragma solidity >=0.8.22;
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 
+import { SablierV2MerkleStreamerLL } from "./SablierV2MerkleStreamerLL.sol";
 import { ISablierV2MerkleStreamerFactory } from "./interfaces/ISablierV2MerkleStreamerFactory.sol";
 import { ISablierV2MerkleStreamerLL } from "./interfaces/ISablierV2MerkleStreamerLL.sol";
-import { SablierV2MerkleStreamerLL } from "./SablierV2MerkleStreamerLL.sol";
 import { MerkleStreamer } from "./types/DataTypes.sol";
 
 /// @title SablierV2MerkleStreamerFactory

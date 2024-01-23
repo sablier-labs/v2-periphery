@@ -25,7 +25,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleStreamerFactory_CampaignNameTooLong.selector, bytes(params.name).length, 32
+                Errors.SablierV2MerkleStreamer_CampaignNameTooLong.selector, bytes(params.name).length, 32
             )
         );
 
