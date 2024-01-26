@@ -136,7 +136,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     }
 
     /// @dev Expects a call to {ISablierV2LockupLinear.createWithTimestamps}.
-    function expectCallToCreateWithRangeLL(LockupLinear.CreateWithTimestamps memory params) internal {
+    function expectCallToCreateWithTimestampsLL(LockupLinear.CreateWithTimestamps memory params) internal {
         vm.expectCall({
             callee: address(lockupLinear),
             data: abi.encodeCall(ISablierV2LockupLinear.createWithTimestamps, (params))
