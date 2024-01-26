@@ -4,38 +4,41 @@ pragma solidity >=0.8.22 <0.9.0;
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Integration_Test } from "../../Integration.t.sol";
+import { Integration_Test } from "../../../Integration.t.sol";
 
-contract CreateWithDeltas_Integration_Test is Integration_Test {
+contract CreateWithDurations_LockupLinear_Integration_Test is Integration_Test {
     function setUp() public virtual override {
         Integration_Test.setUp();
     }
 
     function test_RevertWhen_BatchSizeZero() external {
-        Batch.CreateWithDeltas[] memory batchParams = new Batch.CreateWithDeltas[](0);
+        Batch.CreateWithDurationsLL[] memory batchParams = new Batch.CreateWithDurationsLL[](0);
         vm.expectRevert(Errors.SablierV2Batch_BatchSizeZero.selector);
-        batch.createWithDeltas(lockupDynamic, asset, batchParams);
+        batch.createWithDurationsLL(lockupLinear, asset, batchParams);
     }
 
     modifier whenBatchSizeNotZero() {
         _;
     }
 
-    function test_BatchCreateWithDeltas() external whenBatchSizeNotZero {
+    function test_BatchCreateWithDurations() external whenBatchSizeNotZero {
         // Asset flow: Alice → batch → Sablier
         // Expect transfers from Alice to the batch, and then from the batch to the Sablier contract.
         expectCallToTransferFrom({ from: users.alice, to: address(batch), amount: defaults.TOTAL_TRANSFER_AMOUNT() });
-        expectMultipleCallsToCreateWithDeltas({ count: defaults.BATCH_SIZE(), params: defaults.createWithDeltas() });
+        expectMultipleCallsToCreateWithDurationsLL({
+            count: defaults.BATCH_SIZE(),
+            params: defaults.createWithDurationsLL()
+        });
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),
             from: address(batch),
-            to: address(lockupDynamic),
+            to: address(lockupLinear),
             amount: defaults.PER_STREAM_AMOUNT()
         });
 
         // Assert that the batch of streams has been created successfully.
         uint256[] memory actualStreamIds =
-            batch.createWithDeltas(lockupDynamic, asset, defaults.batchCreateWithDeltas());
+            batch.createWithDurationsLL(lockupLinear, asset, defaults.batchCreateWithDurationsLL());
         uint256[] memory expectedStreamIds = defaults.incrementalStreamIds();
         assertEq(actualStreamIds, expectedStreamIds, "stream ids mismatch");
     }

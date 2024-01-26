@@ -8,30 +8,30 @@ import { Batch } from "../../src/types/DataTypes.sol";
 library BatchBuilder {
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
-        Batch.CreateWithDeltas memory batchSingle,
+        Batch.CreateWithDurationsLD memory batchSingle,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithDeltas[] memory batch)
+        returns (Batch.CreateWithDurationsLD[] memory batch)
     {
-        batch = new Batch.CreateWithDeltas[](batchSize);
+        batch = new Batch.CreateWithDurationsLD[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
             batch[i] = batchSingle;
         }
     }
 
-    /// @notice Turns the `params` into an array of `Batch.CreateWithDeltas` structs.
+    /// @notice Turns the `params` into an array of `Batch.CreateWithDurationsLD` structs.
     function fillBatch(
-        LockupDynamic.CreateWithDeltas memory params,
+        LockupDynamic.CreateWithDurations memory params,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithDeltas[] memory batch)
+        returns (Batch.CreateWithDurationsLD[] memory batch)
     {
-        batch = new Batch.CreateWithDeltas[](batchSize);
-        Batch.CreateWithDeltas memory batchSingle = Batch.CreateWithDeltas({
+        batch = new Batch.CreateWithDurationsLD[](batchSize);
+        Batch.CreateWithDurationsLD memory batchSingle = Batch.CreateWithDurationsLD({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.totalAmount,
@@ -45,30 +45,30 @@ library BatchBuilder {
 
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
-        Batch.CreateWithDurations memory batchSingle,
+        Batch.CreateWithDurationsLL memory batchSingle,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithDurations[] memory batch)
+        returns (Batch.CreateWithDurationsLL[] memory batch)
     {
-        batch = new Batch.CreateWithDurations[](batchSize);
+        batch = new Batch.CreateWithDurationsLL[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
             batch[i] = batchSingle;
         }
     }
 
-    /// @notice Turns the `params` into an array of `Batch.CreateWithDurations` structs.
+    /// @notice Turns the `params` into an array of `Batch.CreateWithDurationsLL` structs.
     function fillBatch(
         LockupLinear.CreateWithDurations memory params,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithDurations[] memory batch)
+        returns (Batch.CreateWithDurationsLL[] memory batch)
     {
-        batch = new Batch.CreateWithDurations[](batchSize);
-        Batch.CreateWithDurations memory batchSingle = Batch.CreateWithDurations({
+        batch = new Batch.CreateWithDurationsLL[](batchSize);
+        Batch.CreateWithDurationsLL memory batchSingle = Batch.CreateWithDurationsLL({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.totalAmount,
@@ -82,30 +82,30 @@ library BatchBuilder {
 
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
-        Batch.CreateWithMilestones memory batchSingle,
+        Batch.CreateWithTimestampsLD memory batchSingle,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithMilestones[] memory batch)
+        returns (Batch.CreateWithTimestampsLD[] memory batch)
     {
-        batch = new Batch.CreateWithMilestones[](batchSize);
+        batch = new Batch.CreateWithTimestampsLD[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
             batch[i] = batchSingle;
         }
     }
 
-    /// @notice Turns the `params` into an array of `Batch.CreateWithMilestones` structs.
+    /// @notice Turns the `params` into an array of `Batch.CreateWithTimestampsLDs` structs.
     function fillBatch(
-        LockupDynamic.CreateWithMilestones memory params,
+        LockupDynamic.CreateWithTimestamps memory params,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithMilestones[] memory batch)
+        returns (Batch.CreateWithTimestampsLD[] memory batch)
     {
-        batch = new Batch.CreateWithMilestones[](batchSize);
-        Batch.CreateWithMilestones memory batchSingle = Batch.CreateWithMilestones({
+        batch = new Batch.CreateWithTimestampsLD[](batchSize);
+        Batch.CreateWithTimestampsLD memory batchSingle = Batch.CreateWithTimestampsLD({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.totalAmount,
@@ -120,30 +120,30 @@ library BatchBuilder {
 
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
-        Batch.CreateWithRange memory batchSingle,
+        Batch.CreateWithTimestampsLL memory batchSingle,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithRange[] memory batch)
+        returns (Batch.CreateWithTimestampsLL[] memory batch)
     {
-        batch = new Batch.CreateWithRange[](batchSize);
+        batch = new Batch.CreateWithTimestampsLL[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
             batch[i] = batchSingle;
         }
     }
 
-    /// @notice Turns the `params` into an array of `Batch.CreateWithRange` structs.
+    /// @notice Turns the `params` into an array of `Batch.CreateWithTimestampsLL` structs.
     function fillBatch(
-        LockupLinear.CreateWithRange memory params,
+        LockupLinear.CreateWithTimestamps memory params,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithRange[] memory batch)
+        returns (Batch.CreateWithTimestampsLL[] memory batch)
     {
-        batch = new Batch.CreateWithRange[](batchSize);
-        Batch.CreateWithRange memory batchSingle = Batch.CreateWithRange({
+        batch = new Batch.CreateWithTimestampsLL[](batchSize);
+        Batch.CreateWithTimestampsLL memory batchSingle = Batch.CreateWithTimestampsLL({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.totalAmount,

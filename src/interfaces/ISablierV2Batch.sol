@@ -25,29 +25,29 @@ interface ISablierV2Batch {
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithDurations}.
     /// @return streamIds The ids of the newly created streams.
-    function createWithDurations(
+    function createWithDurationsLL(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
-        Batch.CreateWithDurations[] calldata batch
+        Batch.CreateWithDurationsLL[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);
 
-    /// @notice Creates a batch of Lockup Linear streams using `createWithRange`.
+    /// @notice Creates a batch of Lockup Linear streams using `createWithTimestamps`.
     ///
     /// @dev Requirements:
     /// - There must be at least one element in `batch`.
-    /// - All requirements from {ISablierV2LockupLinear.createWithRange} must be met for each stream.
+    /// - All requirements from {ISablierV2LockupLinear.createWithTimestamps} must be met for each stream.
     ///
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
-    /// {SablierV2LockupLinear.createWithRange}.
+    /// {SablierV2LockupLinear.createWithTimestamps}.
     /// @return streamIds The ids of the newly created streams.
-    function createWithRange(
+    function createWithTimestampsLL(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
-        Batch.CreateWithRange[] calldata batch
+        Batch.CreateWithTimestampsLL[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);
@@ -56,40 +56,40 @@ interface ISablierV2Batch {
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Creates a batch of Lockup Dynamic streams using `createWithDeltas`.
+    /// @notice Creates a batch of Lockup Dynamic streams using `createWithDurations`.
     ///
     /// @dev Requirements:
     /// - There must be at least one element in `batch`.
-    /// - All requirements from {ISablierV2LockupDynamic.createWithDeltas} must be met for each stream.
+    /// - All requirements from {ISablierV2LockupDynamic.createWithDurations} must be met for each stream.
     ///
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
-    /// {SablierV2LockupDynamic.createWithDeltas}.
+    /// {SablierV2LockupDynamic.createWithDurations}.
     /// @return streamIds The ids of the newly created streams.
-    function createWithDeltas(
+    function createWithDurationsLD(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
-        Batch.CreateWithDeltas[] calldata batch
+        Batch.CreateWithDurationsLD[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);
 
-    /// @notice Creates a batch of Lockup Dynamic streams using `createWithMilestones`.
+    /// @notice Creates a batch of Lockup Dynamic streams using `createWithTimestamps`.
     ///
     /// @dev Requirements:
     /// - There must be at least one element in `batch`.
-    /// - All requirements from {ISablierV2LockupDynamic.createWithMilestones} must be met for each stream.
+    /// - All requirements from {ISablierV2LockupDynamic.createWithTimestamps} must be met for each stream.
     ///
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
     /// @param asset The contract address of the ERC-20 asset used for streaming.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
-    /// {SablierV2LockupDynamic.createWithMilestones}.
+    /// {SablierV2LockupDynamic.createWithTimestamps}.
     /// @return streamIds The ids of the newly created streams.
-    function createWithMilestones(
+    function createWithTimestampsLD(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
-        Batch.CreateWithMilestones[] calldata batch
+        Batch.CreateWithTimestampsLD[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);
