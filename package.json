@@ -12,7 +12,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "4.9.2",
     "@prb/math": "4.0.2",
-    "@sablier/v2-core": "1.1.2"
+    "@sablier/v2-core": "github:sablier-labs/v2-core#staging"
   },
   "devDependencies": {
     "@prb/test": "0.6.4",

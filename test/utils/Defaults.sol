@@ -135,29 +135,29 @@ contract Defaults is Merkle {
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    function createWithDeltas() public view returns (LockupDynamic.CreateWithDeltas memory) {
-        return createWithDeltas(asset);
+    function createWithDurationsLD() public view returns (LockupDynamic.CreateWithDurations memory) {
+        return createWithDurationsLD(asset);
     }
 
-    function createWithDeltas(IERC20 asset_) public view returns (LockupDynamic.CreateWithDeltas memory) {
-        return LockupDynamic.CreateWithDeltas({
+    function createWithDurationsLD(IERC20 asset_) public view returns (LockupDynamic.CreateWithDurations memory) {
+        return LockupDynamic.CreateWithDurations({
             sender: users.alice,
             recipient: users.recipient0,
             totalAmount: PER_STREAM_AMOUNT,
             asset: asset_,
             cancelable: true,
             transferable: true,
-            segments: segmentsWithDeltas(),
+            segments: segmentsWithDurations(),
             broker: broker()
         });
     }
 
-    function createWithMilestones() public view returns (LockupDynamic.CreateWithMilestones memory) {
-        return createWithMilestones(asset);
+    function createWithTimestampsLD() public view returns (LockupDynamic.CreateWithTimestamps memory) {
+        return createWithTimestampsLD(asset);
     }
 
-    function createWithMilestones(IERC20 asset_) public view returns (LockupDynamic.CreateWithMilestones memory) {
-        return LockupDynamic.CreateWithMilestones({
+    function createWithTimestampsLD(IERC20 asset_) public view returns (LockupDynamic.CreateWithTimestamps memory) {
+        return LockupDynamic.CreateWithTimestamps({
             sender: users.alice,
             recipient: users.recipient0,
             totalAmount: PER_STREAM_AMOUNT,
@@ -180,45 +180,45 @@ contract Defaults is Merkle {
         segments_[0] = LockupDynamic.Segment({
             amount: 2500e18,
             exponent: ud2x18(3.14e18),
-            milestone: START_TIME + CLIFF_DURATION
+            timestamp: START_TIME + CLIFF_DURATION
         });
         segments_[1] = LockupDynamic.Segment({
             amount: 7500e18,
             exponent: ud2x18(3.14e18),
-            milestone: START_TIME + TOTAL_DURATION
+            timestamp: START_TIME + TOTAL_DURATION
         });
     }
 
-    /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
-    function segmentsWithDeltas() public pure returns (LockupDynamic.SegmentWithDelta[] memory) {
-        return segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 });
+    /// @dev Returns a batch of `LockupDynamic.SegmentWithDuration` parameters.
+    function segmentsWithDurations() public pure returns (LockupDynamic.SegmentWithDuration[] memory) {
+        return segmentsWithDurations({ amount0: 2500e18, amount1: 7500e18 });
     }
 
-    /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
-    function segmentsWithDeltas(
+    /// @dev Returns a batch of `LockupDynamic.SegmentWithDuration` parameters.
+    function segmentsWithDurations(
         uint128 amount0,
         uint128 amount1
     )
         public
         pure
-        returns (LockupDynamic.SegmentWithDelta[] memory segments_)
+        returns (LockupDynamic.SegmentWithDuration[] memory segments_)
     {
-        segments_ = new LockupDynamic.SegmentWithDelta[](2);
+        segments_ = new LockupDynamic.SegmentWithDuration[](2);
         segments_[0] =
-            LockupDynamic.SegmentWithDelta({ amount: amount0, exponent: ud2x18(3.14e18), delta: 2500 seconds });
+            LockupDynamic.SegmentWithDuration({ amount: amount0, exponent: ud2x18(3.14e18), duration: 2500 seconds });
         segments_[1] =
-            LockupDynamic.SegmentWithDelta({ amount: amount1, exponent: ud2x18(3.14e18), delta: 7500 seconds });
+            LockupDynamic.SegmentWithDuration({ amount: amount1, exponent: ud2x18(3.14e18), duration: 7500 seconds });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                              SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
-    function createWithDurations() public view returns (LockupLinear.CreateWithDurations memory) {
-        return createWithDurations(asset);
+    function createWithDurationsLL() public view returns (LockupLinear.CreateWithDurations memory) {
+        return createWithDurationsLL(asset);
     }
 
-    function createWithDurations(IERC20 asset_) public view returns (LockupLinear.CreateWithDurations memory) {
+    function createWithDurationsLL(IERC20 asset_) public view returns (LockupLinear.CreateWithDurations memory) {
         return LockupLinear.CreateWithDurations({
             sender: users.alice,
             recipient: users.recipient0,
@@ -231,12 +231,12 @@ contract Defaults is Merkle {
         });
     }
 
-    function createWithRange() public view returns (LockupLinear.CreateWithRange memory) {
-        return createWithRange(asset);
+    function createWithTimestampsLL() public view returns (LockupLinear.CreateWithTimestamps memory) {
+        return createWithTimestampsLL(asset);
     }
 
-    function createWithRange(IERC20 asset_) public view returns (LockupLinear.CreateWithRange memory) {
-        return LockupLinear.CreateWithRange({
+    function createWithTimestampsLL(IERC20 asset_) public view returns (LockupLinear.CreateWithTimestamps memory) {
+        return LockupLinear.CreateWithTimestamps({
             sender: users.alice,
             recipient: users.recipient0,
             totalAmount: PER_STREAM_AMOUNT,
@@ -260,37 +260,41 @@ contract Defaults is Merkle {
                                         BATCH
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithDeltas` parameters.
-    function batchCreateWithDeltas() public view returns (Batch.CreateWithDeltas[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithDeltas(), BATCH_SIZE);
+    /// @dev Returns a default-size batch of `Batch.CreateWithDurationsLD` parameters.
+    function batchCreateWithDurationsLD() public view returns (Batch.CreateWithDurationsLD[] memory batch) {
+        batch = BatchBuilder.fillBatch(createWithDurationsLD(), BATCH_SIZE);
     }
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithDurations` parameters.
-    function batchCreateWithDurations() public view returns (Batch.CreateWithDurations[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithDurations(), BATCH_SIZE);
+    /// @dev Returns a default-size batch of `Batch.CreateWithDurationsLL` parameters.
+    function batchCreateWithDurationsLL() public view returns (Batch.CreateWithDurationsLL[] memory batch) {
+        batch = BatchBuilder.fillBatch(createWithDurationsLL(), BATCH_SIZE);
     }
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithMilestones` parameters.
-    function batchCreateWithMilestones() public view returns (Batch.CreateWithMilestones[] memory batch) {
-        batch = batchCreateWithMilestones(BATCH_SIZE);
+    /// @dev Returns a default-size batch of `Batch.CreateWithTimestampsLD` parameters.
+    function batchCreateWithTimestampsLD() public view returns (Batch.CreateWithTimestampsLD[] memory batch) {
+        batch = batchCreateWithTimestampsLD(BATCH_SIZE);
     }
 
-    /// @dev Returns a batch of `Batch.CreateWithMilestones` parameters.
-    function batchCreateWithMilestones(uint256 batchSize)
+    /// @dev Returns a batch of `Batch.CreateWithTimestampsLD` parameters.
+    function batchCreateWithTimestampsLD(uint256 batchSize)
         public
         view
-        returns (Batch.CreateWithMilestones[] memory batch)
+        returns (Batch.CreateWithTimestampsLD[] memory batch)
     {
-        batch = BatchBuilder.fillBatch(createWithMilestones(), batchSize);
+        batch = BatchBuilder.fillBatch(createWithTimestampsLD(), batchSize);
     }
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithRange` parameters.
-    function batchCreateWithRange() public view returns (Batch.CreateWithRange[] memory batch) {
-        batch = batchCreateWithRange(BATCH_SIZE);
+    /// @dev Returns a default-size batch of `Batch.CreateWithTimestampsLL` parameters.
+    function batchCreateWithTimestampsLL() public view returns (Batch.CreateWithTimestampsLL[] memory batch) {
+        batch = batchCreateWithTimestampsLL(BATCH_SIZE);
     }
 
-    /// @dev Returns a batch of `Batch.CreateWithRange` parameters.
-    function batchCreateWithRange(uint256 batchSize) public view returns (Batch.CreateWithRange[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithRange(), batchSize);
+    /// @dev Returns a batch of `Batch.CreateWithTimestampsLL` parameters.
+    function batchCreateWithTimestampsLL(uint256 batchSize)
+        public
+        view
+        returns (Batch.CreateWithTimestampsLL[] memory batch)
+    {
+        batch = BatchBuilder.fillBatch(createWithTimestampsLL(), batchSize);
     }
 }
