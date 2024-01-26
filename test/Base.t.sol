@@ -111,35 +111,35 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                                     CALL EXPECTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Expects a call to {ISablierV2LockupDynamic.createWithDeltas}.
-    function expectCallToCreateWithDeltas(LockupDynamic.CreateWithDeltas memory params) internal {
+    /// @dev Expects a call to {ISablierV2LockupDynamic.createWithDurations}.
+    function expectCallToCreateWithDurationsLD(LockupDynamic.CreateWithDurations memory params) internal {
         vm.expectCall({
             callee: address(lockupDynamic),
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
+            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDurations, (params))
         });
     }
 
     /// @dev Expects a call to {ISablierV2LockupLinear.createWithDurations}.
-    function expectCallToCreateWithDurations(LockupLinear.CreateWithDurations memory params) internal {
+    function expectCallToCreateWithDurationsLL(LockupLinear.CreateWithDurations memory params) internal {
         vm.expectCall({
             callee: address(lockupLinear),
             data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
         });
     }
 
-    /// @dev Expects a call to {ISablierV2LockupDynamic.createWithMilestones}.
-    function expectCallToCreateWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal {
+    /// @dev Expects a call to {ISablierV2LockupDynamic.createWithTimestamps}.
+    function expectCallToCreateWithTimestampsLD(LockupDynamic.CreateWithTimestamps memory params) internal {
         vm.expectCall({
             callee: address(lockupDynamic),
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
+            data: abi.encodeCall(ISablierV2LockupDynamic.createWithTimestamps, (params))
         });
     }
 
-    /// @dev Expects a call to {ISablierV2LockupLinear.createWithRange}.
-    function expectCallToCreateWithRange(LockupLinear.CreateWithRange memory params) internal {
+    /// @dev Expects a call to {ISablierV2LockupLinear.createWithTimestamps}.
+    function expectCallToCreateWithTimestampsLL(LockupLinear.CreateWithTimestamps memory params) internal {
         vm.expectCall({
             callee: address(lockupLinear),
-            data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
+            data: abi.encodeCall(ISablierV2LockupLinear.createWithTimestamps, (params))
         });
     }
 
@@ -163,24 +163,24 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
 
-    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithDeltas}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithDurations}, each with the specified
     /// `params`.
-    function expectMultipleCallsToCreateWithDeltas(
+    function expectMultipleCallsToCreateWithDurationsLD(
         uint64 count,
-        LockupDynamic.CreateWithDeltas memory params
+        LockupDynamic.CreateWithDurations memory params
     )
         internal
     {
         vm.expectCall({
             callee: address(lockupDynamic),
             count: count,
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
+            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDurations, (params))
         });
     }
 
-    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithDurations}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithDurations}, each with the specified
     /// `params`.
-    function expectMultipleCallsToCreateWithDurations(
+    function expectMultipleCallsToCreateWithDurationsLL(
         uint64 count,
         LockupLinear.CreateWithDurations memory params
     )
@@ -193,28 +193,33 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         });
     }
 
-    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithMilestones}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithTimestamps}, each with the specified
     /// `params`.
-    function expectMultipleCallsToCreateWithMilestones(
+    function expectMultipleCallsToCreateWithTimestampsLD(
         uint64 count,
-        LockupDynamic.CreateWithMilestones memory params
+        LockupDynamic.CreateWithTimestamps memory params
     )
         internal
     {
         vm.expectCall({
             callee: address(lockupDynamic),
             count: count,
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
+            data: abi.encodeCall(ISablierV2LockupDynamic.createWithTimestamps, (params))
         });
     }
 
-    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithRange}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithTimestamps}, each with the specified
     /// `params`.
-    function expectMultipleCallsToCreateWithRange(uint64 count, LockupLinear.CreateWithRange memory params) internal {
+    function expectMultipleCallsToCreateWithTimestampsLL(
+        uint64 count,
+        LockupLinear.CreateWithTimestamps memory params
+    )
+        internal
+    {
         vm.expectCall({
             callee: address(lockupLinear),
             count: count,
-            data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
+            data: abi.encodeCall(ISablierV2LockupLinear.createWithTimestamps, (params))
         });
     }
 
