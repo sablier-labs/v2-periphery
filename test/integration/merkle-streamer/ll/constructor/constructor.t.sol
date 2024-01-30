@@ -13,6 +13,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         address actualAdmin;
         uint256 actualAllowance;
         address actualAsset;
+        string actualName;
         bool actualCancelable;
         bool actualTransferable;
         LockupLinear.Durations actualDurations;
@@ -22,6 +23,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         address expectedAdmin;
         uint256 expectedAllowance;
         address expectedAsset;
+        bytes32 expectedName;
         bool expectedCancelable;
         bool expectedTransferable;
         LockupLinear.Durations expectedDurations;
@@ -31,16 +33,8 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
     }
 
     function test_Constructor() external {
-        SablierV2MerkleStreamerLL constructedStreamerLL = new SablierV2MerkleStreamerLL(
-            users.admin,
-            lockupLinear,
-            asset,
-            defaults.MERKLE_ROOT(),
-            defaults.EXPIRATION(),
-            defaults.durations(),
-            defaults.CANCELABLE(),
-            defaults.TRANSFERABLE()
-        );
+        SablierV2MerkleStreamerLL constructedStreamerLL =
+            new SablierV2MerkleStreamerLL(defaults.baseParams(), lockupLinear, defaults.durations());
 
         Vars memory vars;
 
@@ -51,6 +45,10 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         vars.actualAsset = address(constructedStreamerLL.ASSET());
         vars.expectedAsset = address(asset);
         assertEq(vars.actualAsset, vars.expectedAsset, "asset");
+
+        vars.actualName = constructedStreamerLL.name();
+        vars.expectedName = defaults.NAME_BYTES32();
+        assertEq(bytes32(abi.encodePacked(vars.actualName)), vars.expectedName, "name");
 
         vars.actualMerkleRoot = constructedStreamerLL.MERKLE_ROOT();
         vars.expectedMerkleRoot = defaults.MERKLE_ROOT();

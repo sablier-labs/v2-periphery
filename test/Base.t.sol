@@ -261,13 +261,14 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         bytes32 salt = keccak256(
             abi.encodePacked(
                 admin,
-                lockupLinear,
                 asset,
+                defaults.NAME_BYTES32(),
                 merkleRoot,
                 expiration,
-                abi.encode(defaults.durations()),
                 defaults.CANCELABLE(),
-                defaults.TRANSFERABLE()
+                defaults.TRANSFERABLE(),
+                lockupLinear,
+                abi.encode(defaults.durations())
             )
         );
         bytes32 creationBytecodeHash = keccak256(getMerkleStreamerLLBytecode(admin, merkleRoot, expiration));
@@ -286,16 +287,8 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         internal
         returns (bytes memory)
     {
-        bytes memory constructorArgs = abi.encode(
-            admin,
-            lockupLinear,
-            asset,
-            merkleRoot,
-            expiration,
-            defaults.durations(),
-            defaults.CANCELABLE(),
-            defaults.TRANSFERABLE()
-        );
+        bytes memory constructorArgs =
+            abi.encode(defaults.baseParams(admin, merkleRoot, expiration), lockupLinear, defaults.durations());
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2MerkleStreamerLL).creationCode, constructorArgs);
         } else {

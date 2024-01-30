@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22;
 
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
@@ -58,5 +59,25 @@ library Batch {
         bool transferable;
         LockupLinear.Range range;
         Broker broker;
+    }
+}
+
+library MerkleStreamer {
+    /// @notice Struct encapsulating the base constructor parameter of a {SablierV2MerkleStreamer} contract.
+    /// @param initialAdmin The initial admin of the Merkle streamer contract.
+    /// @param asset The address of the streamed ERC-20 asset.
+    /// @param name The name of the Merkle streamer contract.
+    /// @param merkleRoot The Merkle root of the claim data.
+    /// @param expiration The expiration of the streaming campaign, as a Unix timestamp.
+    /// @param cancelable Indicates if each stream will be cancelable.
+    /// @param transferable Indicates if each stream NFT will be transferable.
+    struct ConstructorParams {
+        address initialAdmin;
+        IERC20 asset;
+        string name;
+        bytes32 merkleRoot;
+        uint40 expiration;
+        bool cancelable;
+        bool transferable;
     }
 }
