@@ -6,6 +6,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
+import { MerkleStreamer } from "src/types/DataTypes.sol";
 
 import { MerkleBuilder } from "../../utils/MerkleBuilder.sol";
 import { Fork_Test } from "../Fork.t.sol";
@@ -40,6 +41,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         uint256 aggregateAmount;
         uint128 clawbackAmount;
         address expectedStreamerLL;
+        MerkleStreamer.ConstructorParams baseParams;
         LockupLinear.Stream expectedStream;
         uint256 expectedStreamId;
         uint256[] indexes;
@@ -90,31 +92,25 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         vars.merkleRoot = getRoot(leaves.toBytes32());
 
         vars.expectedStreamerLL = computeMerkleStreamerLLAddress(params.admin, vars.merkleRoot, params.expiration);
+
+        vars.baseParams =
+            defaults.baseParams({ admin: params.admin, merkleRoot: vars.merkleRoot, expiration: params.expiration });
+
         vm.expectEmit({ emitter: address(merkleStreamerFactory) });
         emit CreateMerkleStreamerLL({
-            merkleStreamer: ISablierV2MerkleStreamerLL(vars.expectedStreamerLL),
-            admin: params.admin,
+            merkleStreamerLL: ISablierV2MerkleStreamerLL(vars.expectedStreamerLL),
+            baseParams: vars.baseParams,
             lockupLinear: lockupLinear,
-            asset: asset,
-            merkleRoot: vars.merkleRoot,
-            expiration: params.expiration,
             streamDurations: defaults.durations(),
-            cancelable: defaults.CANCELABLE(),
-            transferable: defaults.TRANSFERABLE(),
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount
         });
 
         vars.merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL({
-            initialAdmin: params.admin,
+            baseParams: vars.baseParams,
             lockupLinear: lockupLinear,
-            asset: asset,
-            merkleRoot: vars.merkleRoot,
-            expiration: params.expiration,
             streamDurations: defaults.durations(),
-            cancelable: defaults.CANCELABLE(),
-            transferable: defaults.TRANSFERABLE(),
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount

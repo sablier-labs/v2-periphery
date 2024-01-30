@@ -8,6 +8,7 @@ import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import { Adminable } from "@sablier/v2-core/src/abstracts/Adminable.sol";
 
 import { ISablierV2MerkleStreamer } from "../interfaces/ISablierV2MerkleStreamer.sol";
+import { MerkleStreamer } from "../types/DataTypes.sol";
 import { Errors } from "../libraries/Errors.sol";
 
 /// @title SablierV2MerkleStreamer
@@ -39,6 +40,13 @@ abstract contract SablierV2MerkleStreamer is
     bool public immutable override TRANSFERABLE;
 
     /*//////////////////////////////////////////////////////////////////////////
+                                  INTERNAL CONSTANT
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev The name of the campaign stored as bytes32.
+    bytes32 internal immutable NAME;
+
+    /*//////////////////////////////////////////////////////////////////////////
                                   INTERNAL STORAGE
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -50,20 +58,22 @@ abstract contract SablierV2MerkleStreamer is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Constructs the contract by initializing the immutable state variables.
-    constructor(
-        address initialAdmin,
-        IERC20 asset,
-        bytes32 merkleRoot,
-        uint40 expiration,
-        bool cancelable,
-        bool transferable
-    ) {
-        admin = initialAdmin;
-        ASSET = asset;
-        MERKLE_ROOT = merkleRoot;
-        EXPIRATION = expiration;
-        CANCELABLE = cancelable;
-        TRANSFERABLE = transferable;
+    constructor(MerkleStreamer.ConstructorParams memory params) {
+        // Checks: the campaign name is not greater than 32 bytes
+        if (bytes(params.name).length > 32) {
+            revert Errors.SablierV2MerkleStreamer_CampaignNameTooLong({
+                nameLength: bytes(params.name).length,
+                maxLength: 32
+            });
+        }
+
+        admin = params.initialAdmin;
+        ASSET = params.asset;
+        CANCELABLE = params.cancelable;
+        EXPIRATION = params.expiration;
+        MERKLE_ROOT = params.merkleRoot;
+        NAME = bytes32(abi.encodePacked(params.name));
+        TRANSFERABLE = params.transferable;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -78,6 +88,11 @@ abstract contract SablierV2MerkleStreamer is
     /// @inheritdoc ISablierV2MerkleStreamer
     function hasExpired() public view override returns (bool) {
         return EXPIRATION > 0 && EXPIRATION <= block.timestamp;
+    }
+
+    /// @inheritdoc ISablierV2MerkleStreamer
+    function name() external view override returns (string memory) {
+        return string(abi.encodePacked(NAME));
     }
 
     /*//////////////////////////////////////////////////////////////////////////

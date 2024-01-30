@@ -38,6 +38,9 @@ interface ISablierV2MerkleStreamer is IAdminable {
     /// @dev This is an immutable state variable.
     function EXPIRATION() external returns (uint40);
 
+    /// @notice Retrieves the name of the campaign.
+    function name() external returns (string memory);
+
     /// @notice Returns a flag indicating whether a claim has been made for a given index.
     /// @dev Uses a bitmap to save gas.
     /// @param index The index of the recipient to check.
