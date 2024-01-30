@@ -18,7 +18,7 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
 
     /// @notice inheritdoc ISablierV2MerkleStreamerFactory
     function createMerkleStreamerLL(
-        MerkleStreamer.ConstructorParams memory params,
+        MerkleStreamer.ConstructorParams memory baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations,
         string memory ipfsCID,
@@ -31,24 +31,24 @@ contract SablierV2MerkleStreamerFactory is ISablierV2MerkleStreamerFactory {
         // Hash the parameters to generate a salt.
         bytes32 salt = keccak256(
             abi.encodePacked(
-                params.initialAdmin,
-                params.asset,
-                bytes32(abi.encodePacked(params.name)),
-                params.merkleRoot,
-                params.expiration,
-                params.cancelable,
-                params.transferable,
+                baseParams.initialAdmin,
+                baseParams.asset,
+                bytes32(abi.encodePacked(baseParams.name)),
+                baseParams.merkleRoot,
+                baseParams.expiration,
+                baseParams.cancelable,
+                baseParams.transferable,
                 lockupLinear,
                 abi.encode(streamDurations)
             )
         );
 
         // Deploy the Merkle streamer with CREATE2.
-        merkleStreamerLL = new SablierV2MerkleStreamerLL{ salt: salt }(params, lockupLinear, streamDurations);
+        merkleStreamerLL = new SablierV2MerkleStreamerLL{ salt: salt }(baseParams, lockupLinear, streamDurations);
 
         // Using a different function to emit the event to avoid stack too deep error.
         emit CreateMerkleStreamerLL(
-            merkleStreamerLL, params, lockupLinear, streamDurations, ipfsCID, aggregateAmount, recipientsCount
+            merkleStreamerLL, baseParams, lockupLinear, streamDurations, ipfsCID, aggregateAmount, recipientsCount
         );
     }
 }

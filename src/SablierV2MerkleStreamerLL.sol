@@ -42,11 +42,11 @@ contract SablierV2MerkleStreamerLL is
     /// @dev Constructs the contract by initializing the immutable state variables, and max approving the Sablier
     /// contract.
     constructor(
-        MerkleStreamer.ConstructorParams memory params,
+        MerkleStreamer.ConstructorParams memory baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations_
     )
-        SablierV2MerkleStreamer(params)
+        SablierV2MerkleStreamer(baseParams)
     {
         LOCKUP_LINEAR = lockupLinear;
         streamDurations = streamDurations_;

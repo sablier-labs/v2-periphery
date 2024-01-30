@@ -12,7 +12,7 @@ import { MerkleStreamer } from "../src/types/DataTypes.sol";
 
 contract CreateMerkleStreamerLL is BaseScript {
     struct Params {
-        MerkleStreamer.ConstructorParams constructorParams;
+        MerkleStreamer.ConstructorParams baseParams;
         ISablierV2LockupLinear lockupLinear;
         LockupLinear.Durations streamDurations;
         string ipfsCID;
@@ -29,7 +29,7 @@ contract CreateMerkleStreamerLL is BaseScript {
         returns (ISablierV2MerkleStreamerLL merkleStreamerLL)
     {
         merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL(
-            params.constructorParams,
+            params.baseParams,
             params.lockupLinear,
             params.streamDurations,
             params.ipfsCID,

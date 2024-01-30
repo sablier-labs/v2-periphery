@@ -288,7 +288,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         returns (bytes memory)
     {
         bytes memory constructorArgs =
-            abi.encode(defaults.constructorParams(admin, merkleRoot, expiration), lockupLinear, defaults.durations());
+            abi.encode(defaults.baseParams(admin, merkleRoot, expiration), lockupLinear, defaults.durations());
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2MerkleStreamerLL).creationCode, constructorArgs);
         } else {

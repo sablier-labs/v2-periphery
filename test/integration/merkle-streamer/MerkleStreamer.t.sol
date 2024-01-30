@@ -55,7 +55,7 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
 
     function createMerkleStreamerLL(address admin, uint40 expiration) internal returns (ISablierV2MerkleStreamerLL) {
         return merkleStreamerFactory.createMerkleStreamerLL({
-            params: defaults.constructorParams(admin, defaults.MERKLE_ROOT(), expiration),
+            baseParams: defaults.baseParams(admin, defaults.MERKLE_ROOT(), expiration),
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),

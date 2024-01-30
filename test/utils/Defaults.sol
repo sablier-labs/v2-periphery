@@ -116,11 +116,11 @@ contract Defaults is Merkle {
         return getProof(LEAVES.toBytes32(), pos);
     }
 
-    function constructorParams() public view returns (MerkleStreamer.ConstructorParams memory) {
-        return constructorParams(users.admin, MERKLE_ROOT, EXPIRATION);
+    function baseParams() public view returns (MerkleStreamer.ConstructorParams memory) {
+        return baseParams(users.admin, MERKLE_ROOT, EXPIRATION);
     }
 
-    function constructorParams(
+    function baseParams(
         address admin,
         bytes32 merkleRoot,
         uint40 expiration

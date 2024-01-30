@@ -41,7 +41,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         uint256 aggregateAmount;
         uint128 clawbackAmount;
         address expectedStreamerLL;
-        MerkleStreamer.ConstructorParams constructorParams;
+        MerkleStreamer.ConstructorParams baseParams;
         LockupLinear.Stream expectedStream;
         uint256 expectedStreamId;
         uint256[] indexes;
@@ -93,16 +93,13 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
 
         vars.expectedStreamerLL = computeMerkleStreamerLLAddress(params.admin, vars.merkleRoot, params.expiration);
 
-        vars.constructorParams = defaults.constructorParams({
-            admin: params.admin,
-            merkleRoot: vars.merkleRoot,
-            expiration: params.expiration
-        });
+        vars.baseParams =
+            defaults.baseParams({ admin: params.admin, merkleRoot: vars.merkleRoot, expiration: params.expiration });
 
         vm.expectEmit({ emitter: address(merkleStreamerFactory) });
         emit CreateMerkleStreamerLL({
             merkleStreamerLL: ISablierV2MerkleStreamerLL(vars.expectedStreamerLL),
-            constructorParams: vars.constructorParams,
+            baseParams: vars.baseParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),
@@ -111,7 +108,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         });
 
         vars.merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL({
-            params: vars.constructorParams,
+            baseParams: vars.baseParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),

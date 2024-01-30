@@ -17,7 +17,7 @@ interface ISablierV2MerkleStreamerFactory {
     /// @notice Emitted when a Sablier V2 Lockup Linear Merkle streamer is created.
     event CreateMerkleStreamerLL(
         ISablierV2MerkleStreamerLL indexed merkleStreamerLL,
-        MerkleStreamer.ConstructorParams indexed constructorParams,
+        MerkleStreamer.ConstructorParams indexed baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations streamDurations,
         string ipfsCID,
@@ -31,7 +31,7 @@ interface ISablierV2MerkleStreamerFactory {
 
     /// @notice Creates a new Merkle streamer that uses Lockup Linear.
     /// @dev Emits a {CreateMerkleStreamerLL} event.
-    /// @param params Struct encapsulating the {SablierV2MerkleStreamer} parameters, which are documented in
+    /// @param baseParams Struct encapsulating the {SablierV2MerkleStreamer} parameters, which are documented in
     /// {DataTypes}.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param streamDurations The durations for each stream due to the recipient.
@@ -40,7 +40,7 @@ interface ISablierV2MerkleStreamerFactory {
     /// @param recipientsCount Total number of recipients eligible to claim.
     /// @return merkleStreamerLL The address of the newly created Merkle streamer contract.
     function createMerkleStreamerLL(
-        MerkleStreamer.ConstructorParams memory params,
+        MerkleStreamer.ConstructorParams memory baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations,
         string memory ipfsCID,

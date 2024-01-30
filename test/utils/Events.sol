@@ -13,7 +13,7 @@ abstract contract Events {
     event Clawback(address indexed admin, address indexed to, uint128 amount);
     event CreateMerkleStreamerLL(
         ISablierV2MerkleStreamerLL indexed merkleStreamerLL,
-        MerkleStreamer.ConstructorParams indexed constructorParams,
+        MerkleStreamer.ConstructorParams indexed baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations streamDurations,
         string ipfsCID,
