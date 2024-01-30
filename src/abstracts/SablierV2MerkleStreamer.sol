@@ -21,7 +21,7 @@ abstract contract SablierV2MerkleStreamer is
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
-                               USER-FACING CONSTANTS
+                                  STATE VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleStreamer
@@ -36,19 +36,11 @@ abstract contract SablierV2MerkleStreamer is
     /// @inheritdoc ISablierV2MerkleStreamer
     bytes32 public immutable override MERKLE_ROOT;
 
-    /// @inheritdoc ISablierV2MerkleStreamer
-    bool public immutable override TRANSFERABLE;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                  INTERNAL CONSTANT
-    //////////////////////////////////////////////////////////////////////////*/
-
     /// @dev The name of the campaign stored as bytes32.
     bytes32 internal immutable NAME;
 
-    /*//////////////////////////////////////////////////////////////////////////
-                                  INTERNAL STORAGE
-    //////////////////////////////////////////////////////////////////////////*/
+    /// @inheritdoc ISablierV2MerkleStreamer
+    bool public immutable override TRANSFERABLE;
 
     /// @dev Packed booleans that record the history of claims.
     BitMaps.BitMap internal _claimedBitMap;

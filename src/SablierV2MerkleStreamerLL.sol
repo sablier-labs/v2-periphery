@@ -22,15 +22,11 @@ contract SablierV2MerkleStreamerLL is
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
-                               USER-FACING CONSTANTS
+                                  STATE VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleStreamerLL
     ISablierV2LockupLinear public immutable override LOCKUP_LINEAR;
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                USER-FACING STORAGE
-    //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleStreamerLL
     LockupLinear.Durations public override streamDurations;
