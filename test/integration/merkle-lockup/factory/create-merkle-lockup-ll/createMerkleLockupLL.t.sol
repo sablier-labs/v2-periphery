@@ -4,18 +4,18 @@ pragma solidity >=0.8.22 <0.9.0;
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
-import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
-import { MerkleStreamer } from "src/types/DataTypes.sol";
+import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
+import { MerkleLockup } from "src/types/DataTypes.sol";
 
-import { MerkleStreamer_Integration_Test } from "../../MerkleStreamer.t.sol";
+import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_Test {
+contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test {
     function setUp() public override {
-        MerkleStreamer_Integration_Test.setUp();
+        MerkleLockup_Integration_Test.setUp();
     }
 
     function test_RevertWhen_CampaignNameTooLong() external {
-        MerkleStreamer.ConstructorParams memory baseParams = defaults.baseParams();
+        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         string memory ipfsCID = defaults.IPFS_CID();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
@@ -25,11 +25,11 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleStreamer_CampaignNameTooLong.selector, bytes(baseParams.name).length, 32
+                Errors.SablierV2MerkleLockup_CampaignNameTooLong.selector, bytes(baseParams.name).length, 32
             )
         );
 
-        merkleStreamerFactory.createMerkleStreamerLL({
+        merkleLockupFactory.createMerkleLockupLL({
             baseParams: baseParams,
             lockupLinear: lockupLinear,
             streamDurations: streamDurations,
@@ -43,16 +43,16 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
         _;
     }
 
-    /// @dev This test works because a default Merkle streamer is deployed in {Integration_Test.setUp}
-    function test_RevertGiven_AlreadyDeployed() external whenCampaignNameIsNotTooLong {
-        MerkleStreamer.ConstructorParams memory baseParams = defaults.baseParams();
+    /// @dev This test works because a default Merkle Lockup contract is deployed in {Integration_Test.setUp}
+    function test_RevertGiven_AlreadyCreated() external whenCampaignNameIsNotTooLong {
+        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         string memory ipfsCID = defaults.IPFS_CID();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
 
         vm.expectRevert();
-        merkleStreamerFactory.createMerkleStreamerLL({
+        merkleLockupFactory.createMerkleLockupLL({
             baseParams: baseParams,
             lockupLinear: lockupLinear,
             streamDurations: streamDurations,
@@ -62,27 +62,27 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
         });
     }
 
-    modifier givenNotAlreadyDeployed() {
+    modifier givenNotAlreadyCreated() {
         _;
     }
 
-    function testFuzz_CreateMerkleStreamerLL(
+    function testFuzz_CreateMerkleLockupLL(
         address admin,
         uint40 expiration
     )
         external
-        givenNotAlreadyDeployed
         whenCampaignNameIsNotTooLong
+        givenNotAlreadyCreated
     {
         vm.assume(admin != users.admin);
-        address expectedStreamerLL = computeMerkleStreamerLLAddress(admin, expiration);
+        address expectedLockupLL = computeMerkleLockupLLAddress(admin, expiration);
 
-        MerkleStreamer.ConstructorParams memory baseParams =
+        MerkleLockup.ConstructorParams memory baseParams =
             defaults.baseParams({ admin: admin, merkleRoot: defaults.MERKLE_ROOT(), expiration: expiration });
 
-        vm.expectEmit({ emitter: address(merkleStreamerFactory) });
-        emit CreateMerkleStreamerLL({
-            merkleStreamerLL: ISablierV2MerkleStreamerLL(expectedStreamerLL),
+        vm.expectEmit({ emitter: address(merkleLockupFactory) });
+        emit CreateMerkleLockupLL({
+            merkleLockupLL: ISablierV2MerkleLockupLL(expectedLockupLL),
             baseParams: baseParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
@@ -91,9 +91,9 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
             recipientsCount: defaults.RECIPIENTS_COUNT()
         });
 
-        address actualStreamerLL = address(createMerkleStreamerLL(admin, expiration));
+        address actualLockupLL = address(createMerkleLockupLL(admin, expiration));
 
-        assertGt(actualStreamerLL.code.length, 0, "MerkleStreamerLL contract not created");
-        assertEq(actualStreamerLL, expectedStreamerLL, "MerkleStreamerLL contract does not match computed address");
+        assertGt(actualLockupLL.code.length, 0, "MerkleLockupLL contract not created");
+        assertEq(actualLockupLL, expectedLockupLL, "MerkleLockupLL contract does not match computed address");
     }
 }

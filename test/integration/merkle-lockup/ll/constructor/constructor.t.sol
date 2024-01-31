@@ -3,11 +3,11 @@ pragma solidity >=0.8.22 <0.9.0;
 
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { SablierV2MerkleStreamerLL } from "src/SablierV2MerkleStreamerLL.sol";
+import { SablierV2MerkleLockupLL } from "src/SablierV2MerkleLockupLL.sol";
 
-import { MerkleStreamer_Integration_Test } from "../../MerkleStreamer.t.sol";
+import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_Test {
+contract Constructor_MerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test {
     /// @dev Needed to prevent "Stack too deep" error
     struct Vars {
         address actualAdmin;
@@ -33,49 +33,49 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
     }
 
     function test_Constructor() external {
-        SablierV2MerkleStreamerLL constructedStreamerLL =
-            new SablierV2MerkleStreamerLL(defaults.baseParams(), lockupLinear, defaults.durations());
+        SablierV2MerkleLockupLL constructedLockupLL =
+            new SablierV2MerkleLockupLL(defaults.baseParams(), lockupLinear, defaults.durations());
 
         Vars memory vars;
 
-        vars.actualAdmin = constructedStreamerLL.admin();
+        vars.actualAdmin = constructedLockupLL.admin();
         vars.expectedAdmin = users.admin;
         assertEq(vars.actualAdmin, vars.expectedAdmin, "admin");
 
-        vars.actualAsset = address(constructedStreamerLL.ASSET());
+        vars.actualAsset = address(constructedLockupLL.ASSET());
         vars.expectedAsset = address(asset);
         assertEq(vars.actualAsset, vars.expectedAsset, "asset");
 
-        vars.actualName = constructedStreamerLL.name();
+        vars.actualName = constructedLockupLL.name();
         vars.expectedName = defaults.NAME_BYTES32();
         assertEq(bytes32(abi.encodePacked(vars.actualName)), vars.expectedName, "name");
 
-        vars.actualMerkleRoot = constructedStreamerLL.MERKLE_ROOT();
+        vars.actualMerkleRoot = constructedLockupLL.MERKLE_ROOT();
         vars.expectedMerkleRoot = defaults.MERKLE_ROOT();
         assertEq(vars.actualMerkleRoot, vars.expectedMerkleRoot, "merkleRoot");
 
-        vars.actualCancelable = constructedStreamerLL.CANCELABLE();
+        vars.actualCancelable = constructedLockupLL.CANCELABLE();
         vars.expectedCancelable = defaults.CANCELABLE();
         assertEq(vars.actualCancelable, vars.expectedCancelable, "cancelable");
 
-        vars.actualTransferable = constructedStreamerLL.TRANSFERABLE();
+        vars.actualTransferable = constructedLockupLL.TRANSFERABLE();
         vars.expectedTransferable = defaults.TRANSFERABLE();
         assertEq(vars.actualTransferable, vars.expectedTransferable, "transferable");
 
-        vars.actualExpiration = constructedStreamerLL.EXPIRATION();
+        vars.actualExpiration = constructedLockupLL.EXPIRATION();
         vars.expectedExpiration = defaults.EXPIRATION();
         assertEq(vars.actualExpiration, vars.expectedExpiration, "expiration");
 
-        vars.actualLockupLinear = address(constructedStreamerLL.LOCKUP_LINEAR());
+        vars.actualLockupLinear = address(constructedLockupLL.LOCKUP_LINEAR());
         vars.expectedLockupLinear = address(lockupLinear);
         assertEq(vars.actualLockupLinear, vars.expectedLockupLinear, "lockupLinear");
 
-        (vars.actualDurations.cliff, vars.actualDurations.total) = constructedStreamerLL.streamDurations();
+        (vars.actualDurations.cliff, vars.actualDurations.total) = constructedLockupLL.streamDurations();
         vars.expectedDurations = defaults.durations();
         assertEq(vars.actualDurations.cliff, vars.expectedDurations.cliff, "durations.cliff");
         assertEq(vars.actualDurations.total, vars.expectedDurations.total, "durations.total");
 
-        vars.actualAllowance = asset.allowance(address(constructedStreamerLL), address(lockupLinear));
+        vars.actualAllowance = asset.allowance(address(constructedLockupLL), address(lockupLinear));
         vars.expectedAllowance = MAX_UINT256;
         assertEq(vars.actualAllowance, vars.expectedAllowance, "allowance");
     }

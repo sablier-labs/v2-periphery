@@ -7,14 +7,14 @@ import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerklePr
 import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import { Adminable } from "@sablier/v2-core/src/abstracts/Adminable.sol";
 
-import { ISablierV2MerkleStreamer } from "../interfaces/ISablierV2MerkleStreamer.sol";
-import { MerkleStreamer } from "../types/DataTypes.sol";
+import { ISablierV2MerkleLockup } from "../interfaces/ISablierV2MerkleLockup.sol";
+import { MerkleLockup } from "../types/DataTypes.sol";
 import { Errors } from "../libraries/Errors.sol";
 
-/// @title SablierV2MerkleStreamer
-/// @notice See the documentation in {ISablierV2MerkleStreamer}.
-abstract contract SablierV2MerkleStreamer is
-    ISablierV2MerkleStreamer, // 2 inherited component
+/// @title SablierV2MerkleLockup
+/// @notice See the documentation in {ISablierV2MerkleLockup}.
+abstract contract SablierV2MerkleLockup is
+    ISablierV2MerkleLockup, // 2 inherited component
     Adminable // 1 inherited component
 {
     using BitMaps for BitMaps.BitMap;
@@ -24,22 +24,22 @@ abstract contract SablierV2MerkleStreamer is
                                   STATE VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2MerkleStreamer
+    /// @inheritdoc ISablierV2MerkleLockup
     IERC20 public immutable override ASSET;
 
-    /// @inheritdoc ISablierV2MerkleStreamer
+    /// @inheritdoc ISablierV2MerkleLockup
     bool public immutable override CANCELABLE;
 
-    /// @inheritdoc ISablierV2MerkleStreamer
+    /// @inheritdoc ISablierV2MerkleLockup
     uint40 public immutable override EXPIRATION;
 
-    /// @inheritdoc ISablierV2MerkleStreamer
+    /// @inheritdoc ISablierV2MerkleLockup
     bytes32 public immutable override MERKLE_ROOT;
 
     /// @dev The name of the campaign stored as bytes32.
     bytes32 internal immutable NAME;
 
-    /// @inheritdoc ISablierV2MerkleStreamer
+    /// @inheritdoc ISablierV2MerkleLockup
     bool public immutable override TRANSFERABLE;
 
     /// @dev Packed booleans that record the history of claims.
@@ -50,10 +50,10 @@ abstract contract SablierV2MerkleStreamer is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Constructs the contract by initializing the immutable state variables.
-    constructor(MerkleStreamer.ConstructorParams memory params) {
+    constructor(MerkleLockup.ConstructorParams memory params) {
         // Checks: the campaign name is not greater than 32 bytes
         if (bytes(params.name).length > 32) {
-            revert Errors.SablierV2MerkleStreamer_CampaignNameTooLong({
+            revert Errors.SablierV2MerkleLockup_CampaignNameTooLong({
                 nameLength: bytes(params.name).length,
                 maxLength: 32
             });
@@ -72,17 +72,17 @@ abstract contract SablierV2MerkleStreamer is
                            USER-FACING CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2MerkleStreamer
+    /// @inheritdoc ISablierV2MerkleLockup
     function hasClaimed(uint256 index) public view override returns (bool) {
         return _claimedBitMap.get(index);
     }
 
-    /// @inheritdoc ISablierV2MerkleStreamer
+    /// @inheritdoc ISablierV2MerkleLockup
     function hasExpired() public view override returns (bool) {
         return EXPIRATION > 0 && EXPIRATION <= block.timestamp;
     }
 
-    /// @inheritdoc ISablierV2MerkleStreamer
+    /// @inheritdoc ISablierV2MerkleLockup
     function name() external view override returns (string memory) {
         return string(abi.encodePacked(NAME));
     }
@@ -91,11 +91,11 @@ abstract contract SablierV2MerkleStreamer is
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2MerkleStreamer
+    /// @inheritdoc ISablierV2MerkleLockup
     function clawback(address to, uint128 amount) external override onlyAdmin {
         // Checks: the campaign is not expired.
         if (!hasExpired()) {
-            revert Errors.SablierV2MerkleStreamer_CampaignNotExpired({
+            revert Errors.SablierV2MerkleLockup_CampaignNotExpired({
                 currentTime: block.timestamp,
                 expiration: EXPIRATION
             });
@@ -116,20 +116,17 @@ abstract contract SablierV2MerkleStreamer is
     function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal view {
         // Checks: the campaign has not expired.
         if (hasExpired()) {
-            revert Errors.SablierV2MerkleStreamer_CampaignExpired({
-                currentTime: block.timestamp,
-                expiration: EXPIRATION
-            });
+            revert Errors.SablierV2MerkleLockup_CampaignExpired({ currentTime: block.timestamp, expiration: EXPIRATION });
         }
 
         // Checks: the index has not been claimed.
         if (_claimedBitMap.get(index)) {
-            revert Errors.SablierV2MerkleStreamer_StreamClaimed(index);
+            revert Errors.SablierV2MerkleLockup_StreamClaimed(index);
         }
 
         // Checks: the input claim is included in the Merkle tree.
         if (!MerkleProof.verify(merkleProof, MERKLE_ROOT, leaf)) {
-            revert Errors.SablierV2MerkleStreamer_InvalidProof();
+            revert Errors.SablierV2MerkleLockup_InvalidProof();
         }
     }
 }

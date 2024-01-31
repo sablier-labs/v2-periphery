@@ -6,11 +6,11 @@ import { ud, UD60x18 } from "@prb/math/src/UD60x18.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 
-import { MerkleStreamer_Integration_Test } from "../../MerkleStreamer.t.sol";
+import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
+contract Claim_Integration_Test is MerkleLockup_Integration_Test {
     function setUp() public virtual override {
-        MerkleStreamer_Integration_Test.setUp();
+        MerkleLockup_Integration_Test.setUp();
     }
 
     function test_RevertGiven_CampaignExpired() external {
@@ -19,9 +19,9 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         bytes32[] memory merkleProof;
         vm.warp({ timestamp: warpTime });
         vm.expectRevert(
-            abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_CampaignExpired.selector, warpTime, expiration)
+            abi.encodeWithSelector(Errors.SablierV2MerkleLockup_CampaignExpired.selector, warpTime, expiration)
         );
-        merkleStreamerLL.claim({ index: 1, recipient: users.recipient1, amount: 1, merkleProof: merkleProof });
+        merkleLockupLL.claim({ index: 1, recipient: users.recipient1, amount: 1, merkleProof: merkleProof });
     }
 
     modifier givenCampaignNotExpired() {
@@ -33,8 +33,8 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint256 index1 = defaults.INDEX1();
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_StreamClaimed.selector, index1));
-        merkleStreamerLL.claim(index1, users.recipient1, amount, merkleProof);
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_StreamClaimed.selector, index1));
+        merkleLockupLL.claim(index1, users.recipient1, amount, merkleProof);
     }
 
     modifier givenNotClaimed() {
@@ -54,8 +54,8 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint256 invalidIndex = 1337;
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_InvalidProof.selector));
-        merkleStreamerLL.claim(invalidIndex, users.recipient1, amount, merkleProof);
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
+        merkleLockupLL.claim(invalidIndex, users.recipient1, amount, merkleProof);
     }
 
     function test_RevertWhen_InvalidRecipient()
@@ -68,8 +68,8 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         address invalidRecipient = address(1337);
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_InvalidProof.selector));
-        merkleStreamerLL.claim(index1, invalidRecipient, amount, merkleProof);
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
+        merkleLockupLL.claim(index1, invalidRecipient, amount, merkleProof);
     }
 
     function test_RevertWhen_InvalidAmount()
@@ -81,8 +81,8 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint256 index1 = defaults.INDEX1();
         uint128 invalidAmount = 1337;
         bytes32[] memory merkleProof = defaults.index1Proof();
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_InvalidProof.selector));
-        merkleStreamerLL.claim(index1, users.recipient1, invalidAmount, merkleProof);
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
+        merkleLockupLL.claim(index1, users.recipient1, invalidAmount, merkleProof);
     }
 
     function test_RevertWhen_InvalidMerkleProof()
@@ -94,8 +94,8 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint256 index1 = defaults.INDEX1();
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory invalidMerkleProof = defaults.index2Proof();
-        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleStreamer_InvalidProof.selector));
-        merkleStreamerLL.claim(index1, users.recipient1, amount, invalidMerkleProof);
+        vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
+        merkleLockupLL.claim(index1, users.recipient1, amount, invalidMerkleProof);
     }
 
     modifier givenIncludedInMerkleTree() {
@@ -132,7 +132,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint256 expectedStreamId = lockupLinear.nextStreamId();
         uint128 feeAmount = uint128(ud(defaults.CLAIM_AMOUNT()).mul(protocolFee).intoUint256());
 
-        vm.expectEmit({ emitter: address(merkleStreamerLL) });
+        vm.expectEmit({ emitter: address(merkleLockupLL) });
         emit Claim(defaults.INDEX1(), users.recipient1, defaults.CLAIM_AMOUNT(), expectedStreamId);
         uint256 actualStreamId = claimLL();
 
@@ -151,7 +151,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
             wasCanceled: false
         });
 
-        assertTrue(merkleStreamerLL.hasClaimed(defaults.INDEX1()), "not claimed");
+        assertTrue(merkleLockupLL.hasClaimed(defaults.INDEX1()), "not claimed");
         assertEq(actualStreamId, expectedStreamId, "invalid stream id");
         assertEq(actualStream, expectedStream);
     }

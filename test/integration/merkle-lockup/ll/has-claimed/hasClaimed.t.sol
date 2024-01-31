@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.22 <0.9.0;
 
-import { MerkleStreamer_Integration_Test } from "../../MerkleStreamer.t.sol";
+import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract HasClaimed_Integration_Test is MerkleStreamer_Integration_Test {
+contract HasClaimed_Integration_Test is MerkleLockup_Integration_Test {
     function setUp() public virtual override {
-        MerkleStreamer_Integration_Test.setUp();
+        MerkleLockup_Integration_Test.setUp();
     }
 
     function test_HasClaimed_IndexNotInTree() external {
         uint256 indexNotInTree = 1337e18;
-        assertFalse(merkleStreamerLL.hasClaimed(indexNotInTree), "claimed");
+        assertFalse(merkleLockupLL.hasClaimed(indexNotInTree), "claimed");
     }
 
     modifier whenIndexInTree() {
@@ -18,7 +18,7 @@ contract HasClaimed_Integration_Test is MerkleStreamer_Integration_Test {
     }
 
     function test_HasClaimed_NotClaimed() external whenIndexInTree {
-        assertFalse(merkleStreamerLL.hasClaimed(defaults.INDEX1()), "claimed");
+        assertFalse(merkleLockupLL.hasClaimed(defaults.INDEX1()), "claimed");
     }
 
     modifier givenRecipientHasClaimed() {
@@ -27,6 +27,6 @@ contract HasClaimed_Integration_Test is MerkleStreamer_Integration_Test {
     }
 
     function test_HasClaimed() external whenIndexInTree givenRecipientHasClaimed {
-        assertTrue(merkleStreamerLL.hasClaimed(defaults.INDEX1()), "not claimed");
+        assertTrue(merkleLockupLL.hasClaimed(defaults.INDEX1()), "not claimed");
     }
 }

@@ -7,7 +7,7 @@ import { SablierV2LockupLinear } from "@sablier/v2-core/src/SablierV2LockupLinea
 import { SablierV2NFTDescriptor } from "@sablier/v2-core/src/SablierV2NFTDescriptor.sol";
 import { BaseScript } from "./Base.s.sol";
 
-import { SablierV2MerkleStreamerFactory } from "../src/SablierV2MerkleStreamerFactory.sol";
+import { SablierV2MerkleLockupFactory } from "../src/SablierV2MerkleLockupFactory.sol";
 import { SablierV2Batch } from "../src/SablierV2Batch.sol";
 
 /// @notice Deploys the Sablier V2 Protocol.
@@ -25,7 +25,7 @@ contract DeployProtocol is BaseScript {
             SablierV2LockupLinear lockupLinear,
             SablierV2NFTDescriptor nftDescriptor,
             SablierV2Batch batch,
-            SablierV2MerkleStreamerFactory merkleStreamerFactory
+            SablierV2MerkleLockupFactory merkleLockupFactory
         )
     {
         // Deploy V2 Core.
@@ -35,6 +35,6 @@ contract DeployProtocol is BaseScript {
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
 
         batch = new SablierV2Batch();
-        merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
+        merkleLockupFactory = new SablierV2MerkleLockupFactory();
     }
 }

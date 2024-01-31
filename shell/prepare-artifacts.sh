@@ -25,13 +25,13 @@ FOUNDRY_PROFILE=optimized forge build
 
 # Copy the production artifacts
 cp out-optimized/SablierV2Batch.sol/SablierV2Batch.json $artifacts
-cp out-optimized/SablierV2MerkleStreamerFactory.sol/SablierV2MerkleStreamerFactory.json $artifacts
-cp out-optimized/SablierV2MerkleStreamerLL.sol/SablierV2MerkleStreamerLL.json $artifacts
+cp out-optimized/SablierV2MerkleLockupFactory.sol/SablierV2MerkleLockupFactory.json $artifacts
+cp out-optimized/SablierV2MerkleLockupLL.sol/SablierV2MerkleLockupLL.json $artifacts
 
 interfaces=./artifacts/interfaces
 cp out-optimized/ISablierV2Batch.sol/ISablierV2Batch.json $interfaces
-cp out-optimized/ISablierV2MerkleStreamerFactory.sol/ISablierV2MerkleStreamerFactory.json $interfaces
-cp out-optimized/ISablierV2MerkleStreamerLL.sol/ISablierV2MerkleStreamerLL.json $interfaces
+cp out-optimized/ISablierV2MerkleLockupFactory.sol/ISablierV2MerkleLockupFactory.json $interfaces
+cp out-optimized/ISablierV2MerkleLockupLL.sol/ISablierV2MerkleLockupLL.json $interfaces
 
 erc20=./artifacts/interfaces/erc20
 cp out-optimized/IERC20.sol/IERC20.json $erc20
