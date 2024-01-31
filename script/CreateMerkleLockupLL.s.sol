@@ -12,7 +12,7 @@ import { MerkleLockup } from "../src/types/DataTypes.sol";
 
 contract CreateMerkleLockupLL is BaseScript {
     struct Params {
-        MerkleLockup.ConstructorParams constructorParams;
+        MerkleLockup.ConstructorParams baseParams;
         ISablierV2LockupLinear lockupLinear;
         LockupLinear.Durations streamDurations;
         string ipfsCID;
@@ -29,7 +29,7 @@ contract CreateMerkleLockupLL is BaseScript {
         returns (ISablierV2MerkleLockupLL merkleLockupLL)
     {
         merkleLockupLL = merkleLockupFactory.createMerkleLockupLL(
-            params.constructorParams,
+            params.baseParams,
             params.lockupLinear,
             params.streamDurations,
             params.ipfsCID,
