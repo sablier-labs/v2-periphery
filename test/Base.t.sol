@@ -2,7 +2,6 @@
 // solhint-disable max-states-count
 pragma solidity >=0.8.22 <0.9.0;
 
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { ISablierV2Comptroller } from "@sablier/v2-core/src/interfaces/ISablierV2Comptroller.sol";
@@ -20,6 +19,7 @@ import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2MerkleLockupFactory } from "src/SablierV2MerkleLockupFactory.sol";
 import { SablierV2MerkleLockupLL } from "src/SablierV2MerkleLockupLL.sol";
 
+import { ERC20Mock } from "./mocks/erc20/ERC20Mock.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
 import { Events } from "./utils/Events.sol";
@@ -53,7 +53,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     function setUp() public virtual {
         // Deploy the default test asset.
-        asset = new ERC20("DAI Stablecoin", "DAI");
+        asset = new ERC20Mock("DAI Stablecoin", "DAI");
 
         // Create users for testing.
         users.alice = createUser("Alice");
@@ -75,7 +75,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     function approveContracts() internal {
         // Approve Batch to spend assets from Alice.
         changePrank({ msgSender: users.alice });
-        asset.approve({ spender: address(batch), amount: MAX_UINT256 });
+        asset.approve({ spender: address(batch), value: MAX_UINT256 });
     }
 
     /// @dev Generates a user, labels its address, and funds it with ETH.

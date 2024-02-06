@@ -50,7 +50,7 @@ abstract contract CreateWithTimestamps_LockupDynamic_Batch_Fork_Test is Fork_Tes
 
         deal({ token: address(asset), to: params.sender, give: uint256(totalTransferAmount) });
         changePrank({ msgSender: params.sender });
-        asset.approve({ spender: address(batch), amount: totalTransferAmount });
+        asset.approve({ spender: address(batch), value: totalTransferAmount });
 
         LockupDynamic.CreateWithTimestamps memory createWithTimestamps = LockupDynamic.CreateWithTimestamps({
             sender: params.sender,
