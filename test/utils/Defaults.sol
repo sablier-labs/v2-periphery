@@ -29,7 +29,7 @@ contract Defaults is Merkle {
     uint40 public immutable CLIFF_TIME;
     uint40 public immutable END_TIME;
     uint256 public constant ETHER_AMOUNT = 10_000 ether;
-    uint256 public constant MAX_SEGMENT_COUNT = 1000;
+    uint256 public constant MAX_SEGMENT_COUNT = 300;
     uint128 public constant PER_STREAM_AMOUNT = 10_000e18;
     UD60x18 public constant PROTOCOL_FEE = UD60x18.wrap(0);
     uint128 public constant REFUND_AMOUNT = 7500e18; // deposit - cliff amount
@@ -53,8 +53,10 @@ contract Defaults is Merkle {
     string public constant IPFS_CID = "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR";
     uint256 public constant RECIPIENTS_COUNT = 4;
     bool public constant TRANSFERABLE = false;
-    uint256[] public LEAVES = new uint256[](RECIPIENTS_COUNT);
-    bytes32 public immutable MERKLE_ROOT;
+    uint256[] public LEAVES_LD = new uint256[](RECIPIENTS_COUNT);
+    uint256[] public LEAVES_LL = new uint256[](RECIPIENTS_COUNT);
+    bytes32 public immutable MERKLE_ROOT_LD;
+    bytes32 public immutable MERKLE_ROOT_LL;
     string public constant NAME = "Airdrop Campaign";
     bytes32 public constant NAME_BYTES32 = bytes32(abi.encodePacked("Airdrop Campaign"));
 
@@ -79,45 +81,77 @@ contract Defaults is Merkle {
         END_TIME = START_TIME + TOTAL_DURATION;
         EXPIRATION = uint40(block.timestamp) + 12 weeks;
 
-        // Initialize the Merkle tree.
-        LEAVES[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1, CLAIM_AMOUNT);
-        LEAVES[1] = MerkleBuilder.computeLeaf(INDEX2, users.recipient2, CLAIM_AMOUNT);
-        LEAVES[2] = MerkleBuilder.computeLeaf(INDEX3, users.recipient3, CLAIM_AMOUNT);
-        LEAVES[3] = MerkleBuilder.computeLeaf(INDEX4, users.recipient4, CLAIM_AMOUNT);
-        MerkleBuilder.sortLeaves(LEAVES);
-        MERKLE_ROOT = getRoot(LEAVES.toBytes32());
+        // Initialize the Merkle tree for Lockup Dynamic campaign.
+        LEAVES_LD[0] = MerkleBuilder.computeLeafLD(INDEX1, users.recipient1, CLAIM_AMOUNT, segmentsWithDurations());
+        LEAVES_LD[1] = MerkleBuilder.computeLeafLD(INDEX2, users.recipient2, CLAIM_AMOUNT, segmentsWithDurations());
+        LEAVES_LD[2] = MerkleBuilder.computeLeafLD(INDEX3, users.recipient3, CLAIM_AMOUNT, segmentsWithDurations());
+        LEAVES_LD[3] = MerkleBuilder.computeLeafLD(INDEX4, users.recipient4, CLAIM_AMOUNT, segmentsWithDurations());
+        MerkleBuilder.sortLeaves(LEAVES_LD);
+        MERKLE_ROOT_LD = getRoot(LEAVES_LD.toBytes32());
+
+        // Initialize the Merkle tree for Lockup Linear campaign.
+        LEAVES_LL[0] = MerkleBuilder.computeLeafLL(INDEX1, users.recipient1, CLAIM_AMOUNT);
+        LEAVES_LL[1] = MerkleBuilder.computeLeafLL(INDEX2, users.recipient2, CLAIM_AMOUNT);
+        LEAVES_LL[2] = MerkleBuilder.computeLeafLL(INDEX3, users.recipient3, CLAIM_AMOUNT);
+        LEAVES_LL[3] = MerkleBuilder.computeLeafLL(INDEX4, users.recipient4, CLAIM_AMOUNT);
+        MerkleBuilder.sortLeaves(LEAVES_LL);
+        MERKLE_ROOT_LL = getRoot(LEAVES_LL.toBytes32());
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                                   MERKLE-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    function index1Proof() public view returns (bytes32[] memory) {
-        uint256 leaf = MerkleBuilder.computeLeaf(INDEX1, users.recipient1, CLAIM_AMOUNT);
-        uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
-        return getProof(LEAVES.toBytes32(), pos);
+    function index1ProofLD() public view returns (bytes32[] memory) {
+        return indexProofLD(INDEX1, users.recipient1);
     }
 
-    function index2Proof() public view returns (bytes32[] memory) {
-        uint256 leaf = MerkleBuilder.computeLeaf(INDEX2, users.recipient2, CLAIM_AMOUNT);
-        uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
-        return getProof(LEAVES.toBytes32(), pos);
+    function index1ProofLL() public view returns (bytes32[] memory) {
+        return indexProofLL(INDEX1, users.recipient1);
     }
 
-    function index3Proof() public view returns (bytes32[] memory) {
-        uint256 leaf = MerkleBuilder.computeLeaf(INDEX3, users.recipient3, CLAIM_AMOUNT);
-        uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
-        return getProof(LEAVES.toBytes32(), pos);
+    function index2ProofLD() public view returns (bytes32[] memory) {
+        return indexProofLD(INDEX2, users.recipient2);
     }
 
-    function index4Proof() public view returns (bytes32[] memory) {
-        uint256 leaf = MerkleBuilder.computeLeaf(INDEX4, users.recipient4, CLAIM_AMOUNT);
-        uint256 pos = Arrays.findUpperBound(LEAVES, leaf);
-        return getProof(LEAVES.toBytes32(), pos);
+    function index2ProofLL() public view returns (bytes32[] memory) {
+        return indexProofLL(INDEX2, users.recipient2);
     }
 
-    function baseParams() public view returns (MerkleLockup.ConstructorParams memory) {
-        return baseParams(users.admin, asset, MERKLE_ROOT, EXPIRATION);
+    function index3ProofLD() public view returns (bytes32[] memory) {
+        return indexProofLD(INDEX3, users.recipient3);
+    }
+
+    function index3ProofLL() public view returns (bytes32[] memory) {
+        return indexProofLL(INDEX3, users.recipient3);
+    }
+
+    function index4ProofLD() public view returns (bytes32[] memory) {
+        return indexProofLD(INDEX4, users.recipient4);
+    }
+
+    function index4ProofLL() public view returns (bytes32[] memory) {
+        return indexProofLL(INDEX4, users.recipient4);
+    }
+
+    function indexProofLD(uint256 index, address recipient) internal view returns (bytes32[] memory) {
+        uint256 leaf = MerkleBuilder.computeLeafLD(index, recipient, CLAIM_AMOUNT, segmentsWithDurations());
+        uint256 pos = Arrays.findUpperBound(LEAVES_LD, leaf);
+        return getProof(LEAVES_LD.toBytes32(), pos);
+    }
+
+    function indexProofLL(uint256 index, address recipient) internal view returns (bytes32[] memory) {
+        uint256 leaf = MerkleBuilder.computeLeafLL(index, recipient, CLAIM_AMOUNT);
+        uint256 pos = Arrays.findUpperBound(LEAVES_LL, leaf);
+        return getProof(LEAVES_LL.toBytes32(), pos);
+    }
+
+    function baseParamsLD() public view returns (MerkleLockup.ConstructorParams memory) {
+        return baseParams(users.admin, asset, MERKLE_ROOT_LD, EXPIRATION);
+    }
+
+    function baseParamsLL() public view returns (MerkleLockup.ConstructorParams memory) {
+        return baseParams(users.admin, asset, MERKLE_ROOT_LL, EXPIRATION);
     }
 
     function baseParams(
@@ -197,22 +231,18 @@ contract Defaults is Merkle {
         });
     }
 
-    function dynamicRange() public view returns (LockupDynamic.Range memory) {
-        return LockupDynamic.Range({ start: START_TIME, end: END_TIME });
-    }
-
     /// @dev Returns a batch of `LockupDynamic.Segment` parameters.
-    function segments() private view returns (LockupDynamic.Segment[] memory segments_) {
+    function segments() public view returns (LockupDynamic.Segment[] memory segments_) {
         segments_ = new LockupDynamic.Segment[](2);
         segments_[0] = LockupDynamic.Segment({
             amount: 2500e18,
             exponent: ud2x18(3.14e18),
-            timestamp: START_TIME + CLIFF_DURATION
+            timestamp: uint40(block.timestamp) + CLIFF_DURATION
         });
         segments_[1] = LockupDynamic.Segment({
             amount: 7500e18,
             exponent: ud2x18(3.14e18),
-            timestamp: START_TIME + TOTAL_DURATION
+            timestamp: uint40(block.timestamp) + TOTAL_DURATION
         });
     }
 

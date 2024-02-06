@@ -1,22 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.22 <0.9.0;
 
-import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
-
 import { Errors } from "src/libraries/Errors.sol";
-import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
+import { ISablierV2MerkleLockupLD } from "src/interfaces/ISablierV2MerkleLockupLD.sol";
 import { MerkleLockup } from "src/types/DataTypes.sol";
 
 import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test {
+contract CreateMerkleLockupLD_Integration_Test is MerkleLockup_Integration_Test {
     function setUp() public override {
         MerkleLockup_Integration_Test.setUp();
     }
 
     function test_RevertWhen_CampaignNameTooLong() external {
-        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParamsLL();
-        LockupLinear.Durations memory streamDurations = defaults.durations();
+        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParamsLD();
         string memory ipfsCID = defaults.IPFS_CID();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
@@ -29,10 +26,9 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             )
         );
 
-        merkleLockupFactory.createMerkleLockupLL({
+        merkleLockupFactory.createMerkleLockupLD({
             baseParams: baseParams,
-            lockupLinear: lockupLinear,
-            streamDurations: streamDurations,
+            lockupDynamic: lockupDynamic,
             ipfsCID: ipfsCID,
             aggregateAmount: aggregateAmount,
             recipientsCount: recipientsCount
@@ -45,17 +41,15 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
 
     /// @dev This test works because a default Merkle Lockup contract is deployed in {Integration_Test.setUp}
     function test_RevertGiven_AlreadyCreated() external whenCampaignNameIsNotTooLong {
-        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParamsLL();
-        LockupLinear.Durations memory streamDurations = defaults.durations();
+        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParamsLD();
         string memory ipfsCID = defaults.IPFS_CID();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
 
         vm.expectRevert();
-        merkleLockupFactory.createMerkleLockupLL({
+        merkleLockupFactory.createMerkleLockupLD({
             baseParams: baseParams,
-            lockupLinear: lockupLinear,
-            streamDurations: streamDurations,
+            lockupDynamic: lockupDynamic,
             ipfsCID: ipfsCID,
             aggregateAmount: aggregateAmount,
             recipientsCount: recipientsCount
@@ -66,7 +60,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         _;
     }
 
-    function testFuzz_CreateMerkleLockupLL(
+    function testFuzz_CreateMerkleLockupLD(
         address admin,
         uint40 expiration
     )
@@ -75,29 +69,24 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         givenNotAlreadyCreated
     {
         vm.assume(admin != users.admin);
-        address expectedLockupLL = computeMerkleLockupLLAddress(admin, expiration);
+        address expectedLockupLD = computeMerkleLockupLDAddress(admin, expiration);
 
-        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams({
-            admin: admin,
-            asset_: dai,
-            merkleRoot: defaults.MERKLE_ROOT_LL(),
-            expiration: expiration
-        });
+        MerkleLockup.ConstructorParams memory baseParams =
+            defaults.baseParams({ admin: admin, merkleRoot: defaults.MERKLE_ROOT_LD(), expiration: expiration });
 
         vm.expectEmit({ emitter: address(merkleLockupFactory) });
-        emit CreateMerkleLockupLL({
-            merkleLockupLL: ISablierV2MerkleLockupLL(expectedLockupLL),
+        emit CreateMerkleLockupLD({
+            merkleLockupLD: ISablierV2MerkleLockupLD(expectedLockupLD),
             baseParams: baseParams,
-            lockupLinear: lockupLinear,
-            streamDurations: defaults.durations(),
+            lockupDynamic: lockupDynamic,
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()
         });
 
-        address actualLockupLL = address(createMerkleLockupLL(admin, expiration));
+        address actualLockupLD = address(createMerkleLockupLD(admin, expiration));
 
-        assertGt(actualLockupLL.code.length, 0, "MerkleLockupLL contract not created");
-        assertEq(actualLockupLL, expectedLockupLL, "MerkleLockupLL contract does not match computed address");
+        assertGt(actualLockupLD.code.length, 0, "MerkleLockupLD contract not created");
+        assertEq(actualLockupLD, expectedLockupLD, "MerkleLockupLD contract does not match computed address");
     }
 }

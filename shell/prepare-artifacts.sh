@@ -27,11 +27,13 @@ FOUNDRY_PROFILE=optimized forge build
 cp out-optimized/SablierV2Batch.sol/SablierV2Batch.json $artifacts
 cp out-optimized/SablierV2MerkleLockupFactory.sol/SablierV2MerkleLockupFactory.json $artifacts
 cp out-optimized/SablierV2MerkleLockupLL.sol/SablierV2MerkleLockupLL.json $artifacts
+cp out-optimized/SablierV2MerkleLockupLD.sol/SablierV2MerkleLockupLD.json $artifacts
 
 interfaces=./artifacts/interfaces
 cp out-optimized/ISablierV2Batch.sol/ISablierV2Batch.json $interfaces
 cp out-optimized/ISablierV2MerkleLockupFactory.sol/ISablierV2MerkleLockupFactory.json $interfaces
 cp out-optimized/ISablierV2MerkleLockupLL.sol/ISablierV2MerkleLockupLL.json $interfaces
+cp out-optimized/ISablierV2MerkleLockupLD.sol/ISablierV2MerkleLockupLD.json $interfaces
 
 erc20=./artifacts/interfaces/erc20
 cp out-optimized/IERC20.sol/IERC20.json $erc20

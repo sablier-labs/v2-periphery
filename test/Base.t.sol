@@ -14,9 +14,11 @@ import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
 
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2MerkleLockupFactory } from "src/interfaces/ISablierV2MerkleLockupFactory.sol";
+import { ISablierV2MerkleLockupLD } from "src/interfaces/ISablierV2MerkleLockupLD.sol";
 import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
 import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2MerkleLockupFactory } from "src/SablierV2MerkleLockupFactory.sol";
+import { SablierV2MerkleLockupLD } from "src/SablierV2MerkleLockupLD.sol";
 import { SablierV2MerkleLockupLL } from "src/SablierV2MerkleLockupLL.sol";
 
 import { ERC20Mock } from "./mocks/erc20/ERC20Mock.sol";
@@ -45,6 +47,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
     ISablierV2MerkleLockupFactory internal merkleLockupFactory;
+    ISablierV2MerkleLockupLD internal merkleLockupLD;
     ISablierV2MerkleLockupLL internal merkleLockupLL;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -100,6 +103,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     function labelContracts(IERC20 asset_) internal {
         vm.label({ account: address(asset_), newLabel: IERC20Metadata(address(asset_)).symbol() });
         vm.label({ account: address(merkleLockupFactory), newLabel: "MerkleLockupFactory" });
+        vm.label({ account: address(merkleLockupLD), newLabel: "MerkleLockupLD" });
         vm.label({ account: address(merkleLockupLL), newLabel: "MerkleLockupLL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(comptroller), newLabel: "Comptroller" });
@@ -247,7 +251,57 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                  MERKLE-LOCKUP
+                                  MERKLE-LOCKUP-LD
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function computeMerkleLockupLDAddress(
+        address admin,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (address)
+    {
+        bytes32 salt = keccak256(
+            abi.encodePacked(
+                admin,
+                asset,
+                defaults.NAME_BYTES32(),
+                merkleRoot,
+                expiration,
+                defaults.CANCELABLE(),
+                defaults.TRANSFERABLE(),
+                lockupDynamic
+            )
+        );
+        bytes32 creationBytecodeHash = keccak256(getMerkleLockupLDBytecode(admin, merkleRoot, expiration));
+        return computeCreate2Address({
+            salt: salt,
+            initcodeHash: creationBytecodeHash,
+            deployer: address(merkleLockupFactory)
+        });
+    }
+
+    function getMerkleLockupLDBytecode(
+        address admin,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (bytes memory)
+    {
+        bytes memory constructorArgs = abi.encode(defaults.baseParams(admin, merkleRoot, expiration), lockupDynamic);
+        if (!isTestOptimizedProfile()) {
+            return bytes.concat(type(SablierV2MerkleLockupLD).creationCode, constructorArgs);
+        } else {
+            return bytes.concat(
+                vm.getCode("out-optimized/SablierV2MerkleLockupLD.sol/SablierV2MerkleLockupLD.json"), constructorArgs
+            );
+        }
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                  MERKLE-LOCKUP-LL
     //////////////////////////////////////////////////////////////////////////*/
 
     function computeMerkleLockupLLAddress(

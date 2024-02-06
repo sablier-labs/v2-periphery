@@ -34,7 +34,7 @@ contract Constructor_MerkleLockupLL_Integration_Test is MerkleLockup_Integration
 
     function test_Constructor() external {
         SablierV2MerkleLockupLL constructedLockupLL =
-            new SablierV2MerkleLockupLL(defaults.baseParams(), lockupLinear, defaults.durations());
+            new SablierV2MerkleLockupLL(defaults.baseParamsLL(), lockupLinear, defaults.durations());
 
         Vars memory vars;
 
@@ -51,7 +51,7 @@ contract Constructor_MerkleLockupLL_Integration_Test is MerkleLockup_Integration
         assertEq(bytes32(abi.encodePacked(vars.actualName)), vars.expectedName, "name");
 
         vars.actualMerkleRoot = constructedLockupLL.MERKLE_ROOT();
-        vars.expectedMerkleRoot = defaults.MERKLE_ROOT();
+        vars.expectedMerkleRoot = defaults.MERKLE_ROOT_LL();
         assertEq(vars.actualMerkleRoot, vars.expectedMerkleRoot, "merkleRoot");
 
         vars.actualCancelable = constructedLockupLL.CANCELABLE();

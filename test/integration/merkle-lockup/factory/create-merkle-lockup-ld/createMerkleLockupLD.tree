@@ -1,0 +1,9 @@
+createMerkleLockupLD.t.sol
+├── when the campaign name is too long
+│   └── it should revert
+└── when the campaign name is not too long
+    ├── given the campaign has been already created
+    │   └── it should revert
+    └── given the campaign has not been already created
+        ├── it should create the campaign
+        └── it should emit a {CreateMerkleLockupLD} event

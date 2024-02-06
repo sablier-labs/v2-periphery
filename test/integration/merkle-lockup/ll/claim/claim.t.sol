@@ -8,7 +8,7 @@ import { Errors } from "src/libraries/Errors.sol";
 
 import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract Claim_Integration_Test is MerkleLockup_Integration_Test {
+contract ClaimLL_Integration_Test is MerkleLockup_Integration_Test {
     function setUp() public virtual override {
         MerkleLockup_Integration_Test.setUp();
     }
@@ -32,7 +32,7 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
         claimLL();
         uint256 index1 = defaults.INDEX1();
         uint128 amount = defaults.CLAIM_AMOUNT();
-        bytes32[] memory merkleProof = defaults.index1Proof();
+        bytes32[] memory merkleProof = defaults.index1ProofLL();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_StreamClaimed.selector, index1));
         merkleLockupLL.claim(index1, users.recipient1, amount, merkleProof);
     }
@@ -53,7 +53,7 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
     {
         uint256 invalidIndex = 1337;
         uint128 amount = defaults.CLAIM_AMOUNT();
-        bytes32[] memory merkleProof = defaults.index1Proof();
+        bytes32[] memory merkleProof = defaults.index1ProofLL();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
         merkleLockupLL.claim(invalidIndex, users.recipient1, amount, merkleProof);
     }
@@ -67,7 +67,7 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
         uint256 index1 = defaults.INDEX1();
         address invalidRecipient = address(1337);
         uint128 amount = defaults.CLAIM_AMOUNT();
-        bytes32[] memory merkleProof = defaults.index1Proof();
+        bytes32[] memory merkleProof = defaults.index1ProofLL();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
         merkleLockupLL.claim(index1, invalidRecipient, amount, merkleProof);
     }
@@ -80,7 +80,7 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
     {
         uint256 index1 = defaults.INDEX1();
         uint128 invalidAmount = 1337;
-        bytes32[] memory merkleProof = defaults.index1Proof();
+        bytes32[] memory merkleProof = defaults.index1ProofLL();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
         merkleLockupLL.claim(index1, users.recipient1, invalidAmount, merkleProof);
     }
@@ -93,7 +93,7 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
     {
         uint256 index1 = defaults.INDEX1();
         uint128 amount = defaults.CLAIM_AMOUNT();
-        bytes32[] memory invalidMerkleProof = defaults.index2Proof();
+        bytes32[] memory invalidMerkleProof = defaults.index2ProofLL();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
         merkleLockupLL.claim(index1, users.recipient1, amount, invalidMerkleProof);
     }

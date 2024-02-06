@@ -16,9 +16,16 @@ interface ISablierV2MerkleLockup is IAdminable {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Emitted when a recipient claims a stream.
+    /// @param index The index of the recipient in the Merkle tree.
+    /// @param recipient The address of the stream holder.
+    /// @param amount The amount of tokens to be streamed.
+    /// @param streamId The id of the newly created stream.
     event Claim(uint256 index, address indexed recipient, uint128 amount, uint256 indexed streamId);
 
     /// @notice Emitted when the admin claws back the unclaimed tokens.
+    /// @param admin The address of the admin of Merkle Lockup contract.
+    /// @param to The address to receive the tokens.
+    /// @param amount The amount of tokens to claw back.
     event Clawback(address indexed admin, address indexed to, uint128 amount);
 
     /*//////////////////////////////////////////////////////////////////////////
