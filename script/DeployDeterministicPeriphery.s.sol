@@ -19,7 +19,7 @@ contract DeployDeterministicPeriphery is BaseScript {
         broadcast
         returns (SablierV2Batch batch, SablierV2MerkleStreamerFactory merkleStreamerFactory)
     {
-        bytes32 salt = _constructCreate2Salt();
+        bytes32 salt = constructCreate2Salt();
         batch = new SablierV2Batch{ salt: salt }();
         merkleStreamerFactory = new SablierV2MerkleStreamerFactory{ salt: bytes32(abi.encodePacked(create2Salt)) }();
     }
