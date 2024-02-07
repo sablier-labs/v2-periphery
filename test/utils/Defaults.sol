@@ -133,6 +133,7 @@ contract Defaults is Merkle {
         return MerkleLockup.ConstructorParams({
             initialAdmin: admin,
             asset: asset_,
+            ipfsCID: IPFS_CID,
             name: NAME,
             merkleRoot: merkleRoot,
             expiration: expiration,

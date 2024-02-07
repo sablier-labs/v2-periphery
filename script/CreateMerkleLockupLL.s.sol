@@ -15,7 +15,6 @@ contract CreateMerkleLockupLL is BaseScript {
         MerkleLockup.ConstructorParams baseParams;
         ISablierV2LockupLinear lockupLinear;
         LockupLinear.Durations streamDurations;
-        string ipfsCID;
         uint256 campaignTotalAmount;
         uint256 recipientsCount;
     }
@@ -32,7 +31,6 @@ contract CreateMerkleLockupLL is BaseScript {
             params.baseParams,
             params.lockupLinear,
             params.streamDurations,
-            params.ipfsCID,
             params.campaignTotalAmount,
             params.recipientsCount
         );

@@ -58,7 +58,6 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
             baseParams: defaults.baseParams(admin, dai, defaults.MERKLE_ROOT(), expiration),
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
-            ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()
         });

@@ -20,7 +20,6 @@ interface ISablierV2MerkleLockupFactory {
         MerkleLockup.ConstructorParams indexed baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations streamDurations,
-        string ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount
     );
@@ -35,7 +34,6 @@ interface ISablierV2MerkleLockupFactory {
     /// {DataTypes}.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param streamDurations The durations for each stream due to the recipient.
-    /// @param ipfsCID Metadata parameter emitted for indexing purposes.
     /// @param aggregateAmount Total amount of ERC-20 assets to be streamed to all recipients.
     /// @param recipientsCount Total number of recipients eligible to claim.
     /// @return merkleLockupLL The address of the newly created Merkle Lockup contract.
@@ -43,7 +41,6 @@ interface ISablierV2MerkleLockupFactory {
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations,
-        string memory ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount
     )

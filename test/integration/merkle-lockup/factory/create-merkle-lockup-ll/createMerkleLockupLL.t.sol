@@ -17,7 +17,6 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
     function test_RevertWhen_CampaignNameTooLong() external {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
-        string memory ipfsCID = defaults.IPFS_CID();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
 
@@ -33,7 +32,6 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             baseParams: baseParams,
             lockupLinear: lockupLinear,
             streamDurations: streamDurations,
-            ipfsCID: ipfsCID,
             aggregateAmount: aggregateAmount,
             recipientsCount: recipientsCount
         });
@@ -47,7 +45,6 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
     function test_RevertGiven_AlreadyCreated() external whenCampaignNameIsNotTooLong {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
-        string memory ipfsCID = defaults.IPFS_CID();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
 
@@ -56,7 +53,6 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             baseParams: baseParams,
             lockupLinear: lockupLinear,
             streamDurations: streamDurations,
-            ipfsCID: ipfsCID,
             aggregateAmount: aggregateAmount,
             recipientsCount: recipientsCount
         });
@@ -90,7 +86,6 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             baseParams: baseParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
-            ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()
         });

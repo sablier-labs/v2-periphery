@@ -108,7 +108,6 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             baseParams: vars.baseParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
-            ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount
         });
@@ -117,7 +116,6 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             baseParams: vars.baseParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
-            ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount
         });

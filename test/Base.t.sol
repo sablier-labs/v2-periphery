@@ -274,6 +274,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
             abi.encodePacked(
                 admin,
                 address(asset_),
+                abi.encode(defaults.IPFS_CID()),
                 defaults.NAME_BYTES32(),
                 merkleRoot,
                 expiration,

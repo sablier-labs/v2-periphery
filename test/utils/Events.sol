@@ -16,7 +16,6 @@ abstract contract Events {
         MerkleLockup.ConstructorParams indexed baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations streamDurations,
-        string ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount
     );
