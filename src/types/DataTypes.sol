@@ -66,6 +66,7 @@ library MerkleLockup {
     /// @notice Struct encapsulating the base constructor parameter of a {SablierV2MerkleLockup} contract.
     /// @param initialAdmin The initial admin of the Merkle Lockup contract.
     /// @param asset The address of the streamed ERC-20 asset.
+    /// @param ipfsCID The content identifier for indexing the contract on IPFS.
     /// @param name The name of the campaign.
     /// @param merkleRoot The Merkle root of the claim data.
     /// @param expiration The expiration of the streaming campaign, as a Unix timestamp.
@@ -74,6 +75,7 @@ library MerkleLockup {
     struct ConstructorParams {
         address initialAdmin;
         IERC20 asset;
+        string ipfsCID;
         string name;
         bytes32 merkleRoot;
         uint40 expiration;

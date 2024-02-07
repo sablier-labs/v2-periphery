@@ -21,7 +21,6 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations,
-        string memory ipfsCID,
         uint256 aggregateAmount,
         uint256 recipientsCount
     )
@@ -33,6 +32,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             abi.encodePacked(
                 baseParams.initialAdmin,
                 baseParams.asset,
+                abi.encode(baseParams.ipfsCID),
                 bytes32(abi.encodePacked(baseParams.name)),
                 baseParams.merkleRoot,
                 baseParams.expiration,
@@ -48,7 +48,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
 
         // Using a different function to emit the event to avoid stack too deep error.
         emit CreateMerkleLockupLL(
-            merkleLockupLL, baseParams, lockupLinear, streamDurations, ipfsCID, aggregateAmount, recipientsCount
+            merkleLockupLL, baseParams, lockupLinear, streamDurations, aggregateAmount, recipientsCount
         );
     }
 }

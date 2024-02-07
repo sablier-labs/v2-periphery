@@ -13,6 +13,7 @@ contract Constructor_MerkleLockupLL_Integration_Test is MerkleLockup_Integration
         address actualAdmin;
         uint256 actualAllowance;
         address actualAsset;
+        string actualIpfsCID;
         string actualName;
         bool actualCancelable;
         bool actualTransferable;
@@ -23,6 +24,7 @@ contract Constructor_MerkleLockupLL_Integration_Test is MerkleLockup_Integration
         address expectedAdmin;
         uint256 expectedAllowance;
         address expectedAsset;
+        string expectedIpfsCID;
         bytes32 expectedName;
         bool expectedCancelable;
         bool expectedTransferable;
@@ -78,5 +80,9 @@ contract Constructor_MerkleLockupLL_Integration_Test is MerkleLockup_Integration
         vars.actualAllowance = dai.allowance(address(constructedLockupLL), address(lockupLinear));
         vars.expectedAllowance = MAX_UINT256;
         assertEq(vars.actualAllowance, vars.expectedAllowance, "allowance");
+
+        vars.actualIpfsCID = constructedLockupLL.ipfsCID();
+        vars.expectedIpfsCID = defaults.IPFS_CID();
+        assertEq(vars.actualIpfsCID, vars.expectedIpfsCID, "ipfsCID");
     }
 }

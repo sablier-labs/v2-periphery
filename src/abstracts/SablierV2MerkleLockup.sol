@@ -42,6 +42,9 @@ abstract contract SablierV2MerkleLockup is
     /// @inheritdoc ISablierV2MerkleLockup
     bool public immutable override TRANSFERABLE;
 
+    /// @inheritdoc ISablierV2MerkleLockup
+    string public ipfsCID;
+
     /// @dev Packed booleans that record the history of claims.
     BitMaps.BitMap internal _claimedBitMap;
 
@@ -63,6 +66,7 @@ abstract contract SablierV2MerkleLockup is
         ASSET = params.asset;
         CANCELABLE = params.cancelable;
         EXPIRATION = params.expiration;
+        ipfsCID = params.ipfsCID;
         MERKLE_ROOT = params.merkleRoot;
         NAME = bytes32(abi.encodePacked(params.name));
         TRANSFERABLE = params.transferable;
