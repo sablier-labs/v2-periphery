@@ -13,15 +13,14 @@ import { SablierV2MerkleStreamerFactory } from "../src/SablierV2MerkleStreamerFa
 ///
 /// @dev Reverts if any contract has already been deployed.
 contract DeployDeterministicPeriphery is BaseScript {
-    /// @dev The presence of the salt instructs Forge to deploy the contract via a deterministic CREATE2 factory.
-    /// https://github.com/Arachnid/deterministic-deployment-proxy
     function run(string memory create2Salt)
         public
         virtual
         broadcast
         returns (SablierV2Batch batch, SablierV2MerkleStreamerFactory merkleStreamerFactory)
     {
-        batch = new SablierV2Batch{ salt: bytes32(abi.encodePacked(create2Salt)) }();
+        bytes32 salt = constructCreate2Salt();
+        batch = new SablierV2Batch{ salt: salt }();
         merkleStreamerFactory = new SablierV2MerkleStreamerFactory{ salt: bytes32(abi.encodePacked(create2Salt)) }();
     }
 }
