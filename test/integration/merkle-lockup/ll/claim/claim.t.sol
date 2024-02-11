@@ -109,7 +109,7 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
         givenIncludedInMerkleTree
     {
         changePrank({ msgSender: users.admin });
-        comptroller.setProtocolFee({ asset: asset, newProtocolFee: ud(0.1e18) });
+        comptroller.setProtocolFee({ asset: dai, newProtocolFee: ud(0.1e18) });
 
         test_Claim({ protocolFee: ud(0.1e18) });
     }
@@ -139,7 +139,7 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
         LockupLinear.Stream memory actualStream = lockupLinear.getStream(actualStreamId);
         LockupLinear.Stream memory expectedStream = LockupLinear.Stream({
             amounts: Lockup.Amounts({ deposited: defaults.CLAIM_AMOUNT() - feeAmount, refunded: 0, withdrawn: 0 }),
-            asset: asset,
+            asset: dai,
             cliffTime: uint40(block.timestamp) + defaults.CLIFF_DURATION(),
             endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
             isCancelable: defaults.CANCELABLE(),

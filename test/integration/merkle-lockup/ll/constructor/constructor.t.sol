@@ -43,7 +43,7 @@ contract Constructor_MerkleLockupLL_Integration_Test is MerkleLockup_Integration
         assertEq(vars.actualAdmin, vars.expectedAdmin, "admin");
 
         vars.actualAsset = address(constructedLockupLL.ASSET());
-        vars.expectedAsset = address(asset);
+        vars.expectedAsset = address(dai);
         assertEq(vars.actualAsset, vars.expectedAsset, "asset");
 
         vars.actualName = constructedLockupLL.name();
@@ -75,7 +75,7 @@ contract Constructor_MerkleLockupLL_Integration_Test is MerkleLockup_Integration
         assertEq(vars.actualDurations.cliff, vars.expectedDurations.cliff, "durations.cliff");
         assertEq(vars.actualDurations.total, vars.expectedDurations.total, "durations.total");
 
-        vars.actualAllowance = asset.allowance(address(constructedLockupLL), address(lockupLinear));
+        vars.actualAllowance = dai.allowance(address(constructedLockupLL), address(lockupLinear));
         vars.expectedAllowance = MAX_UINT256;
         assertEq(vars.actualAllowance, vars.expectedAllowance, "allowance");
     }

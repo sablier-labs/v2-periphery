@@ -14,11 +14,17 @@ import { Base_Test } from "../Base.t.sol";
 /// @notice Common logic needed by all fork tests.
 abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     /*//////////////////////////////////////////////////////////////////////////
+                                  STATE VARIABLES
+    //////////////////////////////////////////////////////////////////////////*/
+
+    IERC20 internal immutable ASSET;
+
+    /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
     constructor(IERC20 asset_) {
-        asset = asset_;
+        ASSET = asset_;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -38,17 +44,17 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         deployDependencies();
 
         // Deploy the defaults contract and allow it to access cheatcodes.
-        defaults = new Defaults(users, asset);
+        defaults = new Defaults(users, ASSET);
         vm.allowCheatcodes(address(defaults));
 
         // Deploy V2 Periphery.
         deployPeripheryConditionally();
 
         // Label the contracts.
-        labelContracts();
+        labelContracts(ASSET);
 
-        // Approve the relevant contracts.
-        approveContracts();
+        // Approve the relevant contract.
+        approveContract({ asset_: ASSET, from: users.alice, spender: address(batch) });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -66,8 +72,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         vm.assume(user != address(lockupLinear) && recipient != address(lockupLinear));
 
         // Avoid users blacklisted by USDC or USDT.
-        assumeNoBlacklisted(address(asset), user);
-        assumeNoBlacklisted(address(asset), recipient);
+        assumeNoBlacklisted(address(ASSET), user);
+        assumeNoBlacklisted(address(ASSET), recipient);
     }
 
     /// @dev Loads all dependencies pre-deployed on Mainnet.

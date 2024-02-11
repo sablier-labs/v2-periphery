@@ -7,6 +7,7 @@ import { CreateWithTimestamps_LockupDynamic_Batch_Fork_Test } from "../batch/cre
 import { CreateWithTimestamps_LockupLinear_Batch_Fork_Test } from "../batch/createWithTimestampsLL.t.sol";
 import { MerkleLockupLL_Fork_Test } from "../merkle-lockup/MerkleLockupLL.t.sol";
 
+/// @dev An ERC-20 asset that suffers from the missing return value bug.
 IERC20 constant usdt = IERC20(0xdAC17F958D2ee523a2206206994597C13D831ec7);
 
 contract USDT_CreateWithTimestamps_LockupDynamic_Batch_Fork_Test is

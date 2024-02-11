@@ -14,7 +14,7 @@ contract CreateWithTimestamps_LockupLinear_Integration_Test is Integration_Test 
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithTimestampsLL[] memory batchParams = new Batch.CreateWithTimestampsLL[](0);
         vm.expectRevert(Errors.SablierV2Batch_BatchSizeZero.selector);
-        batch.createWithTimestampsLL(lockupLinear, asset, batchParams);
+        batch.createWithTimestampsLL(lockupLinear, dai, batchParams);
     }
 
     modifier whenBatchSizeNotZero() {
@@ -38,7 +38,7 @@ contract CreateWithTimestamps_LockupLinear_Integration_Test is Integration_Test 
 
         // Assert that the batch of streams has been created successfully.
         uint256[] memory actualStreamIds =
-            batch.createWithTimestampsLL(lockupLinear, asset, defaults.batchCreateWithTimestampsLL());
+            batch.createWithTimestampsLL(lockupLinear, dai, defaults.batchCreateWithTimestampsLL());
         uint256[] memory expectedStreamIds = defaults.incrementalStreamIds();
         assertEq(actualStreamIds, expectedStreamIds, "stream ids mismatch");
     }
