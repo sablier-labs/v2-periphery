@@ -3,6 +3,7 @@
   block_timestamp = 1_682_899_200 # May 1, 2023 at 00:00 GMT
   bytecode_hash = "none"
   evm_version = "paris"
+  ffi = true
   fs_permissions = [{ access = "read", path = "out-optimized" }]
   gas_reports = [
     "SablierV2Batch",
