@@ -13,7 +13,7 @@ import { SablierV2MerkleStreamerFactory } from "../src/SablierV2MerkleStreamerFa
 ///
 /// @dev Reverts if any contract has already been deployed.
 contract DeployDeterministicPeriphery is BaseScript {
-    function run(string memory create2Salt)
+    function run()
         public
         virtual
         broadcast
@@ -21,6 +21,6 @@ contract DeployDeterministicPeriphery is BaseScript {
     {
         bytes32 salt = constructCreate2Salt();
         batch = new SablierV2Batch{ salt: salt }();
-        merkleStreamerFactory = new SablierV2MerkleStreamerFactory{ salt: bytes32(abi.encodePacked(create2Salt)) }();
+        merkleStreamerFactory = new SablierV2MerkleStreamerFactory{ salt: salt }();
     }
 }

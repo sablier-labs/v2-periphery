@@ -8,8 +8,8 @@ import { SablierV2Batch } from "../src/SablierV2Batch.sol";
 /// @notice Deploys {SablierV2Batch} at a deterministic address across chains.
 /// @dev Reverts if the contract has already been deployed.
 contract DeployDeterministicBatch is BaseScript {
-    function run(string memory create2Salt) public virtual broadcast returns (SablierV2Batch batch) {
-        bytes32 salt = bytes32(abi.encodePacked(create2Salt));
+    function run() public virtual broadcast returns (SablierV2Batch batch) {
+        bytes32 salt = constructCreate2Salt();
         batch = new SablierV2Batch{ salt: salt }();
     }
 }
