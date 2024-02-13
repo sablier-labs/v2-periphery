@@ -38,9 +38,6 @@ interface ISablierV2MerkleLockup is IAdminable {
     /// @dev This is an immutable state variable.
     function EXPIRATION() external returns (uint40);
 
-    /// @notice Retrieves the name of the campaign.
-    function name() external returns (string memory);
-
     /// @notice Returns a flag indicating whether a claim has been made for a given index.
     /// @dev Uses a bitmap to save gas.
     /// @param index The index of the recipient to check.
@@ -52,6 +49,9 @@ interface ISablierV2MerkleLockup is IAdminable {
     /// @notice The root of the Merkle tree used to validate the claims.
     /// @dev This is an immutable state variable.
     function MERKLE_ROOT() external returns (bytes32);
+
+    /// @notice Retrieves the name of the campaign.
+    function name() external returns (string memory);
 
     /// @notice A flag indicating whether the stream NFTs are transferable.
     /// @dev This is an immutable state variable.
