@@ -26,19 +26,19 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
     }
 
     function computeMerkleLockupLLAddress() internal returns (address) {
-        return computeMerkleLockupLLAddress(users.admin, dai, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+        return computeMerkleLockupLLAddress(users.admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
     function computeMerkleLockupLLAddress(address admin) internal returns (address) {
-        return computeMerkleLockupLLAddress(admin, dai, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+        return computeMerkleLockupLLAddress(admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
     function computeMerkleLockupLLAddress(address admin, uint40 expiration) internal returns (address) {
-        return computeMerkleLockupLLAddress(admin, dai, defaults.MERKLE_ROOT(), expiration);
+        return computeMerkleLockupLLAddress(admin, defaults.MERKLE_ROOT(), expiration);
     }
 
     function computeMerkleLockupLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
-        return computeMerkleLockupLLAddress(admin, dai, merkleRoot, defaults.EXPIRATION());
+        return computeMerkleLockupLLAddress(admin, merkleRoot, defaults.EXPIRATION());
     }
 
     function createMerkleLockupLL() internal returns (ISablierV2MerkleLockupLL) {

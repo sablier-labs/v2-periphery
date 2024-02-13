@@ -252,6 +252,17 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     function computeMerkleLockupLLAddress(
         address admin,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (address)
+    {
+        return computeMerkleLockupLLAddress(admin, dai, merkleRoot, expiration);
+    }
+
+    function computeMerkleLockupLLAddress(
+        address admin,
         IERC20 asset_,
         bytes32 merkleRoot,
         uint40 expiration
