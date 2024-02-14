@@ -77,8 +77,12 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         vm.assume(admin != users.admin);
         address expectedLockupLL = computeMerkleLockupLLAddress(admin, expiration);
 
-        MerkleLockup.ConstructorParams memory baseParams =
-            defaults.baseParams({ admin: admin, merkleRoot: defaults.MERKLE_ROOT(), expiration: expiration });
+        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams({
+            admin: admin,
+            asset_: dai,
+            merkleRoot: defaults.MERKLE_ROOT(),
+            expiration: expiration
+        });
 
         vm.expectEmit({ emitter: address(merkleLockupFactory) });
         emit CreateMerkleLockupLL({

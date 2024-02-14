@@ -20,16 +20,16 @@ abstract contract Integration_Test is Base_Test {
         deployDependencies();
 
         // Deploy the defaults contract.
-        defaults = new Defaults(users, asset);
+        defaults = new Defaults(users, dai);
 
         // Deploy V2 Periphery.
         deployPeripheryConditionally();
 
         // Label the contracts.
-        labelContracts();
+        labelContracts(dai);
 
-        // Approve the relevant contracts.
-        approveContracts();
+        // Approve the relevant contract.
+        approveContract({ asset_: dai, from: users.alice, spender: address(batch) });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

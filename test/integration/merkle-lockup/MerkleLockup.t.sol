@@ -13,7 +13,7 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
         merkleLockupLL = createMerkleLockupLL();
 
         // Fund the Merkle Lockup contract.
-        deal({ token: address(asset), to: address(merkleLockupLL), give: defaults.AGGREGATE_AMOUNT() });
+        deal({ token: address(dai), to: address(merkleLockupLL), give: defaults.AGGREGATE_AMOUNT() });
     }
 
     function claimLL() internal returns (uint256) {
@@ -55,7 +55,7 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
 
     function createMerkleLockupLL(address admin, uint40 expiration) internal returns (ISablierV2MerkleLockupLL) {
         return merkleLockupFactory.createMerkleLockupLL({
-            baseParams: defaults.baseParams(admin, defaults.MERKLE_ROOT(), expiration),
+            baseParams: defaults.baseParams(admin, dai, defaults.MERKLE_ROOT(), expiration),
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             ipfsCID: defaults.IPFS_CID(),

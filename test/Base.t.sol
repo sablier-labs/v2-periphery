@@ -38,7 +38,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    IERC20 internal asset;
+    IERC20 internal dai;
     ISablierV2Batch internal batch;
     ISablierV2Comptroller internal comptroller;
     Defaults internal defaults;
@@ -53,7 +53,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     function setUp() public virtual {
         // Deploy the default test asset.
-        asset = new ERC20Mock("DAI Stablecoin", "DAI");
+        dai = new ERC20Mock("DAI Stablecoin", "DAI");
 
         // Create users for testing.
         users.alice = createUser("Alice");
@@ -71,18 +71,18 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                                      HELPERS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Approves relevant contracts to spend assets from some users.
-    function approveContracts() internal {
-        // Approve Batch to spend assets from Alice.
-        changePrank({ msgSender: users.alice });
-        asset.approve({ spender: address(batch), value: MAX_UINT256 });
+    /// @dev Approve contract to spend asset from some users.
+    function approveContract(IERC20 asset_, address from, address spender) internal {
+        changePrank({ msgSender: from });
+        (bool success,) = address(asset_).call(abi.encodeCall(IERC20.approve, (spender, MAX_UINT256)));
+        success;
     }
 
     /// @dev Generates a user, labels its address, and funds it with ETH.
     function createUser(string memory name) internal returns (address payable) {
         address user = makeAddr(name);
         vm.deal({ account: user, newBalance: 100_000 ether });
-        deal({ token: address(asset), to: user, give: 1_000_000e18 });
+        deal({ token: address(dai), to: user, give: 1_000_000e18 });
         return payable(user);
     }
 
@@ -97,8 +97,8 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     }
 
     /// @dev Labels the most relevant contracts.
-    function labelContracts() internal {
-        vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
+    function labelContracts(IERC20 asset_) internal {
+        vm.label({ account: address(asset_), newLabel: IERC20Metadata(address(asset_)).symbol() });
         vm.label({ account: address(merkleLockupFactory), newLabel: "MerkleLockupFactory" });
         vm.label({ account: address(merkleLockupLL), newLabel: "MerkleLockupLL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
@@ -145,7 +145,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     /// @dev Expects a call to {IERC20.transfer}.
     function expectCallToTransfer(address to, uint256 amount) internal {
-        expectCallToTransfer(address(asset), to, amount);
+        expectCallToTransfer(address(dai), to, amount);
     }
 
     /// @dev Expects a call to {IERC20.transfer}.
@@ -155,7 +155,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     /// @dev Expects a call to {IERC20.transferFrom}.
     function expectCallToTransferFrom(address from, address to, uint256 amount) internal {
-        expectCallToTransferFrom(address(asset), from, to, amount);
+        expectCallToTransferFrom(address(dai), from, to, amount);
     }
 
     /// @dev Expects a call to {IERC20.transferFrom}.
@@ -225,12 +225,12 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     /// @dev Expects multiple calls to {IERC20.transfer}.
     function expectMultipleCallsToTransfer(uint64 count, address to, uint256 amount) internal {
-        vm.expectCall({ callee: address(asset), count: count, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+        vm.expectCall({ callee: address(dai), count: count, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
     function expectMultipleCallsToTransferFrom(uint64 count, address from, address to, uint256 amount) internal {
-        expectMultipleCallsToTransferFrom(address(asset), count, from, to, amount);
+        expectMultipleCallsToTransferFrom(address(dai), count, from, to, amount);
     }
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
@@ -258,10 +258,22 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         internal
         returns (address)
     {
+        return computeMerkleLockupLLAddress(admin, dai, merkleRoot, expiration);
+    }
+
+    function computeMerkleLockupLLAddress(
+        address admin,
+        IERC20 asset_,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (address)
+    {
         bytes32 salt = keccak256(
             abi.encodePacked(
                 admin,
-                asset,
+                address(asset_),
                 defaults.NAME_BYTES32(),
                 merkleRoot,
                 expiration,
@@ -271,7 +283,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                 abi.encode(defaults.durations())
             )
         );
-        bytes32 creationBytecodeHash = keccak256(getMerkleLockupLLBytecode(admin, merkleRoot, expiration));
+        bytes32 creationBytecodeHash = keccak256(getMerkleLockupLLBytecode(admin, asset_, merkleRoot, expiration));
         return computeCreate2Address({
             salt: salt,
             initcodeHash: creationBytecodeHash,
@@ -281,6 +293,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     function getMerkleLockupLLBytecode(
         address admin,
+        IERC20 asset_,
         bytes32 merkleRoot,
         uint40 expiration
     )
@@ -288,7 +301,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         returns (bytes memory)
     {
         bytes memory constructorArgs =
-            abi.encode(defaults.baseParams(admin, merkleRoot, expiration), lockupLinear, defaults.durations());
+            abi.encode(defaults.baseParams(admin, asset_, merkleRoot, expiration), lockupLinear, defaults.durations());
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2MerkleLockupLL).creationCode, constructorArgs);
         } else {

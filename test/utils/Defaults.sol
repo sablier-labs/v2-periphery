@@ -117,21 +117,22 @@ contract Defaults is Merkle {
     }
 
     function baseParams() public view returns (MerkleLockup.ConstructorParams memory) {
-        return baseParams(users.admin, MERKLE_ROOT, EXPIRATION);
+        return baseParams(users.admin, asset, MERKLE_ROOT, EXPIRATION);
     }
 
     function baseParams(
         address admin,
+        IERC20 asset_,
         bytes32 merkleRoot,
         uint40 expiration
     )
         public
-        view
+        pure
         returns (MerkleLockup.ConstructorParams memory)
     {
         return MerkleLockup.ConstructorParams({
             initialAdmin: admin,
-            asset: asset,
+            asset: asset_,
             name: NAME,
             merkleRoot: merkleRoot,
             expiration: expiration,

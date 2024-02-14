@@ -7,6 +7,7 @@ import { CreateWithTimestamps_LockupDynamic_Batch_Fork_Test } from "../batch/cre
 import { CreateWithTimestamps_LockupLinear_Batch_Fork_Test } from "../batch/createWithTimestampsLL.t.sol";
 import { MerkleLockupLL_Fork_Test } from "../merkle-lockup/MerkleLockupLL.t.sol";
 
+/// @dev An ERC-20 asset with 6 decimals.
 IERC20 constant usdc = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
 
 contract USDC_CreateWithTimestamps_LockupDynamic_Batch_Fork_Test is
