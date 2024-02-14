@@ -262,10 +262,22 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         internal
         returns (address)
     {
+        return computeMerkleLockupLDAddress(admin, dai, merkleRoot, expiration);
+    }
+
+    function computeMerkleLockupLDAddress(
+        address admin,
+        IERC20 asset_,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (address)
+    {
         bytes32 salt = keccak256(
             abi.encodePacked(
                 admin,
-                asset,
+                address(asset_),
                 defaults.NAME_BYTES32(),
                 merkleRoot,
                 expiration,
@@ -274,7 +286,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                 lockupDynamic
             )
         );
-        bytes32 creationBytecodeHash = keccak256(getMerkleLockupLDBytecode(admin, merkleRoot, expiration));
+        bytes32 creationBytecodeHash = keccak256(getMerkleLockupLDBytecode(admin, asset_, merkleRoot, expiration));
         return computeCreate2Address({
             salt: salt,
             initcodeHash: creationBytecodeHash,
@@ -284,13 +296,15 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     function getMerkleLockupLDBytecode(
         address admin,
+        IERC20 asset_,
         bytes32 merkleRoot,
         uint40 expiration
     )
         internal
         returns (bytes memory)
     {
-        bytes memory constructorArgs = abi.encode(defaults.baseParams(admin, merkleRoot, expiration), lockupDynamic);
+        bytes memory constructorArgs =
+            abi.encode(defaults.baseParams(admin, asset_, merkleRoot, expiration), lockupDynamic);
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2MerkleLockupLD).creationCode, constructorArgs);
         } else {

@@ -186,7 +186,7 @@ contract ClaimLD_Integration_Test is MerkleLockup_Integration_Test {
         LockupDynamic.Stream memory actualStream = lockupDynamic.getStream(actualStreamId);
         LockupDynamic.Stream memory expectedStream = LockupDynamic.Stream({
             amounts: Lockup.Amounts({ deposited: defaults.CLAIM_AMOUNT(), refunded: 0, withdrawn: 0 }),
-            asset: asset,
+            asset: dai,
             endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
             isCancelable: defaults.CANCELABLE(),
             isDepleted: false,

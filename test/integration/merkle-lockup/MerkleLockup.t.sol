@@ -63,7 +63,7 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
 
     function createMerkleLockupLD(address admin, uint40 expiration) internal returns (ISablierV2MerkleLockupLD) {
         return merkleLockupFactory.createMerkleLockupLD({
-            baseParams: defaults.baseParams(admin, defaults.MERKLE_ROOT_LD(), expiration),
+            baseParams: defaults.baseParams(admin, dai, defaults.MERKLE_ROOT_LD(), expiration),
             lockupDynamic: lockupDynamic,
             ipfsCID: defaults.IPFS_CID(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),

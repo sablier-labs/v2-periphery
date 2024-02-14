@@ -64,7 +64,7 @@ abstract contract MerkleLockupLD_Fork_Test is Fork_Test {
         vm.assume(params.expiration == 0 || params.expiration > block.timestamp);
         vm.assume(params.leafData.length > 1);
         params.posBeforeSort = _bound(params.posBeforeSort, 0, params.leafData.length - 1);
-        assumeNoBlacklisted({ token: address(asset), addr: params.admin });
+        assumeNoBlacklisted({ token: address(ASSET), addr: params.admin });
 
         /*//////////////////////////////////////////////////////////////////////////
                                           CREATE
@@ -110,10 +110,14 @@ abstract contract MerkleLockupLD_Fork_Test is Fork_Test {
         MerkleBuilder.sortLeaves(leaves);
         vars.merkleRoot = getRoot(leaves.toBytes32());
 
-        vars.expectedLockupLD = computeMerkleLockupLDAddress(params.admin, vars.merkleRoot, params.expiration);
+        vars.expectedLockupLD = computeMerkleLockupLDAddress(params.admin, ASSET, vars.merkleRoot, params.expiration);
 
-        vars.baseParams =
-            defaults.baseParams({ admin: params.admin, merkleRoot: vars.merkleRoot, expiration: params.expiration });
+        vars.baseParams = defaults.baseParams({
+            admin: params.admin,
+            asset_: ASSET,
+            merkleRoot: vars.merkleRoot,
+            expiration: params.expiration
+        });
 
         vm.expectEmit({ emitter: address(merkleLockupFactory) });
         emit CreateMerkleLockupLD({
@@ -134,7 +138,7 @@ abstract contract MerkleLockupLD_Fork_Test is Fork_Test {
         });
 
         // Fund the Merkle Lockup contract.
-        deal({ token: address(asset), to: address(vars.merkleLockupLD), give: vars.aggregateAmount });
+        deal({ token: address(ASSET), to: address(vars.merkleLockupLD), give: vars.aggregateAmount });
 
         assertGt(address(vars.merkleLockupLD).code.length, 0, "MerkleLockupLD contract not created");
         assertEq(
@@ -179,7 +183,7 @@ abstract contract MerkleLockupLD_Fork_Test is Fork_Test {
         vars.actualStream = lockupDynamic.getStream(vars.actualStreamId);
         vars.expectedStream = LockupDynamic.Stream({
             amounts: Lockup.Amounts({ deposited: vars.amounts[params.posBeforeSort], refunded: 0, withdrawn: 0 }),
-            asset: asset,
+            asset: ASSET,
             endTime: vars.endTime,
             isCancelable: defaults.CANCELABLE(),
             isDepleted: false,
@@ -200,11 +204,11 @@ abstract contract MerkleLockupLD_Fork_Test is Fork_Test {
         //////////////////////////////////////////////////////////////////////////*/
 
         if (params.expiration > 0) {
-            vars.clawbackAmount = uint128(asset.balanceOf(address(vars.merkleLockupLD)));
+            vars.clawbackAmount = uint128(ASSET.balanceOf(address(vars.merkleLockupLD)));
             vm.warp({ timestamp: uint256(params.expiration) + 1 seconds });
 
             changePrank({ msgSender: params.admin });
-            expectCallToTransfer({ to: params.admin, amount: vars.clawbackAmount });
+            expectCallToTransfer({ asset_: address(ASSET), to: params.admin, amount: vars.clawbackAmount });
             vm.expectEmit({ emitter: address(vars.merkleLockupLD) });
             emit Clawback({ to: params.admin, admin: params.admin, amount: vars.clawbackAmount });
             vars.merkleLockupLD.clawback({ to: params.admin, amount: vars.clawbackAmount });
