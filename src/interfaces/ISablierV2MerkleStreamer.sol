@@ -5,13 +5,18 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IAdminable } from "@sablier/v2-core/src/interfaces/IAdminable.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 
+import { IBlastGovernor } from "./IBlastGovernor.sol";
+
 /// @title ISablierV2MerkleStreamer
 /// @notice A contract that lets user claim Sablier streams using Merkle proofs. An interesting use case for
 /// MerkleStream is airstreams, which is a portmanteau of "airdrop" and "stream". This is an airdrop model where the
 /// tokens are distributed over time, as opposed to all at once.
 /// @dev This is the base interface for MerkleStreamer contracts. See the Sablier docs for more guidance on how
 /// streaming works: https://docs.sablier.com/.
-interface ISablierV2MerkleStreamer is IAdminable {
+interface ISablierV2MerkleStreamer is
+    IAdminable, // 0 inherited components
+    IBlastGovernor // 0 inherited components
+{
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/

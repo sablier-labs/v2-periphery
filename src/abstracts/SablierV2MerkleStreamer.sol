@@ -5,18 +5,18 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
-import { Adminable } from "@sablier/v2-core/src/abstracts/Adminable.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
 
 import { ISablierV2MerkleStreamer } from "../interfaces/ISablierV2MerkleStreamer.sol";
 import { Errors } from "../libraries/Errors.sol";
+import { BlastGovernor } from "./BlastGovernor.sol";
 
 /// @title SablierV2MerkleStreamer
 /// @notice See the documentation in {ISablierV2MerkleStreamer}.
 abstract contract SablierV2MerkleStreamer is
     ISablierV2MerkleStreamer, // 2 inherited component
-    Adminable // 1 inherited component
+    BlastGovernor // 3 inherited component
 {
     using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
@@ -63,7 +63,9 @@ abstract contract SablierV2MerkleStreamer is
         uint40 expiration,
         bool cancelable,
         bool transferable
-    ) {
+    )
+        BlastGovernor(address(asset))
+    {
         admin = initialAdmin;
         ASSET = asset;
         LOCKUP = lockup;
