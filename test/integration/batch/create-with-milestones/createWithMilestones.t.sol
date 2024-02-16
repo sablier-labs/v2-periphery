@@ -14,7 +14,7 @@ contract CreateWithMilestones_Integration_Test is Integration_Test {
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithMilestones[] memory batchParams = new Batch.CreateWithMilestones[](0);
         vm.expectRevert(Errors.SablierV2Batch_BatchSizeZero.selector);
-        batch.createWithMilestones(lockupDynamic, asset, batchParams);
+        batch.createWithMilestones(lockupDynamic, dai, batchParams);
     }
 
     modifier whenBatchSizeNotZero() {
@@ -38,7 +38,7 @@ contract CreateWithMilestones_Integration_Test is Integration_Test {
 
         // Assert that the batch of streams has been created successfully.
         uint256[] memory actualStreamIds =
-            batch.createWithMilestones(lockupDynamic, asset, defaults.batchCreateWithMilestones());
+            batch.createWithMilestones(lockupDynamic, dai, defaults.batchCreateWithMilestones());
         uint256[] memory expectedStreamIds = defaults.incrementalStreamIds();
         assertEq(actualStreamIds, expectedStreamIds, "stream ids mismatch");
     }

@@ -27,7 +27,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
         merkleStreamerFactory.createMerkleStreamerLL({
             initialAdmin: users.admin,
             lockupLinear: lockupLinear,
-            asset: asset,
+            asset: dai,
             merkleRoot: merkleRoot,
             expiration: expiration,
             cancelable: cancelable,
@@ -52,7 +52,7 @@ contract CreateMerkleStreamerLL_Integration_Test is MerkleStreamer_Integration_T
             merkleStreamer: ISablierV2MerkleStreamerLL(expectedStreamerLL),
             admin: admin,
             lockupLinear: lockupLinear,
-            asset: asset,
+            asset: dai,
             merkleRoot: defaults.MERKLE_ROOT(),
             expiration: expiration,
             streamDurations: defaults.durations(),

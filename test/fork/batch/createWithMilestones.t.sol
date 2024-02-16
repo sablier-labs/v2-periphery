@@ -48,12 +48,13 @@ abstract contract CreateWithMilestones_Batch_Fork_Test is Fork_Test {
         uint256 firstStreamId = lockupDynamic.nextStreamId();
         uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
 
-        deal({ token: address(asset), to: params.sender, give: uint256(totalTransferAmount) });
+        deal({ token: address(ASSET), to: params.sender, give: uint256(totalTransferAmount) });
+
         changePrank({ msgSender: params.sender });
-        asset.approve({ spender: address(batch), amount: totalTransferAmount });
+        approveContract({ asset_: ASSET, from: params.sender, spender: address(batch) });
 
         LockupDynamic.CreateWithMilestones memory createWithMilestones = LockupDynamic.CreateWithMilestones({
-            asset: asset,
+            asset: ASSET,
             broker: defaults.broker(),
             cancelable: true,
             recipient: params.recipient,
@@ -66,21 +67,21 @@ abstract contract CreateWithMilestones_Batch_Fork_Test is Fork_Test {
         Batch.CreateWithMilestones[] memory batchParams = BatchBuilder.fillBatch(createWithMilestones, params.batchSize);
 
         expectCallToTransferFrom({
-            asset_: address(asset),
+            asset_: address(ASSET),
             from: params.sender,
             to: address(batch),
             amount: totalTransferAmount
         });
         expectMultipleCallsToCreateWithMilestones({ count: uint64(params.batchSize), params: createWithMilestones });
         expectMultipleCallsToTransferFrom({
-            asset_: address(asset),
+            asset_: address(ASSET),
             count: uint64(params.batchSize),
             from: address(batch),
             to: address(lockupDynamic),
             amount: params.perStreamAmount
         });
 
-        uint256[] memory actualStreamIds = batch.createWithMilestones(lockupDynamic, asset, batchParams);
+        uint256[] memory actualStreamIds = batch.createWithMilestones(lockupDynamic, ASSET, batchParams);
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);
     }

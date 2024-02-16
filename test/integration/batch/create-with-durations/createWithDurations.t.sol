@@ -14,7 +14,7 @@ contract CreateWithDurations_Integration_Test is Integration_Test {
     function test_RevertWhen_BatchSizeZero() external {
         Batch.CreateWithDurations[] memory batchParams = new Batch.CreateWithDurations[](0);
         vm.expectRevert(Errors.SablierV2Batch_BatchSizeZero.selector);
-        batch.createWithDurations(lockupLinear, asset, batchParams);
+        batch.createWithDurations(lockupLinear, dai, batchParams);
     }
 
     modifier whenBatchSizeNotZero() {
@@ -35,7 +35,7 @@ contract CreateWithDurations_Integration_Test is Integration_Test {
 
         // Assert that the batch of streams has been created successfully.
         uint256[] memory actualStreamIds =
-            batch.createWithDurations(lockupLinear, asset, defaults.batchCreateWithDurations());
+            batch.createWithDurations(lockupLinear, dai, defaults.batchCreateWithDurations());
         uint256[] memory expectedStreamIds = defaults.incrementalStreamIds();
         assertEq(actualStreamIds, expectedStreamIds, "stream ids mismatch");
     }

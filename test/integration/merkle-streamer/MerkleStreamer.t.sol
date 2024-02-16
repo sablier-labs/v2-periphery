@@ -13,7 +13,7 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
         merkleStreamerLL = createMerkleStreamerLL();
 
         // Fund the Merkle streamer.
-        deal({ token: address(asset), to: address(merkleStreamerLL), give: defaults.AGGREGATE_AMOUNT() });
+        deal({ token: address(dai), to: address(merkleStreamerLL), give: defaults.AGGREGATE_AMOUNT() });
     }
 
     function claimLL() internal returns (uint256) {
@@ -26,19 +26,19 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
     }
 
     function computeMerkleStreamerLLAddress() internal returns (address) {
-        return computeMerkleStreamerLLAddress(users.admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+        return computeMerkleStreamerLLAddress(users.admin, dai, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
     function computeMerkleStreamerLLAddress(address admin) internal returns (address) {
-        return computeMerkleStreamerLLAddress(admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+        return computeMerkleStreamerLLAddress(admin, dai, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
     function computeMerkleStreamerLLAddress(address admin, uint40 expiration) internal returns (address) {
-        return computeMerkleStreamerLLAddress(admin, defaults.MERKLE_ROOT(), expiration);
+        return computeMerkleStreamerLLAddress(admin, dai, defaults.MERKLE_ROOT(), expiration);
     }
 
     function computeMerkleStreamerLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
-        return computeMerkleStreamerLLAddress(admin, merkleRoot, defaults.EXPIRATION());
+        return computeMerkleStreamerLLAddress(admin, dai, merkleRoot, defaults.EXPIRATION());
     }
 
     function createMerkleStreamerLL() internal returns (ISablierV2MerkleStreamerLL) {
@@ -57,7 +57,7 @@ abstract contract MerkleStreamer_Integration_Test is Integration_Test {
         return merkleStreamerFactory.createMerkleStreamerLL({
             initialAdmin: admin,
             lockupLinear: lockupLinear,
-            asset: asset,
+            asset: dai,
             merkleRoot: defaults.MERKLE_ROOT(),
             expiration: expiration,
             cancelable: defaults.CANCELABLE(),

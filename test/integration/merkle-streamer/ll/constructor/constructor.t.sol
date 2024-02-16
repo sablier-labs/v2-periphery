@@ -34,7 +34,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         SablierV2MerkleStreamerLL constructedStreamerLL = new SablierV2MerkleStreamerLL(
             users.admin,
             lockupLinear,
-            asset,
+            dai,
             defaults.MERKLE_ROOT(),
             defaults.EXPIRATION(),
             defaults.durations(),
@@ -49,8 +49,8 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         assertEq(vars.actualAdmin, vars.expectedAdmin, "admin");
 
         vars.actualAsset = address(constructedStreamerLL.ASSET());
-        vars.expectedAsset = address(asset);
-        assertEq(vars.actualAsset, vars.expectedAsset, "asset");
+        vars.expectedAsset = address(dai);
+        assertEq(vars.actualAsset, vars.expectedAsset, "dai");
 
         vars.actualMerkleRoot = constructedStreamerLL.MERKLE_ROOT();
         vars.expectedMerkleRoot = defaults.MERKLE_ROOT();
@@ -77,7 +77,7 @@ contract Constructor_MerkleStreamerLL_Integration_Test is MerkleStreamer_Integra
         assertEq(vars.actualDurations.cliff, vars.expectedDurations.cliff, "durations.cliff");
         assertEq(vars.actualDurations.total, vars.expectedDurations.total, "durations.total");
 
-        vars.actualAllowance = asset.allowance(address(constructedStreamerLL), address(lockupLinear));
+        vars.actualAllowance = dai.allowance(address(constructedStreamerLL), address(lockupLinear));
         vars.expectedAllowance = MAX_UINT256;
         assertEq(vars.actualAllowance, vars.expectedAllowance, "allowance");
     }

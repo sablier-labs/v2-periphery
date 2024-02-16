@@ -111,7 +111,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         uint128 claimAmount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
         changePrank({ msgSender: users.admin });
-        comptroller.setProtocolFee({ asset: asset, newProtocolFee: ud(0.1e18) });
+        comptroller.setProtocolFee({ asset: dai, newProtocolFee: ud(0.1e18) });
         vm.expectRevert(Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero.selector);
         merkleStreamerLL.claim({ index: 1, recipient: users.recipient1, amount: claimAmount, merkleProof: merkleProof });
     }
@@ -136,7 +136,7 @@ contract Claim_Integration_Test is MerkleStreamer_Integration_Test {
         LockupLinear.Stream memory actualStream = lockupLinear.getStream(actualStreamId);
         LockupLinear.Stream memory expectedStream = LockupLinear.Stream({
             amounts: Lockup.Amounts({ deposited: defaults.CLAIM_AMOUNT(), refunded: 0, withdrawn: 0 }),
-            asset: asset,
+            asset: dai,
             cliffTime: uint40(block.timestamp) + defaults.CLIFF_DURATION(),
             endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
             isCancelable: defaults.CANCELABLE(),

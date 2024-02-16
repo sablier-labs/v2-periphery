@@ -59,7 +59,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         vm.assume(params.expiration == 0 || params.expiration > block.timestamp);
         vm.assume(params.leafData.length > 1);
         params.posBeforeSort = _bound(params.posBeforeSort, 0, params.leafData.length - 1);
-        assumeNoBlacklisted({ token: address(asset), addr: params.admin });
+        assumeNoBlacklisted({ token: address(ASSET), addr: params.admin });
 
         /*//////////////////////////////////////////////////////////////////////////
                                           CREATE
@@ -91,13 +91,14 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         MerkleBuilder.sortLeaves(leaves);
         vars.merkleRoot = getRoot(leaves.toBytes32());
 
-        vars.expectedStreamerLL = computeMerkleStreamerLLAddress(params.admin, vars.merkleRoot, params.expiration);
+        vars.expectedStreamerLL =
+            computeMerkleStreamerLLAddress(params.admin, ASSET, vars.merkleRoot, params.expiration);
         vm.expectEmit({ emitter: address(merkleStreamerFactory) });
         emit CreateMerkleStreamerLL({
             merkleStreamer: ISablierV2MerkleStreamerLL(vars.expectedStreamerLL),
             admin: params.admin,
             lockupLinear: lockupLinear,
-            asset: asset,
+            asset: ASSET,
             merkleRoot: vars.merkleRoot,
             expiration: params.expiration,
             streamDurations: defaults.durations(),
@@ -111,7 +112,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         vars.merkleStreamerLL = merkleStreamerFactory.createMerkleStreamerLL({
             initialAdmin: params.admin,
             lockupLinear: lockupLinear,
-            asset: asset,
+            asset: ASSET,
             merkleRoot: vars.merkleRoot,
             expiration: params.expiration,
             streamDurations: defaults.durations(),
@@ -123,7 +124,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         });
 
         // Fund the Merkle streamer.
-        deal({ token: address(asset), to: address(vars.merkleStreamerLL), give: vars.aggregateAmount });
+        deal({ token: address(ASSET), to: address(vars.merkleStreamerLL), give: vars.aggregateAmount });
 
         assertGt(address(vars.merkleStreamerLL).code.length, 0, "MerkleStreamerLL contract not created");
         assertEq(
@@ -162,7 +163,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         vars.actualStream = lockupLinear.getStream(vars.actualStreamId);
         vars.expectedStream = LockupLinear.Stream({
             amounts: Lockup.Amounts({ deposited: vars.amounts[params.posBeforeSort], refunded: 0, withdrawn: 0 }),
-            asset: asset,
+            asset: ASSET,
             cliffTime: uint40(block.timestamp) + defaults.CLIFF_DURATION(),
             endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
             isCancelable: defaults.CANCELABLE(),
@@ -183,11 +184,11 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         //////////////////////////////////////////////////////////////////////////*/
 
         if (params.expiration > 0) {
-            vars.clawbackAmount = uint128(asset.balanceOf(address(vars.merkleStreamerLL)));
+            vars.clawbackAmount = uint128(ASSET.balanceOf(address(vars.merkleStreamerLL)));
             vm.warp({ timestamp: uint256(params.expiration) + 1 seconds });
 
             changePrank({ msgSender: params.admin });
-            expectCallToTransfer({ to: params.admin, amount: vars.clawbackAmount });
+            expectCallToTransfer({ asset_: address(ASSET), to: params.admin, amount: vars.clawbackAmount });
             vm.expectEmit({ emitter: address(vars.merkleStreamerLL) });
             emit Clawback({ to: params.admin, admin: params.admin, amount: vars.clawbackAmount });
             vars.merkleStreamerLL.clawback({ to: params.admin, amount: vars.clawbackAmount });

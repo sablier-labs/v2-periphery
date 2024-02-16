@@ -49,7 +49,7 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
     }
 
     modifier givenProtocolFeeNotZero() {
-        comptroller.setProtocolFee({ asset: asset, newProtocolFee: ud(0.03e18) });
+        comptroller.setProtocolFee({ asset: dai, newProtocolFee: ud(0.03e18) });
         _;
     }
 
@@ -64,7 +64,7 @@ contract Clawback_Integration_Test is MerkleStreamer_Integration_Test {
     }
 
     function test_Clawback(address to) internal {
-        uint128 clawbackAmount = uint128(asset.balanceOf(address(merkleStreamerLL)));
+        uint128 clawbackAmount = uint128(dai.balanceOf(address(merkleStreamerLL)));
         expectCallToTransfer({ to: to, amount: clawbackAmount });
         vm.expectEmit({ emitter: address(merkleStreamerLL) });
         emit Clawback({ admin: users.admin, to: to, amount: clawbackAmount });
