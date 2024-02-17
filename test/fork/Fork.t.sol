@@ -31,8 +31,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual override {
-        // Fork Ethereum Mainnet at a specific block number.
-        vm.createSelectFork({ blockNumber: 18_821_300, urlOrAlias: "mainnet" });
+        // Fork Blast sepolia testnet at a specific block number.
+        vm.createSelectFork({ blockNumber: 1_631_931, urlOrAlias: "blast_sepolia" });
 
         // Set up the base test contract.
         Base_Test.setUp();
@@ -75,7 +75,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     /// @dev Loads all dependencies pre-deployed on Mainnet.
     function loadDependencies() private {
-        lockupDynamic = ISablierV2LockupDynamic(0x7CC7e125d83A581ff438608490Cc0f7bDff79127);
-        lockupLinear = ISablierV2LockupLinear(0xAFb979d9afAd1aD27C5eFf4E27226E3AB9e5dCC9);
+        lockupDynamic = ISablierV2LockupDynamic(0x195908722c0A391a92f63e4e19c9761f441a64FB);
+        lockupLinear = ISablierV2LockupLinear(0x5ab9EaF3d288d7F9E9898cA7114FB0D9A48040D4);
     }
 }

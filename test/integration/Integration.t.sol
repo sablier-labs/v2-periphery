@@ -5,6 +5,10 @@ import { Precompiles as V2CorePrecompiles } from "@sablier/v2-core/test/utils/Pr
 
 import { Defaults } from "../utils/Defaults.sol";
 import { Base_Test } from "../Base.t.sol";
+import { Blast } from "../mocks/Blast.sol";
+import { Gas } from "../mocks/Gas.sol";
+import { Yield } from "../mocks/Yield.sol";
+import { MockUSDB } from "../mocks/MockUSDB.sol";
 
 /// @notice Common logic needed by all integration tests.
 abstract contract Integration_Test is Base_Test {
@@ -22,6 +26,9 @@ abstract contract Integration_Test is Base_Test {
         // Deploy the defaults contract.
         defaults = new Defaults(users, dai);
 
+        // Set ERC20 rebasing contracts.
+        setBlastContracts();
+
         // Deploy V2 Periphery.
         deployPeripheryConditionally();
 
@@ -38,5 +45,16 @@ abstract contract Integration_Test is Base_Test {
 
     function deployDependencies() private {
         (comptroller, lockupDynamic, lockupLinear,) = new V2CorePrecompiles().deployCore(users.admin);
+    }
+
+    function setBlastContracts() private {
+        Yield yieldContract = new Yield();
+        Gas gasContract = new Gas();
+        Blast blast = new Blast(address(gasContract), address(yieldContract));
+        bytes memory erc20RebasingCode = type(MockUSDB).creationCode;
+
+        vm.etch(0x4300000000000000000000000000000000000002, address(blast).code);
+        vm.etch(0x4200000000000000000000000000000000000022, erc20RebasingCode);
+        vm.etch(0x4200000000000000000000000000000000000023, erc20RebasingCode);
     }
 }

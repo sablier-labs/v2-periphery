@@ -3,9 +3,8 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IAdminable } from "@sablier/v2-core/src/interfaces/IAdminable.sol";
+import { IBlastGovernor } from "@sablier/v2-core/src/interfaces/IBlastGovernor.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
-
-import { IBlastGovernor } from "./IBlastGovernor.sol";
 
 /// @title ISablierV2MerkleStreamer
 /// @notice A contract that lets user claim Sablier streams using Merkle proofs. An interesting use case for
