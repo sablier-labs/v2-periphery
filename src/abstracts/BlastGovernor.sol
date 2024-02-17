@@ -96,21 +96,20 @@ abstract contract BlastGovernor is
     }
 
     /// @inheritdoc IBlastGovernor
-    function configure(IERC20Rebasing token, YieldMode yieldMode) external override onlyAdmin returns (uint256) {
-        return token.configure(yieldMode);
-    }
-
-    /// @inheritdoc IBlastGovernor
-    function configure(
-        IBlast blastEth,
-        GasMode gasMode,
-        YieldMode yieldMode,
-        address governor
+    function configureYieldForToken(
+        IERC20Rebasing token,
+        YieldMode yieldMode
     )
         external
         override
         onlyAdmin
+        returns (uint256)
     {
-        blastEth.configure({ _yieldMode: yieldMode, _gasMode: gasMode, governor: governor });
+        return token.configure(yieldMode);
+    }
+
+    /// @inheritdoc IBlastGovernor
+    function configureVoidYieldAndClaimableGas(IBlast blastEth, address governor) external override onlyAdmin {
+        blastEth.configure(YieldMode.VOID, GasMode.CLAIMABLE, governor);
     }
 }

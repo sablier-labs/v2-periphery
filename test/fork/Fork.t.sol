@@ -75,7 +75,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     /// @dev Loads all dependencies pre-deployed on Mainnet.
     function loadDependencies() private {
-        lockupDynamic = ISablierV2LockupDynamic(0x195908722c0A391a92f63e4e19c9761f441a64FB);
-        lockupLinear = ISablierV2LockupLinear(0x5ab9EaF3d288d7F9E9898cA7114FB0D9A48040D4);
+        lockupDynamic = ISablierV2LockupDynamic(0xC4CFE91FC326741bCD582F804C15fde2eb226475);
+        lockupLinear = ISablierV2LockupLinear(0x3F530bB78F27910Bb42B3907bf8A12DC30EB351C);
     }
 }
