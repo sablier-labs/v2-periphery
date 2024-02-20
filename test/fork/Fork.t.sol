@@ -32,7 +32,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     function setUp() public virtual override {
         // Fork Blast sepolia testnet at a specific block number.
-        vm.createSelectFork({ blockNumber: 1_631_931, urlOrAlias: "blast_sepolia" });
+        vm.createSelectFork({ blockNumber: 1_781_369, urlOrAlias: "blast_sepolia" });
 
         // Set up the base test contract.
         Base_Test.setUp();

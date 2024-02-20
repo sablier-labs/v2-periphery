@@ -26,10 +26,10 @@ abstract contract BlastGovernor is
         // Configure ETH with void yield mode and claimabale gas mode.
         IBlast(0x4300000000000000000000000000000000000002).configure(YieldMode.VOID, GasMode.CLAIMABLE, admin);
 
-        // Configure USDB and WETH with automatic yield, admin can claim anytime using `clawback`.
+        // Configure USDB and WETH with claimable yield, admin can claim anytime using `claim()`.
         if (asset == 0x4200000000000000000000000000000000000022 || asset == 0x4200000000000000000000000000000000000023)
         {
-            IERC20Rebasing(asset).configure(YieldMode.AUTOMATIC);
+            IERC20Rebasing(asset).configure(YieldMode.CLAIMABLE);
         }
     }
 
