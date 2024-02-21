@@ -34,7 +34,7 @@ abstract contract CreateWithTimestamps_LockupLinear_Batch_Fork_Test is Fork_Test
         params.batchSize = boundUint128(params.batchSize, 1, 20);
         params.perStreamAmount = boundUint128(params.perStreamAmount, 1, MAX_UINT128 / params.batchSize);
         params.range.start = boundUint40(params.range.start, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
-        params.range.cliff = boundUint40(params.range.cliff, params.range.start, params.range.start + 52 weeks);
+        params.range.cliff = boundUint40(params.range.cliff, params.range.start + 1, params.range.start + 52 weeks);
         params.range.end = boundUint40(params.range.end, params.range.cliff + 1 seconds, MAX_UNIX_TIMESTAMP);
 
         checkUsers(params.sender, params.recipient);

@@ -36,13 +36,13 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
 
     struct Vars {
         uint256 actualStreamId;
-        LockupLinear.Stream actualStream;
+        LockupLinear.StreamLL actualStream;
         uint128[] amounts;
         uint256 aggregateAmount;
         uint128 clawbackAmount;
         address expectedLockupLL;
         MerkleLockup.ConstructorParams baseParams;
-        LockupLinear.Stream expectedStream;
+        LockupLinear.StreamLL expectedStream;
         uint256 expectedStreamId;
         uint256[] indexes;
         uint256 leafPos;
@@ -160,7 +160,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
         });
 
         vars.actualStream = lockupLinear.getStream(vars.actualStreamId);
-        vars.expectedStream = LockupLinear.Stream({
+        vars.expectedStream = LockupLinear.StreamLL({
             amounts: Lockup.Amounts({ deposited: vars.amounts[params.posBeforeSort], refunded: 0, withdrawn: 0 }),
             asset: ASSET,
             cliffTime: uint40(block.timestamp) + defaults.CLIFF_DURATION(),

@@ -136,8 +136,8 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
         emit Claim(defaults.INDEX1(), users.recipient1, defaults.CLAIM_AMOUNT(), expectedStreamId);
         uint256 actualStreamId = claimLL();
 
-        LockupLinear.Stream memory actualStream = lockupLinear.getStream(actualStreamId);
-        LockupLinear.Stream memory expectedStream = LockupLinear.Stream({
+        LockupLinear.StreamLL memory actualStream = lockupLinear.getStream(actualStreamId);
+        LockupLinear.StreamLL memory expectedStream = LockupLinear.StreamLL({
             amounts: Lockup.Amounts({ deposited: defaults.CLAIM_AMOUNT() - feeAmount, refunded: 0, withdrawn: 0 }),
             asset: dai,
             cliffTime: uint40(block.timestamp) + defaults.CLIFF_DURATION(),
