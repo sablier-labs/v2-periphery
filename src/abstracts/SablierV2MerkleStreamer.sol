@@ -74,8 +74,8 @@ abstract contract SablierV2MerkleStreamer is
         CANCELABLE = cancelable;
         TRANSFERABLE = transferable;
 
-        // Sets configurations for Blast L2
-        _setBlastConfigurations(asset, initialAdmin);
+        // Configures modes on Blast L2
+        _configureBlastModes(asset, initialAdmin);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -151,8 +151,8 @@ abstract contract SablierV2MerkleStreamer is
         }
     }
 
-    /// @dev Sets configurations for Blast L2
-    function _setBlastConfigurations(IERC20 asset, address initialAdmin) internal {
+    /// @dev Configures modes on Blast L2
+    function _configureBlastModes(IERC20 asset, address initialAdmin) internal {
         // Configure the Blast yield to VOID and gas to CLAIMABLE.
         IBlast(0x4300000000000000000000000000000000000002).configure(YieldMode.VOID, GasMode.CLAIMABLE, initialAdmin);
 

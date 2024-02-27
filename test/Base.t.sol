@@ -5,6 +5,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import { IERC20Rebasing } from "@sablier/v2-core/src/interfaces/blast/IERC20Rebasing.sol";
 import { ISablierV2Comptroller } from "@sablier/v2-core/src/interfaces/ISablierV2Comptroller.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
@@ -20,6 +21,8 @@ import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2MerkleStreamerFactory } from "src/SablierV2MerkleStreamerFactory.sol";
 import { SablierV2MerkleStreamerLL } from "src/SablierV2MerkleStreamerLL.sol";
 
+import { BlastMock } from "./mocks/blast/BlastMock.sol";
+import { ERC20RebasingMock } from "./mocks/blast/ERC20RebasingMock.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
 import { Events } from "./utils/Events.sol";
@@ -38,10 +41,12 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
+    BlastMock internal blastMock;
     IERC20 internal dai;
     ISablierV2Batch internal batch;
     ISablierV2Comptroller internal comptroller;
     Defaults internal defaults;
+    IERC20Rebasing internal erc20RebasingMock;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
     ISablierV2MerkleStreamerFactory internal merkleStreamerFactory;
@@ -54,6 +59,9 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     function setUp() public virtual {
         // Deploy the default test asset.
         dai = new ERC20("DAI Stablecoin", "DAI");
+
+        // Deploy the Blast contract.
+        deployBlastContract();
 
         // Create users for testing.
         users.alice = createUser("Alice");
@@ -84,6 +92,24 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         vm.deal({ account: user, newBalance: 100_000 ether });
         deal({ token: address(dai), to: user, give: 1_000_000e18 });
         return payable(user);
+    }
+
+    /// @dev This deploys the Blast contract on 0x4300000000000000000000000000000000000002 as required by the
+    /// constructor of `SablierV2MerkleStreamer`.
+    function deployBlastContract() private {
+        // Deploy the rebasing erc-20 contract.
+        erc20RebasingMock = new ERC20RebasingMock();
+
+        // Deploy the Blast contract..
+        blastMock = BlastMock(0x4300000000000000000000000000000000000002);
+
+        // Deploys BlastMock contract and sets the bytecode to the blast address.
+        vm.etch(address(blastMock), address(new BlastMock()).code);
+
+        // Overwrites storage slot of GasMock and YieldMock contracts. This is necessary because these contracts can
+        // only be called by the BlastMock contract.
+        vm.store(address(blastMock.GAS()), bytes32(uint256(0)), bytes32(uint256(uint160(address(blastMock)))));
+        vm.store(address(blastMock.YIELD()), bytes32(uint256(0)), bytes32(uint256(uint160(address(blastMock)))));
     }
 
     /// @dev Conditionally deploy V2 Periphery normally or from an optimized source compiled with `--via-ir`.
