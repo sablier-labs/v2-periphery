@@ -7,16 +7,18 @@ import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerklePr
 import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
+import { SablierV2Blast } from "@sablier/v2-core/src/abstracts/SablierV2Blast.sol";
+import { IBlast, YieldMode, GasMode } from "@sablier/v2-core/src/interfaces/blast/IBlast.sol";
+import { IERC20Rebasing } from "@sablier/v2-core/src/interfaces/blast/IERC20Rebasing.sol";
 
 import { ISablierV2MerkleStreamer } from "../interfaces/ISablierV2MerkleStreamer.sol";
 import { Errors } from "../libraries/Errors.sol";
-import { BlastGovernor } from "./BlastGovernor.sol";
 
 /// @title SablierV2MerkleStreamer
 /// @notice See the documentation in {ISablierV2MerkleStreamer}.
 abstract contract SablierV2MerkleStreamer is
     ISablierV2MerkleStreamer, // 2 inherited component
-    BlastGovernor // 3 inherited component
+    SablierV2Blast // 3 inherited component
 {
     using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;
@@ -63,9 +65,7 @@ abstract contract SablierV2MerkleStreamer is
         uint40 expiration,
         bool cancelable,
         bool transferable
-    )
-        BlastGovernor(address(asset))
-    {
+    ) {
         admin = initialAdmin;
         ASSET = asset;
         LOCKUP = lockup;
@@ -73,6 +73,9 @@ abstract contract SablierV2MerkleStreamer is
         EXPIRATION = expiration;
         CANCELABLE = cancelable;
         TRANSFERABLE = transferable;
+
+        // Sets configurations for Blast L2
+        _setBlastConfigurations(asset, initialAdmin);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -146,5 +149,16 @@ abstract contract SablierV2MerkleStreamer is
         if (protocolFee.gt(ud(0))) {
             revert Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero();
         }
+    }
+
+    /// @dev Sets configurations for Blast L2
+    function _setBlastConfigurations(IERC20 asset, address initialAdmin) internal {
+        // Configure the Blast yield to VOID and gas to CLAIMABLE.
+        IBlast(0x4300000000000000000000000000000000000002).configure(YieldMode.VOID, GasMode.CLAIMABLE, initialAdmin);
+
+        // Sets the yield of rebasing asset to claimable.
+        // A low-level call is used to ignore reverts in case asset does not implememnt `configure()` function.
+        (bool success,) = address(asset).call(abi.encodeCall(IERC20Rebasing.configure, (YieldMode.CLAIMABLE)));
+        success;
     }
 }

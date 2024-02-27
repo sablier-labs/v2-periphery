@@ -3,7 +3,7 @@ pragma solidity >=0.8.19;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IAdminable } from "@sablier/v2-core/src/interfaces/IAdminable.sol";
-import { IBlastGovernor } from "@sablier/v2-core/src/interfaces/IBlastGovernor.sol";
+import { ISablierV2Blast } from "@sablier/v2-core/src/interfaces/blast/ISablierV2Blast.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 
 /// @title ISablierV2MerkleStreamer
@@ -14,7 +14,7 @@ import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lock
 /// streaming works: https://docs.sablier.com/.
 interface ISablierV2MerkleStreamer is
     IAdminable, // 0 inherited components
-    IBlastGovernor // 0 inherited components
+    ISablierV2Blast // 0 inherited components
 {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
