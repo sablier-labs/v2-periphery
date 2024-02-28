@@ -46,7 +46,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         // Deploy the Merkle Lockup contract with CREATE2.
         merkleLockupLL = new SablierV2MerkleLockupLL{ salt: salt }(baseParams, lockupLinear, streamDurations);
 
-        // Using a different function to emit the event to avoid stack too deep error.
+        // Log the creation of the Merkle Lockup, including some metadata that is not stored on-chain.
         emit CreateMerkleLockupLL(
             merkleLockupLL, baseParams, lockupLinear, streamDurations, aggregateAmount, recipientsCount
         );
