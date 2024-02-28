@@ -5,6 +5,8 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
+import { UD2x18 } from "@prb/math/src/UD2x18.sol";
+
 library Batch {
     /// @notice A struct encapsulating the lockup contract's address and the stream ids to cancel.
     struct CancelMultiple {
@@ -81,5 +83,19 @@ library MerkleLockup {
         uint40 expiration;
         bool cancelable;
         bool transferable;
+    }
+}
+
+library MerkleLockupLT {
+    /// @notice Struct encapsulating the amount percentage and the tranche duration of the stream.
+    /// @dev Each recipient may have a different amount allocated, this struct stores the percentage of the
+    /// amount designated for each duration unlock. We use a 18 decimals format to represent percentages:
+    /// 100% = 1e18.
+    /// @param amountPercentage The percentage of the amount designated to be unlocked in this tranche.
+    /// @param duration The time difference in seconds between this tranche and the previous one.
+    struct TrancheWithPercentage {
+        // slot 0
+        UD2x18 amountPercentage;
+        uint40 duration;
     }
 }

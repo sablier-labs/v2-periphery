@@ -28,4 +28,11 @@ library Errors {
 
     /// @notice Thrown when trying to claim the same stream more than once.
     error SablierV2MerkleLockup_StreamClaimed(uint256 index);
+
+    /*//////////////////////////////////////////////////////////////////////////
+                          SABLIER-V2-MERKLE-LOCKUP-FACTORY
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Thrown when trying to create a Merkle Lockup with no recipients.
+    error SablierV2MerkleLockupFactory_PercentageSumNotEqualOneHundred();
 }
