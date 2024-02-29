@@ -3,11 +3,15 @@ pragma solidity >=0.8.19;
 
 import { GasMode, YieldMode } from "@sablier/v2-core/src/interfaces/blast/IBlast.sol";
 
+/// @dev https://github.com/blast-io/blast/blob/master/blast-optimism/packages/contracts-bedrock/src/L2/Blast.sol
 contract BlastMock {
     GasMock public immutable GAS;
     YieldMock public immutable YIELD;
 
     mapping(address => address) public governorMap;
+
+    // Bool to handle default yield modes
+    bool private isYieldSet;
 
     constructor() {
         GAS = new GasMock();
@@ -21,10 +25,16 @@ contract BlastMock {
     }
 
     function readYieldConfiguration(address contractAddress) public view returns (uint8) {
+        if (!isYieldSet) {
+            return uint8(YieldMode.VOID);
+        }
         return YIELD.getConfiguration(contractAddress);
     }
 
     function readGasParams(address contractAddress) public view returns (uint256, uint256, uint256, GasMode) {
+        if (!isYieldSet) {
+            return (0, 0, 0, GasMode.VOID);
+        }
         return GAS.readGasParams(contractAddress);
     }
 }

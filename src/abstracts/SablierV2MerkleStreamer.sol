@@ -8,8 +8,6 @@ import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
 import { SablierV2Blast } from "@sablier/v2-core/src/abstracts/SablierV2Blast.sol";
-import { IBlast, YieldMode, GasMode } from "@sablier/v2-core/src/interfaces/blast/IBlast.sol";
-import { IERC20Rebasing } from "@sablier/v2-core/src/interfaces/blast/IERC20Rebasing.sol";
 
 import { ISablierV2MerkleStreamer } from "../interfaces/ISablierV2MerkleStreamer.sol";
 import { Errors } from "../libraries/Errors.sol";
@@ -73,9 +71,6 @@ abstract contract SablierV2MerkleStreamer is
         EXPIRATION = expiration;
         CANCELABLE = cancelable;
         TRANSFERABLE = transferable;
-
-        // Configures modes on Blast L2
-        _configureBlastModes(asset, initialAdmin);
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -149,16 +144,5 @@ abstract contract SablierV2MerkleStreamer is
         if (protocolFee.gt(ud(0))) {
             revert Errors.SablierV2MerkleStreamer_ProtocolFeeNotZero();
         }
-    }
-
-    /// @dev Configures modes on Blast L2
-    function _configureBlastModes(IERC20 asset, address initialAdmin) internal {
-        // Configure the Blast yield to VOID and gas to CLAIMABLE.
-        IBlast(0x4300000000000000000000000000000000000002).configure(YieldMode.VOID, GasMode.CLAIMABLE, initialAdmin);
-
-        // Sets the yield of rebasing asset to claimable.
-        // A low-level call is used to ignore reverts in case asset does not implememnt `configure()` function.
-        (bool success,) = address(asset).call(abi.encodeCall(IERC20Rebasing.configure, (YieldMode.CLAIMABLE)));
-        success;
     }
 }
