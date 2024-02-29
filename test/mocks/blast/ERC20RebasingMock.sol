@@ -18,6 +18,8 @@ contract ERC20RebasingMock is ERC20("ERC20Rebasing Mock", "REB-MOCK"), IERC20Reb
 
     function addValue(uint256 value) external { }
 
+    function bridge() external view returns (address) { }
+
     function getClaimableAmount(address account) public view override returns (uint256 amount) {
         require(getConfiguration(account) == YieldMode.CLAIMABLE, "ERC20RebasingMock: not claimable account");
 
