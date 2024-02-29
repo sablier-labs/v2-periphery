@@ -8,7 +8,7 @@ import { CreateWithRange_Batch_Fork_Test } from "../batch/createWithRange.t.sol"
 import { MerkleStreamerLL_Fork_Test } from "../merkle-streamer/MerkleStreamerLL.t.sol";
 
 /// @dev A USD token with rebasing yield deployed on Blast L2.
-IERC20 constant usdb = IERC20(0x4200000000000000000000000000000000000022);
+IERC20 constant usdb = IERC20(0x4300000000000000000000000000000000000003);
 
 contract USDB_CreateWithMilestones_Batch_Fork_Test is CreateWithMilestones_Batch_Fork_Test(usdb) { }
 

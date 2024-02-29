@@ -12,7 +12,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "4.9.2",
     "@prb/math": "4.0.2",
-    "@sablier/v2-core": "github:sablier-labs/v2-core#feat/add-blast-yield"
+    "@sablier/v2-core": "github:sablier-labs/v2-core#blast-l2"
   },
   "devDependencies": {
     "@prb/test": "0.6.4",
@@ -49,7 +49,7 @@
     "web3"
   ],
   "peerDependencies": {
-    "@sablier/v2-core": "github:sablier-labs/v2-core#feat/add-blast-yield"
+    "@sablier/v2-core": "github:sablier-labs/v2-core#blast-l2"
   },
   "publishConfig": {
     "access": "public"
