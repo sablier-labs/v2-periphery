@@ -60,8 +60,9 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         // Deploy the default test asset.
         dai = new ERC20("DAI Stablecoin", "DAI");
 
-        // Deploy the Blast contract.
-        deployBlastContract();
+        // Deploy the blast contracts.
+        blastMock = new BlastMock();
+        erc20RebasingMock = new ERC20RebasingMock();
 
         // Create users for testing.
         users.alice = createUser("Alice");
@@ -92,24 +93,6 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         vm.deal({ account: user, newBalance: 100_000 ether });
         deal({ token: address(dai), to: user, give: 1_000_000e18 });
         return payable(user);
-    }
-
-    /// @dev This deploys the Blast contract on 0x4300000000000000000000000000000000000002 as required by the
-    /// constructor of `SablierV2MerkleStreamer`.
-    function deployBlastContract() private {
-        // Deploy the rebasing erc-20 contract.
-        erc20RebasingMock = new ERC20RebasingMock();
-
-        // Deploy the Blast contract..
-        blastMock = BlastMock(0x4300000000000000000000000000000000000002);
-
-        // Deploys BlastMock contract and sets the bytecode to the blast address.
-        vm.etch(address(blastMock), address(new BlastMock()).code);
-
-        // Overwrites storage slot of GasMock and YieldMock contracts. This is necessary because these contracts can
-        // only be called by the BlastMock contract.
-        vm.store(address(blastMock.GAS()), bytes32(uint256(0)), bytes32(uint256(uint160(address(blastMock)))));
-        vm.store(address(blastMock.YIELD()), bytes32(uint256(0)), bytes32(uint256(uint160(address(blastMock)))));
     }
 
     /// @dev Conditionally deploy V2 Periphery normally or from an optimized source compiled with `--via-ir`.

@@ -139,7 +139,7 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
         IERC20Rebasing rebasingAsset = IERC20Rebasing(address(ASSET));
 
         YieldMode actualRebasingAssetYieldMode = vars.merkleStreamerLL.getRebasingAssetConfiguration(rebasingAsset);
-        YieldMode expectedRebasingAssetYieldMode = YieldMode.CLAIMABLE;
+        YieldMode expectedRebasingAssetYieldMode = YieldMode.AUTOMATIC;
         assertEq(uint8(actualRebasingAssetYieldMode), uint8(expectedRebasingAssetYieldMode));
 
         /*//////////////////////////////////////////////////////////////////////////
