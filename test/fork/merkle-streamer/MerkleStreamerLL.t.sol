@@ -3,8 +3,6 @@ pragma solidity >=0.8.19 <0.9.0;
 
 import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { YieldMode } from "@sablier/v2-core/src/interfaces/blast/IBlast.sol";
-import { IERC20Rebasing } from "@sablier/v2-core/src/interfaces/blast/IERC20Rebasing.sol";
 import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
@@ -136,12 +134,6 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             vars.expectedStreamerLL,
             "MerkleStreamerLL contract does not match computed address"
         );
-
-        // Check configuration for rebasing asset on Blast L2.
-        YieldMode actualRebasingAssetYieldMode =
-            vars.merkleStreamerLL.getRebasingAssetConfiguration(IERC20Rebasing(address(ASSET)));
-        YieldMode expectedRebasingAssetYieldMode = YieldMode.AUTOMATIC;
-        assertEq(uint8(actualRebasingAssetYieldMode), uint8(expectedRebasingAssetYieldMode));
 
         /*//////////////////////////////////////////////////////////////////////////
                                           CLAIM
