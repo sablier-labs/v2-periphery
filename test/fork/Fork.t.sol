@@ -33,8 +33,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     //////////////////////////////////////////////////////////////////////////*/
 
     function setUp() public virtual override {
-        // Fork Ethereum Mainnet at a specific block number.
-        vm.createSelectFork({ blockNumber: 18_821_300, urlOrAlias: "mainnet" });
+        // Fork Blast mainnet at a specific block number.
+        vm.createSelectFork({ blockNumber: 1_000_000, urlOrAlias: "blast" });
 
         // Set up the base test contract.
         Base_Test.setUp();

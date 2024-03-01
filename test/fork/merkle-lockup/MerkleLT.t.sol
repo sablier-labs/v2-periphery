@@ -8,6 +8,7 @@ import { Lockup, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol
 import { ISablierV2MerkleLT } from "src/interfaces/ISablierV2MerkleLT.sol";
 import { MerkleLockup } from "src/types/DataTypes.sol";
 
+import { ERC20RebasingMock } from "../../mocks/blast/ERC20RebasingMock.sol";
 import { MerkleBuilder } from "../../utils/MerkleBuilder.sol";
 import { Fork_Test } from "../Fork.t.sol";
 
@@ -124,8 +125,9 @@ abstract contract MerkleLT_Fork_Test is Fork_Test {
             recipientCount: vars.recipientCount
         });
 
-        // Fund the MerkleLockup contract.
-        deal({ token: address(FORK_ASSET), to: address(vars.merkleLT), give: vars.aggregateAmount });
+        // Fund the MerkleLockup with rebasing asset.
+        resetPrank({ msgSender: ERC20RebasingMock(address(FORK_ASSET)).bridge() });
+        ERC20RebasingMock(address(FORK_ASSET)).mint(address(vars.merkleLT), vars.aggregateAmount);
 
         assertGt(address(vars.merkleLT).code.length, 0, "MerkleLT contract not created");
         assertEq(address(vars.merkleLT), vars.expectedLT, "MerkleLT contract does not match computed address");
