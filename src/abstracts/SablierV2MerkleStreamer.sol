@@ -5,9 +5,9 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { MerkleProof } from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
-import { Adminable } from "@sablier/v2-core/src/abstracts/Adminable.sol";
-import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
+import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
+import { SablierV2Blast } from "@sablier/v2-core/src/abstracts/SablierV2Blast.sol";
 
 import { ISablierV2MerkleStreamer } from "../interfaces/ISablierV2MerkleStreamer.sol";
 import { Errors } from "../libraries/Errors.sol";
@@ -16,7 +16,7 @@ import { Errors } from "../libraries/Errors.sol";
 /// @notice See the documentation in {ISablierV2MerkleStreamer}.
 abstract contract SablierV2MerkleStreamer is
     ISablierV2MerkleStreamer, // 2 inherited component
-    Adminable // 1 inherited component
+    SablierV2Blast // 3 inherited component
 {
     using BitMaps for BitMaps.BitMap;
     using SafeERC20 for IERC20;

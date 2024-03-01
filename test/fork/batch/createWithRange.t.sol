@@ -7,6 +7,7 @@ import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
 import { Fork_Test } from "../Fork.t.sol";
+import { ERC20RebasingMock } from "../../mocks/blast/ERC20RebasingMock.sol";
 import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
 import { BatchBuilder } from "../../utils/BatchBuilder.sol";
 
@@ -42,7 +43,11 @@ abstract contract CreateWithRange_Batch_Fork_Test is Fork_Test {
         uint256 firstStreamId = lockupLinear.nextStreamId();
         uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
 
-        deal({ token: address(ASSET), to: params.sender, give: uint256(totalTransferAmount) });
+        // Fund the sender address with rebasing asset.
+        changePrank({ msgSender: ERC20RebasingMock(address(ASSET)).bridge() });
+        ERC20RebasingMock(address(ASSET)).mint(params.sender, uint256(totalTransferAmount));
+
+        changePrank({ msgSender: params.sender });
         approveContract({ asset_: ASSET, from: params.sender, spender: address(batch) });
 
         LockupLinear.CreateWithRange memory createParams = LockupLinear.CreateWithRange({

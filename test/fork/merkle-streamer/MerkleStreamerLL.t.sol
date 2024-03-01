@@ -7,6 +7,7 @@ import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
 
+import { ERC20RebasingMock } from "../../mocks/blast/ERC20RebasingMock.sol";
 import { MerkleBuilder } from "../../utils/MerkleBuilder.sol";
 import { Fork_Test } from "../Fork.t.sol";
 
@@ -123,8 +124,9 @@ abstract contract MerkleStreamerLL_Fork_Test is Fork_Test {
             recipientsCount: vars.recipientsCount
         });
 
-        // Fund the Merkle streamer.
-        deal({ token: address(ASSET), to: address(vars.merkleStreamerLL), give: vars.aggregateAmount });
+        // Fund the Merkle streamer with rebasing asset.
+        changePrank({ msgSender: ERC20RebasingMock(address(ASSET)).bridge() });
+        ERC20RebasingMock(address(ASSET)).mint(address(vars.merkleStreamerLL), vars.aggregateAmount);
 
         assertGt(address(vars.merkleStreamerLL).code.length, 0, "MerkleStreamerLL contract not created");
         assertEq(
