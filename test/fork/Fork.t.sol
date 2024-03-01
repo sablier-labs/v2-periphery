@@ -32,7 +32,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     function setUp() public virtual override {
         // Fork Blast mainnet at a specific block number.
-        vm.createSelectFork({ blockNumber: 216_583, urlOrAlias: "blast" });
+        vm.createSelectFork({ blockNumber: 243_846, urlOrAlias: "blast" });
 
         // Set up the base test contract.
         Base_Test.setUp();
@@ -75,7 +75,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     /// @dev Loads all dependencies pre-deployed on Mainnet.
     function loadDependencies() private {
-        lockupDynamic = ISablierV2LockupDynamic(0xf5dDFE27B49e5Ba785012c061Ee4F8B03f2f1474);
-        lockupLinear = ISablierV2LockupLinear(0xE97E92B56a6a3B23775e315a4fb8a6424e5E37D6);
+        lockupDynamic = ISablierV2LockupDynamic(0xDf578C2c70A86945999c65961417057363530a1c);
+        lockupLinear = ISablierV2LockupLinear(0xcb099EfC90e88690e287259410B9AE63e1658CC6);
     }
 }
