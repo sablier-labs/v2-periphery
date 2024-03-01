@@ -21,7 +21,6 @@ import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2MerkleStreamerFactory } from "src/SablierV2MerkleStreamerFactory.sol";
 import { SablierV2MerkleStreamerLL } from "src/SablierV2MerkleStreamerLL.sol";
 
-import { BlastMock } from "./mocks/blast/BlastMock.sol";
 import { ERC20RebasingMock } from "./mocks/blast/ERC20RebasingMock.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
@@ -41,7 +40,6 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    BlastMock internal blastMock;
     IERC20 internal dai;
     ISablierV2Batch internal batch;
     ISablierV2Comptroller internal comptroller;
@@ -61,7 +59,6 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         dai = new ERC20("DAI Stablecoin", "DAI");
 
         // Deploy the blast contracts.
-        blastMock = new BlastMock();
         erc20RebasingMock = new ERC20RebasingMock();
 
         // Create users for testing.
