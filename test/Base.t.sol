@@ -4,6 +4,7 @@ pragma solidity >=0.8.22 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import { IERC20Rebasing } from "@sablier/v2-core/src/interfaces/blast/IERC20Rebasing.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
@@ -22,6 +23,7 @@ import { SablierV2MerkleLockupFactory } from "src/SablierV2MerkleLockupFactory.s
 
 import { ERC20Mock } from "./mocks/erc20/ERC20Mock.sol";
 import { Assertions } from "./utils/Assertions.sol";
+import { ERC20RebasingMock } from "./mocks/blast/ERC20RebasingMock.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
 import { Events } from "./utils/Events.sol";
@@ -51,6 +53,7 @@ abstract contract Base_Test is
     ISablierV2BatchLockup internal batchLockup;
     IERC20 internal dai;
     Defaults internal defaults;
+    IERC20Rebasing internal erc20RebasingMock;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
     ISablierV2LockupTranched internal lockupTranched;
@@ -66,6 +69,9 @@ abstract contract Base_Test is
     function setUp() public virtual {
         // Deploy the default test asset.
         dai = new ERC20Mock("DAI Stablecoin", "DAI");
+
+        // Deploy the blast contracts.
+        erc20RebasingMock = new ERC20RebasingMock();
 
         // Create users for testing.
         users.alice = createUser("Alice");
