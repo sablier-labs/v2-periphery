@@ -6,6 +6,7 @@ import { LockupDynamic } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
 
+import { ERC20RebasingMock } from "../../mocks/blast/ERC20RebasingMock.sol";
 import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
 import { BatchBuilder } from "../../utils/BatchBuilder.sol";
 import { Fork_Test } from "../Fork.t.sol";
@@ -47,7 +48,11 @@ abstract contract CreateWithTimestamps_LockupDynamic_Batch_Fork_Test is Fork_Tes
         uint256 firstStreamId = lockupDynamic.nextStreamId();
         uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
 
-        deal({ token: address(ASSET), to: params.sender, give: uint256(totalTransferAmount) });
+        // Fund the sender address with rebasing asset.
+        changePrank({ msgSender: ERC20RebasingMock(address(ASSET)).bridge() });
+        ERC20RebasingMock(address(ASSET)).mint(params.sender, uint256(totalTransferAmount));
+
+        changePrank({ msgSender: params.sender });
         approveContract({ asset_: ASSET, from: params.sender, spender: address(batch) });
 
         LockupDynamic.CreateWithTimestamps memory createWithTimestamps = LockupDynamic.CreateWithTimestamps({
