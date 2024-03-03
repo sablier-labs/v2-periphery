@@ -6,11 +6,11 @@ import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 
-import { SablierV2MerkleLockupLT } from "./SablierV2MerkleLockupLT.sol";
 import { SablierV2MerkleLockupLL } from "./SablierV2MerkleLockupLL.sol";
+import { SablierV2MerkleLockupLT } from "./SablierV2MerkleLockupLT.sol";
 import { ISablierV2MerkleLockupFactory } from "./interfaces/ISablierV2MerkleLockupFactory.sol";
-import { ISablierV2MerkleLockupLT } from "./interfaces/ISablierV2MerkleLockupLT.sol";
 import { ISablierV2MerkleLockupLL } from "./interfaces/ISablierV2MerkleLockupLL.sol";
+import { ISablierV2MerkleLockupLT } from "./interfaces/ISablierV2MerkleLockupLT.sol";
 import { Errors } from "./libraries/Errors.sol";
 import { MerkleLockup, MerkleLockupLT } from "./types/DataTypes.sol";
 
@@ -61,7 +61,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
     function createMerkleLockupLT(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercantage,
+        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercantages,
         uint256 aggregateAmount,
         uint256 recipientsCount
     )
@@ -70,9 +70,9 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
     {
         // Calculate the sum of percentages across all tranches.
         UD60x18 sumPercentage;
-        uint256 trancheCount = tranchesWithPercantage.length;
+        uint256 trancheCount = tranchesWithPercantages.length;
         for (uint256 i = 0; i < trancheCount; ++i) {
-            UD60x18 percentage = (tranchesWithPercantage[i].amountPercentage).intoUD60x18();
+            UD60x18 percentage = (tranchesWithPercantages[i].amountPercentage).intoUD60x18();
             sumPercentage = sumPercentage.add(percentage);
         }
 
@@ -93,16 +93,16 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
                 baseParams.cancelable,
                 baseParams.transferable,
                 lockupTranched,
-                abi.encode(tranchesWithPercantage)
+                abi.encode(tranchesWithPercantages)
             )
         );
 
         // Deploy the Merkle Lockup contract with CREATE2.
-        merkleLockupLT = new SablierV2MerkleLockupLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercantage);
+        merkleLockupLT = new SablierV2MerkleLockupLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercantages);
 
         // Log the creation of the Merkle Lockup, including some metadata that is not stored on-chain.
         emit CreateMerkleLockupLT(
-            merkleLockupLT, baseParams, lockupTranched, tranchesWithPercantage, aggregateAmount, recipientsCount
+            merkleLockupLT, baseParams, lockupTranched, tranchesWithPercantages, aggregateAmount, recipientsCount
         );
     }
 }

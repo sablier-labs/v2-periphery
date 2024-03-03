@@ -90,9 +90,6 @@ contract SablierV2MerkleLockupLT is
         // Effects: mark the index as claimed.
         _claimedBitMap.set(index);
 
-        // Calculate the tranches based on the amount.
-        LockupTranched.TrancheWithDuration[] memory tranches = _calculateTranches(amount);
-
         // Interactions: create the stream via {SablierV2LockupTranched}.
         streamId = LOCKUP_TRANCHED.createWithDurations(
             LockupTranched.CreateWithDurations({
@@ -102,7 +99,7 @@ contract SablierV2MerkleLockupLT is
                 asset: ASSET,
                 cancelable: CANCELABLE,
                 transferable: TRANSFERABLE,
-                tranches: tranches,
+                tranches: _calculateTranches(amount),
                 broker: Broker({ account: address(0), fee: ud(0) })
             })
         );
@@ -111,7 +108,7 @@ contract SablierV2MerkleLockupLT is
         emit Claim(index, recipient, amount, streamId);
     }
 
-    /// @dev Calculates the stream tranches based on `amount` and predefined percentage for each tranche.
+    /// @dev Calculates the stream tranches based on Merkle tree `amount` and predefined percentage for each tranche.
     function _calculateTranches(uint128 amount)
         internal
         view
@@ -135,7 +132,7 @@ contract SablierV2MerkleLockupLT is
             // Calculate the tranche's amount by applying its percentage to the total amount.
             uint128 trancheAmount = udAmount.mul(percentage).intoUint128();
 
-            // Sum of all tranche amounts to handle any rounding errors.
+            // Sum all tranche amounts.
             trancheAmountsSum += trancheAmount;
 
             // Assign calculated amount and duration to the tranche.

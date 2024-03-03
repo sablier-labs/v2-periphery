@@ -61,17 +61,21 @@ interface ISablierV2MerkleLockupFactory {
 
     /// @notice Creates a new Merkle Lockup that uses Lockup Tranched.
     /// @dev Emits a {CreateMerkleLockupLT} event.
+    ///
+    /// Requirements:
+    /// - The sum of the tranches percantages must equal 100% = 1e18.
+    ///
     /// @param baseParams Struct encapsulating the {SablierV2MerkleLockup} parameters, which are documented in
     /// {DataTypes}.
     /// @param lockupTranched The address of the {SablierV2LockupTranched} contract.
-    /// @param tranchesWithPercantage The tranches with their respective percentages.
+    /// @param tranchesWithPercantages The tranches with their respective percentages.
     /// @param aggregateAmount Total amount of ERC-20 assets to be streamed to all recipients.
     /// @param recipientsCount Total number of recipients eligible to claim.
     /// @return merkleLockupLT The address of the newly created Merkle Lockup contract.
     function createMerkleLockupLT(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercantage,
+        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercantages,
         uint256 aggregateAmount,
         uint256 recipientsCount
     )

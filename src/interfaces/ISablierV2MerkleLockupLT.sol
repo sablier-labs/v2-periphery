@@ -13,7 +13,7 @@ interface ISablierV2MerkleLockupLT is ISablierV2MerkleLockup {
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Returns the tranches with their respective percentages and durations.
+    /// @notice Retrieves the tranches with their respective percentages and durations.
     function getTranchesWithPercentage() external view returns (MerkleLockupLT.TrancheWithPercentage[] memory);
 
     /// @notice The address of the {SablierV2LockupTranched} contract.
