@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity >=0.8.19;
+pragma solidity >=0.8.22;
 
 import { PRBMathAssertions } from "@prb/math/test/utils/Assertions.sol";
 import { PRBTest } from "@prb/test/src/PRBTest.sol";
