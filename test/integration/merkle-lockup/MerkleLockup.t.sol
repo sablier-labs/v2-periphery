@@ -2,6 +2,7 @@
 pragma solidity >=0.8.22;
 
 import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
+import { ISablierV2MerkleLockupLT } from "src/interfaces/ISablierV2MerkleLockupLT.sol";
 
 import { Integration_Test } from "../Integration.t.sol";
 
@@ -11,13 +12,24 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
 
         // Create the default Merkle Lockup.
         merkleLockupLL = createMerkleLockupLL();
+        merkleLockupLT = createMerkleLockupLT();
 
-        // Fund the Merkle Lockup contract.
+        // Fund the Merkle Lockup contracts.
         deal({ token: address(dai), to: address(merkleLockupLL), give: defaults.AGGREGATE_AMOUNT() });
+        deal({ token: address(dai), to: address(merkleLockupLT), give: defaults.AGGREGATE_AMOUNT() });
     }
 
     function claimLL() internal returns (uint256) {
         return merkleLockupLL.claim({
+            index: defaults.INDEX1(),
+            recipient: users.recipient1,
+            amount: defaults.CLAIM_AMOUNT(),
+            merkleProof: defaults.index1Proof()
+        });
+    }
+
+    function claimLT() internal returns (uint256) {
+        return merkleLockupLT.claim({
             index: defaults.INDEX1(),
             recipient: users.recipient1,
             amount: defaults.CLAIM_AMOUNT(),
@@ -41,6 +53,22 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
         return computeMerkleLockupLLAddress(admin, merkleRoot, defaults.EXPIRATION());
     }
 
+    function computeMerkleLockupLTAddress() internal returns (address) {
+        return computeMerkleLockupLTAddress(users.admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+    }
+
+    function computeMerkleLockupLTAddress(address admin) internal returns (address) {
+        return computeMerkleLockupLTAddress(admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+    }
+
+    function computeMerkleLockupLTAddress(address admin, uint40 expiration) internal returns (address) {
+        return computeMerkleLockupLTAddress(admin, defaults.MERKLE_ROOT(), expiration);
+    }
+
+    function computeMerkleLockupLTAddress(address admin, bytes32 merkleRoot) internal returns (address) {
+        return computeMerkleLockupLTAddress(admin, merkleRoot, defaults.EXPIRATION());
+    }
+
     function createMerkleLockupLL() internal returns (ISablierV2MerkleLockupLL) {
         return createMerkleLockupLL(users.admin, defaults.EXPIRATION());
     }
@@ -58,6 +86,28 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
             baseParams: defaults.baseParams(admin, dai, defaults.MERKLE_ROOT(), expiration),
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
+            aggregateAmount: defaults.AGGREGATE_AMOUNT(),
+            recipientsCount: defaults.RECIPIENTS_COUNT()
+        });
+    }
+
+    function createMerkleLockupLT() internal returns (ISablierV2MerkleLockupLT) {
+        return createMerkleLockupLT(users.admin, defaults.EXPIRATION());
+    }
+
+    function createMerkleLockupLT(address admin) internal returns (ISablierV2MerkleLockupLT) {
+        return createMerkleLockupLT(admin, defaults.EXPIRATION());
+    }
+
+    function createMerkleLockupLT(uint40 expiration) internal returns (ISablierV2MerkleLockupLT) {
+        return createMerkleLockupLT(users.admin, expiration);
+    }
+
+    function createMerkleLockupLT(address admin, uint40 expiration) internal returns (ISablierV2MerkleLockupLT) {
+        return merkleLockupFactory.createMerkleLockupLT({
+            baseParams: defaults.baseParams(admin, dai, defaults.MERKLE_ROOT(), expiration),
+            lockupTranched: lockupTranched,
+            tranchesWithPercantages: defaults.tranchesWithPercantages(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()
         });

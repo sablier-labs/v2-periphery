@@ -37,6 +37,6 @@ abstract contract Integration_Test is Base_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     function deployDependencies() private {
-        (comptroller, lockupDynamic, lockupLinear,) = new V2CorePrecompiles().deployCore(users.admin);
+        (comptroller, lockupDynamic, lockupLinear, lockupTranched,) = new V2CorePrecompiles().deployCore(users.admin);
     }
 }

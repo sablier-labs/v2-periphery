@@ -5,9 +5,9 @@ import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ud2x18 } from "@prb/math/src/UD2x18.sol";
 import { UD60x18 } from "@prb/math/src/UD60x18.sol";
-import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { Broker, LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { Batch, MerkleLockup } from "src/types/DataTypes.sol";
+import { Batch, MerkleLockup, MerkleLockupLT } from "src/types/DataTypes.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";
@@ -140,6 +140,19 @@ contract Defaults is Merkle {
             cancelable: CANCELABLE,
             transferable: TRANSFERABLE
         });
+    }
+
+    function tranchesWithPercantages()
+        public
+        pure
+        returns (MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercantages_)
+    {
+        tranchesWithPercantages_ = new MerkleLockupLT.TrancheWithPercentage[](2);
+        tranchesWithPercantages_[0] =
+            MerkleLockupLT.TrancheWithPercentage({ amountPercentage: ud2x18(0.25e18), duration: 2500 seconds });
+        tranchesWithPercantages_[1] =
+            MerkleLockupLT.TrancheWithPercentage({ amountPercentage: ud2x18(0.75e18), duration: 7500 seconds });
+        return tranchesWithPercantages_;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -282,6 +295,17 @@ contract Defaults is Merkle {
 
     function linearRange() private view returns (LockupLinear.Range memory) {
         return LockupLinear.Range({ start: START_TIME, cliff: CLIFF_TIME, end: END_TIME });
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                             SABLIER-V2-LOCKUP-TRANCHED
+    //////////////////////////////////////////////////////////////////////////*/
+
+    function tranches() public view returns (LockupTranched.Tranche[] memory tranches_) {
+        tranches_ = new LockupTranched.Tranche[](2);
+        tranches_[0] = LockupTranched.Tranche({ amount: 2500e18, timestamp: uint40(block.timestamp) + CLIFF_DURATION });
+        tranches_[1] = LockupTranched.Tranche({ amount: 7500e18, timestamp: uint40(block.timestamp) + TOTAL_DURATION });
+        return tranches_;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
