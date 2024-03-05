@@ -7,7 +7,7 @@ import { PRBTest } from "@prb/test/src/PRBTest.sol";
 import { MerkleLockupLT } from "src/types/DataTypes.sol";
 
 abstract contract Assertions is PRBTest, PRBMathAssertions {
-    event LogNamedArray(string key, MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercantages);
+    event LogNamedArray(string key, MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages);
 
     /// @dev Compares two {MerkleLockupLT.TrancheWithPercentage[]} arrays.
     function assertEq(

@@ -142,17 +142,17 @@ contract Defaults is Merkle {
         });
     }
 
-    function tranchesWithPercantages()
+    function tranchesWithPercentages()
         public
         pure
-        returns (MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercantages_)
+        returns (MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages_)
     {
-        tranchesWithPercantages_ = new MerkleLockupLT.TrancheWithPercentage[](2);
-        tranchesWithPercantages_[0] =
+        tranchesWithPercentages_ = new MerkleLockupLT.TrancheWithPercentage[](2);
+        tranchesWithPercentages_[0] =
             MerkleLockupLT.TrancheWithPercentage({ amountPercentage: ud2x18(0.25e18), duration: 2500 seconds });
-        tranchesWithPercantages_[1] =
+        tranchesWithPercentages_[1] =
             MerkleLockupLT.TrancheWithPercentage({ amountPercentage: ud2x18(0.75e18), duration: 7500 seconds });
-        return tranchesWithPercantages_;
+        return tranchesWithPercentages_;
     }
 
     /*//////////////////////////////////////////////////////////////////////////

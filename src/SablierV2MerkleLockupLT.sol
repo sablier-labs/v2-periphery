@@ -29,7 +29,7 @@ contract SablierV2MerkleLockupLT is
     ISablierV2LockupTranched public immutable override LOCKUP_TRANCHED;
 
     /// @dev The tranches with their respective percentages and durations.
-    MerkleLockupLT.TrancheWithPercentage[] internal _tranchesWithPercentage;
+    MerkleLockupLT.TrancheWithPercentage[] internal _tranchesWithPercentages;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
@@ -40,7 +40,7 @@ contract SablierV2MerkleLockupLT is
     constructor(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentage
+        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages
     )
         SablierV2MerkleLockup(baseParams)
     {
@@ -48,9 +48,9 @@ contract SablierV2MerkleLockupLT is
 
         // Since Solidity lacks a syntax for copying arrays directly from memory to storage,
         // a manual approach is necessary. See https://github.com/ethereum/solidity/issues/12783.
-        uint256 count = tranchesWithPercentage.length;
+        uint256 count = tranchesWithPercentages.length;
         for (uint256 i = 0; i < count; i++) {
-            _tranchesWithPercentage.push(tranchesWithPercentage[i]);
+            _tranchesWithPercentages.push(tranchesWithPercentages[i]);
         }
 
         // Max approve the Sablier contract to spend funds from the Merkle Lockup contract.
@@ -68,7 +68,7 @@ contract SablierV2MerkleLockupLT is
         override
         returns (MerkleLockupLT.TrancheWithPercentage[] memory)
     {
-        return _tranchesWithPercentage;
+        return _tranchesWithPercentages;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -124,11 +124,11 @@ contract SablierV2MerkleLockupLT is
         returns (LockupTranched.TrancheWithDuration[] memory tranches)
     {
         // Load the tranches in memory to save gas.
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentage = _tranchesWithPercentage;
+        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = _tranchesWithPercentages;
 
         // Declare the variables need for calculation.
         UD60x18 trancheAmountsSum;
-        uint256 trancheCount = tranchesWithPercentage.length;
+        uint256 trancheCount = tranchesWithPercentages.length;
         tranches = new LockupTranched.TrancheWithDuration[](trancheCount);
 
         UD60x18 udAmount = ud(amount);
@@ -136,7 +136,7 @@ contract SablierV2MerkleLockupLT is
         // Iterate over each tranche to calculate its amount based on its percentage.
         for (uint256 i = 0; i < trancheCount; ++i) {
             // Convert the tranche's percentage to `UD60x18` for calculation.
-            UD60x18 percentage = (tranchesWithPercentage[i].amountPercentage).intoUD60x18();
+            UD60x18 percentage = (tranchesWithPercentages[i].amountPercentage).intoUD60x18();
 
             // Calculate the tranche's amount by applying its percentage to the `amount`.
             UD60x18 trancheAmount = udAmount.mul(percentage);
@@ -147,7 +147,7 @@ contract SablierV2MerkleLockupLT is
             // Assign calculated amount and duration to the tranche.
             tranches[i] = LockupTranched.TrancheWithDuration({
                 amount: trancheAmount.intoUint128(),
-                duration: tranchesWithPercentage[i].duration
+                duration: tranchesWithPercentages[i].duration
             });
         }
 

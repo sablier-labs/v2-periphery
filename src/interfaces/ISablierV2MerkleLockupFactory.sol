@@ -31,7 +31,7 @@ interface ISablierV2MerkleLockupFactory {
         ISablierV2MerkleLockupLT indexed merkleLockupLT,
         MerkleLockup.ConstructorParams indexed baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentage,
+        MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages,
         uint256 aggregateAmount,
         uint256 recipientsCount
     );
@@ -68,14 +68,14 @@ interface ISablierV2MerkleLockupFactory {
     /// @param baseParams Struct encapsulating the {SablierV2MerkleLockup} parameters, which are documented in
     /// {DataTypes}.
     /// @param lockupTranched The address of the {SablierV2LockupTranched} contract.
-    /// @param tranchesWithPercantages The tranches with their respective percentages.
+    /// @param tranchesWithPercentages The tranches with their respective percentages.
     /// @param aggregateAmount Total amount of ERC-20 assets to be streamed to all recipients.
     /// @param recipientsCount Total number of recipients eligible to claim.
     /// @return merkleLockupLT The address of the newly created Merkle Lockup contract.
     function createMerkleLockupLT(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercantages,
+        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages,
         uint256 aggregateAmount,
         uint256 recipientsCount
     )

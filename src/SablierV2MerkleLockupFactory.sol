@@ -61,7 +61,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
     function createMerkleLockupLT(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercantages,
+        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages,
         uint256 aggregateAmount,
         uint256 recipientsCount
     )
@@ -69,15 +69,15 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         returns (ISablierV2MerkleLockupLT merkleLockupLT)
     {
         // Calculate the sum of percentages across all tranches.
-        UD60x18 sumPercentage;
-        uint256 trancheCount = tranchesWithPercantages.length;
+        UD60x18 percentagesSum;
+        uint256 trancheCount = tranchesWithPercentages.length;
         for (uint256 i = 0; i < trancheCount; ++i) {
-            UD60x18 percentage = (tranchesWithPercantages[i].amountPercentage).intoUD60x18();
-            sumPercentage = sumPercentage.add(percentage);
+            UD60x18 percentage = (tranchesWithPercentages[i].amountPercentage).intoUD60x18();
+            percentagesSum = percentagesSum.add(percentage);
         }
 
         // Checks: the sum percentage equal 100%.
-        if (!sumPercentage.eq(ud(1e18))) {
+        if (!percentagesSum.eq(ud(1e18))) {
             revert Errors.SablierV2MerkleLockupFactory_PercentageSumNotEqualOneHundred();
         }
 
@@ -93,16 +93,16 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
                 baseParams.cancelable,
                 baseParams.transferable,
                 lockupTranched,
-                abi.encode(tranchesWithPercantages)
+                abi.encode(tranchesWithPercentages)
             )
         );
 
         // Deploy the Merkle Lockup contract with CREATE2.
-        merkleLockupLT = new SablierV2MerkleLockupLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercantages);
+        merkleLockupLT = new SablierV2MerkleLockupLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercentages);
 
         // Log the creation of the Merkle Lockup, including some metadata that is not stored on-chain.
         emit CreateMerkleLockupLT(
-            merkleLockupLT, baseParams, lockupTranched, tranchesWithPercantages, aggregateAmount, recipientsCount
+            merkleLockupLT, baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientsCount
         );
     }
 }

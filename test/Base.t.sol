@@ -330,7 +330,7 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
                 defaults.CANCELABLE(),
                 defaults.TRANSFERABLE(),
                 lockupTranched,
-                abi.encode(defaults.tranchesWithPercantages())
+                abi.encode(defaults.tranchesWithPercentages())
             )
         );
         bytes32 creationBytecodeHash = keccak256(getMerkleLockupLTBytecode(admin, asset_, merkleRoot, expiration));
@@ -373,7 +373,7 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         bytes memory constructorArgs = abi.encode(
             defaults.baseParams(admin, asset_, merkleRoot, expiration),
             lockupTranched,
-            defaults.tranchesWithPercantages()
+            defaults.tranchesWithPercentages()
         );
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2MerkleLockupLT).creationCode, constructorArgs);

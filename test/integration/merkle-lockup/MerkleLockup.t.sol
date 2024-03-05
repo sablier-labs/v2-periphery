@@ -107,7 +107,7 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
         return merkleLockupFactory.createMerkleLockupLT({
             baseParams: defaults.baseParams(admin, dai, defaults.MERKLE_ROOT(), expiration),
             lockupTranched: lockupTranched,
-            tranchesWithPercantages: defaults.tranchesWithPercantages(),
+            tranchesWithPercentages: defaults.tranchesWithPercentages(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()
         });

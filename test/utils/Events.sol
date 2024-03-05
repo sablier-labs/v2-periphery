@@ -25,7 +25,7 @@ abstract contract Events {
         ISablierV2MerkleLockupLT indexed merkleLockupLT,
         MerkleLockup.ConstructorParams indexed baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentage,
+        MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages,
         uint256 aggregateAmount,
         uint256 recipientsCount
     );

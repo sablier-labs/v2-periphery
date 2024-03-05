@@ -37,7 +37,7 @@ contract Constructor_MerkleLockupLT_Integration_Test is MerkleLockup_Integration
 
     function test_Constructor() external {
         SablierV2MerkleLockupLT constructedLockupLT =
-            new SablierV2MerkleLockupLT(defaults.baseParams(), lockupTranched, defaults.tranchesWithPercantages());
+            new SablierV2MerkleLockupLT(defaults.baseParams(), lockupTranched, defaults.tranchesWithPercentages());
 
         Vars memory vars;
 
@@ -74,7 +74,7 @@ contract Constructor_MerkleLockupLT_Integration_Test is MerkleLockup_Integration
         assertEq(vars.actualLockupTranched, vars.expectedLockupTranched, "LockupTranched");
 
         vars.actualTranchesWithPercentages = constructedLockupLT.getTranchesWithPercentage();
-        vars.expectedTranchesWithPercentages = defaults.tranchesWithPercantages();
+        vars.expectedTranchesWithPercentages = defaults.tranchesWithPercentages();
         assertEq(vars.actualTranchesWithPercentages, vars.expectedTranchesWithPercentages);
 
         vars.actualAllowance = dai.allowance(address(constructedLockupLT), address(lockupTranched));
