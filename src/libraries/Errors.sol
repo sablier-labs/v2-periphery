@@ -34,5 +34,5 @@ library Errors {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Thrown when trying to create a Merkle Lockup with no recipients.
-    error SablierV2MerkleLockupFactory_PercentageSumNotEqualOneHundred();
+    error SablierV2MerkleLockupFactory_PercentageSumNotEqualOneHundred(uint256 percentageSum);
 }

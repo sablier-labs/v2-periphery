@@ -1,0 +1,15 @@
+createMerkleLockupLL.t.sol
+├── when the tranches percentages sum does not equal 100%
+│   ├── when the tranches percentages sum is less than 100%
+│   │   └── it should revert
+│   └── when the tranches percentages sum is greater than 100%
+│       └── it should revert
+└── when the tranches percentages sum equals 100%
+    ├── when the campaign name is too long
+    │   └── it should revert
+    └── when the campaign name is not too long
+        ├── given the campaign has been already created
+        │   └── it should revert
+        └── given the campaign has not been already created
+            ├── it should create the campaign
+            └── it should emit a {CreateMerkleLockupLL} event
