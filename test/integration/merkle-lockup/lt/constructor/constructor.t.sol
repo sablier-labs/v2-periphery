@@ -71,7 +71,7 @@ contract Constructor_MerkleLockupLT_Integration_Test is MerkleLockup_Integration
         vars.expectedLockupTranched = address(lockupTranched);
         assertEq(vars.actualLockupTranched, vars.expectedLockupTranched, "LockupTranched");
 
-        vars.actualTranchesWithPercentages = constructedLockupLT.getTranchesWithPercentage();
+        vars.actualTranchesWithPercentages = constructedLockupLT.getTranchesWithPercentages();
         vars.expectedTranchesWithPercentages = defaults.tranchesWithPercentages();
         assertEq(vars.actualTranchesWithPercentages, vars.expectedTranchesWithPercentages);
 

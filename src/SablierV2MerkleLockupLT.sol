@@ -62,7 +62,7 @@ contract SablierV2MerkleLockupLT is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleLockupLT
-    function getTranchesWithPercentage()
+    function getTranchesWithPercentages()
         external
         view
         override
