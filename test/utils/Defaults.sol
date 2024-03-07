@@ -152,7 +152,6 @@ contract Defaults is Merkle {
             MerkleLockupLT.TrancheWithPercentage({ amountPercentage: ud2x18(0.25e18), duration: 2500 seconds });
         tranchesWithPercentages_[1] =
             MerkleLockupLT.TrancheWithPercentage({ amountPercentage: ud2x18(0.75e18), duration: 7500 seconds });
-        return tranchesWithPercentages_;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -305,7 +304,6 @@ contract Defaults is Merkle {
         tranches_ = new LockupTranched.Tranche[](2);
         tranches_[0] = LockupTranched.Tranche({ amount: 2500e18, timestamp: uint40(block.timestamp) + CLIFF_DURATION });
         tranches_[1] = LockupTranched.Tranche({ amount: 7500e18, timestamp: uint40(block.timestamp) + TOTAL_DURATION });
-        return tranches_;
     }
 
     /*//////////////////////////////////////////////////////////////////////////

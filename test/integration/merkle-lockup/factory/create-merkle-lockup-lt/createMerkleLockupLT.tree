@@ -12,4 +12,4 @@ createMerkleLockupLL.t.sol
         │   └── it should revert
         └── given the campaign has not been already created
             ├── it should create the campaign
-            └── it should emit a {CreateMerkleLockupLL} event
+            └── it should emit a {CreateMerkleLockupLT} event

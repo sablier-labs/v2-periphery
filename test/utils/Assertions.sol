@@ -18,8 +18,8 @@ abstract contract Assertions is PRBTest, PRBMathAssertions {
     {
         if (keccak256(abi.encode(a)) != keccak256(abi.encode(b))) {
             emit Log("Error: a == b not satisfied [MerkleLockupLT.TrancheWithPercentage[]]");
-            emit LogNamedArray("   Left", b);
-            emit LogNamedArray("  Right", a);
+            emit LogNamedArray("   Left", a);
+            emit LogNamedArray("  Right", b);
             fail();
         }
     }

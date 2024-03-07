@@ -151,17 +151,6 @@ contract SablierV2MerkleLockupLT is
             });
         }
 
-        // Safe Interactions: query the protocol fee. This is safe because it's a known Sablier contract that does
-        // not call other unknown contracts.
-        UD60x18 protocolFee = LOCKUP_TRANCHED.comptroller().protocolFees(ASSET);
-
-        // Adjust the last tranche amount if the protocol fee is greater than zero.
-        // This is needed to ensure the protocol invariat: sum of tranche amounts equals the deposit amount.
-        if (protocolFee.gt(ud(0))) {
-            UD60x18 protocolFeeAmount = udAmount.mul(protocolFee);
-            tranches[trancheCount - 1].amount -= protocolFeeAmount.intoUint128();
-        }
-
         // Although this should never happen because the sum of percentages equals 100%, we adjust
         // the last tranche amount to prevent claim failure due to rounding differences during calculations.
         if (!udAmount.eq(trancheAmountsSum)) {

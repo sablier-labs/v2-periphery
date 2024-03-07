@@ -76,10 +76,8 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             vars.indexes[i] = params.leafData[i].index;
 
             // Bound each leaf amount so that `aggregateAmount` does not overflow.
-            params.leafData[i].amount =
-                uint128(_bound(params.leafData[i].amount, 1, MAX_UINT256 / vars.recipientsCount - 1));
-            vars.amounts[i] = params.leafData[i].amount;
-            vars.aggregateAmount += params.leafData[i].amount;
+            vars.amounts[i] = uint128(_bound(params.leafData[i].amount, 1, MAX_UINT256 / vars.recipientsCount - 1));
+            vars.aggregateAmount += vars.amounts[i];
 
             // Avoid zero recipient addresses.
             uint256 boundedRecipientSeed = _bound(params.leafData[i].recipientSeed, 1, type(uint160).max);

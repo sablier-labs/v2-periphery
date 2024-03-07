@@ -2,7 +2,6 @@
 pragma solidity >=0.8.22 <0.9.0;
 
 import { Lockup, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
-import { ud, UD60x18 } from "@prb/math/src/UD60x18.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 
@@ -102,46 +101,18 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
         _;
     }
 
-    function test_Claim_ProtocolFeeNotZero()
-        external
-        givenCampaignNotExpired
-        givenNotClaimed
-        givenIncludedInMerkleTree
-    {
-        changePrank({ msgSender: users.admin });
-        comptroller.setProtocolFee({ asset: dai, newProtocolFee: ud(0.1e18) });
-
-        test_Claim({ protocolFee: ud(0.1e18) });
-    }
-
-    modifier givenProtocolFeeZero() {
-        _;
-    }
-
-    function test_Claim()
-        external
-        givenCampaignNotExpired
-        givenNotClaimed
-        givenIncludedInMerkleTree
-        givenProtocolFeeZero
-    {
-        test_Claim({ protocolFee: ud(0) });
-    }
-
-    function test_Claim(UD60x18 protocolFee) internal {
+    function test_Claim() external givenCampaignNotExpired givenNotClaimed givenIncludedInMerkleTree {
         uint256 expectedStreamId = lockupTranched.nextStreamId();
-        uint128 feeAmount = uint128(ud(defaults.CLAIM_AMOUNT()).mul(protocolFee).intoUint256());
 
         vm.expectEmit({ emitter: address(merkleLockupLT) });
         emit Claim(defaults.INDEX1(), users.recipient1, defaults.CLAIM_AMOUNT(), expectedStreamId);
         uint256 actualStreamId = claimLT();
 
         LockupTranched.Tranche[] memory tranches = defaults.tranches();
-        tranches[tranches.length - 1].amount -= feeAmount;
 
         LockupTranched.StreamLT memory actualStream = lockupTranched.getStream(actualStreamId);
         LockupTranched.StreamLT memory expectedStream = LockupTranched.StreamLT({
-            amounts: Lockup.Amounts({ deposited: defaults.CLAIM_AMOUNT() - feeAmount, refunded: 0, withdrawn: 0 }),
+            amounts: Lockup.Amounts({ deposited: defaults.CLAIM_AMOUNT(), refunded: 0, withdrawn: 0 }),
             asset: dai,
             endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
             isCancelable: defaults.CANCELABLE(),
