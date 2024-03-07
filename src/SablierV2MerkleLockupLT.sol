@@ -4,9 +4,9 @@ pragma solidity >=0.8.22;
 import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { ud, UD60x18 } from "@prb/math/src/UD60x18.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { Broker, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
-import { ud, UD60x18 } from "@prb/math/src/UD60x18.sol";
 
 import { SablierV2MerkleLockup } from "./abstracts/SablierV2MerkleLockup.sol";
 import { ISablierV2MerkleLockupLT } from "./interfaces/ISablierV2MerkleLockupLT.sol";
@@ -49,7 +49,7 @@ contract SablierV2MerkleLockupLT is
         // Since Solidity lacks a syntax for copying arrays directly from memory to storage,
         // a manual approach is necessary. See https://github.com/ethereum/solidity/issues/12783.
         uint256 count = tranchesWithPercentages.length;
-        for (uint256 i = 0; i < count; i++) {
+        for (uint256 i = 0; i < count; ++i) {
             _tranchesWithPercentages.push(tranchesWithPercentages[i]);
         }
 
