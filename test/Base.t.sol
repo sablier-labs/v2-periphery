@@ -8,7 +8,7 @@ import { ISablierV2Comptroller } from "@sablier/v2-core/src/interfaces/ISablierV
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
-import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Assertions as V2CoreAssertions } from "@sablier/v2-core/test/utils/Assertions.sol";
 import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
@@ -134,6 +134,14 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         });
     }
 
+    /// @dev Expects a call to {ISablierV2LockupTranched.createWithDurations}.
+    function expectCallToCreateWithDurationsLT(LockupTranched.CreateWithDurations memory params) internal {
+        vm.expectCall({
+            callee: address(lockupTranched),
+            data: abi.encodeCall(ISablierV2LockupTranched.createWithDurations, (params))
+        });
+    }
+
     /// @dev Expects a call to {ISablierV2LockupDynamic.createWithTimestamps}.
     function expectCallToCreateWithTimestampsLD(LockupDynamic.CreateWithTimestamps memory params) internal {
         vm.expectCall({
@@ -147,6 +155,14 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         vm.expectCall({
             callee: address(lockupLinear),
             data: abi.encodeCall(ISablierV2LockupLinear.createWithTimestamps, (params))
+        });
+    }
+
+    /// @dev Expects a call to {ISablierV2LockupTranched.createWithTimestamps}.
+    function expectCallToCreateWithTimestampsLT(LockupTranched.CreateWithTimestamps memory params) internal {
+        vm.expectCall({
+            callee: address(lockupTranched),
+            data: abi.encodeCall(ISablierV2LockupTranched.createWithTimestamps, (params))
         });
     }
 
@@ -200,6 +216,21 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         });
     }
 
+    /// @dev Expects multiple calls to {ISablierV2LockupTranched.createWithDurations}, each with the specified
+    /// `params`.
+    function expectMultipleCallsToCreateWithDurationsLT(
+        uint64 count,
+        LockupTranched.CreateWithDurations memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(lockupTranched),
+            count: count,
+            data: abi.encodeCall(ISablierV2LockupTranched.createWithDurations, (params))
+        });
+    }
+
     /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithTimestamps}, each with the specified
     /// `params`.
     function expectMultipleCallsToCreateWithTimestampsLD(
@@ -227,6 +258,21 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
             callee: address(lockupLinear),
             count: count,
             data: abi.encodeCall(ISablierV2LockupLinear.createWithTimestamps, (params))
+        });
+    }
+
+    /// @dev Expects multiple calls to {ISablierV2LockupTranched.createWithTimestamps}, each with the specified
+    /// `params`.
+    function expectMultipleCallsToCreateWithTimestampsLT(
+        uint64 count,
+        LockupTranched.CreateWithTimestamps memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(lockupTranched),
+            count: count,
+            data: abi.encodeCall(ISablierV2LockupTranched.createWithTimestamps, (params))
         });
     }
 

@@ -4,6 +4,7 @@ pragma solidity >=0.8.22;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
+import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 
 import { Batch } from "../types/DataTypes.sol";
 
@@ -90,6 +91,48 @@ interface ISablierV2Batch {
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
         Batch.CreateWithTimestampsLD[] calldata batch
+    )
+        external
+        returns (uint256[] memory streamIds);
+
+    /*//////////////////////////////////////////////////////////////////////////
+                             SABLIER-V2-LOCKUP-TRANCHED
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Creates a batch of Lockup Tranched streams using `createWithDurations`.
+    ///
+    /// @dev Requirements:
+    /// - There must be at least one element in `batch`.
+    /// - All requirements from {ISablierV2LockupTranched.createWithDurations} must be met for each stream.
+    ///
+    /// @param lockupTranched The address of the {SablierV2LockupTranched} contract.
+    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param batch An array of structs, each encapsulating a subset of the parameters of
+    /// {SablierV2LockupTranched.createWithDurations}.
+    /// @return streamIds The ids of the newly created streams.
+    function createWithDurationsLT(
+        ISablierV2LockupTranched lockupTranched,
+        IERC20 asset,
+        Batch.CreateWithDurationsLT[] calldata batch
+    )
+        external
+        returns (uint256[] memory streamIds);
+
+    /// @notice Creates a batch of Lockup Tranched streams using `createWithTimestamps`.
+    ///
+    /// @dev Requirements:
+    /// - There must be at least one element in `batch`.
+    /// - All requirements from {ISablierV2LockupTranched.createWithTimestamps} must be met for each stream.
+    ///
+    /// @param lockupTranched The address of the {SablierV2LockupTranched} contract.
+    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param batch An array of structs, each encapsulating a subset of the parameters of
+    /// {SablierV2LockupTranched.createWithTimestamps}.
+    /// @return streamIds The ids of the newly created streams.
+    function createWithTimestampsLT(
+        ISablierV2LockupTranched lockupTranched,
+        IERC20 asset,
+        Batch.CreateWithTimestampsLT[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);

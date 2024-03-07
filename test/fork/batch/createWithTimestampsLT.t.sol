@@ -1,0 +1,87 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity >=0.8.22 <0.9.0;
+
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
+
+import { Batch } from "src/types/DataTypes.sol";
+
+import { Fork_Test } from "../Fork.t.sol";
+import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
+import { BatchBuilder } from "../../utils/BatchBuilder.sol";
+
+/// @dev Runs against multiple fork assets.
+abstract contract CreateWithTimestamps_LockupTranched_Batch_Fork_Test is Fork_Test {
+    constructor(IERC20 asset_) Fork_Test(asset_) { }
+
+    function setUp() public virtual override {
+        Fork_Test.setUp();
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                            BATCH-CREATE-WITH-TIMESTAMPS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    struct CreateWithTimestampsParams {
+        uint128 batchSize;
+        address sender;
+        address recipient;
+        uint128 perStreamAmount;
+        uint40 startTime;
+        LockupTranched.Tranche[] tranches;
+    }
+
+    function testForkFuzz_CreateWithTimestamps(CreateWithTimestampsParams memory params) external {
+        vm.assume(params.tranches.length != 0);
+        params.batchSize = boundUint128(params.batchSize, 1, 20);
+        params.startTime = boundUint40(params.startTime, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
+        fuzzTrancheTimestamps(params.tranches, params.startTime);
+        (params.perStreamAmount,) = fuzzTranchedStreamAmounts({
+            upperBound: MAX_UINT128 / params.batchSize,
+            tranches: params.tranches,
+            protocolFee: defaults.PROTOCOL_FEE(),
+            brokerFee: defaults.BROKER_FEE()
+        });
+
+        checkUsers(params.sender, params.recipient);
+
+        uint256 firstStreamId = lockupTranched.nextStreamId();
+        uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
+
+        deal({ token: address(ASSET), to: params.sender, give: uint256(totalTransferAmount) });
+        approveContract({ asset_: ASSET, from: params.sender, spender: address(batch) });
+
+        LockupTranched.CreateWithTimestamps memory createWithTimestamps = LockupTranched.CreateWithTimestamps({
+            sender: params.sender,
+            recipient: params.recipient,
+            totalAmount: params.perStreamAmount,
+            asset: ASSET,
+            cancelable: true,
+            transferable: true,
+            startTime: params.startTime,
+            tranches: params.tranches,
+            broker: defaults.broker()
+        });
+        Batch.CreateWithTimestampsLT[] memory batchParams =
+            BatchBuilder.fillBatch(createWithTimestamps, params.batchSize);
+
+        expectCallToTransferFrom({
+            asset_: address(ASSET),
+            from: params.sender,
+            to: address(batch),
+            amount: totalTransferAmount
+        });
+        expectMultipleCallsToCreateWithTimestampsLT({ count: uint64(params.batchSize), params: createWithTimestamps });
+        expectMultipleCallsToTransferFrom({
+            asset_: address(ASSET),
+            count: uint64(params.batchSize),
+            from: address(batch),
+            to: address(lockupTranched),
+            amount: params.perStreamAmount
+        });
+
+        uint256[] memory actualStreamIds = batch.createWithTimestampsLT(lockupTranched, ASSET, batchParams);
+        uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
+        assertEq(actualStreamIds, expectedStreamIds);
+    }
+}

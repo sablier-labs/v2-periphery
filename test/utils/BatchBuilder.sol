@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22;
 
-import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Batch } from "../../src/types/DataTypes.sol";
 
@@ -82,6 +82,43 @@ library BatchBuilder {
 
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
+        Batch.CreateWithDurationsLT memory batchSingle,
+        uint256 batchSize
+    )
+        internal
+        pure
+        returns (Batch.CreateWithDurationsLT[] memory batch)
+    {
+        batch = new Batch.CreateWithDurationsLT[](batchSize);
+        for (uint256 i = 0; i < batchSize; ++i) {
+            batch[i] = batchSingle;
+        }
+    }
+
+    /// @notice Turns the `params` into an array of `Batch.CreateWithDurationsLT` structs.
+    function fillBatch(
+        LockupTranched.CreateWithDurations memory params,
+        uint256 batchSize
+    )
+        internal
+        pure
+        returns (Batch.CreateWithDurationsLT[] memory batch)
+    {
+        batch = new Batch.CreateWithDurationsLT[](batchSize);
+        Batch.CreateWithDurationsLT memory batchSingle = Batch.CreateWithDurationsLT({
+            sender: params.sender,
+            recipient: params.recipient,
+            totalAmount: params.totalAmount,
+            cancelable: params.cancelable,
+            transferable: params.transferable,
+            tranches: params.tranches,
+            broker: params.broker
+        });
+        batch = fillBatch(batchSingle, batchSize);
+    }
+
+    /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
+    function fillBatch(
         Batch.CreateWithTimestampsLD memory batchSingle,
         uint256 batchSize
     )
@@ -150,6 +187,44 @@ library BatchBuilder {
             cancelable: params.cancelable,
             transferable: params.transferable,
             range: params.range,
+            broker: params.broker
+        });
+        batch = fillBatch(batchSingle, batchSize);
+    }
+
+    /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
+    function fillBatch(
+        Batch.CreateWithTimestampsLT memory batchSingle,
+        uint256 batchSize
+    )
+        internal
+        pure
+        returns (Batch.CreateWithTimestampsLT[] memory batch)
+    {
+        batch = new Batch.CreateWithTimestampsLT[](batchSize);
+        for (uint256 i = 0; i < batchSize; ++i) {
+            batch[i] = batchSingle;
+        }
+    }
+
+    /// @notice Turns the `params` into an array of `Batch.CreateWithTimestampsLT` structs.
+    function fillBatch(
+        LockupTranched.CreateWithTimestamps memory params,
+        uint256 batchSize
+    )
+        internal
+        pure
+        returns (Batch.CreateWithTimestampsLT[] memory batch)
+    {
+        batch = new Batch.CreateWithTimestampsLT[](batchSize);
+        Batch.CreateWithTimestampsLT memory batchSingle = Batch.CreateWithTimestampsLT({
+            sender: params.sender,
+            recipient: params.recipient,
+            totalAmount: params.totalAmount,
+            cancelable: params.cancelable,
+            transferable: params.transferable,
+            startTime: params.startTime,
+            tranches: params.tranches,
             broker: params.broker
         });
         batch = fillBatch(batchSingle, batchSize);

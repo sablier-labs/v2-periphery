@@ -3,9 +3,10 @@ pragma solidity >=0.8.22;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
-import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
+import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
+import { LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2Batch } from "./interfaces/ISablierV2Batch.sol";
 import { Errors } from "./libraries/Errors.sol";
@@ -211,6 +212,107 @@ contract SablierV2Batch is ISablierV2Batch {
                     transferable: batch[i].transferable,
                     startTime: batch[i].startTime,
                     segments: batch[i].segments,
+                    broker: batch[i].broker
+                })
+            );
+        }
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                             SABLIER-V2-LOCKUP-TRANCHED
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @inheritdoc ISablierV2Batch
+    function createWithDurationsLT(
+        ISablierV2LockupTranched lockupTranched,
+        IERC20 asset,
+        Batch.CreateWithDurationsLT[] calldata batch
+    )
+        external
+        override
+        returns (uint256[] memory streamIds)
+    {
+        // Check that the batch size is not zero.
+        uint256 batchSize = batch.length;
+        if (batchSize == 0) {
+            revert Errors.SablierV2Batch_BatchSizeZero();
+        }
+
+        // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
+        // transactions will revert if there is overflow.
+        uint256 i;
+        uint256 transferAmount;
+        for (i = 0; i < batchSize; ++i) {
+            unchecked {
+                transferAmount += batch[i].totalAmount;
+            }
+        }
+
+        // Perform the ERC-20 transfer and approve {SablierV2LockupTranched} to spend the amount of assets.
+        _handleTransfer(address(lockupTranched), asset, transferAmount);
+
+        // Create a stream for each element in the parameter array.
+        streamIds = new uint256[](batchSize);
+        for (i = 0; i < batchSize; ++i) {
+            // Create the stream.
+            streamIds[i] = lockupTranched.createWithDurations(
+                LockupTranched.CreateWithDurations({
+                    sender: batch[i].sender,
+                    recipient: batch[i].recipient,
+                    totalAmount: batch[i].totalAmount,
+                    asset: asset,
+                    cancelable: batch[i].cancelable,
+                    transferable: batch[i].transferable,
+                    tranches: batch[i].tranches,
+                    broker: batch[i].broker
+                })
+            );
+        }
+    }
+
+    /// @inheritdoc ISablierV2Batch
+    function createWithTimestampsLT(
+        ISablierV2LockupTranched lockupTranched,
+        IERC20 asset,
+        Batch.CreateWithTimestampsLT[] calldata batch
+    )
+        external
+        override
+        returns (uint256[] memory streamIds)
+    {
+        // Check that the batch size is not zero.
+        uint256 batchSize = batch.length;
+        if (batchSize == 0) {
+            revert Errors.SablierV2Batch_BatchSizeZero();
+        }
+
+        // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
+        // transactions will revert if there is overflow.
+        uint256 i;
+        uint256 transferAmount;
+        for (i = 0; i < batchSize; ++i) {
+            unchecked {
+                transferAmount += batch[i].totalAmount;
+            }
+        }
+
+        // Perform the ERC-20 transfer and approve {SablierV2LockupTranched} to spend the amount of assets.
+        _handleTransfer(address(lockupTranched), asset, transferAmount);
+
+        // Create a stream for each element in the parameter array.
+        streamIds = new uint256[](batchSize);
+        for (i = 0; i < batchSize; ++i) {
+            // Create the stream.
+            streamIds[i] = lockupTranched.createWithTimestamps(
+                LockupTranched.CreateWithTimestamps({
+                    sender: batch[i].sender,
+                    recipient: batch[i].recipient,
+                    totalAmount: batch[i].totalAmount,
+                    asset: asset,
+                    cancelable: batch[i].cancelable,
+                    transferable: batch[i].transferable,
+                    startTime: batch[i].startTime,
+                    tranches: batch[i].tranches,
                     broker: batch[i].broker
                 })
             );
