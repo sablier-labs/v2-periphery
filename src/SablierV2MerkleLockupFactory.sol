@@ -2,16 +2,16 @@
 pragma solidity >=0.8.22;
 
 import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
-import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
-import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
+import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
+import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { SablierV2MerkleLockupLL } from "./SablierV2MerkleLockupLL.sol";
-import { SablierV2MerkleLockupLT } from "./SablierV2MerkleLockupLT.sol";
 import { ISablierV2MerkleLockupFactory } from "./interfaces/ISablierV2MerkleLockupFactory.sol";
 import { ISablierV2MerkleLockupLL } from "./interfaces/ISablierV2MerkleLockupLL.sol";
 import { ISablierV2MerkleLockupLT } from "./interfaces/ISablierV2MerkleLockupLT.sol";
 import { Errors } from "./libraries/Errors.sol";
+import { SablierV2MerkleLockupLL } from "./SablierV2MerkleLockupLL.sol";
+import { SablierV2MerkleLockupLT } from "./SablierV2MerkleLockupLT.sol";
 import { MerkleLockup, MerkleLockupLT } from "./types/DataTypes.sol";
 
 /// @title SablierV2MerkleLockupFactory
