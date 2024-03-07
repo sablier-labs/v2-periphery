@@ -4,6 +4,7 @@ pragma solidity >=0.8.22 <0.9.0;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
+import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { Precompiles as V2CorePrecompiles } from "@sablier/v2-core/test/utils/Precompiles.sol";
 
 import { Fuzzers as V2CoreFuzzers } from "@sablier/v2-core/test/utils/Fuzzers.sol";
@@ -70,6 +71,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         vm.assume(user != recipient);
         vm.assume(user != address(lockupDynamic) && recipient != address(lockupDynamic));
         vm.assume(user != address(lockupLinear) && recipient != address(lockupLinear));
+        vm.assume(user != address(lockupTranched) && recipient != address(lockupTranched));
 
         // Avoid users blacklisted by USDC or USDT.
         assumeNoBlacklisted(address(ASSET), user);
@@ -80,6 +82,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     function loadDependencies() private {
         lockupDynamic = ISablierV2LockupDynamic(0x7CC7e125d83A581ff438608490Cc0f7bDff79127);
         lockupLinear = ISablierV2LockupLinear(0xAFb979d9afAd1aD27C5eFf4E27226E3AB9e5dCC9);
+        lockupTranched = ISablierV2LockupTranched(0xAFb979d9afAd1aD27C5eFf4E27226E3AB9e5dCC9);
     }
 
     /// @dev Deploys the v2 core dependencies.
