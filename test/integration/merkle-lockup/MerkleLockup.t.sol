@@ -10,7 +10,7 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
     function setUp() public virtual override {
         Integration_Test.setUp();
 
-        // Create the default Merkle Lockup.
+        // Create the default Merkle Lockup contracts.
         merkleLockupLL = createMerkleLockupLL();
         merkleLockupLT = createMerkleLockupLT();
 

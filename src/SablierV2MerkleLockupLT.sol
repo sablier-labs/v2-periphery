@@ -28,7 +28,7 @@ contract SablierV2MerkleLockupLT is
     /// @inheritdoc ISablierV2MerkleLockupLT
     ISablierV2LockupTranched public immutable override LOCKUP_TRANCHED;
 
-    /// @dev The tranches with their respective percentages and durations.
+    /// @dev The tranches with their respective unlock percentages and durations.
     MerkleLockupLT.TrancheWithPercentage[] internal _tranchesWithPercentages;
 
     /*//////////////////////////////////////////////////////////////////////////

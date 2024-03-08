@@ -68,7 +68,7 @@ interface ISablierV2MerkleLockupFactory {
     /// @param baseParams Struct encapsulating the {SablierV2MerkleLockup} parameters, which are documented in
     /// {DataTypes}.
     /// @param lockupTranched The address of the {SablierV2LockupTranched} contract.
-    /// @param tranchesWithPercentages The tranches with their respective percentages.
+    /// @param tranchesWithPercentages The tranches with their respective unlock percentages.
     /// @param aggregateAmount Total amount of ERC-20 assets to be streamed to all recipients.
     /// @param recipientsCount Total number of recipients eligible to claim.
     /// @return merkleLockupLT The address of the newly created Merkle Lockup contract.
