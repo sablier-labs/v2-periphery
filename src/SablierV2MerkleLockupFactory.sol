@@ -69,16 +69,16 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         returns (ISablierV2MerkleLockupLT merkleLockupLT)
     {
         // Calculate the sum of percentages across all tranches.
-        UD60x18 percentagesSum;
+        UD60x18 totalPercentage;
         uint256 trancheCount = tranchesWithPercentages.length;
         for (uint256 i = 0; i < trancheCount; ++i) {
             UD60x18 percentage = (tranchesWithPercentages[i].unlockPercentage).intoUD60x18();
-            percentagesSum = percentagesSum.add(percentage);
+            totalPercentage = totalPercentage.add(percentage);
         }
 
         // Checks: the sum of percentages equals 100%.
-        if (!percentagesSum.eq(ud(1e18))) {
-            revert Errors.SablierV2MerkleLockupFactory_PercentageSumNotEqualOneHundred(percentagesSum.intoUint256());
+        if (!totalPercentage.eq(ud(1e18))) {
+            revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred(totalPercentage.intoUint256());
         }
 
         // Hash the parameters to generate a salt.

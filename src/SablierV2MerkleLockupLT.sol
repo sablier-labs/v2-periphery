@@ -117,7 +117,7 @@ contract SablierV2MerkleLockupLT is
         emit Claim(index, recipient, amount, streamId);
     }
 
-    /// @dev Calculates the stream tranches based on Merkle tree amount and predefined percentage for each tranche.
+    /// @dev Calculates the stream tranches based on Merkle tree amount and unlock percentage for each tranche.
     function _calculateTranches(uint128 amount)
         internal
         view

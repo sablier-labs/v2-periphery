@@ -33,6 +33,6 @@ library Errors {
                           SABLIER-V2-MERKLE-LOCKUP-FACTORY
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Thrown when trying to create a Merkle Lockup with no recipients.
-    error SablierV2MerkleLockupFactory_PercentageSumNotEqualOneHundred(uint256 percentageSum);
+    /// @notice Thrown when the sum of the tranches' unlock percentages does not equal 100%.
+    error SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred(uint256 totalPercentage);
 }

@@ -14,11 +14,11 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockup_Integration_Test.setUp();
     }
 
-    modifier whenPercentagesSumIsNotOneHundred() {
+    modifier whenTotalPercentageIsNotOneHundred() {
         _;
     }
 
-    function test_RevertWhen_PercentageSumLessThanOneHundred() external whenPercentagesSumIsNotOneHundred {
+    function test_RevertWhen_TotalPercentageLessThanOneHundred() external whenTotalPercentageIsNotOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
@@ -26,12 +26,12 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.05e18);
 
-        uint256 percentageSum = tranchesWithPercentages[0].unlockPercentage.intoUint256()
+        uint256 totalPercentage = tranchesWithPercentages[0].unlockPercentage.intoUint256()
             + tranchesWithPercentages[1].unlockPercentage.intoUint256();
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleLockupFactory_PercentageSumNotEqualOneHundred.selector, percentageSum
+                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred.selector, totalPercentage
             )
         );
 
@@ -44,7 +44,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         });
     }
 
-    function test_RevertWhen_PercentageSumGreaterThanOneHundred() external whenPercentagesSumIsNotOneHundred {
+    function test_RevertWhen_TotalPercentageGreaterThanOneHundred() external whenTotalPercentageIsNotOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
@@ -52,12 +52,12 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.75e18);
 
-        uint256 percentageSum = tranchesWithPercentages[0].unlockPercentage.intoUint256()
+        uint256 totalPercentage = tranchesWithPercentages[0].unlockPercentage.intoUint256()
             + tranchesWithPercentages[1].unlockPercentage.intoUint256();
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleLockupFactory_PercentageSumNotEqualOneHundred.selector, percentageSum
+                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred.selector, totalPercentage
             )
         );
 
@@ -70,11 +70,11 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         });
     }
 
-    modifier whenPercentagesSumIsOneHundred() {
+    modifier whenTotalPercentageIsOneHundred() {
         _;
     }
 
-    function test_RevertWhen_CampaignNameTooLong() external whenPercentagesSumIsOneHundred {
+    function test_RevertWhen_CampaignNameTooLong() external whenTotalPercentageIsOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
@@ -102,7 +102,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
     }
 
     /// @dev This test works because a default Merkle Lockup contract is deployed in {Integration_Test.setUp}
-    function test_RevertGiven_AlreadyCreated() external whenPercentagesSumIsOneHundred whenCampaignNameIsNotTooLong {
+    function test_RevertGiven_AlreadyCreated() external whenTotalPercentageIsOneHundred whenCampaignNameIsNotTooLong {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
@@ -127,7 +127,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         uint40 expiration
     )
         external
-        whenPercentagesSumIsOneHundred
+        whenTotalPercentageIsOneHundred
         whenCampaignNameIsNotTooLong
         givenNotAlreadyCreated
     {
