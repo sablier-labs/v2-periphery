@@ -72,11 +72,11 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         UD60x18 percentagesSum;
         uint256 trancheCount = tranchesWithPercentages.length;
         for (uint256 i = 0; i < trancheCount; ++i) {
-            UD60x18 percentage = (tranchesWithPercentages[i].amountPercentage).intoUD60x18();
+            UD60x18 percentage = (tranchesWithPercentages[i].unlockPercentage).intoUD60x18();
             percentagesSum = percentagesSum.add(percentage);
         }
 
-        // Checks: the sum percentage equal 100%.
+        // Checks: the sum of percentages equals 100%.
         if (!percentagesSum.eq(ud(1e18))) {
             revert Errors.SablierV2MerkleLockupFactory_PercentageSumNotEqualOneHundred(percentagesSum.intoUint256());
         }

@@ -4,7 +4,7 @@ pragma solidity >=0.8.22 <0.9.0;
 import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ud2x18 } from "@prb/math/src/UD2x18.sol";
-import { UD60x18 } from "@prb/math/src/UD60x18.sol";
+import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
 import { Broker, LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Batch, MerkleLockup, MerkleLockupLT } from "src/types/DataTypes.sol";
@@ -149,9 +149,9 @@ contract Defaults is Merkle {
     {
         tranchesWithPercentages_ = new MerkleLockupLT.TrancheWithPercentage[](2);
         tranchesWithPercentages_[0] =
-            MerkleLockupLT.TrancheWithPercentage({ amountPercentage: ud2x18(0.25e18), duration: 2500 seconds });
+            MerkleLockupLT.TrancheWithPercentage({ unlockPercentage: ud2x18(0.25e18), duration: 2500 seconds });
         tranchesWithPercentages_[1] =
-            MerkleLockupLT.TrancheWithPercentage({ amountPercentage: ud2x18(0.75e18), duration: 7500 seconds });
+            MerkleLockupLT.TrancheWithPercentage({ unlockPercentage: ud2x18(0.75e18), duration: 7500 seconds });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -304,6 +304,23 @@ contract Defaults is Merkle {
         tranches_ = new LockupTranched.Tranche[](2);
         tranches_[0] = LockupTranched.Tranche({ amount: 2500e18, timestamp: uint40(block.timestamp) + CLIFF_DURATION });
         tranches_[1] = LockupTranched.Tranche({ amount: 7500e18, timestamp: uint40(block.timestamp) + TOTAL_DURATION });
+    }
+
+    /// @dev Mirros the logic from {SablierV2MerkleLockupLT._calculateTranches}.
+    function tranches(uint128 totalAmount) public view returns (LockupTranched.Tranche[] memory tranches_) {
+        tranches_ = tranches();
+
+        uint128 amount0 = ud(totalAmount).mul(tranchesWithPercentages()[0].unlockPercentage.intoUD60x18()).intoUint128();
+        uint128 amount1 = ud(totalAmount).mul(tranchesWithPercentages()[1].unlockPercentage.intoUD60x18()).intoUint128();
+
+        tranches_[0].amount = amount0;
+        tranches_[1].amount = amount1;
+
+        uint128 amountsSum = amount0 + amount1;
+
+        if (amountsSum != totalAmount) {
+            tranches_[1].amount += totalAmount - amountsSum;
+        }
     }
 
     /*//////////////////////////////////////////////////////////////////////////

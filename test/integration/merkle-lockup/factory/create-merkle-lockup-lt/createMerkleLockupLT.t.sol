@@ -14,20 +14,20 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockup_Integration_Test.setUp();
     }
 
-    modifier whenTranchesPercentageSumIsNotOneHundred() {
+    modifier whenPercentagesSumIsNotOneHundred() {
         _;
     }
 
-    function test_RevertWhen_PercentageSumLessThanOneHundred() external whenTranchesPercentageSumIsNotOneHundred {
+    function test_RevertWhen_PercentageSumLessThanOneHundred() external whenPercentagesSumIsNotOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
 
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
-        tranchesWithPercentages[0].amountPercentage = ud2x18(0.05e18);
+        tranchesWithPercentages[0].unlockPercentage = ud2x18(0.05e18);
 
-        uint256 percentageSum = tranchesWithPercentages[0].amountPercentage.intoUint256()
-            + tranchesWithPercentages[1].amountPercentage.intoUint256();
+        uint256 percentageSum = tranchesWithPercentages[0].unlockPercentage.intoUint256()
+            + tranchesWithPercentages[1].unlockPercentage.intoUint256();
 
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -44,16 +44,16 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         });
     }
 
-    function test_RevertWhen_PercentageSumGreaterThanOneHundred() external whenTranchesPercentageSumIsNotOneHundred {
+    function test_RevertWhen_PercentageSumGreaterThanOneHundred() external whenPercentagesSumIsNotOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
 
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
-        tranchesWithPercentages[0].amountPercentage = ud2x18(0.75e18);
+        tranchesWithPercentages[0].unlockPercentage = ud2x18(0.75e18);
 
-        uint256 percentageSum = tranchesWithPercentages[0].amountPercentage.intoUint256()
-            + tranchesWithPercentages[1].amountPercentage.intoUint256();
+        uint256 percentageSum = tranchesWithPercentages[0].unlockPercentage.intoUint256()
+            + tranchesWithPercentages[1].unlockPercentage.intoUint256();
 
         vm.expectRevert(
             abi.encodeWithSelector(

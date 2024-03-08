@@ -90,11 +90,11 @@ library MerkleLockupLT {
     /// @dev Each recipient may have a different amount allocated, this struct stores the percentage of the
     /// amount designated for each duration unlock. We use a 18 decimals format to represent percentages:
     /// 100% = 1e18.
-    /// @param amountPercentage The percentage of the amount designated to be unlocked in this tranche.
+    /// @param unlockPercentage The percentage of the amount designated to be unlocked in this tranche.
     /// @param duration The time difference in seconds between this tranche and the previous one.
     struct TrancheWithPercentage {
         // slot 0
-        UD2x18 amountPercentage;
+        UD2x18 unlockPercentage;
         uint40 duration;
     }
 }

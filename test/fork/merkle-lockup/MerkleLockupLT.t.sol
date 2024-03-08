@@ -36,6 +36,7 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
 
     struct Vars {
         uint256 actualStreamId;
+        LockupTranched.Tranche[] actualTranches;
         LockupTranched.StreamLT actualStream;
         uint128[] amounts;
         uint256 aggregateAmount;
@@ -166,7 +167,7 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
             isTransferable: defaults.TRANSFERABLE(),
             sender: params.admin,
             startTime: uint40(block.timestamp),
-            tranches: defaults.tranches(),
+            tranches: defaults.tranches({ totalAmount: vars.amounts[params.posBeforeSort] }),
             wasCanceled: false
         });
 

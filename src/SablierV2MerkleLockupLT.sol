@@ -136,7 +136,7 @@ contract SablierV2MerkleLockupLT is
         // Iterate over each tranche to calculate its amount based on its percentage.
         for (uint256 i = 0; i < trancheCount; ++i) {
             // Convert the tranche's percentage to `UD60x18` for calculation.
-            UD60x18 percentage = (tranchesWithPercentages[i].amountPercentage).intoUD60x18();
+            UD60x18 percentage = (tranchesWithPercentages[i].unlockPercentage).intoUD60x18();
 
             // Calculate the tranche's amount by applying its percentage to the `amount`.
             UD60x18 trancheAmount = udAmount.mul(percentage);
@@ -151,8 +151,8 @@ contract SablierV2MerkleLockupLT is
             });
         }
 
-        // Although this should never happen because the sum of percentages equals 100%, we adjust
-        // the last tranche amount to prevent claim failure due to rounding differences during calculations.
+        // Adjust the last tranche amount to prevent claim failure due to rounding differences during calculations. We
+        // need to ensure the protocol invariant: the sum of all tranches' amounts equals the deposit amount.
         if (!udAmount.eq(trancheAmountsSum)) {
             tranches[trancheCount - 1].amount += udAmount.intoUint128() - trancheAmountsSum.intoUint128();
         }

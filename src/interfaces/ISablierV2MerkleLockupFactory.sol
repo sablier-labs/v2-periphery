@@ -63,7 +63,7 @@ interface ISablierV2MerkleLockupFactory {
     /// @dev Emits a {CreateMerkleLockupLT} event.
     ///
     /// Requirements:
-    /// - The sum of the tranches percantages must equal 100% = 1e18.
+    /// - The sum of the tranches' unlock percentages must equal 100% = 1e18.
     ///
     /// @param baseParams Struct encapsulating the {SablierV2MerkleLockup} parameters, which are documented in
     /// {DataTypes}.
