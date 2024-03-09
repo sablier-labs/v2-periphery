@@ -15,7 +15,7 @@ FOUNDRY_PROFILE=optimized forge build
 batch=$(cat out-optimized/SablierV2Batch.sol/SablierV2Batch.json | jq -r '.bytecode.object' | cut -c 3-)
 merkle_lockup_factory=$(cat out-optimized/SablierV2MerkleLockupFactory.sol/SablierV2MerkleLockupFactory.json | jq -r '.bytecode.object' | cut -c 3-)
 
-precompiles_path="test/utils/Precompiles.sol"
+precompiles_path="precompiles/Precompiles.sol"
 if [ ! -f $precompiles_path ]; then
     echo "Precompiles file does not exist"
     exit 1

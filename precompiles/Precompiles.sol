@@ -2,8 +2,14 @@
 // solhint-disable max-line-length,no-inline-assembly,reason-string
 pragma solidity >=0.8.22;
 
-import { ISablierV2Batch } from "../../src/interfaces/ISablierV2Batch.sol";
-import { ISablierV2MerkleLockupFactory } from "../../src/interfaces/ISablierV2MerkleLockupFactory.sol";
+import { Precompiles as V2CorePrecompiles } from "@sablier/v2-core/precompiles/Precompiles.sol";
+import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
+import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
+import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
+import { ISablierV2NFTDescriptor } from "@sablier/v2-core/src/interfaces/ISablierV2NFTDescriptor.sol";
+
+import { ISablierV2Batch } from "../src/interfaces/ISablierV2Batch.sol";
+import { ISablierV2MerkleLockupFactory } from "../src/interfaces/ISablierV2MerkleLockupFactory.sol";
 
 contract Precompiles {
     /*//////////////////////////////////////////////////////////////////////////
@@ -49,5 +55,31 @@ contract Precompiles {
     {
         batch = deployBatch();
         merkleLockupFactory = deployMerkleLockupFactory();
+    }
+
+    /// @notice Deploys the entire Sablier V2 Protocol from precompiled bytecode.
+    ///
+    /// 1. {SablierV2NFTDescriptor}
+    /// 2. {SablierV2LockupDynamic}
+    /// 3. {SablierV2LockupLinear}
+    /// 4. {SablierV2LockupTranched}
+    /// 5. {SablierV2Batch}
+    /// 6. {SablierV2MerkleLockupFactory}
+    function deployProtocol(address initialAdmin)
+        public
+        returns (
+            ISablierV2LockupDynamic lockupDynamic,
+            ISablierV2LockupLinear lockupLinear,
+            ISablierV2LockupTranched lockupTranched,
+            ISablierV2NFTDescriptor nftDescriptor,
+            ISablierV2Batch batch,
+            ISablierV2MerkleLockupFactory merkleLockupFactory
+        )
+    {
+        // Deploy V2 Core.
+        (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor) = new V2CorePrecompiles().deployCore(initialAdmin);
+
+        // Deploy V2 Periphery.
+        (batch, merkleLockupFactory) = deployPeriphery();
     }
 }

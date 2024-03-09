@@ -29,7 +29,6 @@ contract Defaults is Merkle {
     uint40 public immutable CLIFF_TIME;
     uint40 public immutable END_TIME;
     uint256 public constant ETHER_AMOUNT = 10_000 ether;
-    uint256 public constant MAX_SEGMENT_COUNT = 1000;
     uint128 public constant PER_STREAM_AMOUNT = 10_000e18;
     uint128 public constant REFUND_AMOUNT = 7500e18; // deposit - cliff amount
     uint40 public immutable START_TIME;
