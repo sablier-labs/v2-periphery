@@ -15,6 +15,12 @@ claim.t.sol
       │  └── when the Merkle proof is not valid
       │     └── it should revert
       └── given the claim is included in the Merkle tree
-         ├── it should mark the index as claimed
-         ├── it should create a LockupTranched stream
-         └── it should emit a {Claim} event
+         ├── when the calculation of the tranches' amounts causes a rounding error
+         │  ├── it should adjust the last tranche amount
+         │  ├── it should mark the index as claimed
+         │  ├── it should create a LockupTranched stream
+         │  └── it should emit a {Claim} event
+         └── when the calculation of the tranches' amounts does not cause a rounding error
+            ├── it should mark the index as claimed
+            ├── it should create a LockupTranched stream
+            └── it should emit a {Claim} event

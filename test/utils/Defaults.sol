@@ -88,6 +88,10 @@ contract Defaults is Merkle {
         MERKLE_ROOT = getRoot(LEAVES.toBytes32());
     }
 
+    function getLeaves() public view returns (uint256[] memory) {
+        return LEAVES;
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                                   MERKLE-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
