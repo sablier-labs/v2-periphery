@@ -115,54 +115,6 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
                                     CALL EXPECTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Expects a call to {ISablierV2LockupDynamic.createWithDurations}.
-    function expectCallToCreateWithDurationsLD(LockupDynamic.CreateWithDurations memory params) internal {
-        vm.expectCall({
-            callee: address(lockupDynamic),
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDurations, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupLinear.createWithDurations}.
-    function expectCallToCreateWithDurationsLL(LockupLinear.CreateWithDurations memory params) internal {
-        vm.expectCall({
-            callee: address(lockupLinear),
-            data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupTranched.createWithDurations}.
-    function expectCallToCreateWithDurationsLT(LockupTranched.CreateWithDurations memory params) internal {
-        vm.expectCall({
-            callee: address(lockupTranched),
-            data: abi.encodeCall(ISablierV2LockupTranched.createWithDurations, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupDynamic.createWithTimestamps}.
-    function expectCallToCreateWithTimestampsLD(LockupDynamic.CreateWithTimestamps memory params) internal {
-        vm.expectCall({
-            callee: address(lockupDynamic),
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithTimestamps, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupLinear.createWithTimestamps}.
-    function expectCallToCreateWithTimestampsLL(LockupLinear.CreateWithTimestamps memory params) internal {
-        vm.expectCall({
-            callee: address(lockupLinear),
-            data: abi.encodeCall(ISablierV2LockupLinear.createWithTimestamps, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupTranched.createWithTimestamps}.
-    function expectCallToCreateWithTimestampsLT(LockupTranched.CreateWithTimestamps memory params) internal {
-        vm.expectCall({
-            callee: address(lockupTranched),
-            data: abi.encodeCall(ISablierV2LockupTranched.createWithTimestamps, (params))
-        });
-    }
-
     /// @dev Expects a call to {IERC20.transfer}.
     function expectCallToTransfer(address to, uint256 amount) internal {
         expectCallToTransfer(address(dai), to, amount);
