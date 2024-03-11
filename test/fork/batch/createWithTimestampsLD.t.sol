@@ -6,9 +6,9 @@ import { LockupDynamic } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Fork_Test } from "../Fork.t.sol";
 import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
 import { BatchBuilder } from "../../utils/BatchBuilder.sol";
+import { Fork_Test } from "../Fork.t.sol";
 
 /// @dev Runs against multiple fork assets.
 abstract contract CreateWithTimestamps_LockupDynamic_Batch_Fork_Test is Fork_Test {
