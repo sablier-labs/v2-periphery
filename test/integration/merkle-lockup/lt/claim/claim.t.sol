@@ -4,12 +4,12 @@ pragma solidity >=0.8.22 <0.9.0;
 import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { Lockup, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
+import { ISablierV2MerkleLockupLT } from "src/interfaces/ISablierV2MerkleLockupLT.sol";
 import { Errors } from "src/libraries/Errors.sol";
 import { MerkleLockup } from "src/types/DataTypes.sol";
-import { ISablierV2MerkleLockupLT } from "src/interfaces/ISablierV2MerkleLockupLT.sol";
 
-import { Merkle } from "../../../../utils/Murky.sol";
 import { MerkleBuilder } from "../../../../utils/MerkleBuilder.sol";
+import { Merkle } from "../../../../utils/Murky.sol";
 
 import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
@@ -109,27 +109,27 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         _;
     }
 
-    // Needed this variables in storage due to how the imported libaries work.
-    uint256[] public leaves = new uint256[](4); // same number of recipients as in the defaults
+    // Needed this variable in storage due to how the imported libaries work.
+    uint256[] public leaves = new uint256[](4); // same number of recipients as in Defaults
 
-    function test_Claim_TrancheAmountCalculationRoundingError()
+    function test_Claim_TrancheAmountsSumNotEqualClaimAmount()
         external
         givenCampaignNotExpired
         givenNotClaimed
         givenIncludedInMerkleTree
     {
         // Declare an amount that will cause a rounding error.
-        uint128 claimAmount = 340_282_366_920_938_463_463_374_607_431_768_211_453;
-        uint256 aggregateAmount = defaults.CLAIM_AMOUNT() * 3 + uint256(claimAmount);
+        uint128 claimAmount = defaults.CLAIM_AMOUNT() + 1;
+        uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT() + 1;
 
         // Compute the Merkle tree.
         leaves = defaults.getLeaves();
-        leaves[0] = MerkleBuilder.computeLeaf(defaults.INDEX1(), users.recipient1, claimAmount);
+        uint256 leaf = MerkleBuilder.computeLeaf(defaults.INDEX1(), users.recipient1, claimAmount);
+        leaves[0] = leaf;
         MerkleBuilder.sortLeaves(leaves);
         bytes32 merkleRoot = getRoot(leaves.toBytes32());
 
         // Compute the Merkle proof.
-        uint256 leaf = MerkleBuilder.computeLeaf(defaults.INDEX1(), users.recipient1, claimAmount);
         uint256 pos = Arrays.findUpperBound(leaves, leaf);
         bytes32[] memory proof = getProof(leaves.toBytes32(), pos);
 
@@ -171,7 +171,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         assertEq(actualStream, expectedStream);
     }
 
-    function test_Claim() external {
+    function test_Claim() external givenCampaignNotExpired givenNotClaimed givenIncludedInMerkleTree {
         uint256 expectedStreamId = lockupTranched.nextStreamId();
 
         vm.expectEmit({ emitter: address(merkleLockupLT) });
