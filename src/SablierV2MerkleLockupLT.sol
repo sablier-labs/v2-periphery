@@ -152,7 +152,7 @@ contract SablierV2MerkleLockupLT is
         }
 
         // Adjust the last tranche amount to prevent claim failure due to rounding differences during calculations. We
-        // need to ensure the protocol invariant: the sum of all tranches' amounts equals the deposit amount.
+        // need to ensure the core protocol invariant: the sum of all tranches' amounts equals the deposit amount.
         if (!udAmount.eq(trancheAmountsSum)) {
             tranches[trancheCount - 1].amount += udAmount.intoUint128() - trancheAmountsSum.intoUint128();
         }
