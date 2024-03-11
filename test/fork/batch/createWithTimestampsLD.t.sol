@@ -39,7 +39,6 @@ abstract contract CreateWithTimestamps_LockupDynamic_Batch_Fork_Test is Fork_Tes
         (params.perStreamAmount,) = fuzzDynamicStreamAmounts({
             upperBound: MAX_UINT128 / params.batchSize,
             segments: params.segments,
-            protocolFee: defaults.PROTOCOL_FEE(),
             brokerFee: defaults.BROKER_FEE()
         });
 

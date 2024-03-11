@@ -39,7 +39,6 @@ abstract contract CreateWithTimestamps_LockupTranched_Batch_Fork_Test is Fork_Te
         (params.perStreamAmount,) = fuzzTranchedStreamAmounts({
             upperBound: MAX_UINT128 / params.batchSize,
             tranches: params.tranches,
-            protocolFee: defaults.PROTOCOL_FEE(),
             brokerFee: defaults.BROKER_FEE()
         });
 

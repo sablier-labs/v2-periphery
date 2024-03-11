@@ -4,7 +4,6 @@ pragma solidity >=0.8.22 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import { ISablierV2Comptroller } from "@sablier/v2-core/src/interfaces/ISablierV2Comptroller.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
@@ -44,7 +43,6 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
 
     IERC20 internal dai;
     ISablierV2Batch internal batch;
-    ISablierV2Comptroller internal comptroller;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
@@ -108,7 +106,6 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         vm.label({ account: address(merkleLockupFactory), newLabel: "MerkleLockupFactory" });
         vm.label({ account: address(merkleLockupLL), newLabel: "MerkleLockupLL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
-        vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
         vm.label({ account: address(lockupTranched), newLabel: "LockupTranched" });
