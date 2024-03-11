@@ -88,6 +88,6 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
     /// @dev Deploys the v2 core dependencies.
     // TODO: Remove this function once the v2 core contracts are deployed on Mainnet.
     function deployDependencies() private {
-        (, lockupDynamic, lockupLinear, lockupTranched,) = new V2CorePrecompiles().deployCore(users.admin);
+        (lockupDynamic, lockupLinear, lockupTranched,) = new V2CorePrecompiles().deployCore(users.admin);
     }
 }

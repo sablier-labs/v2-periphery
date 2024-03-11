@@ -4,11 +4,10 @@ pragma solidity >=0.8.22 <0.9.0;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import { ISablierV2Comptroller } from "@sablier/v2-core/src/interfaces/ISablierV2Comptroller.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
-import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Assertions as V2CoreAssertions } from "@sablier/v2-core/test/utils/Assertions.sol";
 import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
@@ -44,7 +43,6 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
 
     IERC20 internal dai;
     ISablierV2Batch internal batch;
-    ISablierV2Comptroller internal comptroller;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
@@ -108,7 +106,6 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         vm.label({ account: address(merkleLockupFactory), newLabel: "MerkleLockupFactory" });
         vm.label({ account: address(merkleLockupLL), newLabel: "MerkleLockupLL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
-        vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
         vm.label({ account: address(lockupTranched), newLabel: "LockupTranched" });
@@ -117,38 +114,6 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
     /*//////////////////////////////////////////////////////////////////////////
                                     CALL EXPECTS
     //////////////////////////////////////////////////////////////////////////*/
-
-    /// @dev Expects a call to {ISablierV2LockupDynamic.createWithDurations}.
-    function expectCallToCreateWithDurationsLD(LockupDynamic.CreateWithDurations memory params) internal {
-        vm.expectCall({
-            callee: address(lockupDynamic),
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDurations, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupLinear.createWithDurations}.
-    function expectCallToCreateWithDurationsLL(LockupLinear.CreateWithDurations memory params) internal {
-        vm.expectCall({
-            callee: address(lockupLinear),
-            data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupDynamic.createWithTimestamps}.
-    function expectCallToCreateWithTimestampsLD(LockupDynamic.CreateWithTimestamps memory params) internal {
-        vm.expectCall({
-            callee: address(lockupDynamic),
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithTimestamps, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupLinear.createWithTimestamps}.
-    function expectCallToCreateWithTimestampsLL(LockupLinear.CreateWithTimestamps memory params) internal {
-        vm.expectCall({
-            callee: address(lockupLinear),
-            data: abi.encodeCall(ISablierV2LockupLinear.createWithTimestamps, (params))
-        });
-    }
 
     /// @dev Expects a call to {IERC20.transfer}.
     function expectCallToTransfer(address to, uint256 amount) internal {
@@ -200,6 +165,21 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         });
     }
 
+    /// @dev Expects multiple calls to {ISablierV2LockupTranched.createWithDurations}, each with the specified
+    /// `params`.
+    function expectMultipleCallsToCreateWithDurationsLT(
+        uint64 count,
+        LockupTranched.CreateWithDurations memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(lockupTranched),
+            count: count,
+            data: abi.encodeCall(ISablierV2LockupTranched.createWithDurations, (params))
+        });
+    }
+
     /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithTimestamps}, each with the specified
     /// `params`.
     function expectMultipleCallsToCreateWithTimestampsLD(
@@ -227,6 +207,21 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
             callee: address(lockupLinear),
             count: count,
             data: abi.encodeCall(ISablierV2LockupLinear.createWithTimestamps, (params))
+        });
+    }
+
+    /// @dev Expects multiple calls to {ISablierV2LockupTranched.createWithTimestamps}, each with the specified
+    /// `params`.
+    function expectMultipleCallsToCreateWithTimestampsLT(
+        uint64 count,
+        LockupTranched.CreateWithTimestamps memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(lockupTranched),
+            count: count,
+            data: abi.encodeCall(ISablierV2LockupTranched.createWithTimestamps, (params))
         });
     }
 

@@ -31,7 +31,6 @@ contract Defaults is Merkle {
     uint256 public constant ETHER_AMOUNT = 10_000 ether;
     uint256 public constant MAX_SEGMENT_COUNT = 1000;
     uint128 public constant PER_STREAM_AMOUNT = 10_000e18;
-    UD60x18 public constant PROTOCOL_FEE = UD60x18.wrap(0);
     uint128 public constant REFUND_AMOUNT = 7500e18; // deposit - cliff amount
     uint40 public immutable START_TIME;
     uint40 public constant TOTAL_DURATION = 10_000 seconds;
@@ -214,10 +213,6 @@ contract Defaults is Merkle {
         });
     }
 
-    function dynamicRange() public view returns (LockupDynamic.Range memory) {
-        return LockupDynamic.Range({ start: START_TIME, end: END_TIME });
-    }
-
     /// @dev Returns a batch of `LockupDynamic.Segment` parameters.
     function segments() private view returns (LockupDynamic.Segment[] memory segments_) {
         segments_ = new LockupDynamic.Segment[](2);
@@ -304,6 +299,41 @@ contract Defaults is Merkle {
                              SABLIER-V2-LOCKUP-TRANCHED
     //////////////////////////////////////////////////////////////////////////*/
 
+    function createWithDurationsLT() public view returns (LockupTranched.CreateWithDurations memory) {
+        return createWithDurationsLT(asset);
+    }
+
+    function createWithDurationsLT(IERC20 asset_) public view returns (LockupTranched.CreateWithDurations memory) {
+        return LockupTranched.CreateWithDurations({
+            sender: users.alice,
+            recipient: users.recipient0,
+            totalAmount: PER_STREAM_AMOUNT,
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            tranches: tranchesWithDurations(),
+            broker: broker()
+        });
+    }
+
+    function createWithTimestampsLT() public view returns (LockupTranched.CreateWithTimestamps memory) {
+        return createWithTimestampsLT(asset);
+    }
+
+    function createWithTimestampsLT(IERC20 asset_) public view returns (LockupTranched.CreateWithTimestamps memory) {
+        return LockupTranched.CreateWithTimestamps({
+            sender: users.alice,
+            recipient: users.recipient0,
+            totalAmount: PER_STREAM_AMOUNT,
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            startTime: START_TIME,
+            tranches: tranches(),
+            broker: broker()
+        });
+    }
+
     function tranches() public view returns (LockupTranched.Tranche[] memory tranches_) {
         tranches_ = new LockupTranched.Tranche[](2);
         tranches_[0] = LockupTranched.Tranche({ amount: 2500e18, timestamp: uint40(block.timestamp) + CLIFF_DURATION });
@@ -327,6 +357,25 @@ contract Defaults is Merkle {
         }
     }
 
+    /// @dev Returns a batch of `LockupTranched.TrancheWithDuration` parameters.
+    function tranchesWithDurations() public pure returns (LockupTranched.TrancheWithDuration[] memory) {
+        return tranchesWithDurations({ amount0: 2500e18, amount1: 7500e18 });
+    }
+
+    /// @dev Returns a batch of `LockupTranched.TrancheWithDuration` parameters.
+    function tranchesWithDurations(
+        uint128 amount0,
+        uint128 amount1
+    )
+        public
+        pure
+        returns (LockupTranched.TrancheWithDuration[] memory segments_)
+    {
+        segments_ = new LockupTranched.TrancheWithDuration[](2);
+        segments_[0] = LockupTranched.TrancheWithDuration({ amount: amount0, duration: 2500 seconds });
+        segments_[1] = LockupTranched.TrancheWithDuration({ amount: amount1, duration: 7500 seconds });
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                                         BATCH
     //////////////////////////////////////////////////////////////////////////*/
@@ -339,6 +388,11 @@ contract Defaults is Merkle {
     /// @dev Returns a default-size batch of `Batch.CreateWithDurationsLL` parameters.
     function batchCreateWithDurationsLL() public view returns (Batch.CreateWithDurationsLL[] memory batch) {
         batch = BatchBuilder.fillBatch(createWithDurationsLL(), BATCH_SIZE);
+    }
+
+    /// @dev Returns a default-size batch of `Batch.CreateWithDurationsLT` parameters.
+    function batchCreateWithDurationsLT() public view returns (Batch.CreateWithDurationsLT[] memory batch) {
+        batch = BatchBuilder.fillBatch(createWithDurationsLT(), BATCH_SIZE);
     }
 
     /// @dev Returns a default-size batch of `Batch.CreateWithTimestampsLD` parameters.
@@ -367,5 +421,19 @@ contract Defaults is Merkle {
         returns (Batch.CreateWithTimestampsLL[] memory batch)
     {
         batch = BatchBuilder.fillBatch(createWithTimestampsLL(), batchSize);
+    }
+
+    /// @dev Returns a default-size batch of `Batch.CreateWithTimestampsLT` parameters.
+    function batchCreateWithTimestampsLT() public view returns (Batch.CreateWithTimestampsLT[] memory batch) {
+        batch = batchCreateWithTimestampsLT(BATCH_SIZE);
+    }
+
+    /// @dev Returns a batch of `Batch.CreateWithTimestampsLL` parameters.
+    function batchCreateWithTimestampsLT(uint256 batchSize)
+        public
+        view
+        returns (Batch.CreateWithTimestampsLT[] memory batch)
+    {
+        batch = BatchBuilder.fillBatch(createWithTimestampsLT(), batchSize);
     }
 }
