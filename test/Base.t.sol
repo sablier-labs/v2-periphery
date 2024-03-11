@@ -7,6 +7,7 @@ import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/I
 import { ISablierV2Comptroller } from "@sablier/v2-core/src/interfaces/ISablierV2Comptroller.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
+import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Assertions as V2CoreAssertions } from "@sablier/v2-core/test/utils/Assertions.sol";
@@ -15,11 +16,14 @@ import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2MerkleLockupFactory } from "src/interfaces/ISablierV2MerkleLockupFactory.sol";
 import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
+import { ISablierV2MerkleLockupLT } from "src/interfaces/ISablierV2MerkleLockupLT.sol";
 import { SablierV2Batch } from "src/SablierV2Batch.sol";
 import { SablierV2MerkleLockupFactory } from "src/SablierV2MerkleLockupFactory.sol";
 import { SablierV2MerkleLockupLL } from "src/SablierV2MerkleLockupLL.sol";
+import { SablierV2MerkleLockupLT } from "src/SablierV2MerkleLockupLT.sol";
 
 import { ERC20Mock } from "./mocks/erc20/ERC20Mock.sol";
+import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
 import { Events } from "./utils/Events.sol";
@@ -27,7 +31,7 @@ import { Merkle } from "./utils/Murky.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
-abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions, V2CoreUtils {
+abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2CoreAssertions, V2CoreUtils {
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
@@ -44,8 +48,10 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
+    ISablierV2LockupTranched internal lockupTranched;
     ISablierV2MerkleLockupFactory internal merkleLockupFactory;
     ISablierV2MerkleLockupLL internal merkleLockupLL;
+    ISablierV2MerkleLockupLT internal merkleLockupLT;
 
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION
@@ -105,6 +111,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
+        vm.label({ account: address(lockupTranched), newLabel: "LockupTranched" });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -292,6 +299,48 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         });
     }
 
+    function computeMerkleLockupLTAddress(
+        address admin,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (address)
+    {
+        return computeMerkleLockupLTAddress(admin, dai, merkleRoot, expiration);
+    }
+
+    function computeMerkleLockupLTAddress(
+        address admin,
+        IERC20 asset_,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (address)
+    {
+        bytes32 salt = keccak256(
+            abi.encodePacked(
+                admin,
+                address(asset_),
+                abi.encode(defaults.IPFS_CID()),
+                defaults.NAME_BYTES32(),
+                merkleRoot,
+                expiration,
+                defaults.CANCELABLE(),
+                defaults.TRANSFERABLE(),
+                lockupTranched,
+                abi.encode(defaults.tranchesWithPercentages())
+            )
+        );
+        bytes32 creationBytecodeHash = keccak256(getMerkleLockupLTBytecode(admin, asset_, merkleRoot, expiration));
+        return computeCreate2Address({
+            salt: salt,
+            initcodeHash: creationBytecodeHash,
+            deployer: address(merkleLockupFactory)
+        });
+    }
+
     function getMerkleLockupLLBytecode(
         address admin,
         IERC20 asset_,
@@ -308,6 +357,29 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         } else {
             return bytes.concat(
                 vm.getCode("out-optimized/SablierV2MerkleLockupLL.sol/SablierV2MerkleLockupLL.json"), constructorArgs
+            );
+        }
+    }
+
+    function getMerkleLockupLTBytecode(
+        address admin,
+        IERC20 asset_,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        returns (bytes memory)
+    {
+        bytes memory constructorArgs = abi.encode(
+            defaults.baseParams(admin, asset_, merkleRoot, expiration),
+            lockupTranched,
+            defaults.tranchesWithPercentages()
+        );
+        if (!isTestOptimizedProfile()) {
+            return bytes.concat(type(SablierV2MerkleLockupLT).creationCode, constructorArgs);
+        } else {
+            return bytes.concat(
+                vm.getCode("out-optimized/SablierV2MerkleLockupLT.sol/SablierV2MerkleLockupLT.json"), constructorArgs
             );
         }
     }

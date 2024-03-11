@@ -3,9 +3,11 @@ pragma solidity >=0.8.22;
 
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
+import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 
 import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
-import { MerkleLockup } from "src/types/DataTypes.sol";
+import { ISablierV2MerkleLockupLT } from "src/interfaces/ISablierV2MerkleLockupLT.sol";
+import { MerkleLockup, MerkleLockupLT } from "src/types/DataTypes.sol";
 
 /// @notice Abstract contract containing all the events emitted by the protocol.
 abstract contract Events {
@@ -16,6 +18,14 @@ abstract contract Events {
         MerkleLockup.ConstructorParams indexed baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations streamDurations,
+        uint256 aggregateAmount,
+        uint256 recipientsCount
+    );
+    event CreateMerkleLockupLT(
+        ISablierV2MerkleLockupLT indexed merkleLockupLT,
+        MerkleLockup.ConstructorParams indexed baseParams,
+        ISablierV2LockupTranched lockupTranched,
+        MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages,
         uint256 aggregateAmount,
         uint256 recipientsCount
     );

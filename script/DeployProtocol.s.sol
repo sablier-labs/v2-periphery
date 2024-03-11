@@ -4,6 +4,7 @@ pragma solidity >=0.8.22 <0.9.0;
 import { SablierV2Comptroller } from "@sablier/v2-core/src/SablierV2Comptroller.sol";
 import { SablierV2LockupDynamic } from "@sablier/v2-core/src/SablierV2LockupDynamic.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/src/SablierV2LockupLinear.sol";
+import { SablierV2LockupTranched } from "@sablier/v2-core/src/SablierV2LockupTranched.sol";
 import { SablierV2NFTDescriptor } from "@sablier/v2-core/src/SablierV2NFTDescriptor.sol";
 import { BaseScript } from "./Base.s.sol";
 
@@ -14,7 +15,7 @@ import { SablierV2Batch } from "../src/SablierV2Batch.sol";
 contract DeployProtocol is BaseScript {
     function run(
         address initialAdmin,
-        uint256 maxSegmentCount
+        uint256 maxCount
     )
         public
         virtual
@@ -23,6 +24,7 @@ contract DeployProtocol is BaseScript {
             SablierV2Comptroller comptroller,
             SablierV2LockupDynamic lockupDynamic,
             SablierV2LockupLinear lockupLinear,
+            SablierV2LockupTranched lockupTranched,
             SablierV2NFTDescriptor nftDescriptor,
             SablierV2Batch batch,
             SablierV2MerkleLockupFactory merkleLockupFactory
@@ -31,8 +33,9 @@ contract DeployProtocol is BaseScript {
         // Deploy V2 Core.
         comptroller = new SablierV2Comptroller(initialAdmin);
         nftDescriptor = new SablierV2NFTDescriptor();
-        lockupDynamic = new SablierV2LockupDynamic(initialAdmin, comptroller, nftDescriptor, maxSegmentCount);
+        lockupDynamic = new SablierV2LockupDynamic(initialAdmin, comptroller, nftDescriptor, maxCount);
         lockupLinear = new SablierV2LockupLinear(initialAdmin, comptroller, nftDescriptor);
+        lockupTranched = new SablierV2LockupTranched(initialAdmin, comptroller, nftDescriptor, maxCount);
 
         batch = new SablierV2Batch();
         merkleLockupFactory = new SablierV2MerkleLockupFactory();
