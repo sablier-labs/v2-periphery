@@ -118,6 +118,7 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
             isDepleted: false,
             isStream: true,
             isTransferable: defaults.TRANSFERABLE(),
+            recipient: users.recipient1,
             sender: users.admin,
             startTime: uint40(block.timestamp),
             wasCanceled: false
