@@ -165,6 +165,7 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
             isDepleted: false,
             isStream: true,
             isTransferable: defaults.TRANSFERABLE(),
+            recipient: vars.recipients[params.posBeforeSort],
             sender: params.admin,
             startTime: uint40(block.timestamp),
             tranches: defaults.tranches({ totalAmount: vars.amounts[params.posBeforeSort] }),
