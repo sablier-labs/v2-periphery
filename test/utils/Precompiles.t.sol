@@ -3,11 +3,11 @@ pragma solidity >=0.8.22 <0.9.0;
 
 import { LibString } from "solady/src/utils/LibString.sol";
 
+import { Precompiles } from "../../precompiles/Precompiles.sol";
 import { ISablierV2Batch } from "../../src/interfaces/ISablierV2Batch.sol";
 import { ISablierV2MerkleLockupFactory } from "../../src/interfaces/ISablierV2MerkleLockupFactory.sol";
 
 import { Base_Test } from "../Base.t.sol";
-import { Precompiles } from "./Precompiles.sol";
 
 contract Precompiles_Test is Base_Test {
     using LibString for address;
