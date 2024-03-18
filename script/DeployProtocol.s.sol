@@ -12,13 +12,53 @@ import { SablierV2Batch } from "../src/SablierV2Batch.sol";
 
 /// @notice Deploys the Sablier V2 Protocol.
 contract DeployProtocol is BaseScript {
-    function run(
+    /// @dev Deploy using Forge CLI.
+    function runBroadcast(
         address initialAdmin,
         uint256 maxCount
     )
         public
         virtual
         broadcast
+        returns (
+            SablierV2LockupDynamic lockupDynamic,
+            SablierV2LockupLinear lockupLinear,
+            SablierV2LockupTranched lockupTranched,
+            SablierV2NFTDescriptor nftDescriptor,
+            SablierV2Batch batch,
+            SablierV2MerkleLockupFactory merkleLockupFactory
+        )
+    {
+        (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor, batch, merkleLockupFactory) =
+            _run(initialAdmin, maxCount);
+    }
+
+    /// @dev Deploy using Sphinx CLI.
+    function runSphinx(
+        address initialAdmin,
+        uint256 maxCount
+    )
+        public
+        virtual
+        sphinx
+        returns (
+            SablierV2LockupDynamic lockupDynamic,
+            SablierV2LockupLinear lockupLinear,
+            SablierV2LockupTranched lockupTranched,
+            SablierV2NFTDescriptor nftDescriptor,
+            SablierV2Batch batch,
+            SablierV2MerkleLockupFactory merkleLockupFactory
+        )
+    {
+        (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor, batch, merkleLockupFactory) =
+            _run(initialAdmin, maxCount);
+    }
+
+    function _run(
+        address initialAdmin,
+        uint256 maxCount
+    )
+        internal
         returns (
             SablierV2LockupDynamic lockupDynamic,
             SablierV2LockupLinear lockupLinear,
