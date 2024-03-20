@@ -47,6 +47,7 @@ vulnerability, it must adhere to these assumptions as well:
 
 - [All assumptions](https://github.com/sablier-labs/v2-core/blob/main/SECURITY.md) in Sablier V2 Core apply to Sablier
   V2 Periphery as well.
+- In `SablierV2MerkleLockupLT`, the tranche unlock percentages and the durations will be same for all airdrop claimers.
 
 ### Rewards
 
