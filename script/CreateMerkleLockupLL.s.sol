@@ -19,12 +19,37 @@ contract CreateMerkleLockupLL is BaseScript {
         uint256 recipientsCount;
     }
 
-    function run(
+    /// @dev Deploy using Forge CLI.
+    function runBroadcast(
         ISablierV2MerkleLockupFactory merkleLockupFactory,
         Params calldata params
     )
         public
+        virtual
         broadcast
+        returns (ISablierV2MerkleLockupLL merkleLockupLL)
+    {
+        merkleLockupLL = _run(merkleLockupFactory, params);
+    }
+
+    /// @dev Deploy using Sphinx CLI.
+    function runSphinx(
+        ISablierV2MerkleLockupFactory merkleLockupFactory,
+        Params calldata params
+    )
+        public
+        virtual
+        sphinx
+        returns (ISablierV2MerkleLockupLL merkleLockupLL)
+    {
+        merkleLockupLL = _run(merkleLockupFactory, params);
+    }
+
+    function _run(
+        ISablierV2MerkleLockupFactory merkleLockupFactory,
+        Params calldata params
+    )
+        internal
         returns (ISablierV2MerkleLockupLL merkleLockupLL)
     {
         merkleLockupLL = merkleLockupFactory.createMerkleLockupLL(

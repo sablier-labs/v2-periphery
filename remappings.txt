@@ -2,5 +2,6 @@
 @prb/math/=node_modules/@prb/math/
 @prb/test/=node_modules/@prb/test/
 @sablier/v2-core/=node_modules/@sablier/v2-core/
+@sphinx-labs/contracts/=node_modules/@sphinx-labs/contracts/contracts/foundry
 forge-std/=node_modules/forge-std/
 solady/=node_modules/solady/
