@@ -10,6 +10,7 @@ import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISabli
 import { LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Assertions as V2CoreAssertions } from "@sablier/v2-core/test/utils/Assertions.sol";
+import { Constants as V2Constants } from "@sablier/v2-core/test/utils/Constants.sol";
 import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
 
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
@@ -30,7 +31,15 @@ import { Merkle } from "./utils/Murky.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
-abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2CoreAssertions, V2CoreUtils {
+abstract contract Base_Test is
+    Assertions,
+    DeployOptimized,
+    Events,
+    Merkle,
+    V2Constants,
+    V2CoreAssertions,
+    V2CoreUtils
+{
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
@@ -258,6 +267,7 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         uint40 expiration
     )
         internal
+        view
         returns (address)
     {
         return computeMerkleLockupLLAddress(admin, dai, merkleRoot, expiration);
@@ -270,6 +280,7 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         uint40 expiration
     )
         internal
+        view
         returns (address)
     {
         bytes32 salt = keccak256(
@@ -300,6 +311,7 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         uint40 expiration
     )
         internal
+        view
         returns (address)
     {
         return computeMerkleLockupLTAddress(admin, dai, merkleRoot, expiration);
@@ -312,6 +324,7 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         uint40 expiration
     )
         internal
+        view
         returns (address)
     {
         bytes32 salt = keccak256(
@@ -343,6 +356,7 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         uint40 expiration
     )
         internal
+        view
         returns (bytes memory)
     {
         bytes memory constructorArgs =
@@ -363,6 +377,7 @@ abstract contract Base_Test is Assertions, DeployOptimized, Events, Merkle, V2Co
         uint40 expiration
     )
         internal
+        view
         returns (bytes memory)
     {
         bytes memory constructorArgs = abi.encode(

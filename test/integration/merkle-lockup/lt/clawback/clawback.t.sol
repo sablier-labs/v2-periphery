@@ -35,7 +35,7 @@ contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
     modifier givenCampaignExpired() {
         // Make a claim to have a different contract balance.
         claimLT();
-        vm.warp({ timestamp: defaults.EXPIRATION() + 1 seconds });
+        vm.warp({ newTimestamp: defaults.EXPIRATION() + 1 seconds });
         _;
     }
 

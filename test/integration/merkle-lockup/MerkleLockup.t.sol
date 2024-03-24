@@ -32,19 +32,19 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
         });
     }
 
-    function computeMerkleLockupLLAddress() internal returns (address) {
+    function computeMerkleLockupLLAddress() internal view returns (address) {
         return computeMerkleLockupLLAddress(users.admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
-    function computeMerkleLockupLLAddress(address admin) internal returns (address) {
+    function computeMerkleLockupLLAddress(address admin) internal view returns (address) {
         return computeMerkleLockupLLAddress(admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
-    function computeMerkleLockupLLAddress(address admin, uint40 expiration) internal returns (address) {
+    function computeMerkleLockupLLAddress(address admin, uint40 expiration) internal view returns (address) {
         return computeMerkleLockupLLAddress(admin, defaults.MERKLE_ROOT(), expiration);
     }
 
-    function computeMerkleLockupLLAddress(address admin, bytes32 merkleRoot) internal returns (address) {
+    function computeMerkleLockupLLAddress(address admin, bytes32 merkleRoot) internal view returns (address) {
         return computeMerkleLockupLLAddress(admin, merkleRoot, defaults.EXPIRATION());
     }
 
@@ -83,19 +83,19 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
         });
     }
 
-    function computeMerkleLockupLTAddress() internal returns (address) {
+    function computeMerkleLockupLTAddress() internal view returns (address) {
         return computeMerkleLockupLTAddress(users.admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
-    function computeMerkleLockupLTAddress(address admin) internal returns (address) {
+    function computeMerkleLockupLTAddress(address admin) internal view returns (address) {
         return computeMerkleLockupLTAddress(admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
     }
 
-    function computeMerkleLockupLTAddress(address admin, uint40 expiration) internal returns (address) {
+    function computeMerkleLockupLTAddress(address admin, uint40 expiration) internal view returns (address) {
         return computeMerkleLockupLTAddress(admin, defaults.MERKLE_ROOT(), expiration);
     }
 
-    function computeMerkleLockupLTAddress(address admin, bytes32 merkleRoot) internal returns (address) {
+    function computeMerkleLockupLTAddress(address admin, bytes32 merkleRoot) internal view returns (address) {
         return computeMerkleLockupLTAddress(admin, merkleRoot, defaults.EXPIRATION());
     }
 

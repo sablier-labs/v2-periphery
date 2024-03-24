@@ -2,12 +2,11 @@
 pragma solidity >=0.8.22;
 
 import { PRBMathAssertions } from "@prb/math/test/utils/Assertions.sol";
-import { PRBTest } from "@prb/test/src/PRBTest.sol";
 
 import { MerkleLockupLT } from "src/types/DataTypes.sol";
 
-abstract contract Assertions is PRBTest, PRBMathAssertions {
-    event LogNamedArray(string key, MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages);
+abstract contract Assertions is PRBMathAssertions {
+    event log_named_array(string key, MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages);
 
     /// @dev Compares two {MerkleLockupLT.TrancheWithPercentage[]} arrays.
     function assertEq(
@@ -17,9 +16,9 @@ abstract contract Assertions is PRBTest, PRBMathAssertions {
         internal
     {
         if (keccak256(abi.encode(a)) != keccak256(abi.encode(b))) {
-            emit Log("Error: a == b not satisfied [MerkleLockupLT.TrancheWithPercentage[]]");
-            emit LogNamedArray("   Left", a);
-            emit LogNamedArray("  Right", b);
+            emit log("Error: a == b not satisfied [MerkleLockupLT.TrancheWithPercentage[]]");
+            emit log_named_array("   Left", a);
+            emit log_named_array("  Right", b);
             fail();
         }
     }
