@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "5.0.0",
-    "@prb/math": "github:PaulRBerg/prb-math#a111d11988756e091c7ccfd1f5af490d4ddf8783",
+    "@prb/math": "github:PaulRBerg/prb-math#a111d11",
     "@sablier/v2-core": "github:sablier-labs/v2-core#test/forge-std-v1.8.1"
   },
   "devDependencies": {
