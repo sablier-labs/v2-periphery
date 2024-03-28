@@ -184,7 +184,7 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
             vars.clawbackAmount = uint128(ASSET.balanceOf(address(vars.merkleLockupLT)));
             vm.warp({ newTimestamp: uint256(params.expiration) + 1 seconds });
 
-            changePrank({ msgSender: params.admin });
+            resetPrank({ msgSender: params.admin });
             expectCallToTransfer({ asset_: address(ASSET), to: params.admin, amount: vars.clawbackAmount });
             vm.expectEmit({ emitter: address(vars.merkleLockupLT) });
             emit Clawback({ to: params.admin, admin: params.admin, amount: vars.clawbackAmount });

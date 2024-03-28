@@ -13,13 +13,13 @@ contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
     }
 
     function test_RevertWhen_CallerNotAdmin() external {
-        changePrank({ msgSender: users.eve });
+        resetPrank({ msgSender: users.eve });
         vm.expectRevert(abi.encodeWithSelector(V2CoreErrors.CallerNotAdmin.selector, users.admin, users.eve));
         merkleLockupLT.clawback({ to: users.eve, amount: 1 });
     }
 
     modifier whenCallerAdmin() {
-        changePrank({ msgSender: users.admin });
+        resetPrank({ msgSender: users.admin });
         _;
     }
 

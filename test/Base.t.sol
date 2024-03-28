@@ -86,7 +86,7 @@ abstract contract Base_Test is
 
     /// @dev Approve contract to spend asset from some users.
     function approveContract(IERC20 asset_, address from, address spender) internal {
-        changePrank({ msgSender: from });
+        resetPrank({ msgSender: from });
         (bool success,) = address(asset_).call(abi.encodeCall(IERC20.approve, (spender, MAX_UINT256)));
         success;
     }
