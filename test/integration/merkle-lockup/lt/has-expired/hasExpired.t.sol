@@ -19,17 +19,17 @@ contract HasExpired_Integration_Test is MerkleLockup_Integration_Test {
         _;
     }
 
-    function test_HasExpired_ExpirationLessThanCurrentTime() external whenExpirationNotZero {
+    function test_HasExpired_ExpirationLessThanCurrentTime() external view whenExpirationNotZero {
         assertFalse(merkleLockupLT.hasExpired(), "campaign expired");
     }
 
     function test_HasExpired_ExpirationEqualToCurrentTime() external whenExpirationNotZero {
-        vm.warp({ timestamp: defaults.EXPIRATION() });
+        vm.warp({ newTimestamp: defaults.EXPIRATION() });
         assertTrue(merkleLockupLT.hasExpired(), "campaign not expired");
     }
 
     function test_HasExpired_ExpirationGreaterThanCurrentTime() external whenExpirationNotZero {
-        vm.warp({ timestamp: defaults.EXPIRATION() + 1 seconds });
+        vm.warp({ newTimestamp: defaults.EXPIRATION() + 1 seconds });
         assertTrue(merkleLockupLT.hasExpired(), "campaign not expired");
     }
 }

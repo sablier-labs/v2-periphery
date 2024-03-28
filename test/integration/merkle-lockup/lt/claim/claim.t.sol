@@ -24,7 +24,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         uint40 expiration = defaults.EXPIRATION();
         uint256 warpTime = expiration + 1 seconds;
         bytes32[] memory merkleProof;
-        vm.warp({ timestamp: warpTime });
+        vm.warp({ newTimestamp: warpTime });
         vm.expectRevert(
             abi.encodeWithSelector(Errors.SablierV2MerkleLockup_CampaignExpired.selector, warpTime, expiration)
         );
