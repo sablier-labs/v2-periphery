@@ -147,6 +147,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             baseParams: baseParams,
             lockupTranched: lockupTranched,
             tranchesWithPercentages: defaults.tranchesWithPercentages(),
+            totalDuration: defaults.TOTAL_DURATION(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
             recipientsCount: defaults.RECIPIENTS_COUNT()
         });
