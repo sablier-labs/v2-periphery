@@ -19,7 +19,7 @@ interface ISablierV2MerkleLockupFactory {
     /// @notice Emitted when a Sablier V2 Lockup Linear Merkle Lockup is created.
     event CreateMerkleLockupLL(
         ISablierV2MerkleLockupLL indexed merkleLockupLL,
-        MerkleLockup.ConstructorParams indexed baseParams,
+        MerkleLockup.ConstructorParams baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations streamDurations,
         uint256 aggregateAmount,
@@ -29,9 +29,10 @@ interface ISablierV2MerkleLockupFactory {
     /// @notice Emitted when a Sablier V2 Lockup Tranched Merkle Lockup is created.
     event CreateMerkleLockupLT(
         ISablierV2MerkleLockupLT indexed merkleLockupLT,
-        MerkleLockup.ConstructorParams indexed baseParams,
+        MerkleLockup.ConstructorParams baseParams,
         ISablierV2LockupTranched lockupTranched,
         MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages,
+        uint256 totalDuration,
         uint256 aggregateAmount,
         uint256 recipientsCount
     );
