@@ -75,7 +75,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             UD60x18 percentage = (tranchesWithPercentages[i].unlockPercentage).intoUD60x18();
             totalPercentage = totalPercentage.add(percentage);
             unchecked {
-                // safe to use `unchecked` because its only used in the event.
+                // Safe to use `unchecked` because its only used in the event.
                 totalDuration += tranchesWithPercentages[i].duration;
             }
         }
