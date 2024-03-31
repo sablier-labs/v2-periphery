@@ -107,6 +107,7 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
             baseParams: vars.baseParams,
             lockupTranched: lockupTranched,
             tranchesWithPercentages: defaults.tranchesWithPercentages(),
+            totalDuration: defaults.TOTAL_DURATION(),
             aggregateAmount: vars.aggregateAmount,
             recipientsCount: vars.recipientsCount
         });

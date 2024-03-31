@@ -15,7 +15,7 @@ abstract contract Events {
     event Clawback(address indexed admin, address indexed to, uint128 amount);
     event CreateMerkleLockupLL(
         ISablierV2MerkleLockupLL indexed merkleLockupLL,
-        MerkleLockup.ConstructorParams indexed baseParams,
+        MerkleLockup.ConstructorParams baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations streamDurations,
         uint256 aggregateAmount,
@@ -23,9 +23,10 @@ abstract contract Events {
     );
     event CreateMerkleLockupLT(
         ISablierV2MerkleLockupLT indexed merkleLockupLT,
-        MerkleLockup.ConstructorParams indexed baseParams,
+        MerkleLockup.ConstructorParams baseParams,
         ISablierV2LockupTranched lockupTranched,
         MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages,
+        uint256 totalDuration,
         uint256 aggregateAmount,
         uint256 recipientsCount
     );
