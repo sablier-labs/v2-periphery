@@ -113,7 +113,7 @@ library MerkleLockup {
 library MerkleLockupLT {
     /// @notice Struct encapsulating the amount percentage and the tranche duration of the stream.
     /// @dev Each recipient may have a different amount allocated, this struct stores the percentage of the
-    /// amount designated for each duration unlock. We use a 18 decimals format to represent percentages:
+    /// amount designated for each duration unlock. We use an 18-decimal format to represent percentages:
     /// 100% = 1e18.
     /// @param unlockPercentage The percentage of the amount designated to be unlocked in this tranche.
     /// @param duration The time difference in seconds between this tranche and the previous one.
