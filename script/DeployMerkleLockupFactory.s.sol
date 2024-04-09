@@ -6,12 +6,12 @@ import { BaseScript } from "./Base.s.sol";
 import { SablierV2MerkleLockupFactory } from "../src/SablierV2MerkleLockupFactory.sol";
 
 contract DeployMerkleLockupFactory is BaseScript {
-    /// @dev Deploy using Forge CLI.
+    /// @dev Deploy via Forge.
     function runBroadcast() public virtual broadcast returns (SablierV2MerkleLockupFactory merkleLockupFactory) {
         merkleLockupFactory = _run();
     }
 
-    /// @dev Deploy using Sphinx CLI.
+    /// @dev Deploy via Sphinx.
     function runSphinx() public virtual sphinx returns (SablierV2MerkleLockupFactory merkleLockupFactory) {
         merkleLockupFactory = _run();
     }

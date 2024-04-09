@@ -10,7 +10,7 @@
     "url": "https://github.com/sablier-labs/v2-periphery/issues"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "5.0.0",
+    "@openzeppelin/contracts": "5.0.2",
     "@prb/math": "github:PaulRBerg/prb-math#a111d11",
     "@sablier/v2-core": "github:sablier-labs/v2-core#staging"
   },
@@ -30,6 +30,8 @@
   ],
   "homepage": "https://github.com/sablier-labs/v2-periphery#readme",
   "keywords": [
+    "airdrops",
+    "airstreams",
     "asset-distribution",
     "asset-streaming",
     "blockchain",

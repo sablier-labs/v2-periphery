@@ -12,7 +12,7 @@ import { SablierV2Batch } from "../src/SablierV2Batch.sol";
 
 /// @notice Deploys the Sablier V2 Protocol.
 contract DeployProtocol is BaseScript {
-    /// @dev Deploy using Forge CLI.
+    /// @dev Deploy via Forge.
     function runBroadcast(
         address initialAdmin,
         uint256 maxCount
@@ -33,7 +33,7 @@ contract DeployProtocol is BaseScript {
             _run(initialAdmin, maxCount);
     }
 
-    /// @dev Deploy using Sphinx CLI.
+    /// @dev Deploy via Sphinx.
     function runSphinx(
         address initialAdmin,
         uint256 maxCount

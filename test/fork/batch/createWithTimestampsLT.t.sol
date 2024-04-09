@@ -18,10 +18,6 @@ abstract contract CreateWithTimestamps_LockupTranched_Batch_Fork_Test is Fork_Te
         Fork_Test.setUp();
     }
 
-    /*//////////////////////////////////////////////////////////////////////////
-                            BATCH-CREATE-WITH-TIMESTAMPS
-    //////////////////////////////////////////////////////////////////////////*/
-
     struct CreateWithTimestampsParams {
         uint128 batchSize;
         address sender;
@@ -31,7 +27,7 @@ abstract contract CreateWithTimestamps_LockupTranched_Batch_Fork_Test is Fork_Te
         LockupTranched.Tranche[] tranches;
     }
 
-    function testForkFuzz_CreateWithTimestamps(CreateWithTimestampsParams memory params) external {
+    function testForkFuzz_CreateWithTimestampsLT(CreateWithTimestampsParams memory params) external {
         vm.assume(params.tranches.length != 0);
         params.batchSize = boundUint128(params.batchSize, 1, 20);
         params.startTime = boundUint40(params.startTime, getBlockTimestamp(), getBlockTimestamp() + 24 hours);

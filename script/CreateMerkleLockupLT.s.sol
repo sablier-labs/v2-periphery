@@ -18,7 +18,7 @@ contract CreateMerkleLockupLT is BaseScript {
         uint256 recipientsCount;
     }
 
-    /// @dev Deploy using Forge CLI.
+    /// @dev Deploy via Forge.
     function runBroadcast(
         ISablierV2MerkleLockupFactory merkleLockupFactory,
         Params calldata params
@@ -31,7 +31,7 @@ contract CreateMerkleLockupLT is BaseScript {
         merkleLockupLT = _run(merkleLockupFactory, params);
     }
 
-    /// @dev Deploy using Sphinx CLI.
+    /// @dev Deploy via Sphinx.
     function runSphinx(
         ISablierV2MerkleLockupFactory merkleLockupFactory,
         Params calldata params

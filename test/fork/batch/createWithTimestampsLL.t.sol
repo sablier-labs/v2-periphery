@@ -18,10 +18,6 @@ abstract contract CreateWithTimestamps_LockupLinear_Batch_Fork_Test is Fork_Test
         Fork_Test.setUp();
     }
 
-    /*//////////////////////////////////////////////////////////////////////////
-                              BATCH-CREATE-WITH-TIMESTAMPS
-    //////////////////////////////////////////////////////////////////////////*/
-
     struct CreateWithTimestampsParams {
         uint128 batchSize;
         LockupLinear.Range range;
@@ -30,11 +26,12 @@ abstract contract CreateWithTimestamps_LockupLinear_Batch_Fork_Test is Fork_Test
         uint128 perStreamAmount;
     }
 
-    function testForkFuzz_CreateWithTimestamps(CreateWithTimestampsParams memory params) external {
+    function testForkFuzz_CreateWithTimestampsLL(CreateWithTimestampsParams memory params) external {
         params.batchSize = boundUint128(params.batchSize, 1, 20);
         params.perStreamAmount = boundUint128(params.perStreamAmount, 1, MAX_UINT128 / params.batchSize);
         params.range.start = boundUint40(params.range.start, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
-        params.range.cliff = boundUint40(params.range.cliff, params.range.start + 1, params.range.start + 52 weeks);
+        params.range.cliff =
+            boundUint40(params.range.cliff, params.range.start + 1 seconds, params.range.start + 52 weeks);
         params.range.end = boundUint40(params.range.end, params.range.cliff + 1 seconds, MAX_UNIX_TIMESTAMP);
 
         checkUsers(params.sender, params.recipient);

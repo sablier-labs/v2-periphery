@@ -41,7 +41,7 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
         // Load the external dependencies.
         // loadDependencies();
-        // TODO: Remove this line once the v2 core contracts are deployed on Mainnet.
+        // TODO: Remove this line once the V2 Core contracts are deployed on Mainnet.
         deployDependencies();
 
         // Deploy the defaults contract and allow it to access cheatcodes.
@@ -85,8 +85,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         lockupTranched = ISablierV2LockupTranched(0xAFb979d9afAd1aD27C5eFf4E27226E3AB9e5dCC9);
     }
 
-    /// @dev Deploys the v2 core dependencies.
-    // TODO: Remove this function once the v2 core contracts are deployed on Mainnet.
+    /// @dev Deploys the V2 Core dependencies.
+    // TODO: Remove this function once the V2 Core contracts are deployed on Mainnet.
     function deployDependencies() private {
         (lockupDynamic, lockupLinear, lockupTranched,) = new V2CorePrecompiles().deployCore(users.admin);
     }
