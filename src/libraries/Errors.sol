@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22;
 
+import { UD2x18 } from "@prb/math/src/UD2x18.sol";
+
 /// @title Errors
 /// @notice Library containing all custom errors the protocol may revert with.
 library Errors {
@@ -34,5 +36,5 @@ library Errors {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Thrown when the sum of the tranches' unlock percentages does not equal 100%.
-    error SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred(uint256 totalPercentage);
+    error SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred(UD2x18 totalPercentage);
 }

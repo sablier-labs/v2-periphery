@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.22 <0.9.0;
 
-import { ud2x18 } from "@prb/math/src/UD2x18.sol";
+import { UD2x18, ud2x18 } from "@prb/math/src/UD2x18.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
 import { ISablierV2MerkleLockupLT } from "src/interfaces/ISablierV2MerkleLockupLT.sol";
@@ -26,12 +26,12 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.05e18);
 
-        uint256 totalPercentage = tranchesWithPercentages[0].unlockPercentage.intoUint256()
-            + tranchesWithPercentages[1].unlockPercentage.intoUint256();
+        uint64 totalPercentage =
+            tranchesWithPercentages[0].unlockPercentage.unwrap() + tranchesWithPercentages[1].unlockPercentage.unwrap();
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred.selector, totalPercentage
+                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred.selector, ud2x18(totalPercentage)
             )
         );
 
@@ -52,12 +52,12 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.75e18);
 
-        uint256 totalPercentage = tranchesWithPercentages[0].unlockPercentage.intoUint256()
-            + tranchesWithPercentages[1].unlockPercentage.intoUint256();
+        uint64 totalPercentage = tranchesWithPercentages[0].unlockPercentage.unwrap()
+            + tranchesWithPercentages[1].unlockPercentage.unwrap();
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred.selector, totalPercentage
+                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred.selector, ud2x18(totalPercentage)
             )
         );
 
