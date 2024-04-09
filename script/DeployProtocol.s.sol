@@ -15,7 +15,8 @@ contract DeployProtocol is BaseScript {
     /// @dev Deploy via Forge.
     function runBroadcast(
         address initialAdmin,
-        uint256 maxCount
+        uint256 maxSegmentCount,
+        uint256 maxTrancheCount
     )
         public
         virtual
@@ -30,13 +31,14 @@ contract DeployProtocol is BaseScript {
         )
     {
         (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor, batch, merkleLockupFactory) =
-            _run(initialAdmin, maxCount);
+            _run(initialAdmin, maxSegmentCount, maxTrancheCount);
     }
 
     /// @dev Deploy via Sphinx.
     function runSphinx(
         address initialAdmin,
-        uint256 maxCount
+        uint256 maxSegmentCount,
+        uint256 maxTrancheCount
     )
         public
         virtual
@@ -51,12 +53,13 @@ contract DeployProtocol is BaseScript {
         )
     {
         (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor, batch, merkleLockupFactory) =
-            _run(initialAdmin, maxCount);
+            _run(initialAdmin, maxSegmentCount, maxTrancheCount);
     }
 
     function _run(
         address initialAdmin,
-        uint256 maxCount
+        uint256 maxSegmentCount,
+        uint256 maxTrancheCount
     )
         internal
         returns (
@@ -70,9 +73,9 @@ contract DeployProtocol is BaseScript {
     {
         // Deploy V2 Core.
         nftDescriptor = new SablierV2NFTDescriptor();
-        lockupDynamic = new SablierV2LockupDynamic(initialAdmin, nftDescriptor, maxCount);
+        lockupDynamic = new SablierV2LockupDynamic(initialAdmin, nftDescriptor, maxSegmentCount);
         lockupLinear = new SablierV2LockupLinear(initialAdmin, nftDescriptor);
-        lockupTranched = new SablierV2LockupTranched(initialAdmin, nftDescriptor, maxCount);
+        lockupTranched = new SablierV2LockupTranched(initialAdmin, nftDescriptor, maxTrancheCount);
 
         // Deploy V2 Periphery.
         batch = new SablierV2Batch();
