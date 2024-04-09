@@ -4,9 +4,9 @@ pragma solidity >=0.8.22 <0.9.0;
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Integration_Test } from "../../../Integration.t.sol";
+import { Integration_Test } from "../../Integration.t.sol";
 
-contract CreateWithTimestamps_LockupTranched_Integration_Test is Integration_Test {
+contract CreateWithTimestampsLT_Integration_Test is Integration_Test {
     function setUp() public virtual override {
         Integration_Test.setUp();
     }
