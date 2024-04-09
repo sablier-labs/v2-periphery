@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22 <0.9.0;
 
+import { BaseScript } from "@sablier/v2-core/script/Base.s.sol";
 import { SablierV2LockupDynamic } from "@sablier/v2-core/src/SablierV2LockupDynamic.sol";
 import { SablierV2LockupLinear } from "@sablier/v2-core/src/SablierV2LockupLinear.sol";
 import { SablierV2LockupTranched } from "@sablier/v2-core/src/SablierV2LockupTranched.sol";
 import { SablierV2NFTDescriptor } from "@sablier/v2-core/src/SablierV2NFTDescriptor.sol";
-import { BaseScript } from "./Base.s.sol";
 
 import { SablierV2MerkleLockupFactory } from "../src/SablierV2MerkleLockupFactory.sol";
 import { SablierV2Batch } from "../src/SablierV2Batch.sol";
