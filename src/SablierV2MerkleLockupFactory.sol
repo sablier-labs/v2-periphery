@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22;
 
-import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
+import { UD60x18, UNIT, ud } from "@prb/math/src/UD60x18.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
@@ -81,7 +81,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         }
 
         // Checks: the sum of percentages equals 100%.
-        if (!totalPercentage.eq(ud(1e18))) {
+        if (!totalPercentage.eq(UNIT)) {
             revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred(totalPercentage.intoUint256());
         }
 
