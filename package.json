@@ -66,7 +66,7 @@
     "gas:snapshot": "forge snapshot --no-match-test \"test(Fuzz)?_RevertWhen_\\w{1,}?\"",
     "gas:snapshot:optimized": "bun run build:optimized && FOUNDRY_PROFILE=test-optimized forge snapshot --no-match-test \"test(Fork)?(Fuzz)?_RevertWhen_\\w{1,}?\"",
     "lint": "bun run lint:sol && bun run prettier:check",
-    "lint:sol": "forge fmt --check && bun solhint \"{script,src,test}/**/*.sol\"",
+    "lint:sol": "forge fmt --check && bun solhint \"{precompiles,script,src,test}/**/*.sol\"",
     "prepack": "bun install && bash ./shell/prepare-artifacts.sh",
     "prettier:check": "prettier --check \"**/*.{json,md,yml}\"",
     "prettier:write": "prettier --write \"**/*.{json,md,yml}\"",

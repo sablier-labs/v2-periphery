@@ -43,14 +43,14 @@ abstract contract CreateWithTimestamps_LockupTranched_Batch_Fork_Test is Fork_Te
         uint256 firstStreamId = lockupTranched.nextStreamId();
         uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
 
-        deal({ token: address(ASSET), to: params.sender, give: uint256(totalTransferAmount) });
-        approveContract({ asset_: ASSET, from: params.sender, spender: address(batch) });
+        deal({ token: address(FORK_ASSET), to: params.sender, give: uint256(totalTransferAmount) });
+        approveContract({ asset_: FORK_ASSET, from: params.sender, spender: address(batch) });
 
         LockupTranched.CreateWithTimestamps memory createWithTimestamps = LockupTranched.CreateWithTimestamps({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.perStreamAmount,
-            asset: ASSET,
+            asset: FORK_ASSET,
             cancelable: true,
             transferable: true,
             startTime: params.startTime,
@@ -61,21 +61,21 @@ abstract contract CreateWithTimestamps_LockupTranched_Batch_Fork_Test is Fork_Te
             BatchBuilder.fillBatch(createWithTimestamps, params.batchSize);
 
         expectCallToTransferFrom({
-            asset_: address(ASSET),
+            asset_: address(FORK_ASSET),
             from: params.sender,
             to: address(batch),
             amount: totalTransferAmount
         });
         expectMultipleCallsToCreateWithTimestampsLT({ count: uint64(params.batchSize), params: createWithTimestamps });
         expectMultipleCallsToTransferFrom({
-            asset_: address(ASSET),
+            asset_: address(FORK_ASSET),
             count: uint64(params.batchSize),
             from: address(batch),
             to: address(lockupTranched),
             amount: params.perStreamAmount
         });
 
-        uint256[] memory actualStreamIds = batch.createWithTimestampsLT(lockupTranched, ASSET, batchParams);
+        uint256[] memory actualStreamIds = batch.createWithTimestampsLT(lockupTranched, FORK_ASSET, batchParams);
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);
     }

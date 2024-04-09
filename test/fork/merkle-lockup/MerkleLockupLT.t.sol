@@ -36,13 +36,13 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
 
     struct Vars {
         uint256 actualStreamId;
-        LockupTranched.Tranche[] actualTranches;
         LockupTranched.StreamLT actualStream;
+        LockupTranched.Tranche[] actualTranches;
         uint128[] amounts;
         uint256 aggregateAmount;
+        MerkleLockup.ConstructorParams baseParams;
         uint128 clawbackAmount;
         address expectedLockupLT;
-        MerkleLockup.ConstructorParams baseParams;
         LockupTranched.StreamLT expectedStream;
         uint256 expectedStreamId;
         uint256[] indexes;
@@ -59,10 +59,14 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
 
     function testForkFuzz_MerkleLockupLT(Params memory params) external {
         vm.assume(params.admin != address(0) && params.admin != users.admin);
-        vm.assume(params.expiration == 0 || params.expiration > block.timestamp);
         vm.assume(params.leafData.length > 1);
+        assumeNoBlacklisted({ token: address(FORK_ASSET), addr: params.admin });
         params.posBeforeSort = _bound(params.posBeforeSort, 0, params.leafData.length - 1);
-        assumeNoBlacklisted({ token: address(ASSET), addr: params.admin });
+
+        // The expiration must be either zero or greater than the block timestamp.
+        if (params.expiration != 0) {
+            params.expiration = boundUint40(params.expiration, uint40(block.timestamp) + 1 seconds, MAX_UNIX_TIMESTAMP);
+        }
 
         /*//////////////////////////////////////////////////////////////////////////
                                           CREATE
@@ -92,11 +96,12 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
         MerkleBuilder.sortLeaves(leaves);
         vars.merkleRoot = getRoot(leaves.toBytes32());
 
-        vars.expectedLockupLT = computeMerkleLockupLTAddress(params.admin, ASSET, vars.merkleRoot, params.expiration);
+        vars.expectedLockupLT =
+            computeMerkleLockupLTAddress(params.admin, FORK_ASSET, vars.merkleRoot, params.expiration);
 
         vars.baseParams = defaults.baseParams({
             admin: params.admin,
-            asset_: ASSET,
+            asset_: FORK_ASSET,
             merkleRoot: vars.merkleRoot,
             expiration: params.expiration
         });
@@ -121,7 +126,7 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
         });
 
         // Fund the Merkle Lockup contract.
-        deal({ token: address(ASSET), to: address(vars.merkleLockupLT), give: vars.aggregateAmount });
+        deal({ token: address(FORK_ASSET), to: address(vars.merkleLockupLT), give: vars.aggregateAmount });
 
         assertGt(address(vars.merkleLockupLT).code.length, 0, "MerkleLockupLT contract not created");
         assertEq(
@@ -160,7 +165,7 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
         vars.actualStream = lockupTranched.getStream(vars.actualStreamId);
         vars.expectedStream = LockupTranched.StreamLT({
             amounts: Lockup.Amounts({ deposited: vars.amounts[params.posBeforeSort], refunded: 0, withdrawn: 0 }),
-            asset: ASSET,
+            asset: FORK_ASSET,
             endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
             isCancelable: defaults.CANCELABLE(),
             isDepleted: false,
@@ -182,11 +187,11 @@ abstract contract MerkleLockupLT_Fork_Test is Fork_Test {
         //////////////////////////////////////////////////////////////////////////*/
 
         if (params.expiration > 0) {
-            vars.clawbackAmount = uint128(ASSET.balanceOf(address(vars.merkleLockupLT)));
+            vars.clawbackAmount = uint128(FORK_ASSET.balanceOf(address(vars.merkleLockupLT)));
             vm.warp({ newTimestamp: uint256(params.expiration) + 1 seconds });
 
             resetPrank({ msgSender: params.admin });
-            expectCallToTransfer({ asset_: address(ASSET), to: params.admin, amount: vars.clawbackAmount });
+            expectCallToTransfer({ asset_: address(FORK_ASSET), to: params.admin, amount: vars.clawbackAmount });
             vm.expectEmit({ emitter: address(vars.merkleLockupLT) });
             emit Clawback({ to: params.admin, admin: params.admin, amount: vars.clawbackAmount });
             vars.merkleLockupLT.clawback({ to: params.admin, amount: vars.clawbackAmount });

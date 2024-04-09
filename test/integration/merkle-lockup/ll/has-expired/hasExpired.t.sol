@@ -15,20 +15,20 @@ contract HasExpired_Integration_Test is MerkleLockup_Integration_Test {
         assertFalse(testLockup.hasExpired(), "campaign expired");
     }
 
-    modifier whenExpirationNotZero() {
+    modifier givenExpirationNotZero() {
         _;
     }
 
-    function test_HasExpired_ExpirationLessThanCurrentTime() external view whenExpirationNotZero {
+    function test_HasExpired_ExpirationLessThanBlockTimestamp() external view givenExpirationNotZero {
         assertFalse(merkleLockupLL.hasExpired(), "campaign expired");
     }
 
-    function test_HasExpired_ExpirationEqualToCurrentTime() external whenExpirationNotZero {
+    function test_HasExpired_ExpirationEqualToBlockTimestamp() external givenExpirationNotZero {
         vm.warp({ newTimestamp: defaults.EXPIRATION() });
         assertTrue(merkleLockupLL.hasExpired(), "campaign not expired");
     }
 
-    function test_HasExpired_ExpirationGreaterThanCurrentTime() external whenExpirationNotZero {
+    function test_HasExpired_ExpirationGreaterThanBlockTimestamp() external givenExpirationNotZero {
         vm.warp({ newTimestamp: defaults.EXPIRATION() + 1 seconds });
         assertTrue(merkleLockupLL.hasExpired(), "campaign not expired");
     }

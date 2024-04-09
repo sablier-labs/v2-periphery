@@ -100,7 +100,7 @@ abstract contract SablierV2MerkleLockup is
         // Checks: the campaign is not expired.
         if (!hasExpired()) {
             revert Errors.SablierV2MerkleLockup_CampaignNotExpired({
-                currentTime: block.timestamp,
+                blockTimestamp: block.timestamp,
                 expiration: EXPIRATION
             });
         }
@@ -120,7 +120,10 @@ abstract contract SablierV2MerkleLockup is
     function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal view {
         // Checks: the campaign has not expired.
         if (hasExpired()) {
-            revert Errors.SablierV2MerkleLockup_CampaignExpired({ currentTime: block.timestamp, expiration: EXPIRATION });
+            revert Errors.SablierV2MerkleLockup_CampaignExpired({
+                blockTimestamp: block.timestamp,
+                expiration: EXPIRATION
+            });
         }
 
         // Checks: the index has not been claimed.

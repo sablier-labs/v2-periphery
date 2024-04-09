@@ -49,12 +49,12 @@ contract Defaults is Merkle {
     uint256 public constant INDEX3 = 3;
     uint256 public constant INDEX4 = 4;
     string public constant IPFS_CID = "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR";
-    uint256 public constant RECIPIENTS_COUNT = 4;
-    bool public constant TRANSFERABLE = false;
     uint256[] public LEAVES = new uint256[](RECIPIENTS_COUNT);
     bytes32 public immutable MERKLE_ROOT;
     string public constant NAME = "Airdrop Campaign";
     bytes32 public constant NAME_BYTES32 = bytes32(abi.encodePacked("Airdrop Campaign"));
+    uint256 public constant RECIPIENTS_COUNT = 4;
+    bool public constant TRANSFERABLE = false;
 
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
