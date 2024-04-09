@@ -15,7 +15,7 @@ contract CreateMerkleLockupLT is BaseScript {
         ISablierV2LockupTranched lockupTranched;
         MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages;
         uint256 campaignTotalAmount;
-        uint256 recipientsCount;
+        uint256 recipientCount;
     }
 
     /// @dev Deploy via Forge.
@@ -56,7 +56,7 @@ contract CreateMerkleLockupLT is BaseScript {
             params.lockupTranched,
             params.tranchesWithPercentages,
             params.campaignTotalAmount,
-            params.recipientsCount
+            params.recipientCount
         );
     }
 }

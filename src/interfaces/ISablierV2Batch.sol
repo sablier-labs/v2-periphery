@@ -22,7 +22,7 @@ interface ISablierV2Batch {
     /// - All requirements from {ISablierV2LockupLinear.createWithDurations} must be met for each stream.
     ///
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param asset The contract address of the ERC-20 asset to be distributed.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithDurations}.
     /// @return streamIds The ids of the newly created streams.
@@ -41,7 +41,7 @@ interface ISablierV2Batch {
     /// - All requirements from {ISablierV2LockupLinear.createWithTimestamps} must be met for each stream.
     ///
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param asset The contract address of the ERC-20 asset to be distributed.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupLinear.createWithTimestamps}.
     /// @return streamIds The ids of the newly created streams.
@@ -64,7 +64,7 @@ interface ISablierV2Batch {
     /// - All requirements from {ISablierV2LockupDynamic.createWithDurations} must be met for each stream.
     ///
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param asset The contract address of the ERC-20 asset to be distributed.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupDynamic.createWithDurations}.
     /// @return streamIds The ids of the newly created streams.
@@ -83,7 +83,7 @@ interface ISablierV2Batch {
     /// - All requirements from {ISablierV2LockupDynamic.createWithTimestamps} must be met for each stream.
     ///
     /// @param lockupDynamic The address of the {SablierV2LockupDynamic} contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param asset The contract address of the ERC-20 asset to be distributed.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupDynamic.createWithTimestamps}.
     /// @return streamIds The ids of the newly created streams.
@@ -106,7 +106,7 @@ interface ISablierV2Batch {
     /// - All requirements from {ISablierV2LockupTranched.createWithDurations} must be met for each stream.
     ///
     /// @param lockupTranched The address of the {SablierV2LockupTranched} contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param asset The contract address of the ERC-20 asset to be distributed.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupTranched.createWithDurations}.
     /// @return streamIds The ids of the newly created streams.
@@ -125,7 +125,7 @@ interface ISablierV2Batch {
     /// - All requirements from {ISablierV2LockupTranched.createWithTimestamps} must be met for each stream.
     ///
     /// @param lockupTranched The address of the {SablierV2LockupTranched} contract.
-    /// @param asset The contract address of the ERC-20 asset used for streaming.
+    /// @param asset The contract address of the ERC-20 asset to be distributed.
     /// @param batch An array of structs, each encapsulating a subset of the parameters of
     /// {SablierV2LockupTranched.createWithTimestamps}.
     /// @return streamIds The ids of the newly created streams.

@@ -18,7 +18,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         baseParams.name = "this string is longer than 32 characters";
 
@@ -33,7 +33,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             lockupLinear: lockupLinear,
             streamDurations: streamDurations,
             aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
+            recipientCount: recipientCount
         });
     }
 
@@ -46,7 +46,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         vm.expectRevert();
         merkleLockupFactory.createMerkleLockupLL({
@@ -54,7 +54,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             lockupLinear: lockupLinear,
             streamDurations: streamDurations,
             aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
+            recipientCount: recipientCount
         });
     }
 
@@ -87,7 +87,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
-            recipientsCount: defaults.RECIPIENTS_COUNT()
+            recipientCount: defaults.RECIPIENT_COUNT()
         });
 
         address actualLockupLL = address(createMerkleLockupLL(admin, expiration));

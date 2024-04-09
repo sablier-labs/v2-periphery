@@ -40,7 +40,7 @@ contract Defaults is Merkle {
                                   MERKLE-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint256 public constant AGGREGATE_AMOUNT = CLAIM_AMOUNT * RECIPIENTS_COUNT;
+    uint256 public constant AGGREGATE_AMOUNT = CLAIM_AMOUNT * RECIPIENT_COUNT;
     bool public constant CANCELABLE = false;
     uint128 public constant CLAIM_AMOUNT = 10_000e18;
     uint40 public immutable EXPIRATION;
@@ -49,11 +49,11 @@ contract Defaults is Merkle {
     uint256 public constant INDEX3 = 3;
     uint256 public constant INDEX4 = 4;
     string public constant IPFS_CID = "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR";
-    uint256[] public LEAVES = new uint256[](RECIPIENTS_COUNT);
+    uint256[] public LEAVES = new uint256[](RECIPIENT_COUNT);
+    uint256 public constant RECIPIENT_COUNT = 4;
     bytes32 public immutable MERKLE_ROOT;
     string public constant NAME = "Airdrop Campaign";
     bytes32 public constant NAME_BYTES32 = bytes32(abi.encodePacked("Airdrop Campaign"));
-    uint256 public constant RECIPIENTS_COUNT = 4;
     bool public constant TRANSFERABLE = false;
 
     /*//////////////////////////////////////////////////////////////////////////

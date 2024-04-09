@@ -139,7 +139,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
 
         // Deploy the new MerkleLockupLT contract.
         ISablierV2MerkleLockupLT _merkleLockupLT = merkleLockupFactory.createMerkleLockupLT(
-            baseParams, lockupTranched, defaults.tranchesWithPercentages(), aggregateAmount, defaults.RECIPIENTS_COUNT()
+            baseParams, lockupTranched, defaults.tranchesWithPercentages(), aggregateAmount, defaults.RECIPIENT_COUNT()
         );
 
         // Fund the MerkleLockupLT contract.

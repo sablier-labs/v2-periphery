@@ -16,7 +16,7 @@ contract CreateMerkleLockupLL is BaseScript {
         ISablierV2LockupLinear lockupLinear;
         LockupLinear.Durations streamDurations;
         uint256 campaignTotalAmount;
-        uint256 recipientsCount;
+        uint256 recipientCount;
     }
 
     /// @dev Deploy via Forge.
@@ -57,7 +57,7 @@ contract CreateMerkleLockupLL is BaseScript {
             params.lockupLinear,
             params.streamDurations,
             params.campaignTotalAmount,
-            params.recipientsCount
+            params.recipientCount
         );
     }
 }

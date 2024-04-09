@@ -66,7 +66,7 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
-            recipientsCount: defaults.RECIPIENTS_COUNT()
+            recipientCount: defaults.RECIPIENT_COUNT()
         });
     }
 
@@ -117,7 +117,7 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
             lockupTranched: lockupTranched,
             tranchesWithPercentages: defaults.tranchesWithPercentages(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
-            recipientsCount: defaults.RECIPIENTS_COUNT()
+            recipientCount: defaults.RECIPIENT_COUNT()
         });
     }
 }

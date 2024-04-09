@@ -21,7 +21,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
     function test_RevertWhen_TotalPercentageLessThanOneHundred() external whenTotalPercentageIsNotOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.05e18);
@@ -40,14 +40,14 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             lockupTranched: lockupTranched,
             tranchesWithPercentages: tranchesWithPercentages,
             aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
+            recipientCount: recipientCount
         });
     }
 
     function test_RevertWhen_TotalPercentageGreaterThanOneHundred() external whenTotalPercentageIsNotOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.75e18);
@@ -66,7 +66,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             lockupTranched: lockupTranched,
             tranchesWithPercentages: tranchesWithPercentages,
             aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
+            recipientCount: recipientCount
         });
     }
 
@@ -78,7 +78,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         baseParams.name = "this string is longer than 32 characters";
 
@@ -93,7 +93,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             lockupTranched: lockupTranched,
             tranchesWithPercentages: tranchesWithPercentages,
             aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
+            recipientCount: recipientCount
         });
     }
 
@@ -106,7 +106,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         vm.expectRevert();
         merkleLockupFactory.createMerkleLockupLT({
@@ -114,7 +114,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             lockupTranched: lockupTranched,
             tranchesWithPercentages: tranchesWithPercentages,
             aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
+            recipientCount: recipientCount
         });
     }
 
@@ -149,7 +149,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             tranchesWithPercentages: defaults.tranchesWithPercentages(),
             totalDuration: defaults.TOTAL_DURATION(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
-            recipientsCount: defaults.RECIPIENTS_COUNT()
+            recipientCount: defaults.RECIPIENT_COUNT()
         });
 
         address actualLockupLT = address(createMerkleLockupLT(admin, expiration));

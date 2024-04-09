@@ -50,7 +50,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
         ISablierV2MerkleLockupLL merkleLockupLL;
         bytes32 merkleRoot;
         address[] recipients;
-        uint256 recipientsCount;
+        uint256 recipientCount;
     }
 
     // We need the leaves as a storage variable so that we can use OpenZeppelin's {Arrays.findUpperBound}.
@@ -72,15 +72,15 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
         //////////////////////////////////////////////////////////////////////////*/
 
         Vars memory vars;
-        vars.recipientsCount = params.leafData.length;
-        vars.amounts = new uint128[](vars.recipientsCount);
-        vars.indexes = new uint256[](vars.recipientsCount);
-        vars.recipients = new address[](vars.recipientsCount);
-        for (uint256 i = 0; i < vars.recipientsCount; ++i) {
+        vars.recipientCount = params.leafData.length;
+        vars.amounts = new uint128[](vars.recipientCount);
+        vars.indexes = new uint256[](vars.recipientCount);
+        vars.recipients = new address[](vars.recipientCount);
+        for (uint256 i = 0; i < vars.recipientCount; ++i) {
             vars.indexes[i] = params.leafData[i].index;
 
             // Bound each leaf amount so that `aggregateAmount` does not overflow.
-            vars.amounts[i] = uint128(_bound(params.leafData[i].amount, 1, MAX_UINT256 / vars.recipientsCount - 1));
+            vars.amounts[i] = uint128(_bound(params.leafData[i].amount, 1, MAX_UINT256 / vars.recipientCount - 1));
             vars.aggregateAmount += vars.amounts[i];
 
             // Avoid zero recipient addresses.
@@ -88,7 +88,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             vars.recipients[i] = address(uint160(boundedRecipientSeed));
         }
 
-        leaves = new uint256[](vars.recipientsCount);
+        leaves = new uint256[](vars.recipientCount);
         leaves = MerkleBuilder.computeLeaves(vars.indexes, vars.recipients, vars.amounts);
 
         // Sort the leaves in ascending order to match the production environment.
@@ -112,7 +112,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             aggregateAmount: vars.aggregateAmount,
-            recipientsCount: vars.recipientsCount
+            recipientCount: vars.recipientCount
         });
 
         vars.merkleLockupLL = merkleLockupFactory.createMerkleLockupLL({
@@ -120,7 +120,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             aggregateAmount: vars.aggregateAmount,
-            recipientsCount: vars.recipientsCount
+            recipientCount: vars.recipientCount
         });
 
         // Fund the Merkle Lockup contract.

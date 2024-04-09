@@ -27,7 +27,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations,
         uint256 aggregateAmount,
-        uint256 recipientsCount
+        uint256 recipientCount
     )
         external
         returns (ISablierV2MerkleLockupLL merkleLockupLL)
@@ -53,7 +53,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
 
         // Log the creation of the Merkle Lockup, including some metadata that is not stored on-chain.
         emit CreateMerkleLockupLL(
-            merkleLockupLL, baseParams, lockupLinear, streamDurations, aggregateAmount, recipientsCount
+            merkleLockupLL, baseParams, lockupLinear, streamDurations, aggregateAmount, recipientCount
         );
     }
 
@@ -63,7 +63,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         ISablierV2LockupTranched lockupTranched,
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages,
         uint256 aggregateAmount,
-        uint256 recipientsCount
+        uint256 recipientCount
     )
         external
         returns (ISablierV2MerkleLockupLT merkleLockupLT)
@@ -112,7 +112,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             tranchesWithPercentages,
             totalDuration,
             aggregateAmount,
-            recipientsCount
+            recipientCount
         );
     }
 }
