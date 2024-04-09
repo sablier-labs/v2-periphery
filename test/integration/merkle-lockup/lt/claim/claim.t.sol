@@ -155,14 +155,14 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         LockupTranched.StreamLT memory expectedStream = LockupTranched.StreamLT({
             amounts: Lockup.Amounts({ deposited: claimAmount, refunded: 0, withdrawn: 0 }),
             asset: dai,
-            endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
+            endTime: getBlockTimestamp() + defaults.TOTAL_DURATION(),
             isCancelable: defaults.CANCELABLE(),
             isDepleted: false,
             isStream: true,
             isTransferable: defaults.TRANSFERABLE(),
             recipient: users.recipient1,
             sender: users.admin,
-            startTime: uint40(block.timestamp),
+            startTime: getBlockTimestamp(),
             tranches: defaults.tranches(claimAmount),
             wasCanceled: false
         });
@@ -185,14 +185,14 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         LockupTranched.StreamLT memory expectedStream = LockupTranched.StreamLT({
             amounts: Lockup.Amounts({ deposited: defaults.CLAIM_AMOUNT(), refunded: 0, withdrawn: 0 }),
             asset: dai,
-            endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
+            endTime: getBlockTimestamp() + defaults.TOTAL_DURATION(),
             isCancelable: defaults.CANCELABLE(),
             isDepleted: false,
             isStream: true,
             isTransferable: defaults.TRANSFERABLE(),
             recipient: users.recipient1,
             sender: users.admin,
-            startTime: uint40(block.timestamp),
+            startTime: getBlockTimestamp(),
             tranches: tranches,
             wasCanceled: false
         });

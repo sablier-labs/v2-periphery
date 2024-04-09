@@ -42,7 +42,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
     }
 
     /// @dev This test works because a default Merkle Lockup contract is deployed in {Integration_Test.setUp}
-    function test_RevertGiven_AlreadyCreated() external whenCampaignNameIsNotTooLong {
+    function test_RevertGiven_CreatedAlready() external whenCampaignNameIsNotTooLong {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
@@ -58,7 +58,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         });
     }
 
-    modifier givenNotAlreadyCreated() {
+    modifier givenNotCreatedAlready() {
         _;
     }
 
@@ -68,7 +68,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
     )
         external
         whenCampaignNameIsNotTooLong
-        givenNotAlreadyCreated
+        givenNotCreatedAlready
     {
         vm.assume(admin != users.admin);
         address expectedLockupLL = computeMerkleLockupLLAddress(admin, expiration);
@@ -91,7 +91,6 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         });
 
         address actualLockupLL = address(createMerkleLockupLL(admin, expiration));
-
         assertGt(actualLockupLL.code.length, 0, "MerkleLockupLL contract not created");
         assertEq(actualLockupLL, expectedLockupLL, "MerkleLockupLL contract does not match computed address");
     }

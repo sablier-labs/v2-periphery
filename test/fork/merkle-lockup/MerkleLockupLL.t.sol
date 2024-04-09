@@ -64,7 +64,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
 
         // The expiration must be either zero or greater than the block timestamp.
         if (params.expiration != 0) {
-            params.expiration = boundUint40(params.expiration, uint40(block.timestamp) + 1 seconds, MAX_UNIX_TIMESTAMP);
+            params.expiration = boundUint40(params.expiration, getBlockTimestamp() + 1 seconds, MAX_UNIX_TIMESTAMP);
         }
 
         /*//////////////////////////////////////////////////////////////////////////
@@ -164,15 +164,15 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
         vars.expectedStream = LockupLinear.StreamLL({
             amounts: Lockup.Amounts({ deposited: vars.amounts[params.posBeforeSort], refunded: 0, withdrawn: 0 }),
             asset: FORK_ASSET,
-            cliffTime: uint40(block.timestamp) + defaults.CLIFF_DURATION(),
-            endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
+            cliffTime: getBlockTimestamp() + defaults.CLIFF_DURATION(),
+            endTime: getBlockTimestamp() + defaults.TOTAL_DURATION(),
             isCancelable: defaults.CANCELABLE(),
             isDepleted: false,
             isStream: true,
             isTransferable: defaults.TRANSFERABLE(),
             recipient: vars.recipients[params.posBeforeSort],
             sender: params.admin,
-            startTime: uint40(block.timestamp),
+            startTime: getBlockTimestamp(),
             wasCanceled: false
         });
 

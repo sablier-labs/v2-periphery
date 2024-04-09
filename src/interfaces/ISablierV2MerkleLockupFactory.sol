@@ -16,7 +16,7 @@ interface ISablierV2MerkleLockupFactory {
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Emitted when a Sablier V2 Lockup Linear Merkle Lockup is created.
+    /// @notice Emitted when a {SablierV2MerkleLockupLL} campaign is created.
     event CreateMerkleLockupLL(
         ISablierV2MerkleLockupLL indexed merkleLockupLL,
         MerkleLockup.ConstructorParams baseParams,
@@ -26,7 +26,7 @@ interface ISablierV2MerkleLockupFactory {
         uint256 recipientsCount
     );
 
-    /// @notice Emitted when a Sablier V2 Lockup Tranched Merkle Lockup is created.
+    /// @notice Emitted when a {SablierV2MerkleLockupLT} campaign is created.
     event CreateMerkleLockupLT(
         ISablierV2MerkleLockupLT indexed merkleLockupLT,
         MerkleLockup.ConstructorParams baseParams,

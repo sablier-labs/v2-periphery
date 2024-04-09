@@ -18,9 +18,9 @@ claim.t.sol
          ├── when the sum of the tranches' amounts does not equal the claim amount
          │  ├── it should adjust the last tranche amount
          │  ├── it should mark the index as claimed
-         │  ├── it should create a LockupTranched stream
+         │  ├── it should create a stream
          │  └── it should emit a {Claim} event
          └── when the sum of the tranches' amounts equals the claim amount
             ├── it should mark the index as claimed
-            ├── it should create a LockupTranched stream
+            ├── it should create a stream
             └── it should emit a {Claim} event
