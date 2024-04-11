@@ -12,7 +12,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "5.0.2",
     "@prb/math": "github:PaulRBerg/prb-math#16419e5",
-    "@sablier/v2-core": "github:sablier-labs/v2-core#staging"
+    "@sablier/v2-core": "github:sablier-labs/v2-core#e575535"
   },
   "devDependencies": {
     "@sphinx-labs/plugins": "^0.31.2",
@@ -52,7 +52,7 @@
     "web3"
   ],
   "peerDependencies": {
-    "@sablier/v2-core": "github:sablier-labs/v2-core#staging"
+    "@sablier/v2-core": "github:sablier-labs/v2-core"
   },
   "publishConfig": {
     "access": "public"
