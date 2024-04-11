@@ -15,7 +15,7 @@ interface ISablierV2Batch {
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Creates a batch of Lockup Linear streams using `createWithDurations`.
+    /// @notice Creates a batch of LockupLinear streams using `createWithDurations`.
     ///
     /// @dev Requirements:
     /// - There must be at least one element in `batch`.
@@ -34,7 +34,7 @@ interface ISablierV2Batch {
         external
         returns (uint256[] memory streamIds);
 
-    /// @notice Creates a batch of Lockup Linear streams using `createWithTimestamps`.
+    /// @notice Creates a batch of LockupLinear streams using `createWithTimestamps`.
     ///
     /// @dev Requirements:
     /// - There must be at least one element in `batch`.
@@ -99,7 +99,7 @@ interface ISablierV2Batch {
                              SABLIER-V2-LOCKUP-TRANCHED
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Creates a batch of Lockup Tranched streams using `createWithDurations`.
+    /// @notice Creates a batch of LockupTranched streams using `createWithDurations`.
     ///
     /// @dev Requirements:
     /// - There must be at least one element in `batch`.
@@ -118,7 +118,7 @@ interface ISablierV2Batch {
         external
         returns (uint256[] memory streamIds);
 
-    /// @notice Creates a batch of Lockup Tranched streams using `createWithTimestamps`.
+    /// @notice Creates a batch of LockupTranched streams using `createWithTimestamps`.
     ///
     /// @dev Requirements:
     /// - There must be at least one element in `batch`.

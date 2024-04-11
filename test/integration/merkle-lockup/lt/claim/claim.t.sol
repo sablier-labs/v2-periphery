@@ -109,20 +109,19 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         _;
     }
 
-    // Needed this variable in storage due to how the imported libaries work.
+    /// @dev Needed this variable in storage due to how the imported libraries work.
     uint256[] public leaves = new uint256[](4); // same number of recipients as in Defaults
 
-    function test_Claim_TrancheAmountsSumNotEqualClaimAmount()
+    function test_Claim_CalculatedAmountsSumNotEqualClaimAmount()
         external
         givenCampaignNotExpired
         givenNotClaimed
         givenIncludedInMerkleTree
     {
-        // Declare an amount that will cause a rounding error.
+        // Declare a claim amount that will cause a rounding error.
         uint128 claimAmount = defaults.CLAIM_AMOUNT() + 1;
-        uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT() + 1;
 
-        // Compute the Merkle tree.
+        // Compute the test Merkle tree.
         leaves = defaults.getLeaves();
         uint256 leaf = MerkleBuilder.computeLeaf(defaults.INDEX1(), users.recipient1, claimAmount);
         leaves[0] = leaf;
@@ -137,19 +136,23 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         baseParams.merkleRoot = merkleRoot;
 
-        // Deploy the new MerkleLockupLT contract.
-        ISablierV2MerkleLockupLT _merkleLockupLT = merkleLockupFactory.createMerkleLockupLT(
-            baseParams, lockupTranched, defaults.tranchesWithPercentages(), aggregateAmount, defaults.RECIPIENT_COUNT()
+        // Deploy a test MerkleLockupLT contract.
+        ISablierV2MerkleLockupLT testMerkleLT = merkleLockupFactory.createMerkleLockupLT(
+            baseParams,
+            lockupTranched,
+            defaults.tranchesWithPercentages(),
+            defaults.AGGREGATE_AMOUNT(),
+            defaults.RECIPIENT_COUNT()
         );
 
         // Fund the MerkleLockupLT contract.
-        deal({ token: address(dai), to: address(_merkleLockupLT), give: aggregateAmount });
+        deal({ token: address(dai), to: address(testMerkleLT), give: defaults.AGGREGATE_AMOUNT() });
 
         uint256 expectedStreamId = lockupTranched.nextStreamId();
 
-        vm.expectEmit({ emitter: address(_merkleLockupLT) });
+        vm.expectEmit({ emitter: address(testMerkleLT) });
         emit Claim(defaults.INDEX1(), users.recipient1, claimAmount, expectedStreamId);
-        uint256 actualStreamId = _merkleLockupLT.claim(defaults.INDEX1(), users.recipient1, claimAmount, proof);
+        uint256 actualStreamId = testMerkleLT.claim(defaults.INDEX1(), users.recipient1, claimAmount, proof);
 
         LockupTranched.StreamLT memory actualStream = lockupTranched.getStream(actualStreamId);
         LockupTranched.StreamLT memory expectedStream = LockupTranched.StreamLT({
@@ -167,12 +170,22 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
             wasCanceled: false
         });
 
-        assertTrue(_merkleLockupLT.hasClaimed(defaults.INDEX1()), "not claimed");
+        assertTrue(testMerkleLT.hasClaimed(defaults.INDEX1()), "not claimed");
         assertEq(actualStreamId, expectedStreamId, "invalid stream id");
         assertEq(actualStream, expectedStream);
     }
 
-    function test_Claim() external givenCampaignNotExpired givenNotClaimed givenIncludedInMerkleTree {
+    modifier whenCalculatedAmountsSumEqualsClaimAmount() {
+        _;
+    }
+
+    function test_Claim()
+        external
+        givenCampaignNotExpired
+        givenNotClaimed
+        givenIncludedInMerkleTree
+        whenCalculatedAmountsSumEqualsClaimAmount
+    {
         uint256 expectedStreamId = lockupTranched.nextStreamId();
 
         vm.expectEmit({ emitter: address(merkleLockupLT) });

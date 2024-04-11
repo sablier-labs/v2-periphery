@@ -15,12 +15,12 @@ claim.t.sol
       │  └── when the Merkle proof is not valid
       │     └── it should revert
       └── given the claim is included in the Merkle tree
-         ├── when the sum of the tranches' amounts does not equal the claim amount
+         ├── when the sum of the calculated amounts does not equal the claim amount
          │  ├── it should adjust the last tranche amount
          │  ├── it should mark the index as claimed
          │  ├── it should create a stream
          │  └── it should emit a {Claim} event
-         └── when the sum of the tranches' amounts equals the claim amount
+         └── when the sum of the calculated amounts equals the claim amount
             ├── it should mark the index as claimed
             ├── it should create a stream
             └── it should emit a {Claim} event

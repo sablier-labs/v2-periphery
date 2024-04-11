@@ -7,7 +7,7 @@ import { ISablierV2MerkleLockup } from "./ISablierV2MerkleLockup.sol";
 import { MerkleLockupLT } from "./../types/DataTypes.sol";
 
 /// @title ISablierV2MerkleLockupLT
-/// @notice Merkle Lockup that creates Lockup Tranched streams.
+/// @notice MerkleLockup campaign that creates LockupTranched streams.
 interface ISablierV2MerkleLockupLT is ISablierV2MerkleLockup {
     /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
@@ -23,7 +23,7 @@ interface ISablierV2MerkleLockupLT is ISablierV2MerkleLockup {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Makes the claim by creating a Lockup Tranched stream to the recipient. A stream NFT is minted to the
+    /// @notice Makes the claim by creating a LockupTranched stream to the recipient. A stream NFT is minted to the
     /// recipient.
     ///
     /// @dev Emits a {Claim} event.

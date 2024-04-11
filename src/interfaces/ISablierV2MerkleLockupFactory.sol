@@ -10,7 +10,7 @@ import { ISablierV2MerkleLockupLT } from "./ISablierV2MerkleLockupLT.sol";
 import { MerkleLockup, MerkleLockupLT } from "../types/DataTypes.sol";
 
 /// @title ISablierV2MerkleLockupFactory
-/// @notice Deploys new Lockup Linear Merkle lockups via CREATE2.
+/// @notice Deploys MerkleLockup campaigns with CREATE2.
 interface ISablierV2MerkleLockupFactory {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
@@ -41,7 +41,7 @@ interface ISablierV2MerkleLockupFactory {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Creates a new MerkleLockup campaign with a Lockup Linear distribution.
+    /// @notice Creates a new MerkleLockup campaign with a LockupLinear distribution.
     /// @dev Emits a {CreateMerkleLockupLL} event.
     /// @param baseParams Struct encapsulating the {SablierV2MerkleLockup} parameters, which are documented in
     /// {DataTypes}.
@@ -60,7 +60,7 @@ interface ISablierV2MerkleLockupFactory {
         external
         returns (ISablierV2MerkleLockupLL merkleLockupLL);
 
-    /// @notice Creates a new MerkleLockup campaign with a Lockup Tranched distribution.
+    /// @notice Creates a new MerkleLockup campaign with a LockupTranched distribution.
     /// @dev Emits a {CreateMerkleLockupLT} event.
     ///
     /// Requirements:

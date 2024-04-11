@@ -80,9 +80,9 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             }
         }
 
-        // Checks: the sum of percentages equals 100%.
+        // Check: the sum of percentages equals 100%.
         if (totalPercentage != uUNIT) {
-            revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred(ud2x18(totalPercentage));
+            revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundredPercent(ud2x18(totalPercentage));
         }
 
         // Hash the parameters to generate a salt.
@@ -101,10 +101,10 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             )
         );
 
-        // Deploy the Merkle Lockup contract with CREATE2.
+        // Deploy the MerkleLockup contract with CREATE2.
         merkleLockupLT = new SablierV2MerkleLockupLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercentages);
 
-        // Log the creation of the Merkle Lockup, including some metadata that is not stored on-chain.
+        // Log the creation of the MerkleLockup contract, including some metadata that is not stored on-chain.
         emit CreateMerkleLockupLT(
             merkleLockupLT,
             baseParams,
