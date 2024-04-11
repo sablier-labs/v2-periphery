@@ -148,7 +148,7 @@ contract SablierV2Batch is ISablierV2Batch {
             }
         }
 
-        // Transfers the assets to the batch and approves the Sablier contract to spend them.
+        // Perform the ERC-20 transfer and approve {SablierV2LockupLinear} to spend the amount of assets.
         _handleTransfer(address(lockupLinear), asset, transferAmount);
 
         // Create a stream for each element in the parameter array.
@@ -196,7 +196,7 @@ contract SablierV2Batch is ISablierV2Batch {
             }
         }
 
-        // Transfers the assets to the batch and approve the Sablier contract to spend them.
+        // Perform the ERC-20 transfer and approve {SablierV2LockupLinear} to spend the amount of assets.
         _handleTransfer(address(lockupLinear), asset, transferAmount);
 
         // Create a stream for each element in the parameter array.
