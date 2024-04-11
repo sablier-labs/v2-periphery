@@ -5,9 +5,9 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 
 import { ISablierV2MerkleLockup } from "./ISablierV2MerkleLockup.sol";
 
-/// @title ISablierV2MerkleLockupLL
+/// @title ISablierV2MerkleLL
 /// @notice MerkleLockup campaign that creates LockupLinear streams.
-interface ISablierV2MerkleLockupLL is ISablierV2MerkleLockup {
+interface ISablierV2MerkleLL is ISablierV2MerkleLockup {
     /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/

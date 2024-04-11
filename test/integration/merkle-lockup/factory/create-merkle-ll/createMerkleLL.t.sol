@@ -4,12 +4,12 @@ pragma solidity >=0.8.22 <0.9.0;
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
-import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
+import { ISablierV2MerkleLL } from "src/interfaces/ISablierV2MerkleLL.sol";
 import { MerkleLockup } from "src/types/DataTypes.sol";
 
 import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test {
+contract CreateMerkleLL_Integration_Test is MerkleLockup_Integration_Test {
     function setUp() public override {
         MerkleLockup_Integration_Test.setUp();
     }
@@ -28,7 +28,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             )
         );
 
-        merkleLockupFactory.createMerkleLockupLL({
+        merkleLockupFactory.createMerkleLL({
             baseParams: baseParams,
             lockupLinear: lockupLinear,
             streamDurations: streamDurations,
@@ -50,7 +50,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
 
         // Expect a revert due to CREATE2.
         vm.expectRevert();
-        merkleLockupFactory.createMerkleLockupLL({
+        merkleLockupFactory.createMerkleLL({
             baseParams: baseParams,
             lockupLinear: lockupLinear,
             streamDurations: streamDurations,
@@ -63,7 +63,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         _;
     }
 
-    function testFuzz_CreateMerkleLockupLL(
+    function testFuzz_CreateMerkleLL(
         address admin,
         uint40 expiration
     )
@@ -72,7 +72,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         givenNotCreatedAlready
     {
         vm.assume(admin != users.admin);
-        address expectedLockupLL = computeMerkleLockupLLAddress(admin, expiration);
+        address expectedLL = computeMerkleLLAddress(admin, expiration);
 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams({
             admin: admin,
@@ -82,8 +82,8 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         });
 
         vm.expectEmit({ emitter: address(merkleLockupFactory) });
-        emit CreateMerkleLockupLL({
-            merkleLockupLL: ISablierV2MerkleLockupLL(expectedLockupLL),
+        emit CreateMerkleLL({
+            merkleLL: ISablierV2MerkleLL(expectedLL),
             baseParams: baseParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
@@ -91,8 +91,8 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             recipientCount: defaults.RECIPIENT_COUNT()
         });
 
-        address actualLockupLL = address(createMerkleLockupLL(admin, expiration));
-        assertGt(actualLockupLL.code.length, 0, "MerkleLockupLL contract not created");
-        assertEq(actualLockupLL, expectedLockupLL, "MerkleLockupLL contract does not match computed address");
+        address actualLL = address(createMerkleLL(admin, expiration));
+        assertGt(actualLL.code.length, 0, "MerkleLL contract not created");
+        assertEq(actualLL, expectedLL, "MerkleLL contract does not match computed address");
     }
 }

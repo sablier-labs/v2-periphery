@@ -4,17 +4,17 @@ pragma solidity >=0.8.22;
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 
 import { ISablierV2MerkleLockup } from "./ISablierV2MerkleLockup.sol";
-import { MerkleLockupLT } from "./../types/DataTypes.sol";
+import { MerkleLT } from "./../types/DataTypes.sol";
 
-/// @title ISablierV2MerkleLockupLT
+/// @title ISablierV2MerkleLT
 /// @notice MerkleLockup campaign that creates LockupTranched streams.
-interface ISablierV2MerkleLockupLT is ISablierV2MerkleLockup {
+interface ISablierV2MerkleLT is ISablierV2MerkleLockup {
     /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Retrieves the tranches with their respective unlock percentages and durations.
-    function getTranchesWithPercentages() external view returns (MerkleLockupLT.TrancheWithPercentage[] memory);
+    function getTranchesWithPercentages() external view returns (MerkleLT.TrancheWithPercentage[] memory);
 
     /// @notice The address of the {SablierV2LockupTranched} contract.
     function LOCKUP_TRANCHED() external view returns (ISablierV2LockupTranched);

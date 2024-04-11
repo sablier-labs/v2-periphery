@@ -4,12 +4,12 @@ pragma solidity >=0.8.22 <0.9.0;
 import { ud2x18 } from "@prb/math/src/UD2x18.sol";
 
 import { Errors } from "src/libraries/Errors.sol";
-import { ISablierV2MerkleLockupLT } from "src/interfaces/ISablierV2MerkleLockupLT.sol";
-import { MerkleLockup, MerkleLockupLT } from "src/types/DataTypes.sol";
+import { ISablierV2MerkleLT } from "src/interfaces/ISablierV2MerkleLT.sol";
+import { MerkleLockup, MerkleLT } from "src/types/DataTypes.sol";
 
 import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test {
+contract CreateMerkleLT_Integration_Test is MerkleLockup_Integration_Test {
     function setUp() public override {
         MerkleLockup_Integration_Test.setUp();
     }
@@ -23,7 +23,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.05e18);
         tranchesWithPercentages[1].unlockPercentage = ud2x18(0.2e18);
 
@@ -36,7 +36,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             )
         );
 
-        merkleLockupFactory.createMerkleLockupLT(
+        merkleLockupFactory.createMerkleLT(
             baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
         );
     }
@@ -46,7 +46,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.75e18);
         tranchesWithPercentages[1].unlockPercentage = ud2x18(0.8e18);
 
@@ -59,7 +59,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             )
         );
 
-        merkleLockupFactory.createMerkleLockupLT(
+        merkleLockupFactory.createMerkleLT(
             baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
         );
     }
@@ -70,7 +70,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
 
     function test_RevertWhen_CampaignNameTooLong() external whenTotalPercentageOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
@@ -82,7 +82,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             )
         );
 
-        merkleLockupFactory.createMerkleLockupLT(
+        merkleLockupFactory.createMerkleLT(
             baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
         );
     }
@@ -94,13 +94,13 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
     /// @dev This test works because a default MerkleLockup contract is deployed in {Integration_Test.setUp}
     function test_RevertGiven_CreatedAlready() external whenTotalPercentageOneHundred whenCampaignNameNotTooLong {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
         uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         // Expect a revert due to CREATE2.
         vm.expectRevert();
-        merkleLockupFactory.createMerkleLockupLT(
+        merkleLockupFactory.createMerkleLT(
             baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
         );
     }
@@ -109,7 +109,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         _;
     }
 
-    function testFuzz_CreateMerkleLockupLT(
+    function testFuzz_CreateMerkleLT(
         address admin,
         uint40 expiration
     )
@@ -119,7 +119,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         givenNotCreatedAlready
     {
         vm.assume(admin != users.admin);
-        address expectedLockupLT = computeMerkleLockupLTAddress(admin, expiration);
+        address expectedLT = computeMerkleLTAddress(admin, expiration);
 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams({
             admin: admin,
@@ -129,8 +129,8 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         });
 
         vm.expectEmit({ emitter: address(merkleLockupFactory) });
-        emit CreateMerkleLockupLT({
-            merkleLockupLT: ISablierV2MerkleLockupLT(expectedLockupLT),
+        emit CreateMerkleLT({
+            merkleLT: ISablierV2MerkleLT(expectedLT),
             baseParams: baseParams,
             lockupTranched: lockupTranched,
             tranchesWithPercentages: defaults.tranchesWithPercentages(),
@@ -139,8 +139,8 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             recipientCount: defaults.RECIPIENT_COUNT()
         });
 
-        address actualLockupLT = address(createMerkleLockupLT(admin, expiration));
-        assertGt(actualLockupLT.code.length, 0, "MerkleLockupLT contract not created");
-        assertEq(actualLockupLT, expectedLockupLT, "MerkleLockupLT contract does not match computed address");
+        address actualLT = address(createMerkleLT(admin, expiration));
+        assertGt(actualLT.code.length, 0, "MerkleLT contract not created");
+        assertEq(actualLT, expectedLT, "MerkleLT contract does not match computed address");
     }
 }

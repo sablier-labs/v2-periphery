@@ -4,7 +4,7 @@ pragma solidity >=0.8.22 <0.9.0;
 import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { Lockup, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { ISablierV2MerkleLockupLT } from "src/interfaces/ISablierV2MerkleLockupLT.sol";
+import { ISablierV2MerkleLT } from "src/interfaces/ISablierV2MerkleLT.sol";
 import { Errors } from "src/libraries/Errors.sol";
 import { MerkleLockup } from "src/types/DataTypes.sol";
 
@@ -28,7 +28,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         vm.expectRevert(
             abi.encodeWithSelector(Errors.SablierV2MerkleLockup_CampaignExpired.selector, warpTime, expiration)
         );
-        merkleLockupLT.claim({ index: 1, recipient: users.recipient1, amount: 1, merkleProof: merkleProof });
+        merkleLT.claim({ index: 1, recipient: users.recipient1, amount: 1, merkleProof: merkleProof });
     }
 
     modifier givenCampaignNotExpired() {
@@ -41,7 +41,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_StreamClaimed.selector, index1));
-        merkleLockupLT.claim(index1, users.recipient1, amount, merkleProof);
+        merkleLT.claim(index1, users.recipient1, amount, merkleProof);
     }
 
     modifier givenNotClaimed() {
@@ -62,7 +62,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
-        merkleLockupLT.claim(invalidIndex, users.recipient1, amount, merkleProof);
+        merkleLT.claim(invalidIndex, users.recipient1, amount, merkleProof);
     }
 
     function test_RevertWhen_InvalidRecipient()
@@ -76,7 +76,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
-        merkleLockupLT.claim(index1, invalidRecipient, amount, merkleProof);
+        merkleLT.claim(index1, invalidRecipient, amount, merkleProof);
     }
 
     function test_RevertWhen_InvalidAmount()
@@ -89,7 +89,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         uint128 invalidAmount = 1337;
         bytes32[] memory merkleProof = defaults.index1Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
-        merkleLockupLT.claim(index1, users.recipient1, invalidAmount, merkleProof);
+        merkleLT.claim(index1, users.recipient1, invalidAmount, merkleProof);
     }
 
     function test_RevertWhen_InvalidMerkleProof()
@@ -102,7 +102,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         uint128 amount = defaults.CLAIM_AMOUNT();
         bytes32[] memory invalidMerkleProof = defaults.index2Proof();
         vm.expectRevert(abi.encodeWithSelector(Errors.SablierV2MerkleLockup_InvalidProof.selector));
-        merkleLockupLT.claim(index1, users.recipient1, amount, invalidMerkleProof);
+        merkleLT.claim(index1, users.recipient1, amount, invalidMerkleProof);
     }
 
     modifier givenIncludedInMerkleTree() {
@@ -135,8 +135,8 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         baseParams.merkleRoot = getRoot(leaves.toBytes32());
 
-        // Deploy a test MerkleLockupLT contract.
-        ISablierV2MerkleLockupLT testMerkleLT = merkleLockupFactory.createMerkleLockupLT(
+        // Deploy a test MerkleLT contract.
+        ISablierV2MerkleLT testMerkleLT = merkleLockupFactory.createMerkleLT(
             baseParams,
             lockupTranched,
             defaults.tranchesWithPercentages(),
@@ -144,7 +144,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
             defaults.RECIPIENT_COUNT()
         );
 
-        // Fund the MerkleLockupLT contract.
+        // Fund the MerkleLT contract.
         deal({ token: address(dai), to: address(testMerkleLT), give: defaults.AGGREGATE_AMOUNT() });
 
         uint256 expectedStreamId = lockupTranched.nextStreamId();
@@ -185,7 +185,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         whenCalculatedAmountsSumEqualsClaimAmount
     {
         uint256 expectedStreamId = lockupTranched.nextStreamId();
-        vm.expectEmit({ emitter: address(merkleLockupLT) });
+        vm.expectEmit({ emitter: address(merkleLT) });
         emit Claim(defaults.INDEX1(), users.recipient1, defaults.CLAIM_AMOUNT(), expectedStreamId);
 
         uint256 actualStreamId = claimLT();
@@ -205,7 +205,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
             wasCanceled: false
         });
 
-        assertTrue(merkleLockupLT.hasClaimed(defaults.INDEX1()), "not claimed");
+        assertTrue(merkleLT.hasClaimed(defaults.INDEX1()), "not claimed");
         assertEq(actualStreamId, expectedStreamId, "invalid stream id");
         assertEq(actualStream, expectedStream);
     }

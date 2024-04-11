@@ -110,7 +110,7 @@ library MerkleLockup {
     }
 }
 
-library MerkleLockupLT {
+library MerkleLT {
     /// @notice Struct encapsulating the unlock percentage and duration of a tranche.
     /// @dev Since users may have different amounts allocated, this struct makes it possible to calculate the amounts
     /// at claim time. An 18-decimal format is used to represent percentages: 100% = 1e18. For more information, see

@@ -5,13 +5,13 @@ import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { Lockup, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
+import { ISablierV2MerkleLL } from "src/interfaces/ISablierV2MerkleLL.sol";
 import { MerkleLockup } from "src/types/DataTypes.sol";
 
 import { MerkleBuilder } from "../../utils/MerkleBuilder.sol";
 import { Fork_Test } from "../Fork.t.sol";
 
-abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
+abstract contract MerkleLL_Fork_Test is Fork_Test {
     using MerkleBuilder for uint256[];
 
     constructor(IERC20 asset_) Fork_Test(asset_) { }
@@ -41,13 +41,13 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
         uint128[] amounts;
         MerkleLockup.ConstructorParams baseParams;
         uint128 clawbackAmount;
-        address expectedLockupLL;
+        address expectedLL;
         LockupLinear.StreamLL expectedStream;
         uint256 expectedStreamId;
         uint256[] indexes;
         uint256 leafPos;
         uint256 leafToClaim;
-        ISablierV2MerkleLockupLL merkleLockupLL;
+        ISablierV2MerkleLL merkleLL;
         bytes32 merkleRoot;
         address[] recipients;
         uint256 recipientCount;
@@ -56,7 +56,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
     // We need the leaves as a storage variable so that we can use OpenZeppelin's {Arrays.findUpperBound}.
     uint256[] public leaves;
 
-    function testForkFuzz_MerkleLockupLL(Params memory params) external {
+    function testForkFuzz_MerkleLL(Params memory params) external {
         vm.assume(params.admin != address(0) && params.admin != users.admin);
         vm.assume(params.leafData.length > 1);
         assumeNoBlacklisted({ token: address(FORK_ASSET), addr: params.admin });
@@ -95,8 +95,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
         MerkleBuilder.sortLeaves(leaves);
         vars.merkleRoot = getRoot(leaves.toBytes32());
 
-        vars.expectedLockupLL =
-            computeMerkleLockupLLAddress(params.admin, FORK_ASSET, vars.merkleRoot, params.expiration);
+        vars.expectedLL = computeMerkleLLAddress(params.admin, FORK_ASSET, vars.merkleRoot, params.expiration);
 
         vars.baseParams = defaults.baseParams({
             admin: params.admin,
@@ -106,8 +105,8 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
         });
 
         vm.expectEmit({ emitter: address(merkleLockupFactory) });
-        emit CreateMerkleLockupLL({
-            merkleLockupLL: ISablierV2MerkleLockupLL(vars.expectedLockupLL),
+        emit CreateMerkleLL({
+            merkleLL: ISablierV2MerkleLL(vars.expectedLL),
             baseParams: vars.baseParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
@@ -115,7 +114,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             recipientCount: vars.recipientCount
         });
 
-        vars.merkleLockupLL = merkleLockupFactory.createMerkleLockupLL({
+        vars.merkleLL = merkleLockupFactory.createMerkleLL({
             baseParams: vars.baseParams,
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
@@ -124,20 +123,16 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
         });
 
         // Fund the MerkleLockup contract.
-        deal({ token: address(FORK_ASSET), to: address(vars.merkleLockupLL), give: vars.aggregateAmount });
+        deal({ token: address(FORK_ASSET), to: address(vars.merkleLL), give: vars.aggregateAmount });
 
-        assertGt(address(vars.merkleLockupLL).code.length, 0, "MerkleLockupLL contract not created");
-        assertEq(
-            address(vars.merkleLockupLL),
-            vars.expectedLockupLL,
-            "MerkleLockupLL contract does not match computed address"
-        );
+        assertGt(address(vars.merkleLL).code.length, 0, "MerkleLL contract not created");
+        assertEq(address(vars.merkleLL), vars.expectedLL, "MerkleLL contract does not match computed address");
 
         /*//////////////////////////////////////////////////////////////////////////
                                           CLAIM
         //////////////////////////////////////////////////////////////////////////*/
 
-        assertFalse(vars.merkleLockupLL.hasClaimed(vars.indexes[params.posBeforeSort]));
+        assertFalse(vars.merkleLL.hasClaimed(vars.indexes[params.posBeforeSort]));
 
         vars.leafToClaim = MerkleBuilder.computeLeaf(
             vars.indexes[params.posBeforeSort],
@@ -153,7 +148,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             vars.amounts[params.posBeforeSort],
             vars.expectedStreamId
         );
-        vars.actualStreamId = vars.merkleLockupLL.claim({
+        vars.actualStreamId = vars.merkleLL.claim({
             index: vars.indexes[params.posBeforeSort],
             recipient: vars.recipients[params.posBeforeSort],
             amount: vars.amounts[params.posBeforeSort],
@@ -176,7 +171,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             wasCanceled: false
         });
 
-        assertTrue(vars.merkleLockupLL.hasClaimed(vars.indexes[params.posBeforeSort]));
+        assertTrue(vars.merkleLL.hasClaimed(vars.indexes[params.posBeforeSort]));
         assertEq(vars.actualStreamId, vars.expectedStreamId);
         assertEq(vars.actualStream, vars.expectedStream);
 
@@ -185,14 +180,14 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
         //////////////////////////////////////////////////////////////////////////*/
 
         if (params.expiration > 0) {
-            vars.clawbackAmount = uint128(FORK_ASSET.balanceOf(address(vars.merkleLockupLL)));
+            vars.clawbackAmount = uint128(FORK_ASSET.balanceOf(address(vars.merkleLL)));
             vm.warp({ newTimestamp: uint256(params.expiration) + 1 seconds });
 
             resetPrank({ msgSender: params.admin });
             expectCallToTransfer({ asset_: address(FORK_ASSET), to: params.admin, amount: vars.clawbackAmount });
-            vm.expectEmit({ emitter: address(vars.merkleLockupLL) });
+            vm.expectEmit({ emitter: address(vars.merkleLL) });
             emit Clawback({ to: params.admin, admin: params.admin, amount: vars.clawbackAmount });
-            vars.merkleLockupLL.clawback({ to: params.admin, amount: vars.clawbackAmount });
+            vars.merkleLL.clawback({ to: params.admin, amount: vars.clawbackAmount });
         }
     }
 }

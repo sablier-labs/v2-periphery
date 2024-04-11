@@ -6,13 +6,13 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
+import { ISablierV2MerkleLL } from "./interfaces/ISablierV2MerkleLL.sol";
 import { ISablierV2MerkleLockupFactory } from "./interfaces/ISablierV2MerkleLockupFactory.sol";
-import { ISablierV2MerkleLockupLL } from "./interfaces/ISablierV2MerkleLockupLL.sol";
-import { ISablierV2MerkleLockupLT } from "./interfaces/ISablierV2MerkleLockupLT.sol";
+import { ISablierV2MerkleLT } from "./interfaces/ISablierV2MerkleLT.sol";
 import { Errors } from "./libraries/Errors.sol";
-import { SablierV2MerkleLockupLL } from "./SablierV2MerkleLockupLL.sol";
-import { SablierV2MerkleLockupLT } from "./SablierV2MerkleLockupLT.sol";
-import { MerkleLockup, MerkleLockupLT } from "./types/DataTypes.sol";
+import { SablierV2MerkleLL } from "./SablierV2MerkleLL.sol";
+import { SablierV2MerkleLT } from "./SablierV2MerkleLT.sol";
+import { MerkleLockup, MerkleLT } from "./types/DataTypes.sol";
 
 /// @title SablierV2MerkleLockupFactory
 /// @notice See the documentation in {ISablierV2MerkleLockupFactory}.
@@ -22,7 +22,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice inheritdoc ISablierV2MerkleLockupFactory
-    function createMerkleLockupLL(
+    function createMerkleLL(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations,
@@ -30,7 +30,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         uint256 recipientCount
     )
         external
-        returns (ISablierV2MerkleLockupLL merkleLockupLL)
+        returns (ISablierV2MerkleLL merkleLL)
     {
         // Hash the parameters to generate a salt.
         bytes32 salt = keccak256(
@@ -49,24 +49,22 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         );
 
         // Deploy the MerkleLockup contract with CREATE2.
-        merkleLockupLL = new SablierV2MerkleLockupLL{ salt: salt }(baseParams, lockupLinear, streamDurations);
+        merkleLL = new SablierV2MerkleLL{ salt: salt }(baseParams, lockupLinear, streamDurations);
 
         // Log the creation of the MerkleLockup contract, including some metadata that is not stored on-chain.
-        emit CreateMerkleLockupLL(
-            merkleLockupLL, baseParams, lockupLinear, streamDurations, aggregateAmount, recipientCount
-        );
+        emit CreateMerkleLL(merkleLL, baseParams, lockupLinear, streamDurations, aggregateAmount, recipientCount);
     }
 
     /// @notice inheritdoc ISablierV2MerkleLockupFactory
-    function createMerkleLockupLT(
+    function createMerkleLT(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages,
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages,
         uint256 aggregateAmount,
         uint256 recipientCount
     )
         external
-        returns (ISablierV2MerkleLockupLT merkleLockupLT)
+        returns (ISablierV2MerkleLT merkleLT)
     {
         // Calculate the sum of percentages and durations across all tranches.
         uint64 totalPercentage;
@@ -102,11 +100,11 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         );
 
         // Deploy the MerkleLockup contract with CREATE2.
-        merkleLockupLT = new SablierV2MerkleLockupLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercentages);
+        merkleLT = new SablierV2MerkleLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercentages);
 
         // Log the creation of the MerkleLockup contract, including some metadata that is not stored on-chain.
-        emit CreateMerkleLockupLT(
-            merkleLockupLT,
+        emit CreateMerkleLT(
+            merkleLT,
             baseParams,
             lockupTranched,
             tranchesWithPercentages,
