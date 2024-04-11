@@ -4,14 +4,14 @@ pragma solidity >=0.8.22 <0.9.0;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { Batch } from "src/types/DataTypes.sol";
+import { BatchLockup } from "src/types/DataTypes.sol";
 
 import { ArrayBuilder } from "../../utils/ArrayBuilder.sol";
-import { BatchBuilder } from "../../utils/BatchBuilder.sol";
+import { BatchLockupBuilder } from "../../utils/BatchLockupBuilder.sol";
 import { Fork_Test } from "../Fork.t.sol";
 
 /// @dev Runs against multiple fork assets.
-abstract contract CreateWithTimestamps_LockupLinear_Batch_Fork_Test is Fork_Test {
+abstract contract CreateWithTimestamps_LockupLinear_BatchLockup_Fork_Test is Fork_Test {
     constructor(IERC20 asset_) Fork_Test(asset_) { }
 
     function setUp() public virtual override {
@@ -40,7 +40,7 @@ abstract contract CreateWithTimestamps_LockupLinear_Batch_Fork_Test is Fork_Test
         uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
 
         deal({ token: address(FORK_ASSET), to: params.sender, give: uint256(totalTransferAmount) });
-        approveContract({ asset_: FORK_ASSET, from: params.sender, spender: address(batch) });
+        approveContract({ asset_: FORK_ASSET, from: params.sender, spender: address(batchLockup) });
 
         LockupLinear.CreateWithTimestamps memory createParams = LockupLinear.CreateWithTimestamps({
             sender: params.sender,
@@ -52,25 +52,26 @@ abstract contract CreateWithTimestamps_LockupLinear_Batch_Fork_Test is Fork_Test
             range: params.range,
             broker: defaults.broker()
         });
-        Batch.CreateWithTimestampsLL[] memory batchParams = BatchBuilder.fillBatch(createParams, params.batchSize);
+        BatchLockup.CreateWithTimestampsLL[] memory batchParams =
+            BatchLockupBuilder.fillBatch(createParams, params.batchSize);
 
         // Asset flow: sender → batch → Sablier
         expectCallToTransferFrom({
             asset_: address(FORK_ASSET),
             from: params.sender,
-            to: address(batch),
+            to: address(batchLockup),
             amount: totalTransferAmount
         });
         expectMultipleCallsToCreateWithTimestampsLL({ count: uint64(params.batchSize), params: createParams });
         expectMultipleCallsToTransferFrom({
             asset_: address(FORK_ASSET),
             count: uint64(params.batchSize),
-            from: address(batch),
+            from: address(batchLockup),
             to: address(lockupLinear),
             amount: params.perStreamAmount
         });
 
-        uint256[] memory actualStreamIds = batch.createWithTimestampsLL(lockupLinear, FORK_ASSET, batchParams);
+        uint256[] memory actualStreamIds = batchLockup.createWithTimestampsLL(lockupLinear, FORK_ASSET, batchParams);
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);
     }

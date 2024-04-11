@@ -3,35 +3,35 @@ pragma solidity >=0.8.22;
 
 import { LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { Batch } from "../../src/types/DataTypes.sol";
+import { BatchLockup } from "../../src/types/DataTypes.sol";
 
-library BatchBuilder {
+library BatchLockupBuilder {
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
-        Batch.CreateWithDurationsLD memory batchSingle,
+        BatchLockup.CreateWithDurationsLD memory batchSingle,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithDurationsLD[] memory batch)
+        returns (BatchLockup.CreateWithDurationsLD[] memory batchLockup)
     {
-        batch = new Batch.CreateWithDurationsLD[](batchSize);
+        batchLockup = new BatchLockup.CreateWithDurationsLD[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            batch[i] = batchSingle;
+            batchLockup[i] = batchSingle;
         }
     }
 
-    /// @notice Turns the `params` into an array of `Batch.CreateWithDurationsLD` structs.
+    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithDurationsLD` structs.
     function fillBatch(
         LockupDynamic.CreateWithDurations memory params,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithDurationsLD[] memory batch)
+        returns (BatchLockup.CreateWithDurationsLD[] memory batchLockup)
     {
-        batch = new Batch.CreateWithDurationsLD[](batchSize);
-        Batch.CreateWithDurationsLD memory batchSingle = Batch.CreateWithDurationsLD({
+        batchLockup = new BatchLockup.CreateWithDurationsLD[](batchSize);
+        BatchLockup.CreateWithDurationsLD memory batchSingle = BatchLockup.CreateWithDurationsLD({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.totalAmount,
@@ -40,35 +40,35 @@ library BatchBuilder {
             segments: params.segments,
             broker: params.broker
         });
-        batch = fillBatch(batchSingle, batchSize);
+        batchLockup = fillBatch(batchSingle, batchSize);
     }
 
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
-        Batch.CreateWithDurationsLL memory batchSingle,
+        BatchLockup.CreateWithDurationsLL memory batchSingle,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithDurationsLL[] memory batch)
+        returns (BatchLockup.CreateWithDurationsLL[] memory batchLockup)
     {
-        batch = new Batch.CreateWithDurationsLL[](batchSize);
+        batchLockup = new BatchLockup.CreateWithDurationsLL[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            batch[i] = batchSingle;
+            batchLockup[i] = batchSingle;
         }
     }
 
-    /// @notice Turns the `params` into an array of `Batch.CreateWithDurationsLL` structs.
+    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithDurationsLL` structs.
     function fillBatch(
         LockupLinear.CreateWithDurations memory params,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithDurationsLL[] memory batch)
+        returns (BatchLockup.CreateWithDurationsLL[] memory batchLockup)
     {
-        batch = new Batch.CreateWithDurationsLL[](batchSize);
-        Batch.CreateWithDurationsLL memory batchSingle = Batch.CreateWithDurationsLL({
+        batchLockup = new BatchLockup.CreateWithDurationsLL[](batchSize);
+        BatchLockup.CreateWithDurationsLL memory batchSingle = BatchLockup.CreateWithDurationsLL({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.totalAmount,
@@ -77,35 +77,35 @@ library BatchBuilder {
             durations: params.durations,
             broker: params.broker
         });
-        batch = fillBatch(batchSingle, batchSize);
+        batchLockup = fillBatch(batchSingle, batchSize);
     }
 
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
-        Batch.CreateWithDurationsLT memory batchSingle,
+        BatchLockup.CreateWithDurationsLT memory batchSingle,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithDurationsLT[] memory batch)
+        returns (BatchLockup.CreateWithDurationsLT[] memory batchLockup)
     {
-        batch = new Batch.CreateWithDurationsLT[](batchSize);
+        batchLockup = new BatchLockup.CreateWithDurationsLT[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            batch[i] = batchSingle;
+            batchLockup[i] = batchSingle;
         }
     }
 
-    /// @notice Turns the `params` into an array of `Batch.CreateWithDurationsLT` structs.
+    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithDurationsLT` structs.
     function fillBatch(
         LockupTranched.CreateWithDurations memory params,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithDurationsLT[] memory batch)
+        returns (BatchLockup.CreateWithDurationsLT[] memory batchLockup)
     {
-        batch = new Batch.CreateWithDurationsLT[](batchSize);
-        Batch.CreateWithDurationsLT memory batchSingle = Batch.CreateWithDurationsLT({
+        batchLockup = new BatchLockup.CreateWithDurationsLT[](batchSize);
+        BatchLockup.CreateWithDurationsLT memory batchSingle = BatchLockup.CreateWithDurationsLT({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.totalAmount,
@@ -114,35 +114,35 @@ library BatchBuilder {
             tranches: params.tranches,
             broker: params.broker
         });
-        batch = fillBatch(batchSingle, batchSize);
+        batchLockup = fillBatch(batchSingle, batchSize);
     }
 
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
-        Batch.CreateWithTimestampsLD memory batchSingle,
+        BatchLockup.CreateWithTimestampsLD memory batchSingle,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithTimestampsLD[] memory batch)
+        returns (BatchLockup.CreateWithTimestampsLD[] memory batchLockup)
     {
-        batch = new Batch.CreateWithTimestampsLD[](batchSize);
+        batchLockup = new BatchLockup.CreateWithTimestampsLD[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            batch[i] = batchSingle;
+            batchLockup[i] = batchSingle;
         }
     }
 
-    /// @notice Turns the `params` into an array of `Batch.CreateWithTimestampsLDs` structs.
+    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithTimestampsLDs` structs.
     function fillBatch(
         LockupDynamic.CreateWithTimestamps memory params,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithTimestampsLD[] memory batch)
+        returns (BatchLockup.CreateWithTimestampsLD[] memory batchLockup)
     {
-        batch = new Batch.CreateWithTimestampsLD[](batchSize);
-        Batch.CreateWithTimestampsLD memory batchSingle = Batch.CreateWithTimestampsLD({
+        batchLockup = new BatchLockup.CreateWithTimestampsLD[](batchSize);
+        BatchLockup.CreateWithTimestampsLD memory batchSingle = BatchLockup.CreateWithTimestampsLD({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.totalAmount,
@@ -152,35 +152,35 @@ library BatchBuilder {
             segments: params.segments,
             broker: params.broker
         });
-        batch = fillBatch(batchSingle, batchSize);
+        batchLockup = fillBatch(batchSingle, batchSize);
     }
 
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
-        Batch.CreateWithTimestampsLL memory batchSingle,
+        BatchLockup.CreateWithTimestampsLL memory batchSingle,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithTimestampsLL[] memory batch)
+        returns (BatchLockup.CreateWithTimestampsLL[] memory batchLockup)
     {
-        batch = new Batch.CreateWithTimestampsLL[](batchSize);
+        batchLockup = new BatchLockup.CreateWithTimestampsLL[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            batch[i] = batchSingle;
+            batchLockup[i] = batchSingle;
         }
     }
 
-    /// @notice Turns the `params` into an array of `Batch.CreateWithTimestampsLL` structs.
+    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithTimestampsLL` structs.
     function fillBatch(
         LockupLinear.CreateWithTimestamps memory params,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithTimestampsLL[] memory batch)
+        returns (BatchLockup.CreateWithTimestampsLL[] memory batchLockup)
     {
-        batch = new Batch.CreateWithTimestampsLL[](batchSize);
-        Batch.CreateWithTimestampsLL memory batchSingle = Batch.CreateWithTimestampsLL({
+        batchLockup = new BatchLockup.CreateWithTimestampsLL[](batchSize);
+        BatchLockup.CreateWithTimestampsLL memory batchSingle = BatchLockup.CreateWithTimestampsLL({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.totalAmount,
@@ -189,35 +189,35 @@ library BatchBuilder {
             range: params.range,
             broker: params.broker
         });
-        batch = fillBatch(batchSingle, batchSize);
+        batchLockup = fillBatch(batchSingle, batchSize);
     }
 
     /// @notice Generates an array containing `batchSize` copies of `batchSingle`.
     function fillBatch(
-        Batch.CreateWithTimestampsLT memory batchSingle,
+        BatchLockup.CreateWithTimestampsLT memory batchSingle,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithTimestampsLT[] memory batch)
+        returns (BatchLockup.CreateWithTimestampsLT[] memory batchLockup)
     {
-        batch = new Batch.CreateWithTimestampsLT[](batchSize);
+        batchLockup = new BatchLockup.CreateWithTimestampsLT[](batchSize);
         for (uint256 i = 0; i < batchSize; ++i) {
-            batch[i] = batchSingle;
+            batchLockup[i] = batchSingle;
         }
     }
 
-    /// @notice Turns the `params` into an array of `Batch.CreateWithTimestampsLT` structs.
+    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithTimestampsLT` structs.
     function fillBatch(
         LockupTranched.CreateWithTimestamps memory params,
         uint256 batchSize
     )
         internal
         pure
-        returns (Batch.CreateWithTimestampsLT[] memory batch)
+        returns (BatchLockup.CreateWithTimestampsLT[] memory batchLockup)
     {
-        batch = new Batch.CreateWithTimestampsLT[](batchSize);
-        Batch.CreateWithTimestampsLT memory batchSingle = Batch.CreateWithTimestampsLT({
+        batchLockup = new BatchLockup.CreateWithTimestampsLT[](batchSize);
+        BatchLockup.CreateWithTimestampsLT memory batchSingle = BatchLockup.CreateWithTimestampsLT({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.totalAmount,
@@ -227,6 +227,6 @@ library BatchBuilder {
             tranches: params.tranches,
             broker: params.broker
         });
-        batch = fillBatch(batchSingle, batchSize);
+        batchLockup = fillBatch(batchSingle, batchSize);
     }
 }

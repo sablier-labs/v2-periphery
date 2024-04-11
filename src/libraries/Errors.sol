@@ -5,10 +5,10 @@ pragma solidity >=0.8.22;
 /// @notice Library containing all custom errors the protocol may revert with.
 library Errors {
     /*//////////////////////////////////////////////////////////////////////////
-                                SABLIER-V2-BATCH
+                             SABLIER-V2-BATCH-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    error SablierV2Batch_BatchSizeZero();
+    error SablierV2BatchLockup_BatchSizeZero();
 
     /*//////////////////////////////////////////////////////////////////////////
                              SABLIER-V2-MERKLE-LOCKUP

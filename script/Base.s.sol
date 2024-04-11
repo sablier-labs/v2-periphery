@@ -58,7 +58,7 @@ contract BaseScript is Script, Sphinx {
     /// Refer to https://github.com/sphinx-labs/sphinx/tree/main/docs.
     ///
     /// CLI example:
-    /// bun sphinx propose script/DeployBatch.s.sol --networks testnets --sig "runSphinx()"
+    /// bun sphinx propose script/DeploybatchLockup.s.sol --networks testnets --sig "runSphinx()"
     function configureSphinx() public override {
         sphinxConfig.mainnets = ["arbitrum", "avalanche", "base", "bnb", "gnosis", "ethereum", "optimism", "polygon"];
         sphinxConfig.orgId = vm.envOr({ name: "SPHINX_ORG_ID", defaultValue: TEST_MNEMONIC });

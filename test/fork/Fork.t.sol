@@ -54,8 +54,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         // Label the contracts.
         labelContracts(FORK_ASSET);
 
-        // Approve the Batch contract.
-        approveContract({ asset_: FORK_ASSET, from: users.alice, spender: address(batch) });
+        // Approve the BatchLockup contract.
+        approveContract({ asset_: FORK_ASSET, from: users.alice, spender: address(batchLockup) });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

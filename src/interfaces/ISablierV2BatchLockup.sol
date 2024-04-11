@@ -6,11 +6,11 @@ import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablie
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 
-import { Batch } from "../types/DataTypes.sol";
+import { BatchLockup } from "../types/DataTypes.sol";
 
-/// @title ISablierV2Batch
+/// @title ISablierV2BatchLockup
 /// @notice Helper to batch create Sablier V2 Lockup streams.
-interface ISablierV2Batch {
+interface ISablierV2BatchLockup {
     /*//////////////////////////////////////////////////////////////////////////
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
@@ -29,7 +29,7 @@ interface ISablierV2Batch {
     function createWithDurationsLL(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
-        Batch.CreateWithDurationsLL[] calldata batch
+        BatchLockup.CreateWithDurationsLL[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);
@@ -48,7 +48,7 @@ interface ISablierV2Batch {
     function createWithTimestampsLL(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
-        Batch.CreateWithTimestampsLL[] calldata batch
+        BatchLockup.CreateWithTimestampsLL[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);
@@ -71,7 +71,7 @@ interface ISablierV2Batch {
     function createWithDurationsLD(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
-        Batch.CreateWithDurationsLD[] calldata batch
+        BatchLockup.CreateWithDurationsLD[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);
@@ -90,7 +90,7 @@ interface ISablierV2Batch {
     function createWithTimestampsLD(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
-        Batch.CreateWithTimestampsLD[] calldata batch
+        BatchLockup.CreateWithTimestampsLD[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);
@@ -113,7 +113,7 @@ interface ISablierV2Batch {
     function createWithDurationsLT(
         ISablierV2LockupTranched lockupTranched,
         IERC20 asset,
-        Batch.CreateWithDurationsLT[] calldata batch
+        BatchLockup.CreateWithDurationsLT[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);
@@ -132,7 +132,7 @@ interface ISablierV2Batch {
     function createWithTimestampsLT(
         ISablierV2LockupTranched lockupTranched,
         IERC20 asset,
-        Batch.CreateWithTimestampsLT[] calldata batch
+        BatchLockup.CreateWithTimestampsLT[] calldata batch
     )
         external
         returns (uint256[] memory streamIds);

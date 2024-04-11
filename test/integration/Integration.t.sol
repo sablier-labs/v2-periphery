@@ -28,8 +28,8 @@ abstract contract Integration_Test is Base_Test {
         // Label the contracts.
         labelContracts(dai);
 
-        // Approve the Batch contract.
-        approveContract({ asset_: dai, from: users.alice, spender: address(batch) });
+        // Approve the BatchLockup contract.
+        approveContract({ asset_: dai, from: users.alice, spender: address(batchLockup) });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
