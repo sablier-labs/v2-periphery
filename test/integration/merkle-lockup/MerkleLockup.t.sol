@@ -62,7 +62,7 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
 
     function createMerkleLL(address admin, uint40 expiration) internal returns (ISablierV2MerkleLL) {
         return merkleLockupFactory.createMerkleLL({
-            baseParams: defaults.baseParams(admin, dai, defaults.MERKLE_ROOT(), expiration),
+            baseParams: defaults.baseParams(admin, dai, expiration, defaults.MERKLE_ROOT()),
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
@@ -113,7 +113,7 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
 
     function createMerkleLT(address admin, uint40 expiration) internal returns (ISablierV2MerkleLT) {
         return merkleLockupFactory.createMerkleLT({
-            baseParams: defaults.baseParams(admin, dai, defaults.MERKLE_ROOT(), expiration),
+            baseParams: defaults.baseParams(admin, dai, expiration, defaults.MERKLE_ROOT()),
             lockupTranched: lockupTranched,
             tranchesWithPercentages: defaults.tranchesWithPercentages(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),

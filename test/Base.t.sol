@@ -286,13 +286,13 @@ abstract contract Base_Test is
     {
         bytes32 salt = keccak256(
             abi.encodePacked(
-                admin,
                 address(asset_),
-                abi.encode(defaults.IPFS_CID()),
-                defaults.NAME_BYTES32(),
-                merkleRoot,
-                expiration,
                 defaults.CANCELABLE(),
+                expiration,
+                admin,
+                abi.encode(defaults.IPFS_CID()),
+                merkleRoot,
+                defaults.NAME_BYTES32(),
                 defaults.TRANSFERABLE(),
                 lockupLinear,
                 abi.encode(defaults.durations())
@@ -330,13 +330,13 @@ abstract contract Base_Test is
     {
         bytes32 salt = keccak256(
             abi.encodePacked(
-                admin,
                 address(asset_),
-                abi.encode(defaults.IPFS_CID()),
-                defaults.NAME_BYTES32(),
-                merkleRoot,
-                expiration,
                 defaults.CANCELABLE(),
+                expiration,
+                admin,
+                abi.encode(defaults.IPFS_CID()),
+                merkleRoot,
+                defaults.NAME_BYTES32(),
                 defaults.TRANSFERABLE(),
                 lockupTranched,
                 abi.encode(defaults.tranchesWithPercentages())
@@ -361,7 +361,7 @@ abstract contract Base_Test is
         returns (bytes memory)
     {
         bytes memory constructorArgs =
-            abi.encode(defaults.baseParams(admin, asset_, merkleRoot, expiration), lockupLinear, defaults.durations());
+            abi.encode(defaults.baseParams(admin, asset_, expiration, merkleRoot), lockupLinear, defaults.durations());
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2MerkleLL).creationCode, constructorArgs);
         } else {
@@ -381,7 +381,7 @@ abstract contract Base_Test is
         returns (bytes memory)
     {
         bytes memory constructorArgs = abi.encode(
-            defaults.baseParams(admin, asset_, merkleRoot, expiration),
+            defaults.baseParams(admin, asset_, expiration, merkleRoot),
             lockupTranched,
             defaults.tranchesWithPercentages()
         );
