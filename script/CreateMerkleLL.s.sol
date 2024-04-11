@@ -1,19 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22 <0.9.0;
 
-import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
+import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
+import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { BaseScript } from "./Base.s.sol";
 
+import { ISablierV2MerkleLL } from "../src/interfaces/ISablierV2MerkleLL.sol";
 import { ISablierV2MerkleLockupFactory } from "../src/interfaces/ISablierV2MerkleLockupFactory.sol";
-import { ISablierV2MerkleLockupLT } from "../src/interfaces/ISablierV2MerkleLockupLT.sol";
-import { MerkleLockup, MerkleLockupLT } from "../src/types/DataTypes.sol";
+import { MerkleLockup } from "../src/types/DataTypes.sol";
 
-contract CreateMerkleLockupLT is BaseScript {
+contract CreateMerkleLL is BaseScript {
     struct Params {
         MerkleLockup.ConstructorParams baseParams;
-        ISablierV2LockupTranched lockupTranched;
-        MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages;
+        ISablierV2LockupLinear lockupLinear;
+        LockupLinear.Durations streamDurations;
         uint256 campaignTotalAmount;
         uint256 recipientCount;
     }
@@ -26,9 +27,9 @@ contract CreateMerkleLockupLT is BaseScript {
         public
         virtual
         broadcast
-        returns (ISablierV2MerkleLockupLT merkleLockupLT)
+        returns (ISablierV2MerkleLL merkleLL)
     {
-        merkleLockupLT = _run(merkleLockupFactory, params);
+        merkleLL = _run(merkleLockupFactory, params);
     }
 
     /// @dev Deploy via Sphinx.
@@ -39,9 +40,9 @@ contract CreateMerkleLockupLT is BaseScript {
         public
         virtual
         sphinx
-        returns (ISablierV2MerkleLockupLT merkleLockupLT)
+        returns (ISablierV2MerkleLL merkleLL)
     {
-        merkleLockupLT = _run(merkleLockupFactory, params);
+        merkleLL = _run(merkleLockupFactory, params);
     }
 
     function _run(
@@ -49,12 +50,12 @@ contract CreateMerkleLockupLT is BaseScript {
         Params calldata params
     )
         internal
-        returns (ISablierV2MerkleLockupLT merkleLockupLT)
+        returns (ISablierV2MerkleLL merkleLL)
     {
-        merkleLockupLT = merkleLockupFactory.createMerkleLockupLT(
+        merkleLL = merkleLockupFactory.createMerkleLL(
             params.baseParams,
-            params.lockupTranched,
-            params.tranchesWithPercentages,
+            params.lockupLinear,
+            params.streamDurations,
             params.campaignTotalAmount,
             params.recipientCount
         );

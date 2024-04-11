@@ -3,11 +3,11 @@ pragma solidity >=0.8.22 <0.9.0;
 
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { SablierV2MerkleLockupLL } from "src/SablierV2MerkleLockupLL.sol";
+import { SablierV2MerkleLL } from "src/SablierV2MerkleLL.sol";
 
 import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract Constructor_MerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test {
+contract Constructor_MerkleLL_Integration_Test is MerkleLockup_Integration_Test {
     /// @dev Needed to prevent "Stack too deep" error
     struct Vars {
         address actualAdmin;
@@ -35,53 +35,53 @@ contract Constructor_MerkleLockupLL_Integration_Test is MerkleLockup_Integration
     }
 
     function test_Constructor() external {
-        SablierV2MerkleLockupLL constructedLockupLL =
-            new SablierV2MerkleLockupLL(defaults.baseParams(), lockupLinear, defaults.durations());
+        SablierV2MerkleLL constructedLL =
+            new SablierV2MerkleLL(defaults.baseParams(), lockupLinear, defaults.durations());
 
         Vars memory vars;
 
-        vars.actualAdmin = constructedLockupLL.admin();
+        vars.actualAdmin = constructedLL.admin();
         vars.expectedAdmin = users.admin;
         assertEq(vars.actualAdmin, vars.expectedAdmin, "admin");
 
-        vars.actualAllowance = dai.allowance(address(constructedLockupLL), address(lockupLinear));
+        vars.actualAllowance = dai.allowance(address(constructedLL), address(lockupLinear));
         vars.expectedAllowance = MAX_UINT256;
         assertEq(vars.actualAllowance, vars.expectedAllowance, "allowance");
 
-        vars.actualAsset = address(constructedLockupLL.ASSET());
+        vars.actualAsset = address(constructedLL.ASSET());
         vars.expectedAsset = address(dai);
         assertEq(vars.actualAsset, vars.expectedAsset, "asset");
 
-        vars.actualCancelable = constructedLockupLL.CANCELABLE();
+        vars.actualCancelable = constructedLL.CANCELABLE();
         vars.expectedCancelable = defaults.CANCELABLE();
         assertEq(vars.actualCancelable, vars.expectedCancelable, "cancelable");
 
-        (vars.actualDurations.cliff, vars.actualDurations.total) = constructedLockupLL.streamDurations();
+        (vars.actualDurations.cliff, vars.actualDurations.total) = constructedLL.streamDurations();
         vars.expectedDurations = defaults.durations();
         assertEq(vars.actualDurations.cliff, vars.expectedDurations.cliff, "durations.cliff");
         assertEq(vars.actualDurations.total, vars.expectedDurations.total, "durations.total");
 
-        vars.actualExpiration = constructedLockupLL.EXPIRATION();
+        vars.actualExpiration = constructedLL.EXPIRATION();
         vars.expectedExpiration = defaults.EXPIRATION();
         assertEq(vars.actualExpiration, vars.expectedExpiration, "expiration");
 
-        vars.actualIpfsCID = constructedLockupLL.ipfsCID();
+        vars.actualIpfsCID = constructedLL.ipfsCID();
         vars.expectedIpfsCID = defaults.IPFS_CID();
         assertEq(vars.actualIpfsCID, vars.expectedIpfsCID, "ipfsCID");
 
-        vars.actualLockupLinear = address(constructedLockupLL.LOCKUP_LINEAR());
+        vars.actualLockupLinear = address(constructedLL.LOCKUP_LINEAR());
         vars.expectedLockupLinear = address(lockupLinear);
         assertEq(vars.actualLockupLinear, vars.expectedLockupLinear, "lockupLinear");
 
-        vars.actualMerkleRoot = constructedLockupLL.MERKLE_ROOT();
+        vars.actualMerkleRoot = constructedLL.MERKLE_ROOT();
         vars.expectedMerkleRoot = defaults.MERKLE_ROOT();
         assertEq(vars.actualMerkleRoot, vars.expectedMerkleRoot, "merkleRoot");
 
-        vars.actualName = constructedLockupLL.name();
+        vars.actualName = constructedLL.name();
         vars.expectedName = defaults.NAME_BYTES32();
         assertEq(bytes32(abi.encodePacked(vars.actualName)), vars.expectedName, "name");
 
-        vars.actualTransferable = constructedLockupLL.TRANSFERABLE();
+        vars.actualTransferable = constructedLL.TRANSFERABLE();
         vars.expectedTransferable = defaults.TRANSFERABLE();
         assertEq(vars.actualTransferable, vars.expectedTransferable, "transferable");
     }

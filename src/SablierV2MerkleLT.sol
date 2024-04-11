@@ -9,13 +9,13 @@ import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISabli
 import { Broker, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { SablierV2MerkleLockup } from "./abstracts/SablierV2MerkleLockup.sol";
-import { ISablierV2MerkleLockupLT } from "./interfaces/ISablierV2MerkleLockupLT.sol";
-import { MerkleLockup, MerkleLockupLT } from "./types/DataTypes.sol";
+import { ISablierV2MerkleLT } from "./interfaces/ISablierV2MerkleLT.sol";
+import { MerkleLockup, MerkleLT } from "./types/DataTypes.sol";
 
-/// @title SablierV2MerkleLockupLT
-/// @notice See the documentation in {ISablierV2MerkleLockupLT}.
-contract SablierV2MerkleLockupLT is
-    ISablierV2MerkleLockupLT, // 2 inherited components
+/// @title SablierV2MerkleLT
+/// @notice See the documentation in {ISablierV2MerkleLT}.
+contract SablierV2MerkleLT is
+    ISablierV2MerkleLT, // 2 inherited components
     SablierV2MerkleLockup // 4 inherited components
 {
     using BitMaps for BitMaps.BitMap;
@@ -25,11 +25,11 @@ contract SablierV2MerkleLockupLT is
                                   STATE VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2MerkleLockupLT
+    /// @inheritdoc ISablierV2MerkleLT
     ISablierV2LockupTranched public immutable override LOCKUP_TRANCHED;
 
     /// @dev The tranches with their respective unlock percentages and durations.
-    MerkleLockupLT.TrancheWithPercentage[] internal _tranchesWithPercentages;
+    MerkleLT.TrancheWithPercentage[] internal _tranchesWithPercentages;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
@@ -40,7 +40,7 @@ contract SablierV2MerkleLockupLT is
     constructor(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages
     )
         SablierV2MerkleLockup(baseParams)
     {
@@ -61,13 +61,8 @@ contract SablierV2MerkleLockupLT is
                            USER-FACING CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2MerkleLockupLT
-    function getTranchesWithPercentages()
-        external
-        view
-        override
-        returns (MerkleLockupLT.TrancheWithPercentage[] memory)
-    {
+    /// @inheritdoc ISablierV2MerkleLT
+    function getTranchesWithPercentages() external view override returns (MerkleLT.TrancheWithPercentage[] memory) {
         return _tranchesWithPercentages;
     }
 
@@ -75,7 +70,7 @@ contract SablierV2MerkleLockupLT is
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2MerkleLockupLT
+    /// @inheritdoc ISablierV2MerkleLT
     function claim(
         uint256 index,
         address recipient,
@@ -128,7 +123,7 @@ contract SablierV2MerkleLockupLT is
         returns (LockupTranched.TrancheWithDuration[] memory tranches)
     {
         // Load the tranches in memory (to save gas).
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = _tranchesWithPercentages;
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages = _tranchesWithPercentages;
 
         // Declare the variables needed for calculation.
         uint128 calculatedAmountsSum;

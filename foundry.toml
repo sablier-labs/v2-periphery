@@ -12,9 +12,9 @@
   ]
   gas_reports = [
     "SablierV2Batch",
+    "SablierV2MerkleLL",
     "SablierV2MerkleLockupFactory",
-    "SablierV2MerkleLockupLL",
-    "SablierV2MerkleLockupLT",
+    "SablierV2MerkleLT",
   ]
   optimizer = true
   optimizer_runs = 10_000

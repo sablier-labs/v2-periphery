@@ -1,4 +1,4 @@
-createMerkleLockupLL.t.sol
+createMerkleLL.t.sol
 ├── when the total percentage does not equal 100%
 │  ├── when the total percentage is less than 100%
 │  │  └── it should revert
@@ -12,4 +12,4 @@ createMerkleLockupLL.t.sol
       │  └── it should revert
       └── given the campaign has not been already created
          ├── it should create the campaign
-         └── it should emit a {CreateMerkleLockupLT} event
+         └── it should emit a {CreateMerkleLT} event

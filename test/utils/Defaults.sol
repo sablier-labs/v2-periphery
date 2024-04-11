@@ -7,7 +7,7 @@ import { ud2x18 } from "@prb/math/src/UD2x18.sol";
 import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
 import { Broker, LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { Batch, MerkleLockup, MerkleLockupLT } from "src/types/DataTypes.sol";
+import { Batch, MerkleLockup, MerkleLT } from "src/types/DataTypes.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
 import { BatchBuilder } from "./BatchBuilder.sol";
@@ -147,13 +147,13 @@ contract Defaults is Merkle {
     function tranchesWithPercentages()
         public
         pure
-        returns (MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages_)
+        returns (MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages_)
     {
-        tranchesWithPercentages_ = new MerkleLockupLT.TrancheWithPercentage[](2);
+        tranchesWithPercentages_ = new MerkleLT.TrancheWithPercentage[](2);
         tranchesWithPercentages_[0] =
-            MerkleLockupLT.TrancheWithPercentage({ unlockPercentage: ud2x18(0.25e18), duration: 2500 seconds });
+            MerkleLT.TrancheWithPercentage({ unlockPercentage: ud2x18(0.25e18), duration: 2500 seconds });
         tranchesWithPercentages_[1] =
-            MerkleLockupLT.TrancheWithPercentage({ unlockPercentage: ud2x18(0.75e18), duration: 7500 seconds });
+            MerkleLT.TrancheWithPercentage({ unlockPercentage: ud2x18(0.75e18), duration: 7500 seconds });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -339,7 +339,7 @@ contract Defaults is Merkle {
         tranches_[1] = LockupTranched.Tranche({ amount: 7500e18, timestamp: uint40(block.timestamp) + TOTAL_DURATION });
     }
 
-    /// @dev Mirros the logic from {SablierV2MerkleLockupLT._calculateTranches}.
+    /// @dev Mirros the logic from {SablierV2MerkleLT._calculateTranches}.
     function tranches(uint128 totalAmount) public view returns (LockupTranched.Tranche[] memory tranches_) {
         tranches_ = tranches();
 

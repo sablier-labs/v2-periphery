@@ -14,13 +14,13 @@ import { Constants as V2CoreConstants } from "@sablier/v2-core/test/utils/Consta
 import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
 
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
+import { ISablierV2MerkleLL } from "src/interfaces/ISablierV2MerkleLL.sol";
 import { ISablierV2MerkleLockupFactory } from "src/interfaces/ISablierV2MerkleLockupFactory.sol";
-import { ISablierV2MerkleLockupLL } from "src/interfaces/ISablierV2MerkleLockupLL.sol";
-import { ISablierV2MerkleLockupLT } from "src/interfaces/ISablierV2MerkleLockupLT.sol";
+import { ISablierV2MerkleLT } from "src/interfaces/ISablierV2MerkleLT.sol";
 import { SablierV2Batch } from "src/SablierV2Batch.sol";
+import { SablierV2MerkleLL } from "src/SablierV2MerkleLL.sol";
 import { SablierV2MerkleLockupFactory } from "src/SablierV2MerkleLockupFactory.sol";
-import { SablierV2MerkleLockupLL } from "src/SablierV2MerkleLockupLL.sol";
-import { SablierV2MerkleLockupLT } from "src/SablierV2MerkleLockupLT.sol";
+import { SablierV2MerkleLT } from "src/SablierV2MerkleLT.sol";
 
 import { ERC20Mock } from "./mocks/erc20/ERC20Mock.sol";
 import { Assertions } from "./utils/Assertions.sol";
@@ -57,8 +57,8 @@ abstract contract Base_Test is
     ISablierV2LockupLinear internal lockupLinear;
     ISablierV2LockupTranched internal lockupTranched;
     ISablierV2MerkleLockupFactory internal merkleLockupFactory;
-    ISablierV2MerkleLockupLL internal merkleLockupLL;
-    ISablierV2MerkleLockupLT internal merkleLockupLT;
+    ISablierV2MerkleLL internal merkleLL;
+    ISablierV2MerkleLT internal merkleLT;
 
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION
@@ -116,9 +116,9 @@ abstract contract Base_Test is
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
         vm.label({ account: address(lockupTranched), newLabel: "LockupTranched" });
+        vm.label({ account: address(merkleLL), newLabel: "MerkleLL" });
         vm.label({ account: address(merkleLockupFactory), newLabel: "MerkleLockupFactory" });
-        vm.label({ account: address(merkleLockupLL), newLabel: "MerkleLockupLL" });
-        vm.label({ account: address(merkleLockupLT), newLabel: "MerkleLockupLT" });
+        vm.label({ account: address(merkleLT), newLabel: "MerkleLT" });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -262,7 +262,7 @@ abstract contract Base_Test is
                                   MERKLE-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    function computeMerkleLockupLLAddress(
+    function computeMerkleLLAddress(
         address admin,
         bytes32 merkleRoot,
         uint40 expiration
@@ -271,10 +271,10 @@ abstract contract Base_Test is
         view
         returns (address)
     {
-        return computeMerkleLockupLLAddress(admin, dai, merkleRoot, expiration);
+        return computeMerkleLLAddress(admin, dai, merkleRoot, expiration);
     }
 
-    function computeMerkleLockupLLAddress(
+    function computeMerkleLLAddress(
         address admin,
         IERC20 asset_,
         bytes32 merkleRoot,
@@ -298,7 +298,7 @@ abstract contract Base_Test is
                 abi.encode(defaults.durations())
             )
         );
-        bytes32 creationBytecodeHash = keccak256(getMerkleLockupLLBytecode(admin, asset_, merkleRoot, expiration));
+        bytes32 creationBytecodeHash = keccak256(getMerkleLLBytecode(admin, asset_, merkleRoot, expiration));
         return computeCreate2Address({
             salt: salt,
             initcodeHash: creationBytecodeHash,
@@ -306,7 +306,7 @@ abstract contract Base_Test is
         });
     }
 
-    function computeMerkleLockupLTAddress(
+    function computeMerkleLTAddress(
         address admin,
         bytes32 merkleRoot,
         uint40 expiration
@@ -315,10 +315,10 @@ abstract contract Base_Test is
         view
         returns (address)
     {
-        return computeMerkleLockupLTAddress(admin, dai, merkleRoot, expiration);
+        return computeMerkleLTAddress(admin, dai, merkleRoot, expiration);
     }
 
-    function computeMerkleLockupLTAddress(
+    function computeMerkleLTAddress(
         address admin,
         IERC20 asset_,
         bytes32 merkleRoot,
@@ -342,7 +342,7 @@ abstract contract Base_Test is
                 abi.encode(defaults.tranchesWithPercentages())
             )
         );
-        bytes32 creationBytecodeHash = keccak256(getMerkleLockupLTBytecode(admin, asset_, merkleRoot, expiration));
+        bytes32 creationBytecodeHash = keccak256(getMerkleLTBytecode(admin, asset_, merkleRoot, expiration));
         return computeCreate2Address({
             salt: salt,
             initcodeHash: creationBytecodeHash,
@@ -350,7 +350,7 @@ abstract contract Base_Test is
         });
     }
 
-    function getMerkleLockupLLBytecode(
+    function getMerkleLLBytecode(
         address admin,
         IERC20 asset_,
         bytes32 merkleRoot,
@@ -363,15 +363,14 @@ abstract contract Base_Test is
         bytes memory constructorArgs =
             abi.encode(defaults.baseParams(admin, asset_, merkleRoot, expiration), lockupLinear, defaults.durations());
         if (!isTestOptimizedProfile()) {
-            return bytes.concat(type(SablierV2MerkleLockupLL).creationCode, constructorArgs);
+            return bytes.concat(type(SablierV2MerkleLL).creationCode, constructorArgs);
         } else {
-            return bytes.concat(
-                vm.getCode("out-optimized/SablierV2MerkleLockupLL.sol/SablierV2MerkleLockupLL.json"), constructorArgs
-            );
+            return
+                bytes.concat(vm.getCode("out-optimized/SablierV2MerkleLL.sol/SablierV2MerkleLL.json"), constructorArgs);
         }
     }
 
-    function getMerkleLockupLTBytecode(
+    function getMerkleLTBytecode(
         address admin,
         IERC20 asset_,
         bytes32 merkleRoot,
@@ -387,11 +386,10 @@ abstract contract Base_Test is
             defaults.tranchesWithPercentages()
         );
         if (!isTestOptimizedProfile()) {
-            return bytes.concat(type(SablierV2MerkleLockupLT).creationCode, constructorArgs);
+            return bytes.concat(type(SablierV2MerkleLT).creationCode, constructorArgs);
         } else {
-            return bytes.concat(
-                vm.getCode("out-optimized/SablierV2MerkleLockupLT.sol/SablierV2MerkleLockupLT.json"), constructorArgs
-            );
+            return
+                bytes.concat(vm.getCode("out-optimized/SablierV2MerkleLT.sol/SablierV2MerkleLT.json"), constructorArgs);
         }
     }
 }

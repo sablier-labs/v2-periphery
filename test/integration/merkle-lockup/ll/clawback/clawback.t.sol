@@ -15,7 +15,7 @@ contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
     function test_RevertWhen_CallerNotAdmin() external {
         resetPrank({ msgSender: users.eve });
         vm.expectRevert(abi.encodeWithSelector(V2CoreErrors.CallerNotAdmin.selector, users.admin, users.eve));
-        merkleLockupLL.clawback({ to: users.eve, amount: 1 });
+        merkleLL.clawback({ to: users.eve, amount: 1 });
     }
 
     modifier whenCallerAdmin() {
@@ -29,7 +29,7 @@ contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
                 Errors.SablierV2MerkleLockup_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
             )
         );
-        merkleLockupLL.clawback({ to: users.admin, amount: 1 });
+        merkleLL.clawback({ to: users.admin, amount: 1 });
     }
 
     modifier givenCampaignExpired() {
@@ -49,10 +49,10 @@ contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
     }
 
     function test_Clawback(address to) internal {
-        uint128 clawbackAmount = uint128(dai.balanceOf(address(merkleLockupLL)));
+        uint128 clawbackAmount = uint128(dai.balanceOf(address(merkleLL)));
         expectCallToTransfer({ to: to, amount: clawbackAmount });
-        vm.expectEmit({ emitter: address(merkleLockupLL) });
+        vm.expectEmit({ emitter: address(merkleLL) });
         emit Clawback({ admin: users.admin, to: to, amount: clawbackAmount });
-        merkleLockupLL.clawback({ to: to, amount: clawbackAmount });
+        merkleLL.clawback({ to: to, amount: clawbackAmount });
     }
 }

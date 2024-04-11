@@ -9,13 +9,13 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { Broker, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { SablierV2MerkleLockup } from "./abstracts/SablierV2MerkleLockup.sol";
-import { ISablierV2MerkleLockupLL } from "./interfaces/ISablierV2MerkleLockupLL.sol";
+import { ISablierV2MerkleLL } from "./interfaces/ISablierV2MerkleLL.sol";
 import { MerkleLockup } from "./types/DataTypes.sol";
 
-/// @title SablierV2MerkleLockupLL
-/// @notice See the documentation in {ISablierV2MerkleLockupLL}.
-contract SablierV2MerkleLockupLL is
-    ISablierV2MerkleLockupLL, // 2 inherited components
+/// @title SablierV2MerkleLL
+/// @notice See the documentation in {ISablierV2MerkleLL}.
+contract SablierV2MerkleLL is
+    ISablierV2MerkleLL, // 2 inherited components
     SablierV2MerkleLockup // 4 inherited components
 {
     using BitMaps for BitMaps.BitMap;
@@ -25,10 +25,10 @@ contract SablierV2MerkleLockupLL is
                                   STATE VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2MerkleLockupLL
+    /// @inheritdoc ISablierV2MerkleLL
     ISablierV2LockupLinear public immutable override LOCKUP_LINEAR;
 
-    /// @inheritdoc ISablierV2MerkleLockupLL
+    /// @inheritdoc ISablierV2MerkleLL
     LockupLinear.Durations public override streamDurations;
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ contract SablierV2MerkleLockupLL is
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2MerkleLockupLL
+    /// @inheritdoc ISablierV2MerkleLL
     function claim(
         uint256 index,
         address recipient,

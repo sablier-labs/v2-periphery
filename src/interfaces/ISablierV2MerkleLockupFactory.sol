@@ -5,9 +5,9 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { ISablierV2MerkleLockupLL } from "./ISablierV2MerkleLockupLL.sol";
-import { ISablierV2MerkleLockupLT } from "./ISablierV2MerkleLockupLT.sol";
-import { MerkleLockup, MerkleLockupLT } from "../types/DataTypes.sol";
+import { ISablierV2MerkleLL } from "./ISablierV2MerkleLL.sol";
+import { ISablierV2MerkleLT } from "./ISablierV2MerkleLT.sol";
+import { MerkleLockup, MerkleLT } from "../types/DataTypes.sol";
 
 /// @title ISablierV2MerkleLockupFactory
 /// @notice Deploys MerkleLockup campaigns with CREATE2.
@@ -16,9 +16,9 @@ interface ISablierV2MerkleLockupFactory {
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Emitted when a {SablierV2MerkleLockupLL} campaign is created.
-    event CreateMerkleLockupLL(
-        ISablierV2MerkleLockupLL indexed merkleLockupLL,
+    /// @notice Emitted when a {SablierV2MerkleLL} campaign is created.
+    event CreateMerkleLL(
+        ISablierV2MerkleLL indexed merkleLL,
         MerkleLockup.ConstructorParams baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations streamDurations,
@@ -26,12 +26,12 @@ interface ISablierV2MerkleLockupFactory {
         uint256 recipientCount
     );
 
-    /// @notice Emitted when a {SablierV2MerkleLockupLT} campaign is created.
-    event CreateMerkleLockupLT(
-        ISablierV2MerkleLockupLT indexed merkleLockupLT,
+    /// @notice Emitted when a {SablierV2MerkleLT} campaign is created.
+    event CreateMerkleLT(
+        ISablierV2MerkleLT indexed merkleLT,
         MerkleLockup.ConstructorParams baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages,
+        MerkleLT.TrancheWithPercentage[] tranchesWithPercentages,
         uint256 totalDuration,
         uint256 aggregateAmount,
         uint256 recipientCount
@@ -42,15 +42,15 @@ interface ISablierV2MerkleLockupFactory {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Creates a new MerkleLockup campaign with a LockupLinear distribution.
-    /// @dev Emits a {CreateMerkleLockupLL} event.
+    /// @dev Emits a {CreateMerkleLL} event.
     /// @param baseParams Struct encapsulating the {SablierV2MerkleLockup} parameters, which are documented in
     /// {DataTypes}.
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param streamDurations The durations for each stream.
     /// @param aggregateAmount The total amount of ERC-20 assets to be distributed to all recipients.
     /// @param recipientCount The total number of recipients who are eligible to claim.
-    /// @return merkleLockupLL The address of the newly created MerkleLockup contract.
-    function createMerkleLockupLL(
+    /// @return merkleLL The address of the newly created MerkleLockup contract.
+    function createMerkleLL(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations,
@@ -58,10 +58,10 @@ interface ISablierV2MerkleLockupFactory {
         uint256 recipientCount
     )
         external
-        returns (ISablierV2MerkleLockupLL merkleLockupLL);
+        returns (ISablierV2MerkleLL merkleLL);
 
     /// @notice Creates a new MerkleLockup campaign with a LockupTranched distribution.
-    /// @dev Emits a {CreateMerkleLockupLT} event.
+    /// @dev Emits a {CreateMerkleLT} event.
     ///
     /// Requirements:
     /// - The sum of the tranches' unlock percentages must equal 100% = 1e18.
@@ -72,14 +72,14 @@ interface ISablierV2MerkleLockupFactory {
     /// @param tranchesWithPercentages The tranches with their respective unlock percentages.
     /// @param aggregateAmount The total amount of ERC-20 assets to be distributed to all recipients.
     /// @param recipientCount The total number of recipients who are eligible to claim.
-    /// @return merkleLockupLT The address of the newly created MerkleLockup contract.
-    function createMerkleLockupLT(
+    /// @return merkleLT The address of the newly created MerkleLockup contract.
+    function createMerkleLT(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages,
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages,
         uint256 aggregateAmount,
         uint256 recipientCount
     )
         external
-        returns (ISablierV2MerkleLockupLT merkleLockupLT);
+        returns (ISablierV2MerkleLT merkleLT);
 }

@@ -10,7 +10,7 @@ contract HasClaimed_Integration_Test is MerkleLockup_Integration_Test {
 
     function test_HasClaimed_IndexNotInTree() external {
         uint256 indexNotInTree = 1337e18;
-        assertFalse(merkleLockupLL.hasClaimed(indexNotInTree), "claimed");
+        assertFalse(merkleLL.hasClaimed(indexNotInTree), "claimed");
     }
 
     modifier whenIndexInTree() {
@@ -18,7 +18,7 @@ contract HasClaimed_Integration_Test is MerkleLockup_Integration_Test {
     }
 
     function test_HasClaimed_NotClaimed() external whenIndexInTree {
-        assertFalse(merkleLockupLL.hasClaimed(defaults.INDEX1()), "claimed");
+        assertFalse(merkleLL.hasClaimed(defaults.INDEX1()), "claimed");
     }
 
     modifier givenRecipientHasClaimed() {
@@ -27,6 +27,6 @@ contract HasClaimed_Integration_Test is MerkleLockup_Integration_Test {
     }
 
     function test_HasClaimed() external whenIndexInTree givenRecipientHasClaimed {
-        assertTrue(merkleLockupLL.hasClaimed(defaults.INDEX1()), "not claimed");
+        assertTrue(merkleLL.hasClaimed(defaults.INDEX1()), "not claimed");
     }
 }
