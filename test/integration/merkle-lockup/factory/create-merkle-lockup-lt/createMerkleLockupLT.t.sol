@@ -32,7 +32,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred.selector, ud2x18(totalPercentage)
+                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred.selector, totalPercentage
             )
         );
 
@@ -55,7 +55,7 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred.selector, ud2x18(totalPercentage)
+                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred.selector, totalPercentage
             )
         );
 

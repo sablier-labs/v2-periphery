@@ -96,8 +96,8 @@ library MerkleLockup {
     /// @param name The name of the campaign.
     /// @param merkleRoot The Merkle root of the claim data.
     /// @param expiration The expiration of the campaign, as a Unix timestamp.
-    /// @param cancelable Indicates if the stream NFT will be cancelable after claiming.
-    /// @param transferable Indicates if the stream NFT will be transferable after claiming.
+    /// @param cancelable Indicates if the stream will be cancelable after claiming.
+    /// @param transferable Indicates if the stream will be transferable after claiming.
     struct ConstructorParams {
         address initialAdmin;
         IERC20 asset;

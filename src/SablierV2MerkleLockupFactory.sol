@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22;
 
-import { ud2x18, uUNIT } from "@prb/math/src/UD2x18.sol";
+import { uUNIT } from "@prb/math/src/UD2x18.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
@@ -82,7 +82,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
 
         // Check: the sum of percentages equals 100%.
         if (totalPercentage != uUNIT) {
-            revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred(ud2x18(totalPercentage));
+            revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred(totalPercentage);
         }
 
         // Hash the parameters to generate a salt.
