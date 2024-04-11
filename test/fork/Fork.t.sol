@@ -18,14 +18,14 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
                                   STATE VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
-    IERC20 internal immutable ASSET;
+    IERC20 internal immutable FORK_ASSET;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
 
-    constructor(IERC20 asset_) {
-        ASSET = asset_;
+    constructor(IERC20 forkAsset) {
+        FORK_ASSET = forkAsset;
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -41,21 +41,21 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
         // Load the external dependencies.
         // loadDependencies();
-        // TODO: Remove this line once the v2 core contracts are deployed on Mainnet.
+        // TODO: Remove this line once the V2 Core contracts are deployed on Mainnet.
         deployDependencies();
 
         // Deploy the defaults contract and allow it to access cheatcodes.
-        defaults = new Defaults(users, ASSET);
+        defaults = new Defaults({ users_: users, asset_: FORK_ASSET });
         vm.allowCheatcodes(address(defaults));
 
         // Deploy V2 Periphery.
         deployPeripheryConditionally();
 
         // Label the contracts.
-        labelContracts(ASSET);
+        labelContracts(FORK_ASSET);
 
-        // Approve the relevant contract.
-        approveContract({ asset_: ASSET, from: users.alice, spender: address(batch) });
+        // Approve the Batch contract.
+        approveContract({ asset_: FORK_ASSET, from: users.alice, spender: address(batch) });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -74,8 +74,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         vm.assume(user != address(lockupTranched) && recipient != address(lockupTranched));
 
         // Avoid users blacklisted by USDC or USDT.
-        assumeNoBlacklisted(address(ASSET), user);
-        assumeNoBlacklisted(address(ASSET), recipient);
+        assumeNoBlacklisted(address(FORK_ASSET), user);
+        assumeNoBlacklisted(address(FORK_ASSET), recipient);
     }
 
     /// @dev Loads all dependencies pre-deployed on Mainnet.
@@ -85,8 +85,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
         lockupTranched = ISablierV2LockupTranched(0xAFb979d9afAd1aD27C5eFf4E27226E3AB9e5dCC9);
     }
 
-    /// @dev Deploys the v2 core dependencies.
-    // TODO: Remove this function once the v2 core contracts are deployed on Mainnet.
+    /// @dev Deploys the V2 Core dependencies.
+    // TODO: Remove this function once the V2 Core contracts are deployed on Mainnet.
     function deployDependencies() private {
         (lockupDynamic, lockupLinear, lockupTranched,) = new V2CorePrecompiles().deployCore(users.admin);
     }

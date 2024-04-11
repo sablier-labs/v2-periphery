@@ -13,7 +13,7 @@ import { SablierV2MerkleLockupFactory } from "../src/SablierV2MerkleLockupFactor
 ///
 /// @dev Reverts if any contract has already been deployed.
 contract DeployDeterministicPeriphery is BaseScript {
-    /// @dev Deploy using Forge CLI.
+    /// @dev Deploy via Forge.
     function runBroadcast()
         public
         virtual
@@ -23,7 +23,7 @@ contract DeployDeterministicPeriphery is BaseScript {
         (batch, merkleLockupFactory) = _run();
     }
 
-    /// @dev Deploy using Sphinx CLI.
+    /// @dev Deploy via Sphinx.
     function runSphinx()
         public
         virtual

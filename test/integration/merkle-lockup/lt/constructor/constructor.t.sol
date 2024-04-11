@@ -15,22 +15,22 @@ contract Constructor_MerkleLockupLT_Integration_Test is MerkleLockup_Integration
         string actualIpfsCID;
         string actualName;
         bool actualCancelable;
-        bool actualTransferable;
-        MerkleLockupLT.TrancheWithPercentage[] actualTranchesWithPercentages;
         uint40 actualExpiration;
         address actualLockupTranched;
         bytes32 actualMerkleRoot;
+        MerkleLockupLT.TrancheWithPercentage[] actualTranchesWithPercentages;
+        bool actualTransferable;
         address expectedAdmin;
         uint256 expectedAllowance;
         address expectedAsset;
-        string expectedIpfsCID;
-        bytes32 expectedName;
         bool expectedCancelable;
-        bool expectedTransferable;
-        MerkleLockupLT.TrancheWithPercentage[] expectedTranchesWithPercentages;
+        string expectedIpfsCID;
         uint40 expectedExpiration;
         address expectedLockupTranched;
         bytes32 expectedMerkleRoot;
+        bytes32 expectedName;
+        MerkleLockupLT.TrancheWithPercentage[] expectedTranchesWithPercentages;
+        bool expectedTransferable;
     }
 
     function test_Constructor() external {
@@ -43,9 +43,29 @@ contract Constructor_MerkleLockupLT_Integration_Test is MerkleLockup_Integration
         vars.expectedAdmin = users.admin;
         assertEq(vars.actualAdmin, vars.expectedAdmin, "admin");
 
+        vars.actualAllowance = dai.allowance(address(constructedLockupLT), address(lockupTranched));
+        vars.expectedAllowance = MAX_UINT256;
+        assertEq(vars.actualAllowance, vars.expectedAllowance, "allowance");
+
         vars.actualAsset = address(constructedLockupLT.ASSET());
         vars.expectedAsset = address(dai);
         assertEq(vars.actualAsset, vars.expectedAsset, "asset");
+
+        vars.actualCancelable = constructedLockupLT.CANCELABLE();
+        vars.expectedCancelable = defaults.CANCELABLE();
+        assertEq(vars.actualCancelable, vars.expectedCancelable, "cancelable");
+
+        vars.actualExpiration = constructedLockupLT.EXPIRATION();
+        vars.expectedExpiration = defaults.EXPIRATION();
+        assertEq(vars.actualExpiration, vars.expectedExpiration, "expiration");
+
+        vars.actualIpfsCID = constructedLockupLT.ipfsCID();
+        vars.expectedIpfsCID = defaults.IPFS_CID();
+        assertEq(vars.actualIpfsCID, vars.expectedIpfsCID, "ipfsCID");
+
+        vars.actualLockupTranched = address(constructedLockupLT.LOCKUP_TRANCHED());
+        vars.expectedLockupTranched = address(lockupTranched);
+        assertEq(vars.actualLockupTranched, vars.expectedLockupTranched, "lockupTranched");
 
         vars.actualName = constructedLockupLT.name();
         vars.expectedName = defaults.NAME_BYTES32();
@@ -55,32 +75,12 @@ contract Constructor_MerkleLockupLT_Integration_Test is MerkleLockup_Integration
         vars.expectedMerkleRoot = defaults.MERKLE_ROOT();
         assertEq(vars.actualMerkleRoot, vars.expectedMerkleRoot, "merkleRoot");
 
-        vars.actualCancelable = constructedLockupLT.CANCELABLE();
-        vars.expectedCancelable = defaults.CANCELABLE();
-        assertEq(vars.actualCancelable, vars.expectedCancelable, "cancelable");
+        vars.actualTranchesWithPercentages = constructedLockupLT.getTranchesWithPercentages();
+        vars.expectedTranchesWithPercentages = defaults.tranchesWithPercentages();
+        assertEq(vars.actualTranchesWithPercentages, vars.expectedTranchesWithPercentages, "tranchesWithPercentages");
 
         vars.actualTransferable = constructedLockupLT.TRANSFERABLE();
         vars.expectedTransferable = defaults.TRANSFERABLE();
         assertEq(vars.actualTransferable, vars.expectedTransferable, "transferable");
-
-        vars.actualExpiration = constructedLockupLT.EXPIRATION();
-        vars.expectedExpiration = defaults.EXPIRATION();
-        assertEq(vars.actualExpiration, vars.expectedExpiration, "expiration");
-
-        vars.actualLockupTranched = address(constructedLockupLT.LOCKUP_TRANCHED());
-        vars.expectedLockupTranched = address(lockupTranched);
-        assertEq(vars.actualLockupTranched, vars.expectedLockupTranched, "LockupTranched");
-
-        vars.actualTranchesWithPercentages = constructedLockupLT.getTranchesWithPercentages();
-        vars.expectedTranchesWithPercentages = defaults.tranchesWithPercentages();
-        assertEq(vars.actualTranchesWithPercentages, vars.expectedTranchesWithPercentages);
-
-        vars.actualAllowance = dai.allowance(address(constructedLockupLT), address(lockupTranched));
-        vars.expectedAllowance = MAX_UINT256;
-        assertEq(vars.actualAllowance, vars.expectedAllowance, "allowance");
-
-        vars.actualIpfsCID = constructedLockupLT.ipfsCID();
-        vars.expectedIpfsCID = defaults.IPFS_CID();
-        assertEq(vars.actualIpfsCID, vars.expectedIpfsCID, "ipfsCID");
     }
 }

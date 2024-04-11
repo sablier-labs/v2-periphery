@@ -18,106 +18,6 @@ contract SablierV2Batch is ISablierV2Batch {
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
-                              SABLIER-V2-LOCKUP-LINEAR
-    //////////////////////////////////////////////////////////////////////////*/
-
-    /// @inheritdoc ISablierV2Batch
-    function createWithDurationsLL(
-        ISablierV2LockupLinear lockupLinear,
-        IERC20 asset,
-        Batch.CreateWithDurationsLL[] calldata batch
-    )
-        external
-        override
-        returns (uint256[] memory streamIds)
-    {
-        // Check that the batch size is not zero.
-        uint256 batchSize = batch.length;
-        if (batchSize == 0) {
-            revert Errors.SablierV2Batch_BatchSizeZero();
-        }
-
-        // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
-        // transactions will revert if there is overflow.
-        uint256 i;
-        uint256 transferAmount;
-        for (i = 0; i < batchSize; ++i) {
-            unchecked {
-                transferAmount += batch[i].totalAmount;
-            }
-        }
-
-        // Transfers the assets to the batch and approves the Sablier contract to spend them.
-        _handleTransfer(address(lockupLinear), asset, transferAmount);
-
-        // Create a stream for each element in the parameter array.
-        streamIds = new uint256[](batchSize);
-        for (i = 0; i < batchSize; ++i) {
-            // Create the stream.
-            streamIds[i] = lockupLinear.createWithDurations(
-                LockupLinear.CreateWithDurations({
-                    sender: batch[i].sender,
-                    recipient: batch[i].recipient,
-                    totalAmount: batch[i].totalAmount,
-                    asset: asset,
-                    cancelable: batch[i].cancelable,
-                    transferable: batch[i].transferable,
-                    durations: batch[i].durations,
-                    broker: batch[i].broker
-                })
-            );
-        }
-    }
-
-    /// @inheritdoc ISablierV2Batch
-    function createWithTimestampsLL(
-        ISablierV2LockupLinear lockupLinear,
-        IERC20 asset,
-        Batch.CreateWithTimestampsLL[] calldata batch
-    )
-        external
-        override
-        returns (uint256[] memory streamIds)
-    {
-        // Check that the batch is not empty.
-        uint256 batchSize = batch.length;
-        if (batchSize == 0) {
-            revert Errors.SablierV2Batch_BatchSizeZero();
-        }
-
-        // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
-        // transactions will revert if there is overflow.
-        uint256 i;
-        uint256 transferAmount;
-        for (i = 0; i < batchSize; ++i) {
-            unchecked {
-                transferAmount += batch[i].totalAmount;
-            }
-        }
-
-        // Transfers the assets to the batch and approve the Sablier contract to spend them.
-        _handleTransfer(address(lockupLinear), asset, transferAmount);
-
-        // Create a stream for each element in the parameter array.
-        streamIds = new uint256[](batchSize);
-        for (i = 0; i < batchSize; ++i) {
-            // Create the stream.
-            streamIds[i] = lockupLinear.createWithTimestamps(
-                LockupLinear.CreateWithTimestamps({
-                    sender: batch[i].sender,
-                    recipient: batch[i].recipient,
-                    totalAmount: batch[i].totalAmount,
-                    asset: asset,
-                    cancelable: batch[i].cancelable,
-                    transferable: batch[i].transferable,
-                    range: batch[i].range,
-                    broker: batch[i].broker
-                })
-            );
-        }
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -212,6 +112,106 @@ contract SablierV2Batch is ISablierV2Batch {
                     transferable: batch[i].transferable,
                     startTime: batch[i].startTime,
                     segments: batch[i].segments,
+                    broker: batch[i].broker
+                })
+            );
+        }
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                              SABLIER-V2-LOCKUP-LINEAR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @inheritdoc ISablierV2Batch
+    function createWithDurationsLL(
+        ISablierV2LockupLinear lockupLinear,
+        IERC20 asset,
+        Batch.CreateWithDurationsLL[] calldata batch
+    )
+        external
+        override
+        returns (uint256[] memory streamIds)
+    {
+        // Check that the batch size is not zero.
+        uint256 batchSize = batch.length;
+        if (batchSize == 0) {
+            revert Errors.SablierV2Batch_BatchSizeZero();
+        }
+
+        // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
+        // transactions will revert if there is overflow.
+        uint256 i;
+        uint256 transferAmount;
+        for (i = 0; i < batchSize; ++i) {
+            unchecked {
+                transferAmount += batch[i].totalAmount;
+            }
+        }
+
+        // Perform the ERC-20 transfer and approve {SablierV2LockupLinear} to spend the amount of assets.
+        _handleTransfer(address(lockupLinear), asset, transferAmount);
+
+        // Create a stream for each element in the parameter array.
+        streamIds = new uint256[](batchSize);
+        for (i = 0; i < batchSize; ++i) {
+            // Create the stream.
+            streamIds[i] = lockupLinear.createWithDurations(
+                LockupLinear.CreateWithDurations({
+                    sender: batch[i].sender,
+                    recipient: batch[i].recipient,
+                    totalAmount: batch[i].totalAmount,
+                    asset: asset,
+                    cancelable: batch[i].cancelable,
+                    transferable: batch[i].transferable,
+                    durations: batch[i].durations,
+                    broker: batch[i].broker
+                })
+            );
+        }
+    }
+
+    /// @inheritdoc ISablierV2Batch
+    function createWithTimestampsLL(
+        ISablierV2LockupLinear lockupLinear,
+        IERC20 asset,
+        Batch.CreateWithTimestampsLL[] calldata batch
+    )
+        external
+        override
+        returns (uint256[] memory streamIds)
+    {
+        // Check that the batch is not empty.
+        uint256 batchSize = batch.length;
+        if (batchSize == 0) {
+            revert Errors.SablierV2Batch_BatchSizeZero();
+        }
+
+        // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
+        // transactions will revert if there is overflow.
+        uint256 i;
+        uint256 transferAmount;
+        for (i = 0; i < batchSize; ++i) {
+            unchecked {
+                transferAmount += batch[i].totalAmount;
+            }
+        }
+
+        // Perform the ERC-20 transfer and approve {SablierV2LockupLinear} to spend the amount of assets.
+        _handleTransfer(address(lockupLinear), asset, transferAmount);
+
+        // Create a stream for each element in the parameter array.
+        streamIds = new uint256[](batchSize);
+        for (i = 0; i < batchSize; ++i) {
+            // Create the stream.
+            streamIds[i] = lockupLinear.createWithTimestamps(
+                LockupLinear.CreateWithTimestamps({
+                    sender: batch[i].sender,
+                    recipient: batch[i].recipient,
+                    totalAmount: batch[i].totalAmount,
+                    asset: asset,
+                    cancelable: batch[i].cancelable,
+                    transferable: batch[i].transferable,
+                    range: batch[i].range,
                     broker: batch[i].broker
                 })
             );

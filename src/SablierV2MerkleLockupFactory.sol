@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22;
 
-import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
+import { uUNIT } from "@prb/math/src/UD2x18.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
@@ -27,7 +27,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations,
         uint256 aggregateAmount,
-        uint256 recipientsCount
+        uint256 recipientCount
     )
         external
         returns (ISablierV2MerkleLockupLL merkleLockupLL)
@@ -48,12 +48,12 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             )
         );
 
-        // Deploy the Merkle Lockup contract with CREATE2.
+        // Deploy the MerkleLockup contract with CREATE2.
         merkleLockupLL = new SablierV2MerkleLockupLL{ salt: salt }(baseParams, lockupLinear, streamDurations);
 
-        // Log the creation of the Merkle Lockup, including some metadata that is not stored on-chain.
+        // Log the creation of the MerkleLockup contract, including some metadata that is not stored on-chain.
         emit CreateMerkleLockupLL(
-            merkleLockupLL, baseParams, lockupLinear, streamDurations, aggregateAmount, recipientsCount
+            merkleLockupLL, baseParams, lockupLinear, streamDurations, aggregateAmount, recipientCount
         );
     }
 
@@ -63,26 +63,26 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         ISablierV2LockupTranched lockupTranched,
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages,
         uint256 aggregateAmount,
-        uint256 recipientsCount
+        uint256 recipientCount
     )
         external
         returns (ISablierV2MerkleLockupLT merkleLockupLT)
     {
         // Calculate the sum of percentages and durations across all tranches.
-        UD60x18 totalPercentage;
+        uint64 totalPercentage;
         uint256 totalDuration;
         for (uint256 i = 0; i < tranchesWithPercentages.length; ++i) {
-            UD60x18 percentage = (tranchesWithPercentages[i].unlockPercentage).intoUD60x18();
-            totalPercentage = totalPercentage.add(percentage);
+            uint64 percentage = tranchesWithPercentages[i].unlockPercentage.unwrap();
+            totalPercentage = totalPercentage + percentage;
             unchecked {
                 // Safe to use `unchecked` because its only used in the event.
                 totalDuration += tranchesWithPercentages[i].duration;
             }
         }
 
-        // Checks: the sum of percentages equals 100%.
-        if (!totalPercentage.eq(ud(1e18))) {
-            revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred(totalPercentage.intoUint256());
+        // Check: the sum of percentages equals 100%.
+        if (totalPercentage != uUNIT) {
+            revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred(totalPercentage);
         }
 
         // Hash the parameters to generate a salt.
@@ -101,10 +101,10 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             )
         );
 
-        // Deploy the Merkle Lockup contract with CREATE2.
+        // Deploy the MerkleLockup contract with CREATE2.
         merkleLockupLT = new SablierV2MerkleLockupLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercentages);
 
-        // Log the creation of the Merkle Lockup, including some metadata that is not stored on-chain.
+        // Log the creation of the MerkleLockup contract, including some metadata that is not stored on-chain.
         emit CreateMerkleLockupLT(
             merkleLockupLT,
             baseParams,
@@ -112,7 +112,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             tranchesWithPercentages,
             totalDuration,
             aggregateAmount,
-            recipientsCount
+            recipientCount
         );
     }
 }

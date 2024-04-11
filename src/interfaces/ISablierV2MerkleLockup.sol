@@ -5,11 +5,10 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IAdminable } from "@sablier/v2-core/src/interfaces/IAdminable.sol";
 
 /// @title ISablierV2MerkleLockup
-/// @notice A contract that lets user claim Sablier streams using Merkle proofs. An interesting use case for
-/// MerkleStream is airstreams, which is a portmanteau of "airdrop" and "stream". This is an airdrop model where the
-/// tokens are distributed over time, as opposed to all at once.
-/// @dev This is the base interface for MerkleLockup contracts. See the Sablier docs for more guidance on how
-/// streaming works: https://docs.sablier.com/.
+/// @notice A contract that lets user claim Sablier streams using Merkle proofs. A popular use case for MerkleLockup
+/// is airstreams: a portmanteau of "airdrop" and "stream". This is an airdrop model where the tokens are distributed
+/// over time, as opposed to all at once.
+/// @dev This is the base interface for MerkleLockup. See the Sablier docs for more guidance: https://docs.sablier.com
 interface ISablierV2MerkleLockup is IAdminable {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
@@ -25,7 +24,7 @@ interface ISablierV2MerkleLockup is IAdminable {
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice The streamed ERC-20 asset.
+    /// @notice The ERC-20 asset to distribute.
     /// @dev This is an immutable state variable.
     function ASSET() external returns (IERC20);
 
@@ -33,8 +32,7 @@ interface ISablierV2MerkleLockup is IAdminable {
     /// @dev This is an immutable state variable.
     function CANCELABLE() external returns (bool);
 
-    /// @notice The cut-off point for the Merkle Lockup contract, as a Unix timestamp. A value of zero means there
-    /// is no expiration.
+    /// @notice The cut-off point for the campaign, as a Unix timestamp. A value of zero means there is no expiration.
     /// @dev This is an immutable state variable.
     function EXPIRATION() external returns (uint40);
 
@@ -46,10 +44,10 @@ interface ISablierV2MerkleLockup is IAdminable {
     /// @notice Returns a flag indicating whether the campaign has expired.
     function hasExpired() external view returns (bool);
 
-    /// @notice The content identifier for indexing the contract on IPFS.
+    /// @notice The content identifier for indexing the campaign on IPFS.
     function ipfsCID() external view returns (string memory);
 
-    /// @notice The root of the Merkle tree used to validate the claims.
+    /// @notice The root of the Merkle tree used to validate the proofs of inclusion.
     /// @dev This is an immutable state variable.
     function MERKLE_ROOT() external returns (bytes32);
 
@@ -64,7 +62,7 @@ interface ISablierV2MerkleLockup is IAdminable {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Claws back the unclaimed tokens from the Merkle Lockup.
+    /// @notice Claws back the unclaimed tokens from the campaign.
     ///
     /// @dev Emits a {Clawback} event.
     ///

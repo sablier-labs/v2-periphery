@@ -14,71 +14,65 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockup_Integration_Test.setUp();
     }
 
-    modifier whenTotalPercentageIsNotOneHundred() {
+    modifier whenTotalPercentageNotOneHundred() {
         _;
     }
 
-    function test_RevertWhen_TotalPercentageLessThanOneHundred() external whenTotalPercentageIsNotOneHundred {
+    function test_RevertWhen_TotalPercentageLessThanOneHundred() external whenTotalPercentageNotOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.05e18);
+        tranchesWithPercentages[1].unlockPercentage = ud2x18(0.2e18);
 
-        uint256 totalPercentage = tranchesWithPercentages[0].unlockPercentage.intoUint256()
-            + tranchesWithPercentages[1].unlockPercentage.intoUint256();
+        uint64 totalPercentage =
+            tranchesWithPercentages[0].unlockPercentage.unwrap() + tranchesWithPercentages[1].unlockPercentage.unwrap();
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred.selector, totalPercentage
+                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred.selector, totalPercentage
             )
         );
 
-        merkleLockupFactory.createMerkleLockupLT({
-            baseParams: baseParams,
-            lockupTranched: lockupTranched,
-            tranchesWithPercentages: tranchesWithPercentages,
-            aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
-        });
+        merkleLockupFactory.createMerkleLockupLT(
+            baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
+        );
     }
 
-    function test_RevertWhen_TotalPercentageGreaterThanOneHundred() external whenTotalPercentageIsNotOneHundred {
+    function test_RevertWhen_TotalPercentageGreaterThanOneHundred() external whenTotalPercentageNotOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.75e18);
+        tranchesWithPercentages[1].unlockPercentage = ud2x18(0.8e18);
 
-        uint256 totalPercentage = tranchesWithPercentages[0].unlockPercentage.intoUint256()
-            + tranchesWithPercentages[1].unlockPercentage.intoUint256();
+        uint64 totalPercentage =
+            tranchesWithPercentages[0].unlockPercentage.unwrap() + tranchesWithPercentages[1].unlockPercentage.unwrap();
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred.selector, totalPercentage
+                Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred.selector, totalPercentage
             )
         );
 
-        merkleLockupFactory.createMerkleLockupLT({
-            baseParams: baseParams,
-            lockupTranched: lockupTranched,
-            tranchesWithPercentages: tranchesWithPercentages,
-            aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
-        });
+        merkleLockupFactory.createMerkleLockupLT(
+            baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
+        );
     }
 
-    modifier whenTotalPercentageIsOneHundred() {
+    modifier whenTotalPercentageOneHundred() {
         _;
     }
 
-    function test_RevertWhen_CampaignNameTooLong() external whenTotalPercentageIsOneHundred {
+    function test_RevertWhen_CampaignNameTooLong() external whenTotalPercentageOneHundred {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         baseParams.name = "this string is longer than 32 characters";
 
@@ -88,37 +82,30 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             )
         );
 
-        merkleLockupFactory.createMerkleLockupLT({
-            baseParams: baseParams,
-            lockupTranched: lockupTranched,
-            tranchesWithPercentages: tranchesWithPercentages,
-            aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
-        });
+        merkleLockupFactory.createMerkleLockupLT(
+            baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
+        );
     }
 
-    modifier whenCampaignNameIsNotTooLong() {
+    modifier whenCampaignNameNotTooLong() {
         _;
     }
 
-    /// @dev This test works because a default Merkle Lockup contract is deployed in {Integration_Test.setUp}
-    function test_RevertGiven_AlreadyCreated() external whenTotalPercentageIsOneHundred whenCampaignNameIsNotTooLong {
+    /// @dev This test works because a default MerkleLockup contract is deployed in {Integration_Test.setUp}
+    function test_RevertGiven_CreatedAlready() external whenTotalPercentageOneHundred whenCampaignNameNotTooLong {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         MerkleLockupLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
+        // Expect a revert due to CREATE2.
         vm.expectRevert();
-        merkleLockupFactory.createMerkleLockupLT({
-            baseParams: baseParams,
-            lockupTranched: lockupTranched,
-            tranchesWithPercentages: tranchesWithPercentages,
-            aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
-        });
+        merkleLockupFactory.createMerkleLockupLT(
+            baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
+        );
     }
 
-    modifier givenNotAlreadyCreated() {
+    modifier givenNotCreatedAlready() {
         _;
     }
 
@@ -127,9 +114,9 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
         uint40 expiration
     )
         external
-        whenTotalPercentageIsOneHundred
-        whenCampaignNameIsNotTooLong
-        givenNotAlreadyCreated
+        whenTotalPercentageOneHundred
+        whenCampaignNameNotTooLong
+        givenNotCreatedAlready
     {
         vm.assume(admin != users.admin);
         address expectedLockupLT = computeMerkleLockupLTAddress(admin, expiration);
@@ -149,11 +136,10 @@ contract CreateMerkleLockupLT_Integration_Test is MerkleLockup_Integration_Test 
             tranchesWithPercentages: defaults.tranchesWithPercentages(),
             totalDuration: defaults.TOTAL_DURATION(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
-            recipientsCount: defaults.RECIPIENTS_COUNT()
+            recipientCount: defaults.RECIPIENT_COUNT()
         });
 
         address actualLockupLT = address(createMerkleLockupLT(admin, expiration));
-
         assertGt(actualLockupLT.code.length, 0, "MerkleLockupLT contract not created");
         assertEq(actualLockupLT, expectedLockupLT, "MerkleLockupLT contract does not match computed address");
     }

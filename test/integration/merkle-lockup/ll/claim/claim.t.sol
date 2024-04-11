@@ -112,15 +112,15 @@ contract Claim_Integration_Test is MerkleLockup_Integration_Test {
         LockupLinear.StreamLL memory expectedStream = LockupLinear.StreamLL({
             amounts: Lockup.Amounts({ deposited: defaults.CLAIM_AMOUNT(), refunded: 0, withdrawn: 0 }),
             asset: dai,
-            cliffTime: uint40(block.timestamp) + defaults.CLIFF_DURATION(),
-            endTime: uint40(block.timestamp) + defaults.TOTAL_DURATION(),
+            cliffTime: getBlockTimestamp() + defaults.CLIFF_DURATION(),
+            endTime: getBlockTimestamp() + defaults.TOTAL_DURATION(),
             isCancelable: defaults.CANCELABLE(),
             isDepleted: false,
             isStream: true,
             isTransferable: defaults.TRANSFERABLE(),
             recipient: users.recipient1,
             sender: users.admin,
-            startTime: uint40(block.timestamp),
+            startTime: getBlockTimestamp(),
             wasCanceled: false
         });
 

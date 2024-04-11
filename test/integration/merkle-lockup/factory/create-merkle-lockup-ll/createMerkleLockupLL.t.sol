@@ -18,7 +18,7 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
         baseParams.name = "this string is longer than 32 characters";
 
@@ -33,32 +33,33 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             lockupLinear: lockupLinear,
             streamDurations: streamDurations,
             aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
+            recipientCount: recipientCount
         });
     }
 
-    modifier whenCampaignNameIsNotTooLong() {
+    modifier whenCampaignNameNotTooLong() {
         _;
     }
 
-    /// @dev This test works because a default Merkle Lockup contract is deployed in {Integration_Test.setUp}
-    function test_RevertGiven_AlreadyCreated() external whenCampaignNameIsNotTooLong {
+    /// @dev This test works because a default MerkleLockup contract is deployed in {Integration_Test.setUp}
+    function test_RevertGiven_CreatedAlready() external whenCampaignNameNotTooLong {
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
         LockupLinear.Durations memory streamDurations = defaults.durations();
         uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientsCount = defaults.RECIPIENTS_COUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
 
+        // Expect a revert due to CREATE2.
         vm.expectRevert();
         merkleLockupFactory.createMerkleLockupLL({
             baseParams: baseParams,
             lockupLinear: lockupLinear,
             streamDurations: streamDurations,
             aggregateAmount: aggregateAmount,
-            recipientsCount: recipientsCount
+            recipientCount: recipientCount
         });
     }
 
-    modifier givenNotAlreadyCreated() {
+    modifier givenNotCreatedAlready() {
         _;
     }
 
@@ -67,8 +68,8 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
         uint40 expiration
     )
         external
-        whenCampaignNameIsNotTooLong
-        givenNotAlreadyCreated
+        whenCampaignNameNotTooLong
+        givenNotCreatedAlready
     {
         vm.assume(admin != users.admin);
         address expectedLockupLL = computeMerkleLockupLLAddress(admin, expiration);
@@ -87,11 +88,10 @@ contract CreateMerkleLockupLL_Integration_Test is MerkleLockup_Integration_Test 
             lockupLinear: lockupLinear,
             streamDurations: defaults.durations(),
             aggregateAmount: defaults.AGGREGATE_AMOUNT(),
-            recipientsCount: defaults.RECIPIENTS_COUNT()
+            recipientCount: defaults.RECIPIENT_COUNT()
         });
 
         address actualLockupLL = address(createMerkleLockupLL(admin, expiration));
-
         assertGt(actualLockupLL.code.length, 0, "MerkleLockupLL contract not created");
         assertEq(actualLockupLL, expectedLockupLL, "MerkleLockupLL contract does not match computed address");
     }

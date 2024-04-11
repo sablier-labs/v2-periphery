@@ -18,10 +18,6 @@ abstract contract CreateWithTimestamps_LockupDynamic_Batch_Fork_Test is Fork_Tes
         Fork_Test.setUp();
     }
 
-    /*//////////////////////////////////////////////////////////////////////////
-                            BATCH-CREATE-WITH-TIMESTAMPS
-    //////////////////////////////////////////////////////////////////////////*/
-
     struct CreateWithTimestampsParams {
         uint128 batchSize;
         address sender;
@@ -31,7 +27,7 @@ abstract contract CreateWithTimestamps_LockupDynamic_Batch_Fork_Test is Fork_Tes
         LockupDynamic.Segment[] segments;
     }
 
-    function testForkFuzz_CreateWithTimestamps(CreateWithTimestampsParams memory params) external {
+    function testForkFuzz_CreateWithTimestampsLD(CreateWithTimestampsParams memory params) external {
         vm.assume(params.segments.length != 0);
         params.batchSize = boundUint128(params.batchSize, 1, 20);
         params.startTime = boundUint40(params.startTime, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
@@ -47,14 +43,14 @@ abstract contract CreateWithTimestamps_LockupDynamic_Batch_Fork_Test is Fork_Tes
         uint256 firstStreamId = lockupDynamic.nextStreamId();
         uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
 
-        deal({ token: address(ASSET), to: params.sender, give: uint256(totalTransferAmount) });
-        approveContract({ asset_: ASSET, from: params.sender, spender: address(batch) });
+        deal({ token: address(FORK_ASSET), to: params.sender, give: uint256(totalTransferAmount) });
+        approveContract({ asset_: FORK_ASSET, from: params.sender, spender: address(batch) });
 
         LockupDynamic.CreateWithTimestamps memory createWithTimestamps = LockupDynamic.CreateWithTimestamps({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.perStreamAmount,
-            asset: ASSET,
+            asset: FORK_ASSET,
             cancelable: true,
             transferable: true,
             startTime: params.startTime,
@@ -65,21 +61,21 @@ abstract contract CreateWithTimestamps_LockupDynamic_Batch_Fork_Test is Fork_Tes
             BatchBuilder.fillBatch(createWithTimestamps, params.batchSize);
 
         expectCallToTransferFrom({
-            asset_: address(ASSET),
+            asset_: address(FORK_ASSET),
             from: params.sender,
             to: address(batch),
             amount: totalTransferAmount
         });
         expectMultipleCallsToCreateWithTimestampsLD({ count: uint64(params.batchSize), params: createWithTimestamps });
         expectMultipleCallsToTransferFrom({
-            asset_: address(ASSET),
+            asset_: address(FORK_ASSET),
             count: uint64(params.batchSize),
             from: address(batch),
             to: address(lockupDynamic),
             amount: params.perStreamAmount
         });
 
-        uint256[] memory actualStreamIds = batch.createWithTimestampsLD(lockupDynamic, ASSET, batchParams);
+        uint256[] memory actualStreamIds = batch.createWithTimestampsLD(lockupDynamic, FORK_ASSET, batchParams);
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);
     }

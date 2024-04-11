@@ -10,7 +10,7 @@ import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISabli
 import { LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Assertions as V2CoreAssertions } from "@sablier/v2-core/test/utils/Assertions.sol";
-import { Constants as V2Constants } from "@sablier/v2-core/test/utils/Constants.sol";
+import { Constants as V2CoreConstants } from "@sablier/v2-core/test/utils/Constants.sol";
 import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
 
 import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
@@ -36,7 +36,7 @@ abstract contract Base_Test is
     DeployOptimized,
     Events,
     Merkle,
-    V2Constants,
+    V2CoreConstants,
     V2CoreAssertions,
     V2CoreUtils
 {
@@ -50,8 +50,8 @@ abstract contract Base_Test is
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    IERC20 internal dai;
     ISablierV2Batch internal batch;
+    IERC20 internal dai;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
@@ -84,7 +84,7 @@ abstract contract Base_Test is
                                      HELPERS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Approve contract to spend asset from some users.
+    /// @dev Approve `spender` to spend assets from `from`.
     function approveContract(IERC20 asset_, address from, address spender) internal {
         resetPrank({ msgSender: from });
         (bool success,) = address(asset_).call(abi.encodeCall(IERC20.approve, (spender, MAX_UINT256)));
@@ -112,12 +112,13 @@ abstract contract Base_Test is
     /// @dev Labels the most relevant contracts.
     function labelContracts(IERC20 asset_) internal {
         vm.label({ account: address(asset_), newLabel: IERC20Metadata(address(asset_)).symbol() });
-        vm.label({ account: address(merkleLockupFactory), newLabel: "MerkleLockupFactory" });
-        vm.label({ account: address(merkleLockupLL), newLabel: "MerkleLockupLL" });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
         vm.label({ account: address(lockupTranched), newLabel: "LockupTranched" });
+        vm.label({ account: address(merkleLockupFactory), newLabel: "MerkleLockupFactory" });
+        vm.label({ account: address(merkleLockupLL), newLabel: "MerkleLockupLL" });
+        vm.label({ account: address(merkleLockupLT), newLabel: "MerkleLockupLT" });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

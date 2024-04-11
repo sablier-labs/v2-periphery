@@ -16,10 +16,10 @@ contract CreateMerkleLockupLL is BaseScript {
         ISablierV2LockupLinear lockupLinear;
         LockupLinear.Durations streamDurations;
         uint256 campaignTotalAmount;
-        uint256 recipientsCount;
+        uint256 recipientCount;
     }
 
-    /// @dev Deploy using Forge CLI.
+    /// @dev Deploy via Forge.
     function runBroadcast(
         ISablierV2MerkleLockupFactory merkleLockupFactory,
         Params calldata params
@@ -32,7 +32,7 @@ contract CreateMerkleLockupLL is BaseScript {
         merkleLockupLL = _run(merkleLockupFactory, params);
     }
 
-    /// @dev Deploy using Sphinx CLI.
+    /// @dev Deploy via Sphinx.
     function runSphinx(
         ISablierV2MerkleLockupFactory merkleLockupFactory,
         Params calldata params
@@ -57,7 +57,7 @@ contract CreateMerkleLockupLL is BaseScript {
             params.lockupLinear,
             params.streamDurations,
             params.campaignTotalAmount,
-            params.recipientsCount
+            params.recipientCount
         );
     }
 }

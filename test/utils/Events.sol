@@ -19,7 +19,7 @@ abstract contract Events {
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations streamDurations,
         uint256 aggregateAmount,
-        uint256 recipientsCount
+        uint256 recipientCount
     );
     event CreateMerkleLockupLT(
         ISablierV2MerkleLockupLT indexed merkleLockupLT,
@@ -28,6 +28,6 @@ abstract contract Events {
         MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages,
         uint256 totalDuration,
         uint256 aggregateAmount,
-        uint256 recipientsCount
+        uint256 recipientCount
     );
 }

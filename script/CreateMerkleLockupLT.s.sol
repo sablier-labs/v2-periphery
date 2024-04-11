@@ -15,10 +15,10 @@ contract CreateMerkleLockupLT is BaseScript {
         ISablierV2LockupTranched lockupTranched;
         MerkleLockupLT.TrancheWithPercentage[] tranchesWithPercentages;
         uint256 campaignTotalAmount;
-        uint256 recipientsCount;
+        uint256 recipientCount;
     }
 
-    /// @dev Deploy using Forge CLI.
+    /// @dev Deploy via Forge.
     function runBroadcast(
         ISablierV2MerkleLockupFactory merkleLockupFactory,
         Params calldata params
@@ -31,7 +31,7 @@ contract CreateMerkleLockupLT is BaseScript {
         merkleLockupLT = _run(merkleLockupFactory, params);
     }
 
-    /// @dev Deploy using Sphinx CLI.
+    /// @dev Deploy via Sphinx.
     function runSphinx(
         ISablierV2MerkleLockupFactory merkleLockupFactory,
         Params calldata params
@@ -56,7 +56,7 @@ contract CreateMerkleLockupLT is BaseScript {
             params.lockupTranched,
             params.tranchesWithPercentages,
             params.campaignTotalAmount,
-            params.recipientsCount
+            params.recipientCount
         );
     }
 }

@@ -47,7 +47,7 @@ contract SablierV2MerkleLockupLL is
         LOCKUP_LINEAR = lockupLinear;
         streamDurations = streamDurations_;
 
-        // Max approve the Sablier contract to spend funds from the Merkle Lockup contract.
+        // Max approve the Sablier contract to spend funds from the MerkleLockup contract.
         ASSET.forceApprove(address(LOCKUP_LINEAR), type(uint256).max);
     }
 
@@ -70,13 +70,13 @@ contract SablierV2MerkleLockupLL is
         // preimage attacks.
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(index, recipient, amount))));
 
-        // Checks: validate the function.
+        // Check: validate the function.
         _checkClaim(index, leaf, merkleProof);
 
-        // Effects: mark the index as claimed.
+        // Effect: mark the index as claimed.
         _claimedBitMap.set(index);
 
-        // Interactions: create the stream via {SablierV2LockupLinear}.
+        // Interaction: create the stream via {SablierV2LockupLinear}.
         streamId = LOCKUP_LINEAR.createWithDurations(
             LockupLinear.CreateWithDurations({
                 sender: admin,

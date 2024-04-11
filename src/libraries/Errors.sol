@@ -15,13 +15,13 @@ library Errors {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Thrown when trying to claim after the campaign has expired.
-    error SablierV2MerkleLockup_CampaignExpired(uint256 currentTime, uint40 expiration);
+    error SablierV2MerkleLockup_CampaignExpired(uint256 blockTimestamp, uint40 expiration);
 
     /// @notice Thrown when trying to create a campaign with a name that is too long.
     error SablierV2MerkleLockup_CampaignNameTooLong(uint256 nameLength, uint256 maxLength);
 
     /// @notice Thrown when trying to clawback when the campaign has not expired.
-    error SablierV2MerkleLockup_CampaignNotExpired(uint256 currentTime, uint40 expiration);
+    error SablierV2MerkleLockup_CampaignNotExpired(uint256 blockTimestamp, uint40 expiration);
 
     /// @notice Thrown when trying to claim with an invalid Merkle proof.
     error SablierV2MerkleLockup_InvalidProof();
@@ -34,5 +34,5 @@ library Errors {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Thrown when the sum of the tranches' unlock percentages does not equal 100%.
-    error SablierV2MerkleLockupFactory_TotalPercentageNotEqualOneHundred(uint256 totalPercentage);
+    error SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred(uint64 totalPercentage);
 }

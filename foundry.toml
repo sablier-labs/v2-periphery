@@ -1,19 +1,20 @@
 [profile.default]
   auto_detect_solc = false
-  block_timestamp = 1_682_899_200 # May 1, 2023 at 00:00 GMT
+  block_timestamp = 1_714_518_000 # May 1, 2024 at 00:00 GMT
   bytecode_hash = "none"
   evm_version = "paris"
-  extra_output = ['storageLayout']
+  extra_output = ["storageLayout"]
   ffi = true
   fs_permissions = [
     { access = "read", path = "out-optimized" },
     { access = "read", path = "./out" },
-    { access = "read-write", path = "./cache" }
+    { access = "read-write", path = "./cache" },
   ]
   gas_reports = [
     "SablierV2Batch",
     "SablierV2MerkleLockupFactory",
     "SablierV2MerkleLockupLL",
+    "SablierV2MerkleLockupLT",
   ]
   optimizer = true
   optimizer_runs = 10_000
@@ -63,9 +64,9 @@
   avalanche = "https://avalanche-mainnet.infura.io/v3/${API_KEY_INFURA}"
   base = "https://mainnet.base.org"
   bnb = "https://bsc-dataseed.binance.org"
+  ethereum = "${RPC_URL_MAINNET}"
   gnosis = "https://rpc.gnosischain.com"
   localhost = "http://localhost:8545"
-  ethereum = "${RPC_URL_MAINNET}"
   mainnet = "${RPC_URL_MAINNET}"
   optimism = "https://optimism-mainnet.infura.io/v3/${API_KEY_INFURA}"
   polygon = "https://polygon-mainnet.infura.io/v3/${API_KEY_INFURA}"

@@ -4,17 +4,17 @@ pragma solidity >=0.8.22 <0.9.0;
 import { Errors } from "src/libraries/Errors.sol";
 import { Batch } from "src/types/DataTypes.sol";
 
-import { Integration_Test } from "../../../Integration.t.sol";
+import { Integration_Test } from "../../Integration.t.sol";
 
-contract CreateWithTimestamps_LockupLinear_Integration_Test is Integration_Test {
+contract CreateWithTimestampsLD_Integration_Test is Integration_Test {
     function setUp() public virtual override {
         Integration_Test.setUp();
     }
 
     function test_RevertWhen_BatchSizeZero() external {
-        Batch.CreateWithTimestampsLL[] memory batchParams = new Batch.CreateWithTimestampsLL[](0);
+        Batch.CreateWithTimestampsLD[] memory batchParams = new Batch.CreateWithTimestampsLD[](0);
         vm.expectRevert(Errors.SablierV2Batch_BatchSizeZero.selector);
-        batch.createWithTimestampsLL(lockupLinear, dai, batchParams);
+        batch.createWithTimestampsLD(lockupDynamic, dai, batchParams);
     }
 
     modifier whenBatchSizeNotZero() {
@@ -25,20 +25,20 @@ contract CreateWithTimestamps_LockupLinear_Integration_Test is Integration_Test 
         // Asset flow: Alice → batch → Sablier
         // Expect transfers from Alice to the batch, and then from the batch to the Sablier contract.
         expectCallToTransferFrom({ from: users.alice, to: address(batch), amount: defaults.TOTAL_TRANSFER_AMOUNT() });
-        expectMultipleCallsToCreateWithTimestampsLL({
+        expectMultipleCallsToCreateWithTimestampsLD({
             count: defaults.BATCH_SIZE(),
-            params: defaults.createWithTimestampsLL()
+            params: defaults.createWithTimestampsLD()
         });
         expectMultipleCallsToTransferFrom({
             count: defaults.BATCH_SIZE(),
             from: address(batch),
-            to: address(lockupLinear),
+            to: address(lockupDynamic),
             amount: defaults.PER_STREAM_AMOUNT()
         });
 
         // Assert that the batch of streams has been created successfully.
         uint256[] memory actualStreamIds =
-            batch.createWithTimestampsLL(lockupLinear, dai, defaults.batchCreateWithTimestampsLL());
+            batch.createWithTimestampsLD(lockupDynamic, dai, defaults.batchCreateWithTimestampsLD());
         uint256[] memory expectedStreamIds = defaults.incrementalStreamIds();
         assertEq(actualStreamIds, expectedStreamIds, "stream ids mismatch");
     }

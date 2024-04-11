@@ -6,7 +6,7 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { ISablierV2MerkleLockup } from "./ISablierV2MerkleLockup.sol";
 
 /// @title ISablierV2MerkleLockupLL
-/// @notice Merkle Lockup that creates Lockup Linear streams.
+/// @notice MerkleLockup campaign that creates LockupLinear streams.
 interface ISablierV2MerkleLockupLL is ISablierV2MerkleLockup {
     /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
@@ -22,7 +22,8 @@ interface ISablierV2MerkleLockupLL is ISablierV2MerkleLockup {
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Makes the claim by creating a Lockup Linear stream to the recipient.
+    /// @notice Makes the claim by creating a LockupLinear stream to the recipient. A stream NFT is minted to the
+    /// recipient.
     ///
     /// @dev Emits a {Claim} event.
     ///
@@ -33,8 +34,8 @@ interface ISablierV2MerkleLockupLL is ISablierV2MerkleLockup {
     ///
     /// @param index The index of the recipient in the Merkle tree.
     /// @param recipient The address of the stream holder.
-    /// @param amount The amount of tokens to be streamed.
-    /// @param merkleProof The Merkle proof of inclusion in the stream.
+    /// @param amount The amount of ERC-20 assets to be distributed via the claimed stream.
+    /// @param merkleProof The proof of inclusion in the Merkle tree.
     /// @return streamId The id of the newly created stream.
     function claim(
         uint256 index,

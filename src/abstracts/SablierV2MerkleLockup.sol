@@ -54,7 +54,7 @@ abstract contract SablierV2MerkleLockup is
 
     /// @dev Constructs the contract by initializing the immutable state variables.
     constructor(MerkleLockup.ConstructorParams memory params) {
-        // Checks: the campaign name is not greater than 32 bytes
+        // Check: the campaign name is not greater than 32 bytes
         if (bytes(params.name).length > 32) {
             revert Errors.SablierV2MerkleLockup_CampaignNameTooLong({
                 nameLength: bytes(params.name).length,
@@ -97,15 +97,15 @@ abstract contract SablierV2MerkleLockup is
 
     /// @inheritdoc ISablierV2MerkleLockup
     function clawback(address to, uint128 amount) external override onlyAdmin {
-        // Checks: the campaign is not expired.
+        // Check: the campaign is not expired.
         if (!hasExpired()) {
             revert Errors.SablierV2MerkleLockup_CampaignNotExpired({
-                currentTime: block.timestamp,
+                blockTimestamp: block.timestamp,
                 expiration: EXPIRATION
             });
         }
 
-        // Effects: transfer the tokens to the provided address.
+        // Effect: transfer the tokens to the provided address.
         ASSET.safeTransfer(to, amount);
 
         // Log the clawback.
@@ -118,17 +118,20 @@ abstract contract SablierV2MerkleLockup is
 
     /// @dev Validates the parameters of the `claim` function, which is implemented by child contracts.
     function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal view {
-        // Checks: the campaign has not expired.
+        // Check: the campaign has not expired.
         if (hasExpired()) {
-            revert Errors.SablierV2MerkleLockup_CampaignExpired({ currentTime: block.timestamp, expiration: EXPIRATION });
+            revert Errors.SablierV2MerkleLockup_CampaignExpired({
+                blockTimestamp: block.timestamp,
+                expiration: EXPIRATION
+            });
         }
 
-        // Checks: the index has not been claimed.
+        // Check: the index has not been claimed.
         if (_claimedBitMap.get(index)) {
             revert Errors.SablierV2MerkleLockup_StreamClaimed(index);
         }
 
-        // Checks: the input claim is included in the Merkle tree.
+        // Check: the input claim is included in the Merkle tree.
         if (!MerkleProof.verify(merkleProof, MERKLE_ROOT, leaf)) {
             revert Errors.SablierV2MerkleLockup_InvalidProof();
         }

@@ -18,10 +18,6 @@ abstract contract CreateWithTimestamps_LockupLinear_Batch_Fork_Test is Fork_Test
         Fork_Test.setUp();
     }
 
-    /*//////////////////////////////////////////////////////////////////////////
-                              BATCH-CREATE-WITH-TIMESTAMPS
-    //////////////////////////////////////////////////////////////////////////*/
-
     struct CreateWithTimestampsParams {
         uint128 batchSize;
         LockupLinear.Range range;
@@ -30,11 +26,12 @@ abstract contract CreateWithTimestamps_LockupLinear_Batch_Fork_Test is Fork_Test
         uint128 perStreamAmount;
     }
 
-    function testForkFuzz_CreateWithTimestamps(CreateWithTimestampsParams memory params) external {
+    function testForkFuzz_CreateWithTimestampsLL(CreateWithTimestampsParams memory params) external {
         params.batchSize = boundUint128(params.batchSize, 1, 20);
         params.perStreamAmount = boundUint128(params.perStreamAmount, 1, MAX_UINT128 / params.batchSize);
         params.range.start = boundUint40(params.range.start, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
-        params.range.cliff = boundUint40(params.range.cliff, params.range.start + 1, params.range.start + 52 weeks);
+        params.range.cliff =
+            boundUint40(params.range.cliff, params.range.start + 1 seconds, params.range.start + 52 weeks);
         params.range.end = boundUint40(params.range.end, params.range.cliff + 1 seconds, MAX_UNIX_TIMESTAMP);
 
         checkUsers(params.sender, params.recipient);
@@ -42,14 +39,14 @@ abstract contract CreateWithTimestamps_LockupLinear_Batch_Fork_Test is Fork_Test
         uint256 firstStreamId = lockupLinear.nextStreamId();
         uint128 totalTransferAmount = params.perStreamAmount * params.batchSize;
 
-        deal({ token: address(ASSET), to: params.sender, give: uint256(totalTransferAmount) });
-        approveContract({ asset_: ASSET, from: params.sender, spender: address(batch) });
+        deal({ token: address(FORK_ASSET), to: params.sender, give: uint256(totalTransferAmount) });
+        approveContract({ asset_: FORK_ASSET, from: params.sender, spender: address(batch) });
 
         LockupLinear.CreateWithTimestamps memory createParams = LockupLinear.CreateWithTimestamps({
             sender: params.sender,
             recipient: params.recipient,
             totalAmount: params.perStreamAmount,
-            asset: ASSET,
+            asset: FORK_ASSET,
             cancelable: true,
             transferable: true,
             range: params.range,
@@ -59,21 +56,21 @@ abstract contract CreateWithTimestamps_LockupLinear_Batch_Fork_Test is Fork_Test
 
         // Asset flow: sender → batch → Sablier
         expectCallToTransferFrom({
-            asset_: address(ASSET),
+            asset_: address(FORK_ASSET),
             from: params.sender,
             to: address(batch),
             amount: totalTransferAmount
         });
         expectMultipleCallsToCreateWithTimestampsLL({ count: uint64(params.batchSize), params: createParams });
         expectMultipleCallsToTransferFrom({
-            asset_: address(ASSET),
+            asset_: address(FORK_ASSET),
             count: uint64(params.batchSize),
             from: address(batch),
             to: address(lockupLinear),
             amount: params.perStreamAmount
         });
 
-        uint256[] memory actualStreamIds = batch.createWithTimestampsLL(lockupLinear, ASSET, batchParams);
+        uint256[] memory actualStreamIds = batch.createWithTimestampsLL(lockupLinear, FORK_ASSET, batchParams);
         uint256[] memory expectedStreamIds = ArrayBuilder.fillStreamIds(firstStreamId, params.batchSize);
         assertEq(actualStreamIds, expectedStreamIds);
     }
