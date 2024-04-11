@@ -82,7 +82,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
 
         // Check: the sum of percentages equals 100%.
         if (totalPercentage != uUNIT) {
-            revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundredPercent(ud2x18(totalPercentage));
+            revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred(ud2x18(totalPercentage));
         }
 
         // Hash the parameters to generate a salt.

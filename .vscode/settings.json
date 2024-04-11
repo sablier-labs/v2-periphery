@@ -9,5 +9,8 @@
     ".gas-snapshot": "julia"
   },
   "editor.formatOnSave": true,
+  "search.exclude": {
+    "**/node_modules": true
+  },
   "solidity.formatter": "forge"
 }

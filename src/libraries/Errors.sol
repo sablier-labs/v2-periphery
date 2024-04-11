@@ -36,5 +36,5 @@ library Errors {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Thrown when the sum of the tranches' unlock percentages does not equal 100%.
-    error SablierV2MerkleLockupFactory_TotalPercentageNotOneHundredPercent(UD2x18 totalPercentage);
+    error SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred(UD2x18 totalPercentage);
 }

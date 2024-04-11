@@ -126,15 +126,14 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         uint256 leaf = MerkleBuilder.computeLeaf(defaults.INDEX1(), users.recipient1, claimAmount);
         leaves[0] = leaf;
         MerkleBuilder.sortLeaves(leaves);
-        bytes32 merkleRoot = getRoot(leaves.toBytes32());
 
-        // Compute the Merkle proof.
+        // Compute the test Merkle proof.
         uint256 pos = Arrays.findUpperBound(leaves, leaf);
         bytes32[] memory proof = getProof(leaves.toBytes32(), pos);
 
         /// Declare the constructor params.
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
-        baseParams.merkleRoot = merkleRoot;
+        baseParams.merkleRoot = getRoot(leaves.toBytes32());
 
         // Deploy a test MerkleLockupLT contract.
         ISablierV2MerkleLockupLT testMerkleLT = merkleLockupFactory.createMerkleLockupLT(
@@ -149,11 +148,10 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         deal({ token: address(dai), to: address(testMerkleLT), give: defaults.AGGREGATE_AMOUNT() });
 
         uint256 expectedStreamId = lockupTranched.nextStreamId();
-
         vm.expectEmit({ emitter: address(testMerkleLT) });
         emit Claim(defaults.INDEX1(), users.recipient1, claimAmount, expectedStreamId);
-        uint256 actualStreamId = testMerkleLT.claim(defaults.INDEX1(), users.recipient1, claimAmount, proof);
 
+        uint256 actualStreamId = testMerkleLT.claim(defaults.INDEX1(), users.recipient1, claimAmount, proof);
         LockupTranched.StreamLT memory actualStream = lockupTranched.getStream(actualStreamId);
         LockupTranched.StreamLT memory expectedStream = LockupTranched.StreamLT({
             amounts: Lockup.Amounts({ deposited: claimAmount, refunded: 0, withdrawn: 0 }),
@@ -187,13 +185,10 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         whenCalculatedAmountsSumEqualsClaimAmount
     {
         uint256 expectedStreamId = lockupTranched.nextStreamId();
-
         vm.expectEmit({ emitter: address(merkleLockupLT) });
         emit Claim(defaults.INDEX1(), users.recipient1, defaults.CLAIM_AMOUNT(), expectedStreamId);
+
         uint256 actualStreamId = claimLT();
-
-        LockupTranched.Tranche[] memory tranches = defaults.tranches();
-
         LockupTranched.StreamLT memory actualStream = lockupTranched.getStream(actualStreamId);
         LockupTranched.StreamLT memory expectedStream = LockupTranched.StreamLT({
             amounts: Lockup.Amounts({ deposited: defaults.CLAIM_AMOUNT(), refunded: 0, withdrawn: 0 }),
@@ -206,7 +201,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
             recipient: users.recipient1,
             sender: users.admin,
             startTime: getBlockTimestamp(),
-            tranches: tranches,
+            tranches: defaults.tranches(),
             wasCanceled: false
         });
 

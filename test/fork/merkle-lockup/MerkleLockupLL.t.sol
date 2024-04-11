@@ -80,7 +80,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             vars.indexes[i] = params.leafData[i].index;
 
             // Bound each leaf amount so that `aggregateAmount` does not overflow.
-            vars.amounts[i] = boundUint128(params.leafData[i].amount, 1, MAX_UINT256 / vars.recipientCount - 1);
+            vars.amounts[i] = boundUint128(params.leafData[i].amount, 1, uint128(MAX_UINT128 / vars.recipientCount - 1));
             vars.aggregateAmount += vars.amounts[i];
 
             // Avoid zero recipient addresses.
@@ -123,7 +123,7 @@ abstract contract MerkleLockupLL_Fork_Test is Fork_Test {
             recipientCount: vars.recipientCount
         });
 
-        // Fund the Merkle Lockup contract.
+        // Fund the MerkleLockup contract.
         deal({ token: address(FORK_ASSET), to: address(vars.merkleLockupLL), give: vars.aggregateAmount });
 
         assertGt(address(vars.merkleLockupLL).code.length, 0, "MerkleLockupLL contract not created");
