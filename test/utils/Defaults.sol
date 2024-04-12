@@ -212,7 +212,7 @@ contract Defaults is Merkle {
         });
     }
 
-    /// @dev Returns a batch of `LockupDynamic.Segment} parameters.
+    /// @dev Returns a batch of {LockupDynamic.Segment} parameters.
     function segments() private view returns (LockupDynamic.Segment[] memory segments_) {
         segments_ = new LockupDynamic.Segment[](2);
         segments_[0] = LockupDynamic.Segment({
@@ -227,12 +227,12 @@ contract Defaults is Merkle {
         });
     }
 
-    /// @dev Returns a batch of `LockupDynamic.SegmentWithDuration} parameters.
+    /// @dev Returns a batch of {LockupDynamic.SegmentWithDuration} parameters.
     function segmentsWithDurations() public pure returns (LockupDynamic.SegmentWithDuration[] memory) {
         return segmentsWithDurations({ amount0: 2500e18, amount1: 7500e18 });
     }
 
-    /// @dev Returns a batch of `LockupDynamic.SegmentWithDuration} parameters.
+    /// @dev Returns a batch of {LockupDynamic.SegmentWithDuration} parameters.
     function segmentsWithDurations(
         uint128 amount0,
         uint128 amount1
@@ -356,12 +356,12 @@ contract Defaults is Merkle {
         }
     }
 
-    /// @dev Returns a batch of `LockupTranched.TrancheWithDuration} parameters.
+    /// @dev Returns a batch of {LockupTranched.TrancheWithDuration} parameters.
     function tranchesWithDurations() public pure returns (LockupTranched.TrancheWithDuration[] memory) {
         return tranchesWithDurations({ amount0: 2500e18, amount1: 7500e18 });
     }
 
-    /// @dev Returns a batch of `LockupTranched.TrancheWithDuration} parameters.
+    /// @dev Returns a batch of {LockupTranched.TrancheWithDuration} parameters.
     function tranchesWithDurations(
         uint128 amount0,
         uint128 amount1
