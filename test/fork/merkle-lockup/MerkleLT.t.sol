@@ -35,11 +35,11 @@ abstract contract MerkleLT_Fork_Test is Fork_Test {
     }
 
     struct Vars {
-        uint256 actualStreamId;
         LockupTranched.StreamLT actualStream;
+        uint256 actualStreamId;
         LockupTranched.Tranche[] actualTranches;
-        uint128[] amounts;
         uint256 aggregateAmount;
+        uint128[] amounts;
         MerkleLockup.ConstructorParams baseParams;
         uint128 clawbackAmount;
         address expectedLT;

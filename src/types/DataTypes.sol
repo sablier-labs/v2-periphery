@@ -90,22 +90,22 @@ library BatchLockup {
 
 library MerkleLockup {
     /// @notice Struct encapsulating the base constructor parameters of a MerkleLockup campaign.
-    /// @param initialAdmin The initial admin of the MerkleLockup campaign.
     /// @param asset The contract address of the ERC-20 asset to be distributed.
-    /// @param ipfsCID The content identifier for indexing the contract on IPFS.
-    /// @param name The name of the campaign.
-    /// @param merkleRoot The Merkle root of the claim data.
-    /// @param expiration The expiration of the campaign, as a Unix timestamp.
     /// @param cancelable Indicates if the stream will be cancelable after claiming.
+    /// @param expiration The expiration of the campaign, as a Unix timestamp.
+    /// @param initialAdmin The initial admin of the MerkleLockup campaign.
+    /// @param ipfsCID The content identifier for indexing the contract on IPFS.
+    /// @param merkleRoot The Merkle root of the claim data.
+    /// @param name The name of the campaign.
     /// @param transferable Indicates if the stream will be transferable after claiming.
     struct ConstructorParams {
-        address initialAdmin;
         IERC20 asset;
-        string ipfsCID;
-        string name;
-        bytes32 merkleRoot;
-        uint40 expiration;
         bool cancelable;
+        uint40 expiration;
+        address initialAdmin;
+        string ipfsCID;
+        bytes32 merkleRoot;
+        string name;
         bool transferable;
     }
 }
@@ -114,7 +114,7 @@ library MerkleLT {
     /// @notice Struct encapsulating the unlock percentage and duration of a tranche.
     /// @dev Since users may have different amounts allocated, this struct makes it possible to calculate the amounts
     /// at claim time. An 18-decimal format is used to represent percentages: 100% = 1e18. For more information, see
-    /// the PRBMath documentation on {UD2x18}: https://github.com/PaulRBerg/prb-math
+    /// the PRBMath documentation on UD2x18: https://github.com/PaulRBerg/prb-math
     /// @param unlockPercentage The percentage designated to be unlocked in this tranche.
     /// @param duration The time difference in seconds between this tranche and the previous one.
     struct TrancheWithPercentage {

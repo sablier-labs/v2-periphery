@@ -21,7 +21,7 @@ library BatchLockupBuilder {
         }
     }
 
-    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithDurationsLD` structs.
+    /// @notice Turns the `params` into an array of {BatchLockup.CreateWithDurationsLD} structs.
     function fillBatch(
         LockupDynamic.CreateWithDurations memory params,
         uint256 batchSize
@@ -58,7 +58,7 @@ library BatchLockupBuilder {
         }
     }
 
-    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithDurationsLL` structs.
+    /// @notice Turns the `params` into an array of {BatchLockup.CreateWithDurationsLL} structs.
     function fillBatch(
         LockupLinear.CreateWithDurations memory params,
         uint256 batchSize
@@ -95,7 +95,7 @@ library BatchLockupBuilder {
         }
     }
 
-    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithDurationsLT` structs.
+    /// @notice Turns the `params` into an array of {BatchLockup.CreateWithDurationsLT} structs.
     function fillBatch(
         LockupTranched.CreateWithDurations memory params,
         uint256 batchSize
@@ -132,7 +132,7 @@ library BatchLockupBuilder {
         }
     }
 
-    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithTimestampsLDs` structs.
+    /// @notice Turns the `params` into an array of {BatchLockup.CreateWithTimestampsLDs} structs.
     function fillBatch(
         LockupDynamic.CreateWithTimestamps memory params,
         uint256 batchSize
@@ -170,7 +170,7 @@ library BatchLockupBuilder {
         }
     }
 
-    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithTimestampsLL` structs.
+    /// @notice Turns the `params` into an array of {BatchLockup.CreateWithTimestampsLL} structs.
     function fillBatch(
         LockupLinear.CreateWithTimestamps memory params,
         uint256 batchSize
@@ -207,7 +207,7 @@ library BatchLockupBuilder {
         }
     }
 
-    /// @notice Turns the `params` into an array of `BatchLockup.CreateWithTimestampsLT` structs.
+    /// @notice Turns the `params` into an array of {BatchLockup.CreateWithTimestampsLT} structs.
     function fillBatch(
         LockupTranched.CreateWithTimestamps memory params,
         uint256 batchSize

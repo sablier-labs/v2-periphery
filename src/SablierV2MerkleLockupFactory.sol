@@ -35,13 +35,13 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         // Hash the parameters to generate a salt.
         bytes32 salt = keccak256(
             abi.encodePacked(
-                baseParams.initialAdmin,
                 baseParams.asset,
-                abi.encode(baseParams.ipfsCID),
-                bytes32(abi.encodePacked(baseParams.name)),
-                baseParams.merkleRoot,
-                baseParams.expiration,
                 baseParams.cancelable,
+                baseParams.expiration,
+                baseParams.initialAdmin,
+                abi.encode(baseParams.ipfsCID),
+                baseParams.merkleRoot,
+                bytes32(abi.encodePacked(baseParams.name)),
                 baseParams.transferable,
                 lockupLinear,
                 abi.encode(streamDurations)
@@ -86,13 +86,13 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         // Hash the parameters to generate a salt.
         bytes32 salt = keccak256(
             abi.encodePacked(
-                baseParams.initialAdmin,
                 baseParams.asset,
-                abi.encode(baseParams.ipfsCID),
-                bytes32(abi.encodePacked(baseParams.name)),
-                baseParams.merkleRoot,
-                baseParams.expiration,
                 baseParams.cancelable,
+                baseParams.expiration,
+                baseParams.initialAdmin,
+                abi.encode(baseParams.ipfsCID),
+                baseParams.merkleRoot,
+                bytes32(abi.encodePacked(baseParams.name)),
                 baseParams.transferable,
                 lockupTranched,
                 abi.encode(tranchesWithPercentages)

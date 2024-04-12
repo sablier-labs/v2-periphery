@@ -119,27 +119,27 @@ contract Defaults is Merkle {
     }
 
     function baseParams() public view returns (MerkleLockup.ConstructorParams memory) {
-        return baseParams(users.admin, asset, MERKLE_ROOT, EXPIRATION);
+        return baseParams(users.admin, asset, EXPIRATION, MERKLE_ROOT);
     }
 
     function baseParams(
         address admin,
         IERC20 asset_,
-        bytes32 merkleRoot,
-        uint40 expiration
+        uint40 expiration,
+        bytes32 merkleRoot
     )
         public
         pure
         returns (MerkleLockup.ConstructorParams memory)
     {
         return MerkleLockup.ConstructorParams({
-            initialAdmin: admin,
             asset: asset_,
-            ipfsCID: IPFS_CID,
-            name: NAME,
-            merkleRoot: merkleRoot,
-            expiration: expiration,
             cancelable: CANCELABLE,
+            expiration: expiration,
+            initialAdmin: admin,
+            ipfsCID: IPFS_CID,
+            merkleRoot: merkleRoot,
+            name: NAME,
             transferable: TRANSFERABLE
         });
     }
@@ -212,7 +212,7 @@ contract Defaults is Merkle {
         });
     }
 
-    /// @dev Returns a batch of `LockupDynamic.Segment` parameters.
+    /// @dev Returns a batch of {LockupDynamic.Segment} parameters.
     function segments() private view returns (LockupDynamic.Segment[] memory segments_) {
         segments_ = new LockupDynamic.Segment[](2);
         segments_[0] = LockupDynamic.Segment({
@@ -227,12 +227,12 @@ contract Defaults is Merkle {
         });
     }
 
-    /// @dev Returns a batch of `LockupDynamic.SegmentWithDuration` parameters.
+    /// @dev Returns a batch of {LockupDynamic.SegmentWithDuration} parameters.
     function segmentsWithDurations() public pure returns (LockupDynamic.SegmentWithDuration[] memory) {
         return segmentsWithDurations({ amount0: 2500e18, amount1: 7500e18 });
     }
 
-    /// @dev Returns a batch of `LockupDynamic.SegmentWithDuration` parameters.
+    /// @dev Returns a batch of {LockupDynamic.SegmentWithDuration} parameters.
     function segmentsWithDurations(
         uint128 amount0,
         uint128 amount1
@@ -356,12 +356,12 @@ contract Defaults is Merkle {
         }
     }
 
-    /// @dev Returns a batch of `LockupTranched.TrancheWithDuration` parameters.
+    /// @dev Returns a batch of {LockupTranched.TrancheWithDuration} parameters.
     function tranchesWithDurations() public pure returns (LockupTranched.TrancheWithDuration[] memory) {
         return tranchesWithDurations({ amount0: 2500e18, amount1: 7500e18 });
     }
 
-    /// @dev Returns a batch of `LockupTranched.TrancheWithDuration` parameters.
+    /// @dev Returns a batch of {LockupTranched.TrancheWithDuration} parameters.
     function tranchesWithDurations(
         uint128 amount0,
         uint128 amount1
@@ -379,27 +379,27 @@ contract Defaults is Merkle {
                                     BATCH-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Returns a default-size batch of `BatchLockup.CreateWithDurationsLD` parameters.
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithDurationsLD} parameters.
     function batchCreateWithDurationsLD() public view returns (BatchLockup.CreateWithDurationsLD[] memory batch) {
         batch = BatchLockupBuilder.fillBatch(createWithDurationsLD(), BATCH_SIZE);
     }
 
-    /// @dev Returns a default-size batch of `BatchLockup.CreateWithDurationsLL` parameters.
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithDurationsLL} parameters.
     function batchCreateWithDurationsLL() public view returns (BatchLockup.CreateWithDurationsLL[] memory batch) {
         batch = BatchLockupBuilder.fillBatch(createWithDurationsLL(), BATCH_SIZE);
     }
 
-    /// @dev Returns a default-size batch of `BatchLockup.CreateWithDurationsLT` parameters.
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithDurationsLT} parameters.
     function batchCreateWithDurationsLT() public view returns (BatchLockup.CreateWithDurationsLT[] memory batch) {
         batch = BatchLockupBuilder.fillBatch(createWithDurationsLT(), BATCH_SIZE);
     }
 
-    /// @dev Returns a default-size batch of `BatchLockup.CreateWithTimestampsLD` parameters.
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithTimestampsLD} parameters.
     function batchCreateWithTimestampsLD() public view returns (BatchLockup.CreateWithTimestampsLD[] memory batch) {
         batch = batchCreateWithTimestampsLD(BATCH_SIZE);
     }
 
-    /// @dev Returns a batch of `BatchLockup.CreateWithTimestampsLD` parameters.
+    /// @dev Returns a batch of {BatchLockup.CreateWithTimestampsLD} parameters.
     function batchCreateWithTimestampsLD(uint256 batchSize)
         public
         view
@@ -408,12 +408,12 @@ contract Defaults is Merkle {
         batch = BatchLockupBuilder.fillBatch(createWithTimestampsLD(), batchSize);
     }
 
-    /// @dev Returns a default-size batch of `BatchLockup.CreateWithTimestampsLL` parameters.
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithTimestampsLL} parameters.
     function batchCreateWithTimestampsLL() public view returns (BatchLockup.CreateWithTimestampsLL[] memory batch) {
         batch = batchCreateWithTimestampsLL(BATCH_SIZE);
     }
 
-    /// @dev Returns a batch of `BatchLockup.CreateWithTimestampsLL` parameters.
+    /// @dev Returns a batch of {BatchLockup.CreateWithTimestampsLL} parameters.
     function batchCreateWithTimestampsLL(uint256 batchSize)
         public
         view
@@ -422,12 +422,12 @@ contract Defaults is Merkle {
         batch = BatchLockupBuilder.fillBatch(createWithTimestampsLL(), batchSize);
     }
 
-    /// @dev Returns a default-size batch of `BatchLockup.CreateWithTimestampsLT` parameters.
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithTimestampsLT} parameters.
     function batchCreateWithTimestampsLT() public view returns (BatchLockup.CreateWithTimestampsLT[] memory batch) {
         batch = batchCreateWithTimestampsLT(BATCH_SIZE);
     }
 
-    /// @dev Returns a batch of `BatchLockup.CreateWithTimestampsLL` parameters.
+    /// @dev Returns a batch of {BatchLockup.CreateWithTimestampsLL} parameters.
     function batchCreateWithTimestampsLT(uint256 batchSize)
         public
         view
