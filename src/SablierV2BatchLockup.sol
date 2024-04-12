@@ -8,24 +8,24 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { ISablierV2Batch } from "./interfaces/ISablierV2Batch.sol";
+import { ISablierV2BatchLockup } from "./interfaces/ISablierV2BatchLockup.sol";
 import { Errors } from "./libraries/Errors.sol";
-import { Batch } from "./types/DataTypes.sol";
+import { BatchLockup } from "./types/DataTypes.sol";
 
-/// @title SablierV2Batch
-/// @notice See the documentation in {ISablierV2Batch}.
-contract SablierV2Batch is ISablierV2Batch {
+/// @title SablierV2BatchLockup
+/// @notice See the documentation in {ISablierV2BatchLockup}.
+contract SablierV2BatchLockup is ISablierV2BatchLockup {
     using SafeERC20 for IERC20;
 
     /*//////////////////////////////////////////////////////////////////////////
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2Batch
+    /// @inheritdoc ISablierV2BatchLockup
     function createWithDurationsLD(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
-        Batch.CreateWithDurationsLD[] calldata batch
+        BatchLockup.CreateWithDurationsLD[] calldata batch
     )
         external
         override
@@ -34,7 +34,7 @@ contract SablierV2Batch is ISablierV2Batch {
         // Check that the batch size is not zero.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
-            revert Errors.SablierV2Batch_BatchSizeZero();
+            revert Errors.SablierV2BatchLockup_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
@@ -69,11 +69,11 @@ contract SablierV2Batch is ISablierV2Batch {
         }
     }
 
-    /// @inheritdoc ISablierV2Batch
+    /// @inheritdoc ISablierV2BatchLockup
     function createWithTimestampsLD(
         ISablierV2LockupDynamic lockupDynamic,
         IERC20 asset,
-        Batch.CreateWithTimestampsLD[] calldata batch
+        BatchLockup.CreateWithTimestampsLD[] calldata batch
     )
         external
         override
@@ -82,7 +82,7 @@ contract SablierV2Batch is ISablierV2Batch {
         // Check that the batch size is not zero.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
-            revert Errors.SablierV2Batch_BatchSizeZero();
+            revert Errors.SablierV2BatchLockup_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
@@ -122,11 +122,11 @@ contract SablierV2Batch is ISablierV2Batch {
                               SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2Batch
+    /// @inheritdoc ISablierV2BatchLockup
     function createWithDurationsLL(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
-        Batch.CreateWithDurationsLL[] calldata batch
+        BatchLockup.CreateWithDurationsLL[] calldata batch
     )
         external
         override
@@ -135,7 +135,7 @@ contract SablierV2Batch is ISablierV2Batch {
         // Check that the batch size is not zero.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
-            revert Errors.SablierV2Batch_BatchSizeZero();
+            revert Errors.SablierV2BatchLockup_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
@@ -170,11 +170,11 @@ contract SablierV2Batch is ISablierV2Batch {
         }
     }
 
-    /// @inheritdoc ISablierV2Batch
+    /// @inheritdoc ISablierV2BatchLockup
     function createWithTimestampsLL(
         ISablierV2LockupLinear lockupLinear,
         IERC20 asset,
-        Batch.CreateWithTimestampsLL[] calldata batch
+        BatchLockup.CreateWithTimestampsLL[] calldata batch
     )
         external
         override
@@ -183,7 +183,7 @@ contract SablierV2Batch is ISablierV2Batch {
         // Check that the batch is not empty.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
-            revert Errors.SablierV2Batch_BatchSizeZero();
+            revert Errors.SablierV2BatchLockup_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
@@ -222,11 +222,11 @@ contract SablierV2Batch is ISablierV2Batch {
                              SABLIER-V2-LOCKUP-TRANCHED
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @inheritdoc ISablierV2Batch
+    /// @inheritdoc ISablierV2BatchLockup
     function createWithDurationsLT(
         ISablierV2LockupTranched lockupTranched,
         IERC20 asset,
-        Batch.CreateWithDurationsLT[] calldata batch
+        BatchLockup.CreateWithDurationsLT[] calldata batch
     )
         external
         override
@@ -235,7 +235,7 @@ contract SablierV2Batch is ISablierV2Batch {
         // Check that the batch size is not zero.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
-            revert Errors.SablierV2Batch_BatchSizeZero();
+            revert Errors.SablierV2BatchLockup_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
@@ -270,11 +270,11 @@ contract SablierV2Batch is ISablierV2Batch {
         }
     }
 
-    /// @inheritdoc ISablierV2Batch
+    /// @inheritdoc ISablierV2BatchLockup
     function createWithTimestampsLT(
         ISablierV2LockupTranched lockupTranched,
         IERC20 asset,
-        Batch.CreateWithTimestampsLT[] calldata batch
+        BatchLockup.CreateWithTimestampsLT[] calldata batch
     )
         external
         override
@@ -283,7 +283,7 @@ contract SablierV2Batch is ISablierV2Batch {
         // Check that the batch size is not zero.
         uint256 batchSize = batch.length;
         if (batchSize == 0) {
-            revert Errors.SablierV2Batch_BatchSizeZero();
+            revert Errors.SablierV2BatchLockup_BatchSizeZero();
         }
 
         // Calculate the sum of all of stream amounts. It is safe to use unchecked addition because one of the create
@@ -323,7 +323,7 @@ contract SablierV2Batch is ISablierV2Batch {
                                   HELPER FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Helper function to approve a Sablier contract to spend funds from the batch. If the current allowance
+    /// @dev Helper function to approve a Sablier contract to spend funds from the batchLockup. If the current allowance
     /// is insufficient, this function approves Sablier to spend the exact `amount`.
     /// The {SafeERC20.forceApprove} function is used to handle special ERC-20 assets (e.g. USDT) that require the
     /// current allowance to be zero before setting it to a non-zero value.
@@ -334,9 +334,10 @@ contract SablierV2Batch is ISablierV2Batch {
         }
     }
 
-    /// @dev Helper function to transfer assets from the caller to the batch contract and approve the Sablier contract.
+    /// @dev Helper function to transfer assets from the caller to the batchLockup contract and approve the Sablier
+    /// contract.
     function _handleTransfer(address sablierContract, IERC20 asset, uint256 amount) internal {
-        // Transfer the assets to the batch contract.
+        // Transfer the assets to the batchLockup contract.
         asset.safeTransferFrom({ from: msg.sender, to: address(this), value: amount });
 
         // Approve the Sablier contract to spend funds.

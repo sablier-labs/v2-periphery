@@ -2,7 +2,7 @@
 pragma solidity >=0.8.22 <0.9.0;
 
 import { Precompiles } from "../../precompiles/Precompiles.sol";
-import { ISablierV2Batch } from "../../src/interfaces/ISablierV2Batch.sol";
+import { ISablierV2BatchLockup } from "../../src/interfaces/ISablierV2BatchLockup.sol";
 import { ISablierV2MerkleLockupFactory } from "../../src/interfaces/ISablierV2MerkleLockupFactory.sol";
 
 import { Base_Test } from "../Base.t.sol";
@@ -16,10 +16,10 @@ contract Precompiles_Test is Base_Test {
         }
     }
 
-    function test_DeployBatch() external onlyTestOptimizedProfile {
-        address actualBatch = address(precompiles.deployBatch());
-        address expectedBatch = address(deployOptimizedBatch());
-        assertEq(actualBatch.code, expectedBatch.code, "bytecodes mismatch");
+    function test_DeployBatchLockup() external onlyTestOptimizedProfile {
+        address actualBatchLockup = address(precompiles.deployBatchLockup());
+        address expectedBatchLockup = address(deployOptimizedBatchLockup());
+        assertEq(actualBatchLockup.code, expectedBatchLockup.code, "bytecodes mismatch");
     }
 
     function test_DeployMerkleLockupFactory() external onlyTestOptimizedProfile {
@@ -29,13 +29,13 @@ contract Precompiles_Test is Base_Test {
     }
 
     function test_DeployPeriphery() external onlyTestOptimizedProfile {
-        (ISablierV2Batch actualBatch, ISablierV2MerkleLockupFactory actualMerkleLockupFactory) =
+        (ISablierV2BatchLockup actualBatchLockup, ISablierV2MerkleLockupFactory actualMerkleLockupFactory) =
             precompiles.deployPeriphery();
 
-        (ISablierV2Batch expectedBatch, ISablierV2MerkleLockupFactory expectedMerkleLockupFactory) =
+        (ISablierV2BatchLockup expectedBatchLockup, ISablierV2MerkleLockupFactory expectedMerkleLockupFactory) =
             deployOptimizedPeriphery();
 
-        assertEq(address(actualBatch).code, address(expectedBatch).code, "bytecodes mismatch");
+        assertEq(address(actualBatchLockup).code, address(expectedBatchLockup).code, "bytecodes mismatch");
         assertEq(
             address(actualMerkleLockupFactory).code, address(expectedMerkleLockupFactory).code, "bytecodes mismatch"
         );

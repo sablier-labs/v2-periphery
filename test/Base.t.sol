@@ -13,11 +13,11 @@ import { Assertions as V2CoreAssertions } from "@sablier/v2-core/test/utils/Asse
 import { Constants as V2CoreConstants } from "@sablier/v2-core/test/utils/Constants.sol";
 import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
 
-import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
+import { ISablierV2BatchLockup } from "src/interfaces/ISablierV2BatchLockup.sol";
 import { ISablierV2MerkleLL } from "src/interfaces/ISablierV2MerkleLL.sol";
 import { ISablierV2MerkleLockupFactory } from "src/interfaces/ISablierV2MerkleLockupFactory.sol";
 import { ISablierV2MerkleLT } from "src/interfaces/ISablierV2MerkleLT.sol";
-import { SablierV2Batch } from "src/SablierV2Batch.sol";
+import { SablierV2BatchLockup } from "src/SablierV2BatchLockup.sol";
 import { SablierV2MerkleLL } from "src/SablierV2MerkleLL.sol";
 import { SablierV2MerkleLockupFactory } from "src/SablierV2MerkleLockupFactory.sol";
 import { SablierV2MerkleLT } from "src/SablierV2MerkleLT.sol";
@@ -50,7 +50,7 @@ abstract contract Base_Test is
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    ISablierV2Batch internal batch;
+    ISablierV2BatchLockup internal batchLockup;
     IERC20 internal dai;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
@@ -102,10 +102,10 @@ abstract contract Base_Test is
     /// @dev Conditionally deploy V2 Periphery normally or from an optimized source compiled with `--via-ir`.
     function deployPeripheryConditionally() internal {
         if (!isTestOptimizedProfile()) {
-            batch = new SablierV2Batch();
+            batchLockup = new SablierV2BatchLockup();
             merkleLockupFactory = new SablierV2MerkleLockupFactory();
         } else {
-            (batch, merkleLockupFactory) = deployOptimizedPeriphery();
+            (batchLockup, merkleLockupFactory) = deployOptimizedPeriphery();
         }
     }
 

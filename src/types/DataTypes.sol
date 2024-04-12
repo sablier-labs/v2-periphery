@@ -6,7 +6,7 @@ import { UD2x18 } from "@prb/math/src/UD2x18.sol";
 import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lockup.sol";
 import { Broker, LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-library Batch {
+library BatchLockup {
     /// @notice A struct encapsulating the lockup contract's address and the stream ids to cancel.
     struct CancelMultiple {
         ISablierV2Lockup lockup;

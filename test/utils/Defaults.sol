@@ -7,10 +7,10 @@ import { ud2x18 } from "@prb/math/src/UD2x18.sol";
 import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
 import { Broker, LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { Batch, MerkleLockup, MerkleLT } from "src/types/DataTypes.sol";
+import { BatchLockup, MerkleLockup, MerkleLT } from "src/types/DataTypes.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
-import { BatchBuilder } from "./BatchBuilder.sol";
+import { BatchLockupBuilder } from "./BatchLockupBuilder.sol";
 import { Merkle } from "./Murky.sol";
 import { MerkleBuilder } from "./MerkleBuilder.sol";
 import { Users } from "./Types.sol";
@@ -376,63 +376,63 @@ contract Defaults is Merkle {
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                        BATCH
+                                    BATCH-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithDurationsLD` parameters.
-    function batchCreateWithDurationsLD() public view returns (Batch.CreateWithDurationsLD[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithDurationsLD(), BATCH_SIZE);
+    /// @dev Returns a default-size batch of `BatchLockup.CreateWithDurationsLD` parameters.
+    function batchCreateWithDurationsLD() public view returns (BatchLockup.CreateWithDurationsLD[] memory batch) {
+        batch = BatchLockupBuilder.fillBatch(createWithDurationsLD(), BATCH_SIZE);
     }
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithDurationsLL` parameters.
-    function batchCreateWithDurationsLL() public view returns (Batch.CreateWithDurationsLL[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithDurationsLL(), BATCH_SIZE);
+    /// @dev Returns a default-size batch of `BatchLockup.CreateWithDurationsLL` parameters.
+    function batchCreateWithDurationsLL() public view returns (BatchLockup.CreateWithDurationsLL[] memory batch) {
+        batch = BatchLockupBuilder.fillBatch(createWithDurationsLL(), BATCH_SIZE);
     }
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithDurationsLT` parameters.
-    function batchCreateWithDurationsLT() public view returns (Batch.CreateWithDurationsLT[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithDurationsLT(), BATCH_SIZE);
+    /// @dev Returns a default-size batch of `BatchLockup.CreateWithDurationsLT` parameters.
+    function batchCreateWithDurationsLT() public view returns (BatchLockup.CreateWithDurationsLT[] memory batch) {
+        batch = BatchLockupBuilder.fillBatch(createWithDurationsLT(), BATCH_SIZE);
     }
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithTimestampsLD` parameters.
-    function batchCreateWithTimestampsLD() public view returns (Batch.CreateWithTimestampsLD[] memory batch) {
+    /// @dev Returns a default-size batch of `BatchLockup.CreateWithTimestampsLD` parameters.
+    function batchCreateWithTimestampsLD() public view returns (BatchLockup.CreateWithTimestampsLD[] memory batch) {
         batch = batchCreateWithTimestampsLD(BATCH_SIZE);
     }
 
-    /// @dev Returns a batch of `Batch.CreateWithTimestampsLD` parameters.
+    /// @dev Returns a batch of `BatchLockup.CreateWithTimestampsLD` parameters.
     function batchCreateWithTimestampsLD(uint256 batchSize)
         public
         view
-        returns (Batch.CreateWithTimestampsLD[] memory batch)
+        returns (BatchLockup.CreateWithTimestampsLD[] memory batch)
     {
-        batch = BatchBuilder.fillBatch(createWithTimestampsLD(), batchSize);
+        batch = BatchLockupBuilder.fillBatch(createWithTimestampsLD(), batchSize);
     }
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithTimestampsLL` parameters.
-    function batchCreateWithTimestampsLL() public view returns (Batch.CreateWithTimestampsLL[] memory batch) {
+    /// @dev Returns a default-size batch of `BatchLockup.CreateWithTimestampsLL` parameters.
+    function batchCreateWithTimestampsLL() public view returns (BatchLockup.CreateWithTimestampsLL[] memory batch) {
         batch = batchCreateWithTimestampsLL(BATCH_SIZE);
     }
 
-    /// @dev Returns a batch of `Batch.CreateWithTimestampsLL` parameters.
+    /// @dev Returns a batch of `BatchLockup.CreateWithTimestampsLL` parameters.
     function batchCreateWithTimestampsLL(uint256 batchSize)
         public
         view
-        returns (Batch.CreateWithTimestampsLL[] memory batch)
+        returns (BatchLockup.CreateWithTimestampsLL[] memory batch)
     {
-        batch = BatchBuilder.fillBatch(createWithTimestampsLL(), batchSize);
+        batch = BatchLockupBuilder.fillBatch(createWithTimestampsLL(), batchSize);
     }
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithTimestampsLT` parameters.
-    function batchCreateWithTimestampsLT() public view returns (Batch.CreateWithTimestampsLT[] memory batch) {
+    /// @dev Returns a default-size batch of `BatchLockup.CreateWithTimestampsLT` parameters.
+    function batchCreateWithTimestampsLT() public view returns (BatchLockup.CreateWithTimestampsLT[] memory batch) {
         batch = batchCreateWithTimestampsLT(BATCH_SIZE);
     }
 
-    /// @dev Returns a batch of `Batch.CreateWithTimestampsLL` parameters.
+    /// @dev Returns a batch of `BatchLockup.CreateWithTimestampsLL` parameters.
     function batchCreateWithTimestampsLT(uint256 batchSize)
         public
         view
-        returns (Batch.CreateWithTimestampsLT[] memory batch)
+        returns (BatchLockup.CreateWithTimestampsLT[] memory batch)
     {
-        batch = BatchBuilder.fillBatch(createWithTimestampsLT(), batchSize);
+        batch = BatchLockupBuilder.fillBatch(createWithTimestampsLT(), batchSize);
     }
 }

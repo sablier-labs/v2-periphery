@@ -11,7 +11,7 @@
     { access = "read-write", path = "./cache" },
   ]
   gas_reports = [
-    "SablierV2Batch",
+    "SablierV2BatchLockup",
     "SablierV2MerkleLL",
     "SablierV2MerkleLockupFactory",
     "SablierV2MerkleLT",

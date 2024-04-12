@@ -8,7 +8,7 @@ import { SablierV2NFTDescriptor } from "@sablier/v2-core/src/SablierV2NFTDescrip
 import { BaseScript } from "./Base.s.sol";
 
 import { SablierV2MerkleLockupFactory } from "../src/SablierV2MerkleLockupFactory.sol";
-import { SablierV2Batch } from "../src/SablierV2Batch.sol";
+import { SablierV2BatchLockup } from "../src/SablierV2BatchLockup.sol";
 
 /// @notice Deploys the Sablier V2 Protocol.
 contract DeployProtocol is BaseScript {
@@ -26,11 +26,11 @@ contract DeployProtocol is BaseScript {
             SablierV2LockupLinear lockupLinear,
             SablierV2LockupTranched lockupTranched,
             SablierV2NFTDescriptor nftDescriptor,
-            SablierV2Batch batch,
+            SablierV2BatchLockup batchLockup,
             SablierV2MerkleLockupFactory merkleLockupFactory
         )
     {
-        (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor, batch, merkleLockupFactory) =
+        (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor, batchLockup, merkleLockupFactory) =
             _run(initialAdmin, maxSegmentCount, maxTrancheCount);
     }
 
@@ -48,11 +48,11 @@ contract DeployProtocol is BaseScript {
             SablierV2LockupLinear lockupLinear,
             SablierV2LockupTranched lockupTranched,
             SablierV2NFTDescriptor nftDescriptor,
-            SablierV2Batch batch,
+            SablierV2BatchLockup batchLockup,
             SablierV2MerkleLockupFactory merkleLockupFactory
         )
     {
-        (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor, batch, merkleLockupFactory) =
+        (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor, batchLockup, merkleLockupFactory) =
             _run(initialAdmin, maxSegmentCount, maxTrancheCount);
     }
 
@@ -67,7 +67,7 @@ contract DeployProtocol is BaseScript {
             SablierV2LockupLinear lockupLinear,
             SablierV2LockupTranched lockupTranched,
             SablierV2NFTDescriptor nftDescriptor,
-            SablierV2Batch batch,
+            SablierV2BatchLockup batchLockup,
             SablierV2MerkleLockupFactory merkleLockupFactory
         )
     {
@@ -78,7 +78,7 @@ contract DeployProtocol is BaseScript {
         lockupTranched = new SablierV2LockupTranched(initialAdmin, nftDescriptor, maxTrancheCount);
 
         // Deploy V2 Periphery.
-        batch = new SablierV2Batch();
+        batchLockup = new SablierV2BatchLockup();
         merkleLockupFactory = new SablierV2MerkleLockupFactory();
     }
 }
