@@ -4,12 +4,37 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Common Changelog](https://common-changelog.org).
 
+[1.2.0]: https://github.com/sablier-labs/v2-periphery/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/sablier-labs/v2-periphery/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/sablier-labs/v2-periphery/releases/tag/v1.0.0
+
+## [1.2.0] - 2024-06-16
+
+### Changed
+
+- Rename `MerkleStreamer` to `MerkleLockup` ([#268](https://github.com/sablier-labs/v2-periphery/pull/268))
+- Rename `Batch` to `BatchLockup` ([#322](https://github.com/sablier-labs/v2-periphery/pull/322),
+  [#297](https://github.com/sablier-labs/v2-periphery/pull/297),
+  [#300](https://github.com/sablier-labs/v2-periphery/pull/300))
+- Refactor `Range` to `Timestamps` ([#335](https://github.com/sablier-labs/v2-periphery/pull/335))
+- Bump `sablier/v2-core` to v1.2.0
+- Upgrade to OpenZeppelin v5 ([#283](https://github.com/sablier-labs/v2-periphery/pull/283))
+- Upgrade build dependencies ([#351](https://github.com/sablier-labs/v2-periphery/pull/351))
+- Switch to Bun ([#249](https://github.com/sablier-labs/v2-periphery/pull/249))
+
+### Added
+
+- Add `MerkleLockup` and `BatchLockup` support for `LockupTranched`
+- Add grace period mechanism for `clawback` function ([#340](https://github.com/sablier-labs/v2-periphery/pull/340))
+- Add `precompiles` in the NPM release ([#302](https://github.com/sablier-labs/v2-periphery/pull/302))
+
+### Removed
+
+- **Breaking**: Remove protocol fee check in `MerkleLL` ([#257](https://github.com/sablier-labs/v2-periphery/pull/257))
 
 ## [1.1.1] - 2023-12-20
 
