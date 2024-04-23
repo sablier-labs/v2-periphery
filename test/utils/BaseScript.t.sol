@@ -11,7 +11,7 @@ contract BaseScript_Test is StdAssertions {
 
     BaseScript internal baseScript = new BaseScript();
 
-    function test_ConstructCreate2Salt() public {
+    function test_ConstructCreate2Salt() public view {
         string memory chainId = block.chainid.toString();
         string memory version = "1.1.1";
         string memory salt = string.concat("ChainID ", chainId, ", Version ", version);
