@@ -20,7 +20,7 @@ abstract contract CreateWithTimestamps_LockupLinear_BatchLockup_Fork_Test is For
 
     struct CreateWithTimestampsParams {
         uint128 batchSize;
-        LockupLinear.Range range;
+        LockupLinear.Timestamp timestamp;
         address sender;
         address recipient;
         uint128 perStreamAmount;
@@ -29,10 +29,11 @@ abstract contract CreateWithTimestamps_LockupLinear_BatchLockup_Fork_Test is For
     function testForkFuzz_CreateWithTimestampsLL(CreateWithTimestampsParams memory params) external {
         params.batchSize = boundUint128(params.batchSize, 1, 20);
         params.perStreamAmount = boundUint128(params.perStreamAmount, 1, MAX_UINT128 / params.batchSize);
-        params.range.start = boundUint40(params.range.start, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
-        params.range.cliff =
-            boundUint40(params.range.cliff, params.range.start + 1 seconds, params.range.start + 52 weeks);
-        params.range.end = boundUint40(params.range.end, params.range.cliff + 1 seconds, MAX_UNIX_TIMESTAMP);
+        params.timestamp.start =
+            boundUint40(params.timestamp.start, getBlockTimestamp(), getBlockTimestamp() + 24 hours);
+        params.timestamp.cliff =
+            boundUint40(params.timestamp.cliff, params.timestamp.start + 1 seconds, params.timestamp.start + 52 weeks);
+        params.timestamp.end = boundUint40(params.timestamp.end, params.timestamp.cliff + 1 seconds, MAX_UNIX_TIMESTAMP);
 
         checkUsers(params.sender, params.recipient);
 
@@ -49,7 +50,7 @@ abstract contract CreateWithTimestamps_LockupLinear_BatchLockup_Fork_Test is For
             asset: FORK_ASSET,
             cancelable: true,
             transferable: true,
-            range: params.range,
+            timestamp: params.timestamp,
             broker: defaults.broker()
         });
         BatchLockup.CreateWithTimestampsLL[] memory batchParams =
