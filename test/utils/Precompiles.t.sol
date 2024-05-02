@@ -16,24 +16,24 @@ contract Precompiles_Test is Base_Test {
         }
     }
 
-    function test_DeployBatchLockup() external onlyTestOptimizedProfile {
-        address actualBatchLockup = address(precompiles.deployBatchLockup());
-        address expectedBatchLockup = address(deployOptimizedBatchLockup());
+    function test_DeployBatchLockup(address initialAdmin) external onlyTestOptimizedProfile {
+        address actualBatchLockup = address(precompiles.deployBatchLockup(initialAdmin));
+        address expectedBatchLockup = address(deployOptimizedBatchLockup(initialAdmin));
         assertEq(actualBatchLockup.code, expectedBatchLockup.code, "bytecodes mismatch");
     }
 
-    function test_DeployMerkleLockupFactory() external onlyTestOptimizedProfile {
-        address actualFactory = address(precompiles.deployMerkleLockupFactory());
-        address expectedFactory = address(deployOptimizedMerkleLockupFactory());
+    function test_DeployMerkleLockupFactory(address initialAdmin) external onlyTestOptimizedProfile {
+        address actualFactory = address(precompiles.deployMerkleLockupFactory(initialAdmin));
+        address expectedFactory = address(deployOptimizedMerkleLockupFactory(initialAdmin));
         assertEq(actualFactory.code, expectedFactory.code, "bytecodes mismatch");
     }
 
-    function test_DeployPeriphery() external onlyTestOptimizedProfile {
+    function test_DeployPeriphery(address initialAdmin) external onlyTestOptimizedProfile {
         (ISablierV2BatchLockup actualBatchLockup, ISablierV2MerkleLockupFactory actualMerkleLockupFactory) =
-            precompiles.deployPeriphery();
+            precompiles.deployPeriphery(initialAdmin);
 
         (ISablierV2BatchLockup expectedBatchLockup, ISablierV2MerkleLockupFactory expectedMerkleLockupFactory) =
-            deployOptimizedPeriphery();
+            deployOptimizedPeriphery(initialAdmin);
 
         assertEq(address(actualBatchLockup).code, address(expectedBatchLockup).code, "bytecodes mismatch");
         assertEq(

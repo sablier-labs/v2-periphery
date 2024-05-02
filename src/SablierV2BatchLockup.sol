@@ -3,6 +3,7 @@ pragma solidity >=0.8.22;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { SablierV2Blast } from "@sablier/v2-core/src/abstracts/SablierV2Blast.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
@@ -14,8 +15,19 @@ import { BatchLockup } from "./types/DataTypes.sol";
 
 /// @title SablierV2BatchLockup
 /// @notice See the documentation in {ISablierV2BatchLockup}.
-contract SablierV2BatchLockup is ISablierV2BatchLockup {
+contract SablierV2BatchLockup is ISablierV2BatchLockup, SablierV2Blast {
     using SafeERC20 for IERC20;
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Emits a {TransferAdmin} event.
+    /// @param initialAdmin The address of the initial contract admin.
+    constructor(address initialAdmin) {
+        admin = initialAdmin;
+        emit TransferAdmin({ oldAdmin: address(0), newAdmin: initialAdmin });
+    }
 
     /*//////////////////////////////////////////////////////////////////////////
                              SABLIER-V2-LOCKUP-DYNAMIC
