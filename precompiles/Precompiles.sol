@@ -26,8 +26,8 @@ contract Precompiles {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice Deploys {SablierV2BatchLockup} from precompiled bytecode.
-    function deployBatchLockup() public returns (ISablierV2BatchLockup batchLockup) {
-        bytes memory creationBytecode = BYTECODE_BATCH_LOCKUP;
+    function deployBatchLockup(address initialAdmin) public returns (ISablierV2BatchLockup batchLockup) {
+        bytes memory creationBytecode = bytes.concat(BYTECODE_BATCH_LOCKUP, abi.encode(initialAdmin));
         assembly {
             batchLockup := create(0, add(creationBytecode, 0x20), mload(creationBytecode))
         }
@@ -37,8 +37,8 @@ contract Precompiles {
     }
 
     /// @notice Deploys {SablierV2MerkleLockupFactory} from precompiled bytecode.
-    function deployMerkleLockupFactory() public returns (ISablierV2MerkleLockupFactory factory) {
-        bytes memory creationBytecode = BYTECODE_MERKLE_LOCKUP_FACTORY;
+    function deployMerkleLockupFactory(address initialAdmin) public returns (ISablierV2MerkleLockupFactory factory) {
+        bytes memory creationBytecode = bytes.concat(BYTECODE_MERKLE_LOCKUP_FACTORY, abi.encode(initialAdmin));
         assembly {
             factory := create(0, add(creationBytecode, 0x20), mload(creationBytecode))
         }
@@ -51,12 +51,12 @@ contract Precompiles {
     ///
     /// 1. {SablierV2BatchLockup}
     /// 2. {SablierV2MerkleLockupFactory}
-    function deployPeriphery()
+    function deployPeriphery(address initialAdmin)
         public
         returns (ISablierV2BatchLockup batchLockup, ISablierV2MerkleLockupFactory merkleLockupFactory)
     {
-        batchLockup = deployBatchLockup();
-        merkleLockupFactory = deployMerkleLockupFactory();
+        batchLockup = deployBatchLockup(initialAdmin);
+        merkleLockupFactory = deployMerkleLockupFactory(initialAdmin);
     }
 
     /// @notice Deploys the entire Sablier V2 Protocol from precompiled bytecode.
@@ -82,6 +82,6 @@ contract Precompiles {
         (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor) = new V2CorePrecompiles().deployCore(initialAdmin);
 
         // Deploy V2 Periphery.
-        (batchLockup, merkleLockupFactory) = deployPeriphery();
+        (batchLockup, merkleLockupFactory) = deployPeriphery(initialAdmin);
     }
 }

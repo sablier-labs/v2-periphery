@@ -12,30 +12,39 @@ import { SablierV2BatchLockup } from "../src/SablierV2BatchLockup.sol";
 /// 2. {SablierV2MerkleLockupFactory}
 contract DeployPeriphery is BaseScript {
     /// @dev Deploy via Forge.
-    function runBroadcast()
+    function runBroadcast(address admin)
         public
         virtual
         broadcast
         returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
     {
-        (batchLockup, merkleLockupFactory) = _run();
+        (batchLockup, merkleLockupFactory) = _run(admin);
     }
 
     /// @dev Deploy via Sphinx.
-    function runSphinx()
+    function runSphinx(address admin)
         public
         virtual
         sphinx
         returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
     {
-        (batchLockup, merkleLockupFactory) = _run();
+        (batchLockup, merkleLockupFactory) = _run(admin);
     }
 
-    function _run()
+    function _run(address admin)
         internal
         returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
     {
-        batchLockup = new SablierV2BatchLockup();
-        merkleLockupFactory = new SablierV2MerkleLockupFactory();
+        batchLockup = new SablierV2BatchLockup(msg.sender);
+        batchLockup.configureYieldAndGas(BLAST, YIELD_MODE, GAS_MODE, admin);
+        batchLockup.configureRebasingAsset(USDB, YIELD_MODE);
+        batchLockup.configureRebasingAsset(WETH, YIELD_MODE);
+        batchLockup.transferAdmin(admin);
+
+        merkleLockupFactory = new SablierV2MerkleLockupFactory(msg.sender);
+        merkleLockupFactory.configureRebasingAsset(USDB, YIELD_MODE);
+        merkleLockupFactory.configureRebasingAsset(WETH, YIELD_MODE);
+        merkleLockupFactory.configureYieldAndGas(BLAST, YIELD_MODE, GAS_MODE, admin);
+        merkleLockupFactory.transferAdmin(admin);
     }
 }

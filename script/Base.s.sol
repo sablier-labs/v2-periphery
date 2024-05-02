@@ -4,6 +4,8 @@ pragma solidity >=0.8.22 <0.9.0;
 
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 import { Sphinx } from "@sphinx-labs/contracts/SphinxPlugin.sol";
+import { IBlast, YieldMode, GasMode } from "@sablier/v2-core/src/interfaces/blast/IBlast.sol";
+import { IERC20Rebasing } from "@sablier/v2-core/src/interfaces/blast/IERC20Rebasing.sol";
 
 import { console2 } from "forge-std/src/console2.sol";
 import { Script } from "forge-std/src/Script.sol";
@@ -12,6 +14,13 @@ import { stdJson } from "forge-std/src/StdJson.sol";
 contract BaseScript is Script, Sphinx {
     using Strings for uint256;
     using stdJson for string;
+
+    /// @dev Blast configuration variables.
+    IBlast public constant BLAST = IBlast(0x4300000000000000000000000000000000000002);
+    GasMode public constant GAS_MODE = GasMode.CLAIMABLE;
+    YieldMode public constant YIELD_MODE = YieldMode.CLAIMABLE;
+    IERC20Rebasing public constant WETH = IERC20Rebasing(0x4300000000000000000000000000000000000004);
+    IERC20Rebasing public constant USDB = IERC20Rebasing(0x4300000000000000000000000000000000000003);
 
     /// @dev Included to enable compilation of the script without a $MNEMONIC environment variable.
     string internal constant TEST_MNEMONIC = "test test test test test test test test test test test junk";
