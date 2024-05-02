@@ -281,7 +281,7 @@ contract Defaults is Merkle {
             asset: asset_,
             cancelable: true,
             transferable: true,
-            timestamp: linearTimestamp(),
+            timestamps: linearTimestamps(),
             broker: broker()
         });
     }
@@ -290,7 +290,7 @@ contract Defaults is Merkle {
         return LockupLinear.Durations({ cliff: CLIFF_DURATION, total: TOTAL_DURATION });
     }
 
-    function linearTimestamp() private view returns (LockupLinear.Timestamp memory) {
+    function linearTimestamps() private view returns (LockupLinear.Timestamp memory) {
         return LockupLinear.Timestamp({ start: START_TIME, cliff: CLIFF_TIME, end: END_TIME });
     }
 
