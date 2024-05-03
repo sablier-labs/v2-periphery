@@ -48,6 +48,9 @@ abstract contract SablierV2MerkleLockup is
     /// @dev Packed booleans that record the history of claims.
     BitMaps.BitMap internal _claimedBitMap;
 
+    /// @dev The timestamp when the first claim is made.
+    uint40 internal _firstClaimTime;
+
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
     //////////////////////////////////////////////////////////////////////////*/
@@ -77,6 +80,11 @@ abstract contract SablierV2MerkleLockup is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleLockup
+    function getFirstClaimTime() external view override returns (uint40) {
+        return _firstClaimTime;
+    }
+
+    /// @inheritdoc ISablierV2MerkleLockup
     function hasClaimed(uint256 index) public view override returns (bool) {
         return _claimedBitMap.get(index);
     }
@@ -97,11 +105,12 @@ abstract contract SablierV2MerkleLockup is
 
     /// @inheritdoc ISablierV2MerkleLockup
     function clawback(address to, uint128 amount) external override onlyAdmin {
-        // Check: the campaign is not expired.
-        if (!hasExpired()) {
-            revert Errors.SablierV2MerkleLockup_CampaignNotExpired({
+        // Check: current timestamp is over the grace period and the campaign has not expired.
+        if (_hasGracePeriodPassed() && !hasExpired()) {
+            revert Errors.SablierV2MerkleLockup_ClawbackNotAllowed({
                 blockTimestamp: block.timestamp,
-                expiration: EXPIRATION
+                expiration: EXPIRATION,
+                firstClaimTime: _firstClaimTime
             });
         }
 
@@ -117,7 +126,7 @@ abstract contract SablierV2MerkleLockup is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Validates the parameters of the `claim` function, which is implemented by child contracts.
-    function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal view {
+    function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal {
         // Check: the campaign has not expired.
         if (hasExpired()) {
             revert Errors.SablierV2MerkleLockup_CampaignExpired({
@@ -135,5 +144,16 @@ abstract contract SablierV2MerkleLockup is
         if (!MerkleProof.verify(merkleProof, MERKLE_ROOT, leaf)) {
             revert Errors.SablierV2MerkleLockup_InvalidProof();
         }
+
+        // Effect: set the `_firstClaimTime` if its zero.
+        if (_firstClaimTime == 0) {
+            _firstClaimTime = uint40(block.timestamp);
+        }
+    }
+
+    /// @notice Returns a flag indicating whether the grace period has passed.
+    /// @dev The grace period is 7 days after the first claim.
+    function _hasGracePeriodPassed() internal view returns (bool) {
+        return _firstClaimTime > 0 && block.timestamp > _firstClaimTime + 7 days;
     }
 }

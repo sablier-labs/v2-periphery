@@ -23,27 +23,53 @@ contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
         _;
     }
 
-    function test_RevertGiven_CampaignNotExpired() external whenCallerAdmin {
+    function test_Clawback_BeforeFirstClaim() external whenCallerAdmin {
+        test_Clawback(users.admin);
+    }
+
+    modifier afterFirstClaim() {
+        claimLT();
+        _;
+    }
+
+    function test_Clawback_GracePeriod() external whenCallerAdmin afterFirstClaim {
+        vm.warp({ newTimestamp: block.timestamp + 6 days });
+        test_Clawback(users.admin);
+    }
+
+    modifier postGracePeriod() {
+        vm.warp({ newTimestamp: block.timestamp + 8 days });
+        _;
+    }
+
+    function test_RevertGiven_CampaignNotExpired() external whenCallerAdmin afterFirstClaim postGracePeriod {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleLockup_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
+                Errors.SablierV2MerkleLockup_ClawbackNotAllowed.selector,
+                block.timestamp,
+                defaults.EXPIRATION(),
+                defaults.FIRST_CLAIM_TIME()
             )
         );
         merkleLT.clawback({ to: users.admin, amount: 1 });
     }
 
     modifier givenCampaignExpired() {
-        // Make a claim to have a different contract balance.
-        claimLT();
         vm.warp({ newTimestamp: defaults.EXPIRATION() + 1 seconds });
         _;
     }
 
-    function test_Clawback() external whenCallerAdmin givenCampaignExpired {
+    function test_Clawback() external whenCallerAdmin afterFirstClaim postGracePeriod givenCampaignExpired {
         test_Clawback(users.admin);
     }
 
-    function testFuzz_Clawback(address to) external whenCallerAdmin givenCampaignExpired {
+    function testFuzz_Clawback(address to)
+        external
+        whenCallerAdmin
+        afterFirstClaim
+        postGracePeriod
+        givenCampaignExpired
+    {
         vm.assume(to != address(0));
         test_Clawback(to);
     }
