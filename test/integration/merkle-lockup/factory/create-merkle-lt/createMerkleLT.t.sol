@@ -100,7 +100,7 @@ contract CreateMerkleLT_Integration_Test is MerkleLockup_Integration_Test {
         whenCampaignNameNotTooLong
     {
         vm.assume(admin != users.admin);
-        address expectedLT = computeCreateAddress(address(merkleLockupFactory), ++merkleLockupFactoryNonce);
+        address expectedLT = vm.computeCreateAddress(address(merkleLockupFactory), ++merkleLockupFactoryNonce);
 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams({
             admin: admin,

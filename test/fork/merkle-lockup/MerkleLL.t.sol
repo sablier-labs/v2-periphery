@@ -95,7 +95,7 @@ abstract contract MerkleLL_Fork_Test is Fork_Test {
         MerkleBuilder.sortLeaves(leaves);
         vars.merkleRoot = getRoot(leaves.toBytes32());
 
-        vars.expectedLL = computeCreateAddress(address(merkleLockupFactory), ++merkleLockupFactoryNonce);
+        vars.expectedLL = vm.computeCreateAddress(address(merkleLockupFactory), ++merkleLockupFactoryNonce);
 
         vars.baseParams = defaults.baseParams({
             admin: params.admin,

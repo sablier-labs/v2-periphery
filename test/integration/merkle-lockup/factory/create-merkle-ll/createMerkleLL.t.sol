@@ -43,7 +43,7 @@ contract CreateMerkleLL_Integration_Test is MerkleLockup_Integration_Test {
 
     function testFuzz_CreateMerkleLL(address admin, uint40 expiration) external whenCampaignNameNotTooLong {
         vm.assume(admin != users.admin);
-        address expectedLL = computeCreateAddress(address(merkleLockupFactory), ++merkleLockupFactoryNonce);
+        address expectedLL = vm.computeCreateAddress(address(merkleLockupFactory), ++merkleLockupFactoryNonce);
 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams({
             admin: admin,
