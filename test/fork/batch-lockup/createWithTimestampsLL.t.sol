@@ -20,7 +20,7 @@ abstract contract CreateWithTimestamps_LockupLinear_BatchLockup_Fork_Test is For
 
     struct CreateWithTimestampsParams {
         uint128 batchSize;
-        LockupLinear.Timestamp timestamps;
+        LockupLinear.Timestamps timestamps;
         address sender;
         address recipient;
         uint128 perStreamAmount;

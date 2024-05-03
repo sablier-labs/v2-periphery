@@ -290,8 +290,8 @@ contract Defaults is Merkle {
         return LockupLinear.Durations({ cliff: CLIFF_DURATION, total: TOTAL_DURATION });
     }
 
-    function linearTimestamps() private view returns (LockupLinear.Timestamp memory) {
-        return LockupLinear.Timestamp({ start: START_TIME, cliff: CLIFF_TIME, end: END_TIME });
+    function linearTimestamps() private view returns (LockupLinear.Timestamps memory) {
+        return LockupLinear.Timestamps({ start: START_TIME, cliff: CLIFF_TIME, end: END_TIME });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
