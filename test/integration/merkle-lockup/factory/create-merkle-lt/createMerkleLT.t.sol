@@ -91,24 +91,6 @@ contract CreateMerkleLT_Integration_Test is MerkleLockup_Integration_Test {
         _;
     }
 
-    /// @dev This test works because a default MerkleLockup contract is deployed in {Integration_Test.setUp}
-    function test_RevertGiven_CreatedAlready() external whenTotalPercentageOneHundred whenCampaignNameNotTooLong {
-        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
-        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
-        uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
-        uint256 recipientCount = defaults.RECIPIENT_COUNT();
-
-        // Expect a revert due to CREATE2.
-        vm.expectRevert();
-        merkleLockupFactory.createMerkleLT(
-            baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
-        );
-    }
-
-    modifier givenNotCreatedAlready() {
-        _;
-    }
-
     function testFuzz_CreateMerkleLT(
         address admin,
         uint40 expiration
@@ -116,10 +98,9 @@ contract CreateMerkleLT_Integration_Test is MerkleLockup_Integration_Test {
         external
         whenTotalPercentageOneHundred
         whenCampaignNameNotTooLong
-        givenNotCreatedAlready
     {
         vm.assume(admin != users.admin);
-        address expectedLT = computeMerkleLTAddress(admin, expiration);
+        address expectedLT = computeCreateAddress(address(merkleLockupFactory), ++merkleLockupFactoryNonce);
 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams({
             admin: admin,

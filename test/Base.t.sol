@@ -18,9 +18,7 @@ import { ISablierV2MerkleLL } from "src/interfaces/ISablierV2MerkleLL.sol";
 import { ISablierV2MerkleLockupFactory } from "src/interfaces/ISablierV2MerkleLockupFactory.sol";
 import { ISablierV2MerkleLT } from "src/interfaces/ISablierV2MerkleLT.sol";
 import { SablierV2BatchLockup } from "src/SablierV2BatchLockup.sol";
-import { SablierV2MerkleLL } from "src/SablierV2MerkleLL.sol";
 import { SablierV2MerkleLockupFactory } from "src/SablierV2MerkleLockupFactory.sol";
-import { SablierV2MerkleLT } from "src/SablierV2MerkleLT.sol";
 
 import { ERC20Mock } from "./mocks/erc20/ERC20Mock.sol";
 import { Assertions } from "./utils/Assertions.sol";
@@ -57,6 +55,7 @@ abstract contract Base_Test is
     ISablierV2LockupLinear internal lockupLinear;
     ISablierV2LockupTranched internal lockupTranched;
     ISablierV2MerkleLockupFactory internal merkleLockupFactory;
+    uint256 internal merkleLockupFactoryNonce;
     ISablierV2MerkleLL internal merkleLL;
     ISablierV2MerkleLT internal merkleLT;
 
@@ -256,140 +255,5 @@ abstract contract Base_Test is
         internal
     {
         vm.expectCall({ callee: asset_, count: count, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
-    }
-
-    /*//////////////////////////////////////////////////////////////////////////
-                                  MERKLE-LOCKUP
-    //////////////////////////////////////////////////////////////////////////*/
-
-    function computeMerkleLLAddress(
-        address admin,
-        bytes32 merkleRoot,
-        uint40 expiration
-    )
-        internal
-        view
-        returns (address)
-    {
-        return computeMerkleLLAddress(admin, dai, merkleRoot, expiration);
-    }
-
-    function computeMerkleLLAddress(
-        address admin,
-        IERC20 asset_,
-        bytes32 merkleRoot,
-        uint40 expiration
-    )
-        internal
-        view
-        returns (address)
-    {
-        bytes32 salt = keccak256(
-            abi.encodePacked(
-                address(asset_),
-                defaults.CANCELABLE(),
-                expiration,
-                admin,
-                abi.encode(defaults.IPFS_CID()),
-                merkleRoot,
-                defaults.NAME_BYTES32(),
-                defaults.TRANSFERABLE(),
-                lockupLinear,
-                abi.encode(defaults.durations())
-            )
-        );
-        bytes32 creationBytecodeHash = keccak256(getMerkleLLBytecode(admin, asset_, merkleRoot, expiration));
-        return computeCreate2Address({
-            salt: salt,
-            initcodeHash: creationBytecodeHash,
-            deployer: address(merkleLockupFactory)
-        });
-    }
-
-    function computeMerkleLTAddress(
-        address admin,
-        bytes32 merkleRoot,
-        uint40 expiration
-    )
-        internal
-        view
-        returns (address)
-    {
-        return computeMerkleLTAddress(admin, dai, merkleRoot, expiration);
-    }
-
-    function computeMerkleLTAddress(
-        address admin,
-        IERC20 asset_,
-        bytes32 merkleRoot,
-        uint40 expiration
-    )
-        internal
-        view
-        returns (address)
-    {
-        bytes32 salt = keccak256(
-            abi.encodePacked(
-                address(asset_),
-                defaults.CANCELABLE(),
-                expiration,
-                admin,
-                abi.encode(defaults.IPFS_CID()),
-                merkleRoot,
-                defaults.NAME_BYTES32(),
-                defaults.TRANSFERABLE(),
-                lockupTranched,
-                abi.encode(defaults.tranchesWithPercentages())
-            )
-        );
-        bytes32 creationBytecodeHash = keccak256(getMerkleLTBytecode(admin, asset_, merkleRoot, expiration));
-        return computeCreate2Address({
-            salt: salt,
-            initcodeHash: creationBytecodeHash,
-            deployer: address(merkleLockupFactory)
-        });
-    }
-
-    function getMerkleLLBytecode(
-        address admin,
-        IERC20 asset_,
-        bytes32 merkleRoot,
-        uint40 expiration
-    )
-        internal
-        view
-        returns (bytes memory)
-    {
-        bytes memory constructorArgs =
-            abi.encode(defaults.baseParams(admin, asset_, expiration, merkleRoot), lockupLinear, defaults.durations());
-        if (!isTestOptimizedProfile()) {
-            return bytes.concat(type(SablierV2MerkleLL).creationCode, constructorArgs);
-        } else {
-            return
-                bytes.concat(vm.getCode("out-optimized/SablierV2MerkleLL.sol/SablierV2MerkleLL.json"), constructorArgs);
-        }
-    }
-
-    function getMerkleLTBytecode(
-        address admin,
-        IERC20 asset_,
-        bytes32 merkleRoot,
-        uint40 expiration
-    )
-        internal
-        view
-        returns (bytes memory)
-    {
-        bytes memory constructorArgs = abi.encode(
-            defaults.baseParams(admin, asset_, expiration, merkleRoot),
-            lockupTranched,
-            defaults.tranchesWithPercentages()
-        );
-        if (!isTestOptimizedProfile()) {
-            return bytes.concat(type(SablierV2MerkleLT).creationCode, constructorArgs);
-        } else {
-            return
-                bytes.concat(vm.getCode("out-optimized/SablierV2MerkleLT.sol/SablierV2MerkleLT.json"), constructorArgs);
-        }
     }
 }

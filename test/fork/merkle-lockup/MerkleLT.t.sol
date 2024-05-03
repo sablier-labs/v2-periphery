@@ -96,7 +96,7 @@ abstract contract MerkleLT_Fork_Test is Fork_Test {
         MerkleBuilder.sortLeaves(leaves);
         vars.merkleRoot = getRoot(leaves.toBytes32());
 
-        vars.expectedLT = computeMerkleLTAddress(params.admin, FORK_ASSET, vars.merkleRoot, params.expiration);
+        vars.expectedLT = computeCreateAddress(address(merkleLockupFactory), ++merkleLockupFactoryNonce);
 
         vars.baseParams = defaults.baseParams({
             admin: params.admin,

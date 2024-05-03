@@ -10,7 +10,7 @@ import { ISablierV2MerkleLT } from "./ISablierV2MerkleLT.sol";
 import { MerkleLockup, MerkleLT } from "../types/DataTypes.sol";
 
 /// @title ISablierV2MerkleLockupFactory
-/// @notice Deploys MerkleLockup campaigns with CREATE2.
+/// @notice Deploys MerkleLockup campaigns with CREATE.
 interface ISablierV2MerkleLockupFactory {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS

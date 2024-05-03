@@ -32,24 +32,8 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         external
         returns (ISablierV2MerkleLL merkleLL)
     {
-        // Hash the parameters to generate a salt.
-        bytes32 salt = keccak256(
-            abi.encodePacked(
-                baseParams.asset,
-                baseParams.cancelable,
-                baseParams.expiration,
-                baseParams.initialAdmin,
-                abi.encode(baseParams.ipfsCID),
-                baseParams.merkleRoot,
-                bytes32(abi.encodePacked(baseParams.name)),
-                baseParams.transferable,
-                lockupLinear,
-                abi.encode(streamDurations)
-            )
-        );
-
-        // Deploy the MerkleLockup contract with CREATE2.
-        merkleLL = new SablierV2MerkleLL{ salt: salt }(baseParams, lockupLinear, streamDurations);
+        // Deploy the MerkleLockup contract with CREATE.
+        merkleLL = new SablierV2MerkleLL(baseParams, lockupLinear, streamDurations);
 
         // Log the creation of the MerkleLockup contract, including some metadata that is not stored on-chain.
         emit CreateMerkleLL(merkleLL, baseParams, lockupLinear, streamDurations, aggregateAmount, recipientCount);
@@ -83,24 +67,8 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             revert Errors.SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred(totalPercentage);
         }
 
-        // Hash the parameters to generate a salt.
-        bytes32 salt = keccak256(
-            abi.encodePacked(
-                baseParams.asset,
-                baseParams.cancelable,
-                baseParams.expiration,
-                baseParams.initialAdmin,
-                abi.encode(baseParams.ipfsCID),
-                baseParams.merkleRoot,
-                bytes32(abi.encodePacked(baseParams.name)),
-                baseParams.transferable,
-                lockupTranched,
-                abi.encode(tranchesWithPercentages)
-            )
-        );
-
-        // Deploy the MerkleLockup contract with CREATE2.
-        merkleLT = new SablierV2MerkleLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercentages);
+        // Deploy the MerkleLockup contract with CREATE.
+        merkleLT = new SablierV2MerkleLT(baseParams, lockupTranched, tranchesWithPercentages);
 
         // Log the creation of the MerkleLockup contract, including some metadata that is not stored on-chain.
         emit CreateMerkleLT(
