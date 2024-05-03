@@ -80,7 +80,7 @@ abstract contract SablierV2MerkleLockup is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleLockup
-    function getFirtClaimTime() external view override returns (uint40) {
+    function getFirstClaimTime() external view override returns (uint40) {
         return _firstClaimTime;
     }
 
