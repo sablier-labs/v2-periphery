@@ -80,6 +80,11 @@ abstract contract SablierV2MerkleLockup is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleLockup
+    function getFirtClaimTime() external view returns (uint40) {
+        return _firstClaimTime;
+    }
+
+    /// @inheritdoc ISablierV2MerkleLockup
     function hasClaimed(uint256 index) public view override returns (bool) {
         return _claimedBitMap.get(index);
     }
@@ -101,7 +106,7 @@ abstract contract SablierV2MerkleLockup is
     /// @inheritdoc ISablierV2MerkleLockup
     function clawback(address to, uint128 amount) external override onlyAdmin {
         // Check: current timestamp is over the grace period and the campaign has not expired.
-        if (_firstClaimTime > 0 && block.timestamp > _firstClaimTime + 7 days && !hasExpired()) {
+        if (_hasGracePeriodPassed() && !hasExpired()) {
             revert Errors.SablierV2MerkleLockup_ClawbackNotAllowed({
                 blockTimestamp: block.timestamp,
                 expiration: EXPIRATION,
@@ -144,5 +149,11 @@ abstract contract SablierV2MerkleLockup is
         if (_firstClaimTime == 0) {
             _firstClaimTime = uint40(block.timestamp);
         }
+    }
+
+    /// @notice Returns a flag indicating whether the grace period has passed.
+    /// @dev The grace period is 7 days after the first claim.
+    function _hasGracePeriodPassed() internal view returns (bool) {
+        return _firstClaimTime > 0 && block.timestamp > _firstClaimTime + 7 days;
     }
 }

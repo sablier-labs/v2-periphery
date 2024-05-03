@@ -36,6 +36,9 @@ interface ISablierV2MerkleLockup is IAdminable {
     /// @dev This is an immutable state variable.
     function EXPIRATION() external returns (uint40);
 
+    /// @notice Returns the timestamp when the first claim is made.
+    function getFirtClaimTime() external view returns (uint40);
+
     /// @notice Returns a flag indicating whether a claim has been made for a given index.
     /// @dev Uses a bitmap to save gas.
     /// @param index The index of the recipient to check.
@@ -70,7 +73,7 @@ interface ISablierV2MerkleLockup is IAdminable {
     /// - The caller must be the admin.
     /// - No claim must be made, OR
     ///   The current timestamp must not exceed 7 days after the first claim, OR
-    ///   The campaign must either be expired.
+    ///   The campaign must be expired.
     ///
     /// @param to The address to receive the tokens.
     /// @param amount The amount of tokens to claw back.

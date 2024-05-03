@@ -44,6 +44,7 @@ contract Defaults is Merkle {
     bool public constant CANCELABLE = false;
     uint128 public constant CLAIM_AMOUNT = 10_000e18;
     uint40 public immutable EXPIRATION;
+    uint40 public immutable FIRST_CLAIM_TIME;
     uint256 public constant INDEX1 = 1;
     uint256 public constant INDEX2 = 2;
     uint256 public constant INDEX3 = 3;
@@ -76,6 +77,7 @@ contract Defaults is Merkle {
         CLIFF_TIME = START_TIME + CLIFF_DURATION;
         END_TIME = START_TIME + TOTAL_DURATION;
         EXPIRATION = uint40(block.timestamp) + 12 weeks;
+        FIRST_CLAIM_TIME = uint40(block.timestamp);
 
         // Initialize the Merkle tree.
         LEAVES[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1, CLAIM_AMOUNT);
