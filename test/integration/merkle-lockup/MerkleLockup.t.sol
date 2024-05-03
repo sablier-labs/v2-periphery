@@ -24,12 +24,39 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     function claimLL() internal returns (uint256) {
-        return merkleLL.claim({
-            index: defaults.INDEX1(),
-            recipient: users.recipient1,
-            amount: defaults.CLAIM_AMOUNT(),
-            merkleProof: defaults.index1Proof()
-        });
+        return claimLLAt(1);
+    }
+
+    function claimLLAt(uint256 index) internal returns (uint256) {
+        if (index == 1) {
+            return merkleLL.claim({
+                index: index,
+                recipient: users.recipient1,
+                amount: defaults.CLAIM_AMOUNT(),
+                merkleProof: defaults.index1Proof()
+            });
+        } else if (index == 2) {
+            return merkleLL.claim({
+                index: index,
+                recipient: users.recipient2,
+                amount: defaults.CLAIM_AMOUNT(),
+                merkleProof: defaults.index2Proof()
+            });
+        } else if (index == 3) {
+            return merkleLL.claim({
+                index: index,
+                recipient: users.recipient3,
+                amount: defaults.CLAIM_AMOUNT(),
+                merkleProof: defaults.index3Proof()
+            });
+        } else {
+            return merkleLL.claim({
+                index: index,
+                recipient: users.recipient4,
+                amount: defaults.CLAIM_AMOUNT(),
+                merkleProof: defaults.index4Proof()
+            });
+        }
     }
 
     function createMerkleLL() internal returns (ISablierV2MerkleLL) {
@@ -62,12 +89,39 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     function claimLT() internal returns (uint256) {
-        return merkleLT.claim({
-            index: defaults.INDEX1(),
-            recipient: users.recipient1,
-            amount: defaults.CLAIM_AMOUNT(),
-            merkleProof: defaults.index1Proof()
-        });
+        return claimLTAt(1);
+    }
+
+    function claimLTAt(uint256 index) internal returns (uint256) {
+        if (index == 1) {
+            return merkleLT.claim({
+                index: index,
+                recipient: users.recipient1,
+                amount: defaults.CLAIM_AMOUNT(),
+                merkleProof: defaults.index1Proof()
+            });
+        } else if (index == 2) {
+            return merkleLT.claim({
+                index: index,
+                recipient: users.recipient2,
+                amount: defaults.CLAIM_AMOUNT(),
+                merkleProof: defaults.index2Proof()
+            });
+        } else if (index == 3) {
+            return merkleLT.claim({
+                index: index,
+                recipient: users.recipient3,
+                amount: defaults.CLAIM_AMOUNT(),
+                merkleProof: defaults.index3Proof()
+            });
+        } else {
+            return merkleLT.claim({
+                index: index,
+                recipient: users.recipient4,
+                amount: defaults.CLAIM_AMOUNT(),
+                merkleProof: defaults.index4Proof()
+            });
+        }
     }
 
     function createMerkleLT() internal returns (ISablierV2MerkleLT) {

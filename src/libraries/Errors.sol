@@ -20,8 +20,9 @@ library Errors {
     /// @notice Thrown when trying to create a campaign with a name that is too long.
     error SablierV2MerkleLockup_CampaignNameTooLong(uint256 nameLength, uint256 maxLength);
 
-    /// @notice Thrown when trying to clawback when the campaign has not expired.
-    error SablierV2MerkleLockup_CampaignNotExpired(uint256 blockTimestamp, uint40 expiration);
+    /// @notice Thrown when trying to clawback when the current timestamp is over the grace period and the campaign has
+    /// not expired.
+    error SablierV2MerkleLockup_ClawbackNotAllowed(uint256 blockTimestamp, uint40 expiration, uint40 firstClaimTime);
 
     /// @notice Thrown when trying to claim with an invalid Merkle proof.
     error SablierV2MerkleLockup_InvalidProof();

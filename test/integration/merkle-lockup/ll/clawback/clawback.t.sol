@@ -8,6 +8,9 @@ import { Errors } from "src/libraries/Errors.sol";
 import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
 contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
+    uint40 internal firstClaimTime;
+    uint256 internal claimIndex = 1;
+
     function setUp() public virtual override {
         MerkleLockup_Integration_Test.setUp();
     }
@@ -23,10 +26,34 @@ contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
         _;
     }
 
-    function test_RevertGiven_CampaignNotExpired() external whenCallerAdmin {
+    function test_Clawback_BeforeFirstClaim() external whenCallerAdmin {
+        test_Clawback(users.admin);
+    }
+
+    modifier AfterFirstClaim() {
+        // Make the first claim to set `_firstClaimTime`.
+        claimLLAt(claimIndex++);
+        firstClaimTime = uint40(block.timestamp);
+        _;
+    }
+
+    function test_Clawback_GracePeriod() external whenCallerAdmin AfterFirstClaim {
+        vm.warp({ newTimestamp: block.timestamp + 6 days });
+        test_Clawback(users.admin);
+    }
+
+    modifier PostGracePeriod() {
+        vm.warp({ newTimestamp: block.timestamp + 8 days });
+        _;
+    }
+
+    function test_RevertGiven_CampaignNotExpired() external whenCallerAdmin AfterFirstClaim PostGracePeriod {
         vm.expectRevert(
             abi.encodeWithSelector(
-                Errors.SablierV2MerkleLockup_CampaignNotExpired.selector, block.timestamp, defaults.EXPIRATION()
+                Errors.SablierV2MerkleLockup_ClawbackNotAllowed.selector,
+                block.timestamp,
+                defaults.EXPIRATION(),
+                firstClaimTime
             )
         );
         merkleLL.clawback({ to: users.admin, amount: 1 });
@@ -34,16 +61,22 @@ contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
 
     modifier givenCampaignExpired() {
         // Make a claim to have a different contract balance.
-        claimLL();
+        claimLLAt(claimIndex++);
         vm.warp({ newTimestamp: defaults.EXPIRATION() + 1 seconds });
         _;
     }
 
-    function test_Clawback() external whenCallerAdmin givenCampaignExpired {
+    function test_Clawback() external whenCallerAdmin AfterFirstClaim PostGracePeriod givenCampaignExpired {
         test_Clawback(users.admin);
     }
 
-    function testFuzz_Clawback(address to) external whenCallerAdmin givenCampaignExpired {
+    function testFuzz_Clawback(address to)
+        external
+        whenCallerAdmin
+        AfterFirstClaim
+        PostGracePeriod
+        givenCampaignExpired
+    {
         vm.assume(to != address(0));
         test_Clawback(to);
     }
