@@ -8,14 +8,22 @@ import { ISablierV2MerkleLockupFactory } from "../../src/interfaces/ISablierV2Me
 
 abstract contract DeployOptimized is StdCheats {
     /// @dev Deploys {SablierV2BatchLockup} from an optimized source compiled with `--via-ir`.
-    function deployOptimizedBatchLockup() internal returns (ISablierV2BatchLockup) {
-        return ISablierV2BatchLockup(deployCode("out-optimized/SablierV2BatchLockup.sol/SablierV2BatchLockup.json"));
+    function deployOptimizedBatchLockup(address initialAdmin) internal returns (ISablierV2BatchLockup) {
+        return ISablierV2BatchLockup(
+            deployCode("out-optimized/SablierV2BatchLockup.sol/SablierV2BatchLockup.json", abi.encode(initialAdmin))
+        );
     }
 
     /// @dev Deploys {SablierV2MerkleLockupFactory} from an optimized source compiled with `--via-ir`.
-    function deployOptimizedMerkleLockupFactory() internal returns (ISablierV2MerkleLockupFactory) {
+    function deployOptimizedMerkleLockupFactory(address initialAdmin)
+        internal
+        returns (ISablierV2MerkleLockupFactory)
+    {
         return ISablierV2MerkleLockupFactory(
-            deployCode("out-optimized/SablierV2MerkleLockupFactory.sol/SablierV2MerkleLockupFactory.json")
+            deployCode(
+                "out-optimized/SablierV2MerkleLockupFactory.sol/SablierV2MerkleLockupFactory.json",
+                abi.encode(initialAdmin)
+            )
         );
     }
 
@@ -23,7 +31,10 @@ abstract contract DeployOptimized is StdCheats {
     ///
     /// 1. {SablierV2BatchLockup}
     /// 2. {SablierV2MerkleLockupFactory}
-    function deployOptimizedPeriphery() internal returns (ISablierV2BatchLockup, ISablierV2MerkleLockupFactory) {
-        return (deployOptimizedBatchLockup(), deployOptimizedMerkleLockupFactory());
+    function deployOptimizedPeriphery(address initialAdmin)
+        internal
+        returns (ISablierV2BatchLockup, ISablierV2MerkleLockupFactory)
+    {
+        return (deployOptimizedBatchLockup(initialAdmin), deployOptimizedMerkleLockupFactory(initialAdmin));
     }
 }

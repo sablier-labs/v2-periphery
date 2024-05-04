@@ -107,10 +107,10 @@ abstract contract Base_Test is
     /// @dev Conditionally deploy V2 Periphery normally or from an optimized source compiled with `--via-ir`.
     function deployPeripheryConditionally() internal {
         if (!isTestOptimizedProfile()) {
-            batchLockup = new SablierV2BatchLockup();
-            merkleLockupFactory = new SablierV2MerkleLockupFactory();
+            batchLockup = new SablierV2BatchLockup(users.admin);
+            merkleLockupFactory = new SablierV2MerkleLockupFactory(users.admin);
         } else {
-            (batchLockup, merkleLockupFactory) = deployOptimizedPeriphery();
+            (batchLockup, merkleLockupFactory) = deployOptimizedPeriphery(users.admin);
         }
     }
 

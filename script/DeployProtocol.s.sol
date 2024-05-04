@@ -78,7 +78,7 @@ contract DeployProtocol is BaseScript {
         lockupTranched = new SablierV2LockupTranched(initialAdmin, nftDescriptor, maxTrancheCount);
 
         // Deploy V2 Periphery.
-        batchLockup = new SablierV2BatchLockup();
-        merkleLockupFactory = new SablierV2MerkleLockupFactory();
+        batchLockup = new SablierV2BatchLockup(initialAdmin);
+        merkleLockupFactory = new SablierV2MerkleLockupFactory(initialAdmin);
     }
 }

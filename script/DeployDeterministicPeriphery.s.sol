@@ -14,31 +14,50 @@ import { SablierV2MerkleLockupFactory } from "../src/SablierV2MerkleLockupFactor
 /// @dev Reverts if any contract has already been deployed.
 contract DeployDeterministicPeriphery is BaseScript {
     /// @dev Deploy via Forge.
-    function runBroadcast()
+    function runBroadcast(address admin)
         public
         virtual
         broadcast
         returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
     {
-        (batchLockup, merkleLockupFactory) = _run();
+        (batchLockup, merkleLockupFactory) = _run(admin);
     }
 
     /// @dev Deploy via Sphinx.
-    function runSphinx()
+    function runSphinx(address admin)
         public
         virtual
         sphinx
         returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
     {
-        (batchLockup, merkleLockupFactory) = _run();
+        (batchLockup, merkleLockupFactory) = _run(admin);
     }
 
-    function _run()
+    function _run(address admin)
         internal
         returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
     {
         bytes32 salt = constructCreate2Salt();
-        batchLockup = new SablierV2BatchLockup{ salt: salt }();
-        merkleLockupFactory = new SablierV2MerkleLockupFactory{ salt: salt }();
+
+        batchLockup = new SablierV2BatchLockup{ salt: salt }(msg.sender);
+
+        // Configure Blast mainnet yield and gas modes.
+        batchLockup.configureRebasingAsset({ asset: USDB, yieldMode: YIELD_MODE });
+        batchLockup.configureRebasingAsset({ asset: WETH, yieldMode: YIELD_MODE });
+        batchLockup.configureYieldAndGas({ blast: BLAST, yieldMode: YIELD_MODE, gasMode: GAS_MODE, governor: admin });
+        batchLockup.transferAdmin(admin);
+
+        merkleLockupFactory = new SablierV2MerkleLockupFactory{ salt: salt }(msg.sender);
+
+        // Configure Blast mainnet yield and gas modes.
+        merkleLockupFactory.configureRebasingAsset({ asset: USDB, yieldMode: YIELD_MODE });
+        merkleLockupFactory.configureRebasingAsset({ asset: WETH, yieldMode: YIELD_MODE });
+        merkleLockupFactory.configureYieldAndGas({
+            blast: BLAST,
+            yieldMode: YIELD_MODE,
+            gasMode: GAS_MODE,
+            governor: admin
+        });
+        merkleLockupFactory.transferAdmin(admin);
     }
 }

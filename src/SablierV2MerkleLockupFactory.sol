@@ -2,6 +2,7 @@
 pragma solidity >=0.8.22;
 
 import { uUNIT } from "@prb/math/src/UD2x18.sol";
+import { SablierV2Blast } from "@sablier/v2-core/src/abstracts/SablierV2Blast.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
@@ -16,7 +17,18 @@ import { MerkleLockup, MerkleLT } from "./types/DataTypes.sol";
 
 /// @title SablierV2MerkleLockupFactory
 /// @notice See the documentation in {ISablierV2MerkleLockupFactory}.
-contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
+contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory, SablierV2Blast {
+    /*//////////////////////////////////////////////////////////////////////////
+                                    CONSTRUCTOR
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Emits a {TransferAdmin} event.
+    /// @param initialAdmin The address of the initial contract admin.
+    constructor(address initialAdmin) {
+        admin = initialAdmin;
+        emit TransferAdmin({ oldAdmin: address(0), newAdmin: initialAdmin });
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/

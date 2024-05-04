@@ -30,4 +30,5 @@ abstract contract Events {
         uint256 aggregateAmount,
         uint256 recipientCount
     );
+    event TransferAdmin(address indexed oldAdmin, address indexed newAdmin);
 }
