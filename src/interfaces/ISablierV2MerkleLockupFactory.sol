@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22;
 
+import { ISablierV2Blast } from "@sablier/v2-core/src/interfaces/blast/ISablierV2Blast.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
@@ -11,7 +12,7 @@ import { MerkleLockup, MerkleLT } from "../types/DataTypes.sol";
 
 /// @title ISablierV2MerkleLockupFactory
 /// @notice Deploys MerkleLockup campaigns with CREATE2.
-interface ISablierV2MerkleLockupFactory {
+interface ISablierV2MerkleLockupFactory is ISablierV2Blast {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/

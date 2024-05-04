@@ -9,8 +9,14 @@ import { SablierV2BatchLockup } from "../src/SablierV2BatchLockup.sol";
 /// @dev Reverts if the contract has already been deployed.
 contract DeployDeterministicBatchLockup is BaseScript {
     /// @dev Deploy via Forge.
-    function run() public virtual broadcast returns (SablierV2BatchLockup batchLockup) {
+    function run(address admin) public virtual broadcast returns (SablierV2BatchLockup batchLockup) {
         bytes32 salt = constructCreate2Salt();
-        batchLockup = new SablierV2BatchLockup{ salt: salt }();
+
+        // Configure Blast mainnet yield and gas modes.
+        batchLockup = new SablierV2BatchLockup{ salt: salt }(msg.sender);
+        batchLockup.configureRebasingAsset({ asset: USDB, yieldMode: YIELD_MODE });
+        batchLockup.configureRebasingAsset({ asset: WETH, yieldMode: YIELD_MODE });
+        batchLockup.configureYieldAndGas({ blast: BLAST, yieldMode: YIELD_MODE, gasMode: GAS_MODE, governor: admin });
+        batchLockup.transferAdmin(admin);
     }
 }
