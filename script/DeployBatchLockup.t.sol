@@ -7,7 +7,13 @@ import { SablierV2BatchLockup } from "../src/SablierV2BatchLockup.sol";
 
 contract DeployBatchLockup is BaseScript {
     /// @dev Deploy via Forge.
-    function run() public virtual broadcast returns (SablierV2BatchLockup batchLockup) {
-        batchLockup = new SablierV2BatchLockup();
+    function run(address admin) public virtual broadcast returns (SablierV2BatchLockup batchLockup) {
+        batchLockup = new SablierV2BatchLockup(msg.sender);
+
+        // Configure Blast mainnet yield and gas modes.
+        batchLockup.configureRebasingAsset({ asset: USDB, yieldMode: YIELD_MODE });
+        batchLockup.configureRebasingAsset({ asset: WETH, yieldMode: YIELD_MODE });
+        batchLockup.configureYieldAndGas({ blast: BLAST, yieldMode: YIELD_MODE, gasMode: GAS_MODE, governor: admin });
+        batchLockup.transferAdmin(admin);
     }
 }

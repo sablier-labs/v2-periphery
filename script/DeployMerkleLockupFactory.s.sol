@@ -7,7 +7,18 @@ import { SablierV2MerkleLockupFactory } from "../src/SablierV2MerkleLockupFactor
 
 contract DeployMerkleLockupFactory is BaseScript {
     /// @dev Deploy via Forge.
-    function run() public virtual broadcast returns (SablierV2MerkleLockupFactory merkleLockupFactory) {
-        merkleLockupFactory = new SablierV2MerkleLockupFactory();
+    function run(address admin) public virtual broadcast returns (SablierV2MerkleLockupFactory merkleLockupFactory) {
+        merkleLockupFactory = new SablierV2MerkleLockupFactory(msg.sender);
+
+        // Configure Blast mainnet yield and gas modes.
+        merkleLockupFactory.configureRebasingAsset({ asset: USDB, yieldMode: YIELD_MODE });
+        merkleLockupFactory.configureRebasingAsset({ asset: WETH, yieldMode: YIELD_MODE });
+        merkleLockupFactory.configureYieldAndGas({
+            blast: BLAST,
+            yieldMode: YIELD_MODE,
+            gasMode: GAS_MODE,
+            governor: admin
+        });
+        merkleLockupFactory.transferAdmin(admin);
     }
 }
