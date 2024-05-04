@@ -18,9 +18,11 @@ contract DeployBatchLockup is BaseScript {
 
     function _run(address admin) internal returns (SablierV2BatchLockup batchLockup) {
         batchLockup = new SablierV2BatchLockup(msg.sender);
-        batchLockup.configureYieldAndGas(BLAST, YIELD_MODE, GAS_MODE, admin);
-        batchLockup.configureRebasingAsset(USDB, YIELD_MODE);
-        batchLockup.configureRebasingAsset(WETH, YIELD_MODE);
+
+        // Configure Blast mainnet yield and gas modes.
+        batchLockup.configureRebasingAsset({ asset: USDB, yieldMode: YIELD_MODE });
+        batchLockup.configureRebasingAsset({ asset: WETH, yieldMode: YIELD_MODE });
+        batchLockup.configureYieldAndGas({ blast: BLAST, yieldMode: YIELD_MODE, gasMode: GAS_MODE, governor: admin });
         batchLockup.transferAdmin(admin);
     }
 }

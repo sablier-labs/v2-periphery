@@ -40,15 +40,24 @@ contract DeployDeterministicPeriphery is BaseScript {
         bytes32 salt = constructCreate2Salt();
 
         batchLockup = new SablierV2BatchLockup{ salt: salt }(msg.sender);
-        batchLockup.configureRebasingAsset(USDB, YIELD_MODE);
-        batchLockup.configureRebasingAsset(WETH, YIELD_MODE);
-        batchLockup.configureYieldAndGas(BLAST, YIELD_MODE, GAS_MODE, admin);
+
+        // Configure Blast mainnet yield and gas modes.
+        batchLockup.configureRebasingAsset({ asset: USDB, yieldMode: YIELD_MODE });
+        batchLockup.configureRebasingAsset({ asset: WETH, yieldMode: YIELD_MODE });
+        batchLockup.configureYieldAndGas({ blast: BLAST, yieldMode: YIELD_MODE, gasMode: GAS_MODE, governor: admin });
         batchLockup.transferAdmin(admin);
 
         merkleLockupFactory = new SablierV2MerkleLockupFactory{ salt: salt }(msg.sender);
-        merkleLockupFactory.configureRebasingAsset(USDB, YIELD_MODE);
-        merkleLockupFactory.configureRebasingAsset(WETH, YIELD_MODE);
-        merkleLockupFactory.configureYieldAndGas(BLAST, YIELD_MODE, GAS_MODE, admin);
+
+        // Configure Blast mainnet yield and gas modes.
+        merkleLockupFactory.configureRebasingAsset({ asset: USDB, yieldMode: YIELD_MODE });
+        merkleLockupFactory.configureRebasingAsset({ asset: WETH, yieldMode: YIELD_MODE });
+        merkleLockupFactory.configureYieldAndGas({
+            blast: BLAST,
+            yieldMode: YIELD_MODE,
+            gasMode: GAS_MODE,
+            governor: admin
+        });
         merkleLockupFactory.transferAdmin(admin);
     }
 }

@@ -2,10 +2,10 @@
 pragma solidity >=0.8.22;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { ISablierV2Blast } from "@sablier/v2-core/src/interfaces/blast/ISablierV2Blast.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
-import { ISablierV2Blast } from "@sablier/v2-core/src/interfaces/blast/ISablierV2Blast.sol";
 
 import { BatchLockup } from "../types/DataTypes.sol";
 

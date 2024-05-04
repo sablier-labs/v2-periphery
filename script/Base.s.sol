@@ -15,7 +15,7 @@ contract BaseScript is Script, Sphinx {
     using Strings for uint256;
     using stdJson for string;
 
-    /// @dev Blast configuration variables.
+    /// @dev Blast mainnet configuration variables.
     IBlast public constant BLAST = IBlast(0x4300000000000000000000000000000000000002);
     GasMode public constant GAS_MODE = GasMode.CLAIMABLE;
     YieldMode public constant YIELD_MODE = YieldMode.CLAIMABLE;
