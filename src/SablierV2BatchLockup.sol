@@ -211,7 +211,7 @@ contract SablierV2BatchLockup is ISablierV2BatchLockup {
                     asset: asset,
                     cancelable: batch[i].cancelable,
                     transferable: batch[i].transferable,
-                    range: batch[i].range,
+                    timestamps: batch[i].timestamps,
                     broker: batch[i].broker
                 })
             );

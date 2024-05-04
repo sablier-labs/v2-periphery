@@ -186,7 +186,7 @@ library BatchLockupBuilder {
             totalAmount: params.totalAmount,
             cancelable: params.cancelable,
             transferable: params.transferable,
-            range: params.range,
+            timestamps: params.timestamps,
             broker: params.broker
         });
         batch = fillBatch(batchSingle, batchSize);

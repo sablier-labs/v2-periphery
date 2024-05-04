@@ -70,7 +70,7 @@ library BatchLockup {
         uint128 totalAmount;
         bool cancelable;
         bool transferable;
-        LockupLinear.Range range;
+        LockupLinear.Timestamps timestamps;
         Broker broker;
     }
 
