@@ -125,6 +125,16 @@ abstract contract SablierV2MerkleLockup is
                             INTERNAL CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
+    /// @notice Returns a flag indicating whether the grace period has passed.
+    /// @dev The grace period is 7 days after the first claim.
+    function _hasGracePeriodPassed() internal view returns (bool) {
+        return _firstClaimTime > 0 && block.timestamp > _firstClaimTime + 7 days;
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                           INTERNAL NON-CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
     /// @dev Validates the parameters of the `claim` function, which is implemented by child contracts.
     function _checkClaim(uint256 index, bytes32 leaf, bytes32[] calldata merkleProof) internal {
         // Check: the campaign has not expired.
@@ -149,11 +159,5 @@ abstract contract SablierV2MerkleLockup is
         if (_firstClaimTime == 0) {
             _firstClaimTime = uint40(block.timestamp);
         }
-    }
-
-    /// @notice Returns a flag indicating whether the grace period has passed.
-    /// @dev The grace period is 7 days after the first claim.
-    function _hasGracePeriodPassed() internal view returns (bool) {
-        return _firstClaimTime > 0 && block.timestamp > _firstClaimTime + 7 days;
     }
 }
