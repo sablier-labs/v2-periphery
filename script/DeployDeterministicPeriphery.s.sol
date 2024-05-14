@@ -14,27 +14,10 @@ import { SablierV2MerkleLockupFactory } from "../src/SablierV2MerkleLockupFactor
 /// @dev Reverts if any contract has already been deployed.
 contract DeployDeterministicPeriphery is BaseScript {
     /// @dev Deploy via Forge.
-    function runBroadcast()
+    function run()
         public
         virtual
         broadcast
-        returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
-    {
-        (batchLockup, merkleLockupFactory) = _run();
-    }
-
-    /// @dev Deploy via Sphinx.
-    function runSphinx()
-        public
-        virtual
-        sphinx
-        returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
-    {
-        (batchLockup, merkleLockupFactory) = _run();
-    }
-
-    function _run()
-        internal
         returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
     {
         bytes32 salt = constructCreate2Salt();

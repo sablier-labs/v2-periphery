@@ -12,27 +12,10 @@ import { SablierV2BatchLockup } from "../src/SablierV2BatchLockup.sol";
 /// 2. {SablierV2MerkleLockupFactory}
 contract DeployPeriphery is BaseScript {
     /// @dev Deploy via Forge.
-    function runBroadcast()
+    function run()
         public
         virtual
         broadcast
-        returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
-    {
-        (batchLockup, merkleLockupFactory) = _run();
-    }
-
-    /// @dev Deploy via Sphinx.
-    function runSphinx()
-        public
-        virtual
-        sphinx
-        returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
-    {
-        (batchLockup, merkleLockupFactory) = _run();
-    }
-
-    function _run()
-        internal
         returns (SablierV2BatchLockup batchLockup, SablierV2MerkleLockupFactory merkleLockupFactory)
     {
         batchLockup = new SablierV2BatchLockup();

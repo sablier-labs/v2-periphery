@@ -3,12 +3,9 @@
   block_timestamp = 1_714_518_000 # May 1, 2024 at 00:00 GMT
   bytecode_hash = "none"
   evm_version = "paris"
-  extra_output = ["storageLayout"]
   fs_permissions = [
-    { access = "read", path = "./out" },
     { access = "read", path = "./out-optimized" },
     { access = "read", path = "package.json"},
-    { access = "read-write", path = "./cache" },
   ]
   gas_reports = [
     "SablierV2BatchLockup",

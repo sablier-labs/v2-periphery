@@ -19,36 +19,13 @@ contract CreateMerkleLT is BaseScript {
     }
 
     /// @dev Deploy via Forge.
-    function runBroadcast(
+    function run(
         ISablierV2MerkleLockupFactory merkleLockupFactory,
         Params calldata params
     )
         public
         virtual
         broadcast
-        returns (ISablierV2MerkleLT merkleLT)
-    {
-        merkleLT = _run(merkleLockupFactory, params);
-    }
-
-    /// @dev Deploy via Sphinx.
-    function runSphinx(
-        ISablierV2MerkleLockupFactory merkleLockupFactory,
-        Params calldata params
-    )
-        public
-        virtual
-        sphinx
-        returns (ISablierV2MerkleLT merkleLT)
-    {
-        merkleLT = _run(merkleLockupFactory, params);
-    }
-
-    function _run(
-        ISablierV2MerkleLockupFactory merkleLockupFactory,
-        Params calldata params
-    )
-        internal
         returns (ISablierV2MerkleLT merkleLT)
     {
         merkleLT = merkleLockupFactory.createMerkleLT(
