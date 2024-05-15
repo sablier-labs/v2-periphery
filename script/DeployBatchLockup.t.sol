@@ -7,16 +7,7 @@ import { SablierV2BatchLockup } from "../src/SablierV2BatchLockup.sol";
 
 contract DeployBatchLockup is BaseScript {
     /// @dev Deploy via Forge.
-    function runBroadcast() public virtual broadcast returns (SablierV2BatchLockup batchLockup) {
-        batchLockup = _run();
-    }
-
-    /// @dev Deploy via Sphinx.
-    function runSphinx() public virtual sphinx returns (SablierV2BatchLockup batchLockup) {
-        batchLockup = _run();
-    }
-
-    function _run() internal returns (SablierV2BatchLockup batchLockup) {
+    function run() public virtual broadcast returns (SablierV2BatchLockup batchLockup) {
         batchLockup = new SablierV2BatchLockup();
     }
 }

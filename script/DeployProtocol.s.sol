@@ -13,7 +13,7 @@ import { SablierV2BatchLockup } from "../src/SablierV2BatchLockup.sol";
 /// @notice Deploys the Sablier V2 Protocol.
 contract DeployProtocol is BaseScript {
     /// @dev Deploy via Forge.
-    function runBroadcast(
+    function run(
         address initialAdmin,
         uint256 maxSegmentCount,
         uint256 maxTrancheCount
@@ -21,47 +21,6 @@ contract DeployProtocol is BaseScript {
         public
         virtual
         broadcast
-        returns (
-            SablierV2LockupDynamic lockupDynamic,
-            SablierV2LockupLinear lockupLinear,
-            SablierV2LockupTranched lockupTranched,
-            SablierV2NFTDescriptor nftDescriptor,
-            SablierV2BatchLockup batchLockup,
-            SablierV2MerkleLockupFactory merkleLockupFactory
-        )
-    {
-        (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor, batchLockup, merkleLockupFactory) =
-            _run(initialAdmin, maxSegmentCount, maxTrancheCount);
-    }
-
-    /// @dev Deploy via Sphinx.
-    function runSphinx(
-        address initialAdmin,
-        uint256 maxSegmentCount,
-        uint256 maxTrancheCount
-    )
-        public
-        virtual
-        sphinx
-        returns (
-            SablierV2LockupDynamic lockupDynamic,
-            SablierV2LockupLinear lockupLinear,
-            SablierV2LockupTranched lockupTranched,
-            SablierV2NFTDescriptor nftDescriptor,
-            SablierV2BatchLockup batchLockup,
-            SablierV2MerkleLockupFactory merkleLockupFactory
-        )
-    {
-        (lockupDynamic, lockupLinear, lockupTranched, nftDescriptor, batchLockup, merkleLockupFactory) =
-            _run(initialAdmin, maxSegmentCount, maxTrancheCount);
-    }
-
-    function _run(
-        address initialAdmin,
-        uint256 maxSegmentCount,
-        uint256 maxTrancheCount
-    )
-        internal
         returns (
             SablierV2LockupDynamic lockupDynamic,
             SablierV2LockupLinear lockupLinear,
