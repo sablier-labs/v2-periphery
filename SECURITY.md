@@ -31,8 +31,8 @@ The Program does NOT cover the following:
 
 Vulnerabilities contingent upon the occurrence of any of the following also are outside the scope of this Program:
 
-- Front-end bugs
-- DDOS attacks
+- Front-end bugs (clickjacking etc.)
+- DDoS attacks
 - Spamming
 - Phishing
 - Social engineering attacks
