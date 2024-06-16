@@ -28,7 +28,8 @@ The format is based on [Common Changelog](https://common-changelog.org).
 
 ### Added
 
-- Add `MerkleLockup` and `BatchLockup` support for `LockupTranched`
+- Add `MerkleLockup` support for `LockupTranched` ([#297](https://github.com/sablier-labs/v2-periphery/pull/297))
+- And `BatchLockup` support for `LockupTranched` ([#300](https://github.com/sablier-labs/v2-periphery/pull/300))
 - Add grace period mechanism for `clawback` function ([#340](https://github.com/sablier-labs/v2-periphery/pull/340))
 - Add `precompiles` in the NPM release ([#302](https://github.com/sablier-labs/v2-periphery/pull/302))
 
