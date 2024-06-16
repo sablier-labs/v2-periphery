@@ -23,7 +23,7 @@ The format is based on [Common Changelog](https://common-changelog.org).
 - Refactor `Range` to `Timestamps` ([#335](https://github.com/sablier-labs/v2-periphery/pull/335))
 - Bump `sablier/v2-core` to v1.2.0
 - Upgrade to OpenZeppelin v5 ([#283](https://github.com/sablier-labs/v2-periphery/pull/283))
-- Upgrade build dependencies ([#351](https://github.com/sablier-labs/v2-periphery/pull/351))
+- Bump build dependencies ([#351](https://github.com/sablier-labs/v2-periphery/pull/351))
 - Switch to Bun ([#249](https://github.com/sablier-labs/v2-periphery/pull/249))
 
 ### Added
