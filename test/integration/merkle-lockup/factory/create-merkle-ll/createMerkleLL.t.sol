@@ -41,9 +41,38 @@ contract CreateMerkleLL_Integration_Test is MerkleLockup_Integration_Test {
         _;
     }
 
-    function testFuzz_CreateMerkleLL(address admin, uint40 expiration) external whenCampaignNameNotTooLong {
+    /// @dev This test works because a default MerkleLockup contract is deployed in {Integration_Test.setUp}
+    function test_RevertGiven_CreatedAlready() external whenCampaignNameNotTooLong {
+        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
+        LockupLinear.Durations memory streamDurations = defaults.durations();
+        uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
+
+        // Expect a revert due to CREATE2.
+        vm.expectRevert();
+        merkleLockupFactory.createMerkleLL({
+            baseParams: baseParams,
+            lockupLinear: lockupLinear,
+            streamDurations: streamDurations,
+            aggregateAmount: aggregateAmount,
+            recipientCount: recipientCount
+        });
+    }
+
+    modifier givenNotCreatedAlready() {
+        _;
+    }
+
+    function testFuzz_CreateMerkleLL(
+        address admin,
+        uint40 expiration
+    )
+        external
+        whenCampaignNameNotTooLong
+        givenNotCreatedAlready
+    {
         vm.assume(admin != users.admin);
-        address expectedLL = vm.computeCreateAddress(address(merkleLockupFactory), ++merkleLockupFactoryNonce);
+        address expectedLL = computeMerkleLLAddress(admin, expiration);
 
         MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams({
             admin: admin,

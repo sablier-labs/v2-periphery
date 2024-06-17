@@ -18,6 +18,7 @@ contract Constructor_MerkleLT_Integration_Test is MerkleLockup_Integration_Test 
         uint40 actualExpiration;
         address actualLockupTranched;
         bytes32 actualMerkleRoot;
+        uint64 actualTotalPercentage;
         MerkleLT.TrancheWithPercentage[] actualTranchesWithPercentages;
         bool actualTransferable;
         address expectedAdmin;
@@ -29,13 +30,15 @@ contract Constructor_MerkleLT_Integration_Test is MerkleLockup_Integration_Test 
         address expectedLockupTranched;
         bytes32 expectedMerkleRoot;
         bytes32 expectedName;
+        uint64 expectedTotalPercentage;
         MerkleLT.TrancheWithPercentage[] expectedTranchesWithPercentages;
         bool expectedTransferable;
     }
 
     function test_Constructor() external {
-        SablierV2MerkleLT constructedLT =
-            new SablierV2MerkleLT(defaults.baseParams(), lockupTranched, defaults.tranchesWithPercentages());
+        SablierV2MerkleLT constructedLT = new SablierV2MerkleLT(
+            defaults.baseParams(), lockupTranched, defaults.tranchesWithPercentages(), defaults.TOTAL_PERCENTAGE()
+        );
 
         Vars memory vars;
 
@@ -74,6 +77,10 @@ contract Constructor_MerkleLT_Integration_Test is MerkleLockup_Integration_Test 
         vars.actualMerkleRoot = constructedLT.MERKLE_ROOT();
         vars.expectedMerkleRoot = defaults.MERKLE_ROOT();
         assertEq(vars.actualMerkleRoot, vars.expectedMerkleRoot, "merkleRoot");
+
+        vars.actualTotalPercentage = constructedLT.TOTAL_PERCENTAGE();
+        vars.expectedTotalPercentage = defaults.TOTAL_PERCENTAGE();
+        assertEq(vars.actualTotalPercentage, vars.expectedTotalPercentage, "totalPercentage");
 
         vars.actualTranchesWithPercentages = constructedLT.getTranchesWithPercentages();
         vars.expectedTranchesWithPercentages = defaults.tranchesWithPercentages();

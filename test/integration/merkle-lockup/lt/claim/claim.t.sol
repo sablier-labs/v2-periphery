@@ -2,11 +2,12 @@
 pragma solidity >=0.8.22 <0.9.0;
 
 import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
+import { ud2x18 } from "@prb/math/src/UD2x18.sol";
 import { Lockup, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { ISablierV2MerkleLT } from "src/interfaces/ISablierV2MerkleLT.sol";
 import { Errors } from "src/libraries/Errors.sol";
-import { MerkleLockup } from "src/types/DataTypes.sol";
+import { MerkleLockup, MerkleLT } from "src/types/DataTypes.sol";
 
 import { MerkleBuilder } from "../../../../utils/MerkleBuilder.sol";
 import { Merkle } from "../../../../utils/Murky.sol";
@@ -20,7 +21,69 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         MerkleLockup_Integration_Test.setUp();
     }
 
-    function test_RevertGiven_CampaignExpired() external {
+    modifier whenTotalPercentageNotOneHundred() {
+        _;
+    }
+
+    function test_RevertWhen_TotalPercentageLessThanOneHundred() external whenTotalPercentageNotOneHundred {
+        // Create a MerkleLT campaign with a total percentage less than 100.
+        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
+        uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
+
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
+        tranchesWithPercentages[0].unlockPercentage = ud2x18(0.05e18);
+        tranchesWithPercentages[1].unlockPercentage = ud2x18(0.2e18);
+
+        uint64 totalPercentage =
+            tranchesWithPercentages[0].unlockPercentage.unwrap() + tranchesWithPercentages[1].unlockPercentage.unwrap();
+
+        merkleLT = merkleLockupFactory.createMerkleLT(
+            baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
+        );
+
+        // Claim an airstream.
+        bytes32[] memory merkleProof = defaults.index1Proof();
+
+        vm.expectRevert(
+            abi.encodeWithSelector(Errors.SablierV2MerkleLT_TotalPercentageNotOneHundred.selector, totalPercentage)
+        );
+
+        merkleLT.claim({ index: 1, recipient: users.recipient1, amount: 1, merkleProof: merkleProof });
+    }
+
+    function test_RevertWhen_TotalPercentageGreaterThanOneHundred() external whenTotalPercentageNotOneHundred {
+        // Create a MerkleLT campaign with a total percentage less than 100.
+        MerkleLockup.ConstructorParams memory baseParams = defaults.baseParams();
+        uint256 aggregateAmount = defaults.AGGREGATE_AMOUNT();
+        uint256 recipientCount = defaults.RECIPIENT_COUNT();
+
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages = defaults.tranchesWithPercentages();
+        tranchesWithPercentages[0].unlockPercentage = ud2x18(0.75e18);
+        tranchesWithPercentages[1].unlockPercentage = ud2x18(0.8e18);
+
+        uint64 totalPercentage =
+            tranchesWithPercentages[0].unlockPercentage.unwrap() + tranchesWithPercentages[1].unlockPercentage.unwrap();
+
+        merkleLT = merkleLockupFactory.createMerkleLT(
+            baseParams, lockupTranched, tranchesWithPercentages, aggregateAmount, recipientCount
+        );
+
+        // Claim an airstream.
+        bytes32[] memory merkleProof = defaults.index1Proof();
+
+        vm.expectRevert(
+            abi.encodeWithSelector(Errors.SablierV2MerkleLT_TotalPercentageNotOneHundred.selector, totalPercentage)
+        );
+
+        merkleLT.claim({ index: 1, recipient: users.recipient1, amount: 1, merkleProof: merkleProof });
+    }
+
+    modifier whenTotalPercentageOneHundred() {
+        _;
+    }
+
+    function test_RevertGiven_CampaignExpired() external whenTotalPercentageOneHundred {
         uint40 expiration = defaults.EXPIRATION();
         uint256 warpTime = expiration + 1 seconds;
         bytes32[] memory merkleProof;
@@ -35,7 +98,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
         _;
     }
 
-    function test_RevertGiven_AlreadyClaimed() external givenCampaignNotExpired {
+    function test_RevertGiven_AlreadyClaimed() external whenTotalPercentageOneHundred givenCampaignNotExpired {
         claimLT();
         uint256 index1 = defaults.INDEX1();
         uint128 amount = defaults.CLAIM_AMOUNT();
@@ -54,6 +117,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
 
     function test_RevertWhen_InvalidIndex()
         external
+        whenTotalPercentageOneHundred
         givenCampaignNotExpired
         givenNotClaimed
         givenNotIncludedInMerkleTree
@@ -67,6 +131,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
 
     function test_RevertWhen_InvalidRecipient()
         external
+        whenTotalPercentageOneHundred
         givenCampaignNotExpired
         givenNotClaimed
         givenNotIncludedInMerkleTree
@@ -81,6 +146,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
 
     function test_RevertWhen_InvalidAmount()
         external
+        whenTotalPercentageOneHundred
         givenCampaignNotExpired
         givenNotClaimed
         givenNotIncludedInMerkleTree
@@ -94,6 +160,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
 
     function test_RevertWhen_InvalidMerkleProof()
         external
+        whenTotalPercentageOneHundred
         givenCampaignNotExpired
         givenNotClaimed
         givenNotIncludedInMerkleTree
@@ -114,6 +181,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
 
     function test_Claim_CalculatedAmountsSumNotEqualClaimAmount()
         external
+        whenTotalPercentageOneHundred
         givenCampaignNotExpired
         givenNotClaimed
         givenIncludedInMerkleTree
@@ -179,6 +247,7 @@ contract Claim_Integration_Test is Merkle, MerkleLockup_Integration_Test {
 
     function test_Claim()
         external
+        whenTotalPercentageOneHundred
         givenCampaignNotExpired
         givenNotClaimed
         givenIncludedInMerkleTree

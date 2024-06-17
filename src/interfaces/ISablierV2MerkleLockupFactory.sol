@@ -10,7 +10,7 @@ import { ISablierV2MerkleLT } from "./ISablierV2MerkleLT.sol";
 import { MerkleLockup, MerkleLT } from "../types/DataTypes.sol";
 
 /// @title ISablierV2MerkleLockupFactory
-/// @notice Deploys MerkleLockup campaigns with CREATE.
+/// @notice Deploys MerkleLockup campaigns with CREATE2.
 interface ISablierV2MerkleLockupFactory {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
@@ -38,6 +38,40 @@ interface ISablierV2MerkleLockupFactory {
     );
 
     /*//////////////////////////////////////////////////////////////////////////
+                                CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Compute the address of the MerkleLL campaign to be deployed.
+    /// @param baseParams Struct encapsulating the {SablierV2MerkleLockup} parameters, which are documented in
+    /// {DataTypes}.
+    /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
+    /// @param streamDurations The durations for each stream.
+    /// @return merkleLL The expected address of the MerkleLockup contract.
+    function computeMerkleLLAddress(
+        MerkleLockup.ConstructorParams memory baseParams,
+        ISablierV2LockupLinear lockupLinear,
+        LockupLinear.Durations memory streamDurations
+    )
+        external
+        view
+        returns (address merkleLL);
+
+    /// @notice Compute the address of the MerkleLT campaign to be deployed.
+    /// @param baseParams Struct encapsulating the {SablierV2MerkleLockup} parameters, which are documented in
+    /// {DataTypes}.
+    /// @param lockupTranched The address of the {SablierV2LockupTranched} contract.
+    /// @param tranchesWithPercentages The tranches with their respective unlock percentages.
+    /// @return merkleLT The expected address of the MerkleLockup contract.
+    function computeMerkleLTAddress(
+        MerkleLockup.ConstructorParams memory baseParams,
+        ISablierV2LockupTranched lockupTranched,
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages
+    )
+        external
+        view
+        returns (address merkleLT);
+
+    /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
@@ -62,9 +96,6 @@ interface ISablierV2MerkleLockupFactory {
 
     /// @notice Creates a new MerkleLockup campaign with a LockupTranched distribution.
     /// @dev Emits a {CreateMerkleLT} event.
-    ///
-    /// Requirements:
-    /// - The sum of the tranches' unlock percentages must equal 100% = 1e18.
     ///
     /// @param baseParams Struct encapsulating the {SablierV2MerkleLockup} parameters, which are documented in
     /// {DataTypes}.
