@@ -32,6 +32,22 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
         });
     }
 
+    function computeMerkleLLAddress() internal view returns (address) {
+        return computeMerkleLLAddress(users.admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+    }
+
+    function computeMerkleLLAddress(address admin) internal view returns (address) {
+        return computeMerkleLLAddress(admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+    }
+
+    function computeMerkleLLAddress(address admin, uint40 expiration) internal view returns (address) {
+        return computeMerkleLLAddress(admin, defaults.MERKLE_ROOT(), expiration);
+    }
+
+    function computeMerkleLLAddress(address admin, bytes32 merkleRoot) internal view returns (address) {
+        return computeMerkleLLAddress(admin, merkleRoot, defaults.EXPIRATION());
+    }
+
     function createMerkleLL() internal returns (ISablierV2MerkleLL) {
         return createMerkleLL(users.admin, defaults.EXPIRATION());
     }
@@ -45,9 +61,6 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
     }
 
     function createMerkleLL(address admin, uint40 expiration) internal returns (ISablierV2MerkleLL) {
-        // Increment the CREATE nonce for factory contract.
-        ++merkleLockupFactoryNonce;
-
         return merkleLockupFactory.createMerkleLL({
             baseParams: defaults.baseParams(admin, dai, expiration, defaults.MERKLE_ROOT()),
             lockupLinear: lockupLinear,
@@ -70,6 +83,22 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
         });
     }
 
+    function computeMerkleLTAddress() internal view returns (address) {
+        return computeMerkleLTAddress(users.admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+    }
+
+    function computeMerkleLTAddress(address admin) internal view returns (address) {
+        return computeMerkleLTAddress(admin, defaults.MERKLE_ROOT(), defaults.EXPIRATION());
+    }
+
+    function computeMerkleLTAddress(address admin, uint40 expiration) internal view returns (address) {
+        return computeMerkleLTAddress(admin, defaults.MERKLE_ROOT(), expiration);
+    }
+
+    function computeMerkleLTAddress(address admin, bytes32 merkleRoot) internal view returns (address) {
+        return computeMerkleLTAddress(admin, merkleRoot, defaults.EXPIRATION());
+    }
+
     function createMerkleLT() internal returns (ISablierV2MerkleLT) {
         return createMerkleLT(users.admin, defaults.EXPIRATION());
     }
@@ -83,9 +112,6 @@ abstract contract MerkleLockup_Integration_Test is Integration_Test {
     }
 
     function createMerkleLT(address admin, uint40 expiration) internal returns (ISablierV2MerkleLT) {
-        // Increment the CREATE nonce for factory contract.
-        ++merkleLockupFactoryNonce;
-
         return merkleLockupFactory.createMerkleLT({
             baseParams: defaults.baseParams(admin, dai, expiration, defaults.MERKLE_ROOT()),
             lockupTranched: lockupTranched,

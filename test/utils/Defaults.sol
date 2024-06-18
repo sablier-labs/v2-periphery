@@ -3,7 +3,7 @@ pragma solidity >=0.8.22 <0.9.0;
 
 import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { ud2x18 } from "@prb/math/src/UD2x18.sol";
+import { ud2x18, uUNIT } from "@prb/math/src/UD2x18.sol";
 import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
 import { Broker, LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
@@ -55,6 +55,7 @@ contract Defaults is Merkle {
     bytes32 public immutable MERKLE_ROOT;
     string public constant NAME = "Airdrop Campaign";
     bytes32 public constant NAME_BYTES32 = bytes32(abi.encodePacked("Airdrop Campaign"));
+    uint64 public constant TOTAL_PERCENTAGE = uUNIT;
     bool public constant TRANSFERABLE = false;
 
     /*//////////////////////////////////////////////////////////////////////////

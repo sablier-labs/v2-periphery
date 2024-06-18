@@ -19,6 +19,9 @@ interface ISablierV2MerkleLT is ISablierV2MerkleLockup {
     /// @notice The address of the {SablierV2LockupTranched} contract.
     function LOCKUP_TRANCHED() external view returns (ISablierV2LockupTranched);
 
+    /// @notice The total percentage of the tranches.
+    function TOTAL_PERCENTAGE() external view returns (uint64);
+
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
@@ -32,6 +35,7 @@ interface ISablierV2MerkleLT is ISablierV2MerkleLockup {
     /// - The campaign must not have expired.
     /// - The stream must not have been claimed already.
     /// - The Merkle proof must be valid.
+    /// - TOTAL_PERCENTAGE must be equal to 100%.
     ///
     /// @param index The index of the recipient in the Merkle tree.
     /// @param recipient The address of the stream holder.

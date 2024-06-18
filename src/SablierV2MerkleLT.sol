@@ -4,12 +4,14 @@ pragma solidity >=0.8.22;
 import { BitMaps } from "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { uUNIT } from "@prb/math/src/UD2x18.sol";
 import { UD60x18, ud60x18, ZERO } from "@prb/math/src/UD60x18.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { Broker, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { SablierV2MerkleLockup } from "./abstracts/SablierV2MerkleLockup.sol";
 import { ISablierV2MerkleLT } from "./interfaces/ISablierV2MerkleLT.sol";
+import { Errors } from "./libraries/Errors.sol";
 import { MerkleLockup, MerkleLT } from "./types/DataTypes.sol";
 
 /// @title SablierV2MerkleLT
@@ -27,6 +29,9 @@ contract SablierV2MerkleLT is
 
     /// @inheritdoc ISablierV2MerkleLT
     ISablierV2LockupTranched public immutable override LOCKUP_TRANCHED;
+
+    /// @inheritdoc ISablierV2MerkleLT
+    uint64 public immutable override TOTAL_PERCENTAGE;
 
     /// @dev The tranches with their respective unlock percentages and durations.
     MerkleLT.TrancheWithPercentage[] internal _tranchesWithPercentages;
@@ -46,12 +51,14 @@ contract SablierV2MerkleLT is
     {
         LOCKUP_TRANCHED = lockupTranched;
 
-        // Since Solidity lacks a syntax for copying arrays of structs directly from memory to storage, a manual
-        // approach is necessary. See https://github.com/ethereum/solidity/issues/12783.
-        uint256 count = tranchesWithPercentages.length;
-        for (uint256 i = 0; i < count; ++i) {
+        // Calculate the total percentage of the tranches and save them in the contract state.
+        uint64 totalPercentage;
+        for (uint256 i = 0; i < tranchesWithPercentages.length; ++i) {
+            uint64 percentage = tranchesWithPercentages[i].unlockPercentage.unwrap();
+            totalPercentage += percentage;
             _tranchesWithPercentages.push(tranchesWithPercentages[i]);
         }
+        TOTAL_PERCENTAGE = totalPercentage;
 
         // Max approve the Sablier contract to spend funds from the MerkleLockup contract.
         ASSET.forceApprove(address(LOCKUP_TRANCHED), type(uint256).max);
@@ -81,6 +88,11 @@ contract SablierV2MerkleLT is
         override
         returns (uint256 streamId)
     {
+        // Check: the sum of percentages equals 100%.
+        if (TOTAL_PERCENTAGE != uUNIT) {
+            revert Errors.SablierV2MerkleLT_TotalPercentageNotOneHundred(TOTAL_PERCENTAGE);
+        }
+
         // Generate the Merkle tree leaf by hashing the corresponding parameters. Hashing twice prevents second
         // preimage attacks.
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(index, recipient, amount))));

@@ -31,9 +31,9 @@ library Errors {
     error SablierV2MerkleLockup_StreamClaimed(uint256 index);
 
     /*//////////////////////////////////////////////////////////////////////////
-                          SABLIER-V2-MERKLE-LOCKUP-FACTORY
+                                SABLIER-V2-MERKLE-LT
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Thrown when the sum of the tranches' unlock percentages does not equal 100%.
-    error SablierV2MerkleLockupFactory_TotalPercentageNotOneHundred(uint64 totalPercentage);
+    /// @notice Thrown when trying to claim from an LT campaign with tranches' unlock percentages not adding up to 100%.
+    error SablierV2MerkleLT_TotalPercentageNotOneHundred(uint64 totalPercentage);
 }
