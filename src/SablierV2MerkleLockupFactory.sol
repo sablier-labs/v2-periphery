@@ -86,7 +86,8 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
                 baseParams.merkleRoot,
                 bytes32(abi.encodePacked(baseParams.name)),
                 baseParams.transferable,
-                lockupTranched
+                lockupTranched,
+                abi.encode(tranchesWithPercentages)
             )
         );
 

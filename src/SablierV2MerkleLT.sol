@@ -55,7 +55,7 @@ contract SablierV2MerkleLT is
         uint64 totalPercentage;
         for (uint256 i = 0; i < tranchesWithPercentages.length; ++i) {
             uint64 percentage = tranchesWithPercentages[i].unlockPercentage.unwrap();
-            totalPercentage = totalPercentage + percentage;
+            totalPercentage += percentage;
             _tranchesWithPercentages.push(tranchesWithPercentages[i]);
         }
         TOTAL_PERCENTAGE = totalPercentage;

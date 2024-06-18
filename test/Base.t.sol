@@ -340,7 +340,8 @@ abstract contract Base_Test is
                 merkleRoot,
                 defaults.NAME_BYTES32(),
                 defaults.TRANSFERABLE(),
-                lockupTranched
+                lockupTranched,
+                abi.encode(defaults.tranchesWithPercentages())
             )
         );
         bytes32 creationBytecodeHash = keccak256(getMerkleLTBytecode(admin, asset_, merkleRoot, expiration));
