@@ -47,7 +47,7 @@ interface ISablierV2MerkleLockupFactory {
     /// @param lockupLinear The address of the {SablierV2LockupLinear} contract.
     /// @param streamDurations The durations for each stream.
     /// @return merkleLL The expected address of the MerkleLockup contract.
-    function computeMerkleLLAddress(
+    function computeMerkleLL(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations
@@ -62,7 +62,7 @@ interface ISablierV2MerkleLockupFactory {
     /// @param lockupTranched The address of the {SablierV2LockupTranched} contract.
     /// @param tranchesWithPercentages The tranches with their respective unlock percentages.
     /// @return merkleLT The expected address of the MerkleLockup contract.
-    function computeMerkleLTAddress(
+    function computeMerkleLT(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
         MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages

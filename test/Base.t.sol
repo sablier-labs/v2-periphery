@@ -299,9 +299,9 @@ abstract contract Base_Test is
             )
         );
         bytes32 creationBytecodeHash = keccak256(getMerkleLLBytecode(admin, asset_, merkleRoot, expiration));
-        return computeCreate2Address({
+        return vm.computeCreate2Address({
             salt: salt,
-            initcodeHash: creationBytecodeHash,
+            initCodeHash: creationBytecodeHash,
             deployer: address(merkleLockupFactory)
         });
     }
@@ -343,9 +343,9 @@ abstract contract Base_Test is
             )
         );
         bytes32 creationBytecodeHash = keccak256(getMerkleLTBytecode(admin, asset_, merkleRoot, expiration));
-        return computeCreate2Address({
+        return vm.computeCreate2Address({
             salt: salt,
-            initcodeHash: creationBytecodeHash,
+            initCodeHash: creationBytecodeHash,
             deployer: address(merkleLockupFactory)
         });
     }

@@ -20,7 +20,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @notice inheritdoc ISablierV2MerkleLockupFactory
-    function computeMerkleLLAddress(
+    function computeMerkleLL(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupLinear lockupLinear,
         LockupLinear.Durations memory streamDurations
@@ -45,17 +45,18 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             )
         );
 
-        // Get the constructor argument.
-        bytes memory initcode = abi.encode(baseParams, lockupLinear, streamDurations);
+        // Get the init code hash.
+        bytes memory constructorArgs = abi.encode(baseParams, lockupLinear, streamDurations);
+        bytes32 initCodeHash = keccak256(abi.encodePacked(type(SablierV2MerkleLL).creationCode, constructorArgs));
 
         // Compute the CREATE2 address.
-        bytes32 merkleLLHash = keccak256(abi.encodePacked(bytes1(0xff), address(this), salt, keccak256(initcode)));
+        bytes32 merkleLLHash = keccak256(abi.encodePacked(bytes1(0xff), address(this), salt, initCodeHash));
 
         return address(uint160(uint256(merkleLLHash)));
     }
 
     /// @notice inheritdoc ISablierV2MerkleLockupFactory
-    function computeMerkleLTAddress(
+    function computeMerkleLT(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
         MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages
@@ -92,11 +93,12 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
             )
         );
 
-        // Get the constructor argument.
-        bytes memory initcode = abi.encode(baseParams, lockupTranched, tranchesWithPercentages, totalPercentage);
+        // Get the init code hash.
+        bytes memory constructorArgs = abi.encode(baseParams, lockupTranched, tranchesWithPercentages, totalPercentage);
+        bytes32 initCodeHash = keccak256(abi.encodePacked(type(SablierV2MerkleLT).creationCode, constructorArgs));
 
         // Compute the CREATE2 address.
-        bytes32 merkleLTHash = keccak256(abi.encodePacked(bytes1(0xff), address(this), salt, keccak256(initcode)));
+        bytes32 merkleLTHash = keccak256(abi.encodePacked(bytes1(0xff), address(this), salt, initCodeHash));
 
         return address(uint160(uint256(merkleLTHash)));
     }
