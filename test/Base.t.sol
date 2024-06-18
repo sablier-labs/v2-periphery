@@ -338,8 +338,7 @@ abstract contract Base_Test is
                 merkleRoot,
                 defaults.NAME_BYTES32(),
                 defaults.TRANSFERABLE(),
-                lockupTranched,
-                defaults.TOTAL_PERCENTAGE()
+                lockupTranched
             )
         );
         bytes32 creationBytecodeHash = keccak256(getMerkleLTBytecode(admin, asset_, merkleRoot, expiration));
@@ -383,8 +382,7 @@ abstract contract Base_Test is
         bytes memory constructorArgs = abi.encode(
             defaults.baseParams(admin, asset_, expiration, merkleRoot),
             lockupTranched,
-            defaults.tranchesWithPercentages(),
-            defaults.TOTAL_PERCENTAGE()
+            defaults.tranchesWithPercentages()
         );
         if (!isTestOptimizedProfile()) {
             return bytes.concat(type(SablierV2MerkleLT).creationCode, constructorArgs);

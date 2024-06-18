@@ -36,9 +36,8 @@ contract Constructor_MerkleLT_Integration_Test is MerkleLockup_Integration_Test 
     }
 
     function test_Constructor() external {
-        SablierV2MerkleLT constructedLT = new SablierV2MerkleLT(
-            defaults.baseParams(), lockupTranched, defaults.tranchesWithPercentages(), defaults.TOTAL_PERCENTAGE()
-        );
+        SablierV2MerkleLT constructedLT =
+            new SablierV2MerkleLT(defaults.baseParams(), lockupTranched, defaults.tranchesWithPercentages());
 
         Vars memory vars;
 

@@ -65,11 +65,8 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         returns (ISablierV2MerkleLT merkleLT)
     {
         // Calculate the sum of percentages and durations across all tranches.
-        uint64 totalPercentage;
         uint256 totalDuration;
         for (uint256 i = 0; i < tranchesWithPercentages.length; ++i) {
-            uint64 percentage = tranchesWithPercentages[i].unlockPercentage.unwrap();
-            totalPercentage = totalPercentage + percentage;
             unchecked {
                 // Safe to use `unchecked` because its only used in the event.
                 totalDuration += tranchesWithPercentages[i].duration;
@@ -87,14 +84,12 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
                 baseParams.merkleRoot,
                 bytes32(abi.encodePacked(baseParams.name)),
                 baseParams.transferable,
-                lockupTranched,
-                totalPercentage
+                lockupTranched
             )
         );
 
         // Deploy the MerkleLockup contract with CREATE2.
-        merkleLT =
-            new SablierV2MerkleLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercentages, totalPercentage);
+        merkleLT = new SablierV2MerkleLT{ salt: salt }(baseParams, lockupTranched, tranchesWithPercentages);
 
         // Log the creation of the MerkleLockup contract, including some metadata that is not stored on-chain.
         emit CreateMerkleLT(

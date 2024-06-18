@@ -45,21 +45,20 @@ contract SablierV2MerkleLT is
     constructor(
         MerkleLockup.ConstructorParams memory baseParams,
         ISablierV2LockupTranched lockupTranched,
-        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages,
-        uint64 totalPercentage
+        MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages
     )
         SablierV2MerkleLockup(baseParams)
     {
         LOCKUP_TRANCHED = lockupTranched;
 
-        TOTAL_PERCENTAGE = totalPercentage;
-
-        // Since Solidity lacks a syntax for copying arrays of structs directly from memory to storage, a manual
-        // approach is necessary. See https://github.com/ethereum/solidity/issues/12783.
-        uint256 count = tranchesWithPercentages.length;
-        for (uint256 i = 0; i < count; ++i) {
+        // Calculate the total percentage of the tranches and save them in the contract storage.
+        uint64 totalPercentage;
+        for (uint256 i = 0; i < tranchesWithPercentages.length; ++i) {
+            uint64 percentage = tranchesWithPercentages[i].unlockPercentage.unwrap();
+            totalPercentage = totalPercentage + percentage;
             _tranchesWithPercentages.push(tranchesWithPercentages[i]);
         }
+        TOTAL_PERCENTAGE = totalPercentage;
 
         // Max approve the Sablier contract to spend funds from the MerkleLockup contract.
         ASSET.forceApprove(address(LOCKUP_TRANCHED), type(uint256).max);
