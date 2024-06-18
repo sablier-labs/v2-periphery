@@ -10,6 +10,9 @@ import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 contract CreateMerkleLT_Integration_Test is MerkleLockup_Integration_Test {
     function setUp() public override {
         MerkleLockup_Integration_Test.setUp();
+
+        // Make alice the caller of createMerkleLT.
+        resetPrank(users.alice);
     }
 
     function test_RevertWhen_CampaignNameTooLong() external {

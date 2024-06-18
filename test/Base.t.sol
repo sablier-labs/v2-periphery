@@ -286,6 +286,7 @@ abstract contract Base_Test is
     {
         bytes32 salt = keccak256(
             abi.encodePacked(
+                users.alice,
                 address(asset_),
                 defaults.CANCELABLE(),
                 expiration,
@@ -330,6 +331,7 @@ abstract contract Base_Test is
     {
         bytes32 salt = keccak256(
             abi.encodePacked(
+                users.alice,
                 address(asset_),
                 defaults.CANCELABLE(),
                 expiration,

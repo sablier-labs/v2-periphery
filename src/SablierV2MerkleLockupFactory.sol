@@ -33,6 +33,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         // Hash the parameters to generate a salt.
         bytes32 salt = keccak256(
             abi.encodePacked(
+                msg.sender,
                 baseParams.asset,
                 baseParams.cancelable,
                 baseParams.expiration,
@@ -76,6 +77,7 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         // Hash the parameters to generate a salt.
         bytes32 salt = keccak256(
             abi.encodePacked(
+                msg.sender,
                 baseParams.asset,
                 baseParams.cancelable,
                 baseParams.expiration,
