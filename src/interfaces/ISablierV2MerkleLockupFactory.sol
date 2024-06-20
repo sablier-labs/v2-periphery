@@ -41,11 +41,10 @@ interface ISablierV2MerkleLockupFactory {
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Verify the sum of percentages in `tranches` equals 100%.
+    /// @notice Verify the sum of percentages in `tranches` equals 100% , i.e. 1e18.
     /// @dev Reverts if the sum of percentages overflows.
     /// @param tranches The tranches with their respective unlock percentages.
-    /// @return `true` if the sum of percentages equals 100%.
-    function isValidMerkleLT(MerkleLT.TrancheWithPercentage[] calldata tranches) external pure returns (bool);
+    function isValidMerkleLT(MerkleLT.TrancheWithPercentage[] calldata tranches) external pure returns (bool result);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
