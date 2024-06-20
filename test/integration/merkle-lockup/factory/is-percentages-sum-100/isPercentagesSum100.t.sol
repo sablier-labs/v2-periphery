@@ -7,13 +7,13 @@ import { MerkleLT } from "src/types/DataTypes.sol";
 
 import { MerkleLockup_Integration_Test } from "../../MerkleLockup.t.sol";
 
-contract IsValidMerkleLT_Integration_Test is MerkleLockup_Integration_Test {
+contract IsPercentagesSum100_Integration_Test is MerkleLockup_Integration_Test {
     function test_RevertWhen_SumOverflow() public {
         MerkleLT.TrancheWithPercentage[] memory tranches = defaults.tranchesWithPercentages();
         tranches[0].unlockPercentage = MAX_UD2x18;
 
         vm.expectRevert();
-        merkleLockupFactory.isValidMerkleLT(tranches);
+        merkleLockupFactory.isPercentagesSum100(tranches);
     }
 
     modifier whenSumDoesNotOverflow() {
@@ -34,7 +34,7 @@ contract IsValidMerkleLT_Integration_Test is MerkleLockup_Integration_Test {
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.05e18);
         tranchesWithPercentages[1].unlockPercentage = ud2x18(0.2e18);
 
-        assertFalse(merkleLockupFactory.isValidMerkleLT(tranchesWithPercentages), "isValidMerkleLT");
+        assertFalse(merkleLockupFactory.isPercentagesSum100(tranchesWithPercentages), "isPercentagesSum100");
     }
 
     function test_TotalPercentageGreaterThanOneHundred()
@@ -47,14 +47,14 @@ contract IsValidMerkleLT_Integration_Test is MerkleLockup_Integration_Test {
         tranchesWithPercentages[0].unlockPercentage = ud2x18(0.5e18);
         tranchesWithPercentages[1].unlockPercentage = ud2x18(0.6e18);
 
-        assertFalse(merkleLockupFactory.isValidMerkleLT(tranchesWithPercentages), "isValidMerkleLT");
+        assertFalse(merkleLockupFactory.isPercentagesSum100(tranchesWithPercentages), "isPercentagesSum100");
     }
 
     modifier whenTotalPercentageOneHundred() {
         _;
     }
 
-    function test_IsValidMerkleLT() public view whenSumDoesNotOverflow whenTotalPercentageOneHundred {
-        assertTrue(merkleLockupFactory.isValidMerkleLT(defaults.tranchesWithPercentages()), "isValidMerkleLT");
+    function test_IsPercentagesSum100() public view whenSumDoesNotOverflow whenTotalPercentageOneHundred {
+        assertTrue(merkleLockupFactory.isPercentagesSum100(defaults.tranchesWithPercentages()), "isPercentagesSum100");
     }
 }

@@ -1,4 +1,4 @@
-isValidMerkleLT.t.sol
+isPercentagesSum100.t.sol
 ├── when the sum of the percentages overflows
 │   └── it should revert
 └── when the sum of the percentages does not overflow

@@ -21,11 +21,11 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleLockupFactory
-    function isValidMerkleLT(MerkleLT.TrancheWithPercentage[] calldata tranches)
+    function isPercentagesSum100(MerkleLT.TrancheWithPercentage[] calldata tranches)
         external
         pure
         override
-        returns (bool)
+        returns (bool result)
     {
         uint64 totalPercentage;
         for (uint256 i = 0; i < tranches.length; ++i) {
