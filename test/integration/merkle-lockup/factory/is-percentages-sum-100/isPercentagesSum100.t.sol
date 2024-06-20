@@ -25,7 +25,7 @@ contract IsPercentagesSum100_Integration_Test is MerkleLockup_Integration_Test {
     }
 
     function test_TotalPercentageLessThanOneHundred()
-        public
+        external
         view
         whenSumDoesNotOverflow
         whenTotalPercentageNotOneHundred
@@ -38,7 +38,7 @@ contract IsPercentagesSum100_Integration_Test is MerkleLockup_Integration_Test {
     }
 
     function test_TotalPercentageGreaterThanOneHundred()
-        public
+        external
         view
         whenSumDoesNotOverflow
         whenTotalPercentageNotOneHundred
@@ -54,7 +54,7 @@ contract IsPercentagesSum100_Integration_Test is MerkleLockup_Integration_Test {
         _;
     }
 
-    function test_IsPercentagesSum100() public view whenSumDoesNotOverflow whenTotalPercentageOneHundred {
+    function test_IsPercentagesSum100() external view whenSumDoesNotOverflow whenTotalPercentageOneHundred {
         assertTrue(merkleLockupFactory.isPercentagesSum100(defaults.tranchesWithPercentages()), "isPercentagesSum100");
     }
 }

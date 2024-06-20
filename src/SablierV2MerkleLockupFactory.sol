@@ -29,7 +29,6 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
     {
         uint64 totalPercentage;
         for (uint256 i = 0; i < tranches.length; ++i) {
-            // It would revert if the sum of percentages overflows.
             totalPercentage += tranches[i].unlockPercentage.unwrap();
         }
         return totalPercentage == uUNIT;
