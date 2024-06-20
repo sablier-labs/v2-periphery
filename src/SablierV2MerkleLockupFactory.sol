@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.22;
 
+import { uUNIT } from "@prb/math/src/UD2x18.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
@@ -15,6 +16,25 @@ import { MerkleLockup, MerkleLT } from "./types/DataTypes.sol";
 /// @title SablierV2MerkleLockupFactory
 /// @notice See the documentation in {ISablierV2MerkleLockupFactory}.
 contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
+    /*//////////////////////////////////////////////////////////////////////////
+                           USER-FACING CONSTANT FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @inheritdoc ISablierV2MerkleLockupFactory
+    function isValidMerkleLT(MerkleLT.TrancheWithPercentage[] calldata tranches)
+        external
+        pure
+        override
+        returns (bool)
+    {
+        uint64 totalPercentage;
+        for (uint256 i = 0; i < tranches.length; ++i) {
+            // It would revert if the sum of percentages overflows.
+            totalPercentage += tranches[i].unlockPercentage.unwrap();
+        }
+        return totalPercentage == uUNIT;
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
