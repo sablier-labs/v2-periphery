@@ -84,12 +84,17 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
         external
         returns (ISablierV2MerkleLT merkleLT)
     {
-        // Calculate the sum of percentages and durations across all tranches.
         uint256 totalDuration;
-        for (uint256 i = 0; i < tranchesWithPercentages.length; ++i) {
-            unchecked {
-                // Safe to use `unchecked` because its only used in the event.
-                totalDuration += tranchesWithPercentages[i].duration;
+
+        // Need a separate scope to prevent the stack too deep error.
+        {
+            // Calculate the sum of percentages and durations across all tranches.
+            uint256 count = tranchesWithPercentages.length;
+            for (uint256 i = 0; i < count; ++i) {
+                unchecked {
+                    // Safe to use `unchecked` because its only used in the event.
+                    totalDuration += tranchesWithPercentages[i].duration;
+                }
             }
         }
 

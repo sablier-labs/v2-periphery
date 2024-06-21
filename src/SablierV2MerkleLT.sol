@@ -51,9 +51,11 @@ contract SablierV2MerkleLT is
     {
         LOCKUP_TRANCHED = lockupTranched;
 
+        uint256 count = tranchesWithPercentages.length;
+
         // Calculate the total percentage of the tranches and save them in the contract state.
         uint64 totalPercentage;
-        for (uint256 i = 0; i < tranchesWithPercentages.length; ++i) {
+        for (uint256 i = 0; i < count; ++i) {
             uint64 percentage = tranchesWithPercentages[i].unlockPercentage.unwrap();
             totalPercentage += percentage;
             _tranchesWithPercentages.push(tranchesWithPercentages[i]);
