@@ -15,14 +15,9 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
                                   STATE VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint128 internal constant AMOUNT_PER_LD_STREAM = AMOUNT_PER_SEGMENT * SEGMENTS_PER_STREAM;
-    uint128 internal constant AMOUNT_PER_LT_STREAM = AMOUNT_PER_TRANCHE * TRANCHES_PER_STREAM;
-    uint128 internal constant AMOUNT_PER_SEGMENT = 10e18;
-    uint128 internal constant AMOUNT_PER_TRANCHE = 10e18;
-    uint128 internal constant SEGMENTS_PER_STREAM = 5;
-    uint128 internal constant TRANCHES_PER_STREAM = 5;
-
-    uint8[5] internal batchSize = [2, 5, 10, 20, 50];
+    uint128 internal constant AMOUNT_PER_COUNT = 10e18;
+    uint8[5] internal batches = [5, 10, 20, 30, 50];
+    uint8[5] internal counts = [24, 24, 24, 24, 12];
 
     /*//////////////////////////////////////////////////////////////////////////
                                    TEST FUNCTION
@@ -42,18 +37,18 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
             )
         });
 
-        for (uint256 i; i < batchSize.length; ++i) {
+        for (uint256 i; i < batches.length; ++i) {
             // Gas benchmark the batch create functions for Lockup Linear.
-            gasCreateWithDurationsLL(batchSize[i]);
-            gasCreateWithTimestampsLL(batchSize[i]);
+            gasCreateWithDurationsLL(batches[i]);
+            gasCreateWithTimestampsLL(batches[i]);
 
             // Gas benchmark the batch create functions for Lockup Dynamic.
-            gasCreateWithDurationsLD(batchSize[i]);
-            gasCreateWithTimestampsLD(batchSize[i]);
+            gasCreateWithDurationsLD({ batchsize: batches[i], segmentsCount: counts[i] });
+            gasCreateWithTimestampsLD({ batchsize: batches[i], segmentsCount: counts[i] });
 
             // Gas benchmark the batch create functions for Lockup Tranched.
-            gasCreateWithDurationsLT(batchSize[i]);
-            gasCreateWithTimestampsLT(batchSize[i]);
+            gasCreateWithDurationsLT({ batchsize: batches[i], tranchesCount: counts[i] });
+            gasCreateWithTimestampsLT({ batchsize: batches[i], tranchesCount: counts[i] });
         }
     }
 
@@ -61,9 +56,12 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
                         GAS BENCHMARKS FOR BATCH FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function gasCreateWithDurationsLD(uint256 batchsize) internal {
+    function gasCreateWithDurationsLD(uint256 batchsize, uint256 segmentsCount) internal {
         BatchLockup.CreateWithDurationsLD[] memory params = BatchLockupBuilder.fillBatch(
-            defaults.createWithDurationsLD(dai, AMOUNT_PER_LD_STREAM, _segmentsWithDuration()), batchsize
+            defaults.createWithDurationsLD(
+                dai, uint128(AMOUNT_PER_COUNT * segmentsCount), _segmentsWithDuration(segmentsCount)
+            ),
+            batchsize
         );
 
         uint256 beforeGas = gasleft();
@@ -72,7 +70,7 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
 
         contentToAppend = string.concat(
             "| `createWithDurationsLD` | Lockup Dynamic |",
-            vm.toString(SEGMENTS_PER_STREAM),
+            vm.toString(segmentsCount),
             " |",
             vm.toString(batchsize),
             " | ",
@@ -84,9 +82,10 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
         appendToFile(benchmarkResultsFile, contentToAppend);
     }
 
-    function gasCreateWithTimestampsLD(uint256 batchsize) internal {
+    function gasCreateWithTimestampsLD(uint256 batchsize, uint256 segmentsCount) internal {
         BatchLockup.CreateWithTimestampsLD[] memory params = BatchLockupBuilder.fillBatch(
-            defaults.createWithTimestampsLD(dai, AMOUNT_PER_LD_STREAM, _segments()), batchsize
+            defaults.createWithTimestampsLD(dai, uint128(AMOUNT_PER_COUNT * segmentsCount), _segments(segmentsCount)),
+            batchsize
         );
 
         uint256 beforeGas = gasleft();
@@ -95,7 +94,7 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
 
         contentToAppend = string.concat(
             "| `createWithTimestampsLD` | Lockup Dynamic |",
-            vm.toString(SEGMENTS_PER_STREAM),
+            vm.toString(segmentsCount),
             " |",
             vm.toString(batchsize),
             " | ",
@@ -139,9 +138,12 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
         appendToFile(benchmarkResultsFile, contentToAppend);
     }
 
-    function gasCreateWithDurationsLT(uint256 batchsize) internal {
+    function gasCreateWithDurationsLT(uint256 batchsize, uint256 tranchesCount) internal {
         BatchLockup.CreateWithDurationsLT[] memory params = BatchLockupBuilder.fillBatch(
-            defaults.createWithDurationsLT(dai, AMOUNT_PER_LT_STREAM, _tranchesWithDuration()), batchsize
+            defaults.createWithDurationsLT(
+                dai, uint128(AMOUNT_PER_COUNT * tranchesCount), _tranchesWithDuration(tranchesCount)
+            ),
+            batchsize
         );
 
         uint256 beforeGas = gasleft();
@@ -150,7 +152,7 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
 
         contentToAppend = string.concat(
             "| `createWithDurationsLT` | Lockup Tranched |",
-            vm.toString(TRANCHES_PER_STREAM),
+            vm.toString(tranchesCount),
             " |",
             vm.toString(batchsize),
             " | ",
@@ -162,9 +164,10 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
         appendToFile(benchmarkResultsFile, contentToAppend);
     }
 
-    function gasCreateWithTimestampsLT(uint256 batchsize) internal {
+    function gasCreateWithTimestampsLT(uint256 batchsize, uint256 tranchesCount) internal {
         BatchLockup.CreateWithTimestampsLT[] memory params = BatchLockupBuilder.fillBatch(
-            defaults.createWithTimestampsLT(dai, AMOUNT_PER_LT_STREAM, _tranches()), batchsize
+            defaults.createWithTimestampsLT(dai, uint128(AMOUNT_PER_COUNT * tranchesCount), _tranches(tranchesCount)),
+            batchsize
         );
 
         uint256 beforeGas = gasleft();
@@ -173,7 +176,7 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
 
         contentToAppend = string.concat(
             "| `createWithTimestampsLT` | Lockup Tranched |",
-            vm.toString(TRANCHES_PER_STREAM),
+            vm.toString(tranchesCount),
             " |",
             vm.toString(batchsize),
             " | ",
@@ -189,13 +192,13 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
                                       HELPERS
     //////////////////////////////////////////////////////////////////////////*/
 
-    function _segments() private view returns (LockupDynamic.Segment[] memory) {
-        LockupDynamic.Segment[] memory segments = new LockupDynamic.Segment[](SEGMENTS_PER_STREAM);
+    function _segments(uint256 segmentsCount) private view returns (LockupDynamic.Segment[] memory) {
+        LockupDynamic.Segment[] memory segments = new LockupDynamic.Segment[](segmentsCount);
 
         // Populate segments.
-        for (uint256 i = 0; i < SEGMENTS_PER_STREAM; ++i) {
+        for (uint256 i = 0; i < segmentsCount; ++i) {
             segments[i] = LockupDynamic.Segment({
-                amount: AMOUNT_PER_SEGMENT,
+                amount: AMOUNT_PER_COUNT,
                 exponent: ud2x18(0.5e18),
                 timestamp: getBlockTimestamp() + uint40(defaults.CLIFF_DURATION() * (1 + i))
             });
@@ -204,14 +207,17 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
         return segments;
     }
 
-    function _segmentsWithDuration() private view returns (LockupDynamic.SegmentWithDuration[] memory) {
-        LockupDynamic.SegmentWithDuration[] memory segments =
-            new LockupDynamic.SegmentWithDuration[](SEGMENTS_PER_STREAM);
+    function _segmentsWithDuration(uint256 segmentsCount)
+        private
+        view
+        returns (LockupDynamic.SegmentWithDuration[] memory)
+    {
+        LockupDynamic.SegmentWithDuration[] memory segments = new LockupDynamic.SegmentWithDuration[](segmentsCount);
 
         // Populate segments.
-        for (uint256 i; i < SEGMENTS_PER_STREAM; ++i) {
+        for (uint256 i; i < segmentsCount; ++i) {
             segments[i] = LockupDynamic.SegmentWithDuration({
-                amount: AMOUNT_PER_SEGMENT,
+                amount: AMOUNT_PER_COUNT,
                 exponent: ud2x18(0.5e18),
                 duration: defaults.CLIFF_DURATION()
             });
@@ -220,13 +226,13 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
         return segments;
     }
 
-    function _tranches() private view returns (LockupTranched.Tranche[] memory) {
-        LockupTranched.Tranche[] memory tranches = new LockupTranched.Tranche[](TRANCHES_PER_STREAM);
+    function _tranches(uint256 tranchesCount) private view returns (LockupTranched.Tranche[] memory) {
+        LockupTranched.Tranche[] memory tranches = new LockupTranched.Tranche[](tranchesCount);
         // Populate tranches.
-        for (uint256 i = 0; i < TRANCHES_PER_STREAM; ++i) {
+        for (uint256 i = 0; i < tranchesCount; ++i) {
             tranches[i] = (
                 LockupTranched.Tranche({
-                    amount: AMOUNT_PER_TRANCHE,
+                    amount: AMOUNT_PER_COUNT,
                     timestamp: getBlockTimestamp() + uint40(defaults.CLIFF_DURATION() * (1 + i))
                 })
             );
@@ -235,14 +241,17 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
         return tranches;
     }
 
-    function _tranchesWithDuration() private view returns (LockupTranched.TrancheWithDuration[] memory) {
-        LockupTranched.TrancheWithDuration[] memory tranches =
-            new LockupTranched.TrancheWithDuration[](TRANCHES_PER_STREAM);
+    function _tranchesWithDuration(uint256 tranchesCount)
+        private
+        view
+        returns (LockupTranched.TrancheWithDuration[] memory)
+    {
+        LockupTranched.TrancheWithDuration[] memory tranches = new LockupTranched.TrancheWithDuration[](tranchesCount);
 
         // Populate tranches.
-        for (uint256 i; i < TRANCHES_PER_STREAM; ++i) {
+        for (uint256 i; i < tranchesCount; ++i) {
             tranches[i] =
-                LockupTranched.TrancheWithDuration({ amount: AMOUNT_PER_TRANCHE, duration: defaults.CLIFF_DURATION() });
+                LockupTranched.TrancheWithDuration({ amount: AMOUNT_PER_COUNT, duration: defaults.CLIFF_DURATION() });
         }
 
         return tranches;

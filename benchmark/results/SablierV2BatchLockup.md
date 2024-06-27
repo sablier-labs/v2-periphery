@@ -2,33 +2,33 @@
 
 | Function                 | Lockup Type     | Segments/Tranches | Batch Size | Gas Usage |
 | ------------------------ | --------------- | ----------------- | ---------- | --------- |
-| `createWithDurationsLL`  | Lockup Linear   |                   | 2          | 361844    |
-| `createWithTimestampsLL` | Lockup Linear   |                   | 2          | 324523    |
-| `createWithDurationsLD`  | Lockup Dynamic  | 5                 | 2          | 608910    |
-| `createWithTimestampsLD` | Lockup Dynamic  | 5                 | 2          | 578586    |
-| `createWithDurationsLT`  | Lockup Tranched | 5                 | 2          | 601881    |
-| `createWithTimestampsLT` | Lockup Tranched | 5                 | 2          | 572680    |
-| `createWithDurationsLL`  | Lockup Linear   |                   | 5          | 734485    |
-| `createWithTimestampsLL` | Lockup Linear   |                   | 5          | 732963    |
-| `createWithDurationsLD`  | Lockup Dynamic  | 5                 | 5          | 1391832   |
-| `createWithTimestampsLD` | Lockup Dynamic  | 5                 | 5          | 1368315   |
-| `createWithDurationsLT`  | Lockup Tranched | 5                 | 5          | 1374272   |
-| `createWithTimestampsLT` | Lockup Tranched | 5                 | 5          | 1353582   |
-| `createWithDurationsLL`  | Lockup Linear   |                   | 10         | 1417161   |
-| `createWithTimestampsLL` | Lockup Linear   |                   | 10         | 1414212   |
-| `createWithDurationsLD`  | Lockup Dynamic  | 5                 | 10         | 2732969   |
-| `createWithTimestampsLD` | Lockup Dynamic  | 5                 | 10         | 2686132   |
-| `createWithDurationsLT`  | Lockup Tranched | 5                 | 10         | 2697702   |
-| `createWithTimestampsLT` | Lockup Tranched | 5                 | 10         | 2656477   |
-| `createWithDurationsLL`  | Lockup Linear   |                   | 20         | 2783678   |
-| `createWithTimestampsLL` | Lockup Linear   |                   | 20         | 2778224   |
-| `createWithDurationsLD`  | Lockup Dynamic  | 5                 | 20         | 5419557   |
-| `createWithTimestampsLD` | Lockup Dynamic  | 5                 | 20         | 5326631   |
-| `createWithDurationsLT`  | Lockup Tranched | 5                 | 20         | 5348503   |
-| `createWithTimestampsLT` | Lockup Tranched | 5                 | 20         | 5266764   |
-| `createWithDurationsLL`  | Lockup Linear   |                   | 50         | 6889015   |
-| `createWithTimestampsLL` | Lockup Linear   |                   | 50         | 6877961   |
-| `createWithDurationsLD`  | Lockup Dynamic  | 5                 | 50         | 13503395  |
-| `createWithTimestampsLD` | Lockup Dynamic  | 5                 | 50         | 13276192  |
-| `createWithDurationsLT`  | Lockup Tranched | 5                 | 50         | 13318736  |
-| `createWithTimestampsLT` | Lockup Tranched | 5                 | 50         | 13124266  |
+| `createWithDurationsLL`  | Lockup Linear   |                   | 5          | 771013    |
+| `createWithTimestampsLL` | Lockup Linear   |                   | 5          | 732772    |
+| `createWithDurationsLD`  | Lockup Dynamic  | 24                | 5          | 3951599   |
+| `createWithTimestampsLD` | Lockup Dynamic  | 24                | 5          | 3815274   |
+| `createWithDurationsLT`  | Lockup Tranched | 24                | 5          | 3862661   |
+| `createWithTimestampsLT` | Lockup Tranched | 24                | 5          | 3744535   |
+| `createWithDurationsLL`  | Lockup Linear   |                   | 10         | 1417180   |
+| `createWithTimestampsLL` | Lockup Linear   |                   | 10         | 1414248   |
+| `createWithDurationsLD`  | Lockup Dynamic  | 24                | 10         | 7819162   |
+| `createWithTimestampsLD` | Lockup Dynamic  | 24                | 10         | 7585613   |
+| `createWithDurationsLT`  | Lockup Tranched | 24                | 10         | 7632113   |
+| `createWithTimestampsLT` | Lockup Tranched | 24                | 10         | 7444113   |
+| `createWithDurationsLL`  | Lockup Linear   |                   | 20         | 2783509   |
+| `createWithTimestampsLL` | Lockup Linear   |                   | 20         | 2779081   |
+| `createWithDurationsLD`  | Lockup Dynamic  | 24                | 20         | 15617207  |
+| `createWithTimestampsLD` | Lockup Dynamic  | 24                | 20         | 15131248  |
+| `createWithDurationsLT`  | Lockup Tranched | 24                | 20         | 15211892  |
+| `createWithTimestampsLT` | Lockup Tranched | 24                | 20         | 14846363  |
+| `createWithDurationsLL`  | Lockup Linear   |                   | 30         | 4143337   |
+| `createWithTimestampsLL` | Lockup Linear   |                   | 30         | 4148585   |
+| `createWithDurationsLD`  | Lockup Dynamic  | 24                | 30         | 23460912  |
+| `createWithTimestampsLD` | Lockup Dynamic  | 24                | 30         | 22697560  |
+| `createWithDurationsLT`  | Lockup Tranched | 24                | 30         | 22794686  |
+| `createWithTimestampsLT` | Lockup Tranched | 24                | 30         | 22267335  |
+| `createWithDurationsLL`  | Lockup Linear   |                   | 50         | 6871104   |
+| `createWithTimestampsLL` | Lockup Linear   |                   | 50         | 6893873   |
+| `createWithDurationsLD`  | Lockup Dynamic  | 12                | 50         | 22990717  |
+| `createWithTimestampsLD` | Lockup Dynamic  | 12                | 50         | 22355937  |
+| `createWithDurationsLT`  | Lockup Tranched | 12                | 50         | 22413551  |
+| `createWithTimestampsLT` | Lockup Tranched | 12                | 50         | 22006164  |
