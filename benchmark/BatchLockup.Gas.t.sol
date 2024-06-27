@@ -58,7 +58,7 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
 
     function gasCreateWithDurationsLD(uint256 batchSize, uint256 segmentsCount) internal {
         BatchLockup.CreateWithDurationsLD[] memory params = BatchLockupBuilder.fillBatch({
-            batchSingle: defaults.createWithDurationsLD({
+            params: defaults.createWithDurationsLD({
                 asset_: dai,
                 totalAmount_: uint128(AMOUNT_PER_ITEM * segmentsCount),
                 segments_: _generateSegmentsWithDuration(segmentsCount)
@@ -86,7 +86,7 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
 
     function gasCreateWithTimestampsLD(uint256 batchSize, uint256 segmentsCount) internal {
         BatchLockup.CreateWithTimestampsLD[] memory params = BatchLockupBuilder.fillBatch({
-            batchSingle: defaults.createWithTimestampsLD({
+            params: defaults.createWithTimestampsLD({
                 asset_: dai,
                 totalAmount_: uint128(AMOUNT_PER_ITEM * segmentsCount),
                 segments_: _generateSegments(segmentsCount)
@@ -114,14 +114,14 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
 
     function gasCreateWithDurationsLL(uint256 batchSize) internal {
         BatchLockup.CreateWithDurationsLL[] memory params =
-            BatchLockupBuilder.fillBatch({ batchSingle: defaults.createWithDurationsLL(dai), batchSize: batchSize });
+            BatchLockupBuilder.fillBatch({ params: defaults.createWithDurationsLL(dai), batchSize: batchSize });
 
         uint256 initialGas = gasleft();
         batchLockup.createWithDurationsLL(lockupLinear, dai, params);
         string memory gasUsed = vm.toString(initialGas - gasleft());
 
         contentToAppend = string.concat(
-            "| `createWithDurationsLL` | Lockup Linear |  |", vm.toString(batchSize), " | ", gasUsed, " |"
+            "| `createWithDurationsLL` | Lockup Linear | N/A |", vm.toString(batchSize), " | ", gasUsed, " |"
         );
 
         // Append the content to the file.
@@ -130,14 +130,14 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
 
     function gasCreateWithTimestampsLL(uint256 batchSize) internal {
         BatchLockup.CreateWithTimestampsLL[] memory params =
-            BatchLockupBuilder.fillBatch({ batchSingle: defaults.createWithTimestampsLL(dai), batchSize: batchSize });
+            BatchLockupBuilder.fillBatch({ params: defaults.createWithTimestampsLL(dai), batchSize: batchSize });
 
         uint256 initialGas = gasleft();
         batchLockup.createWithTimestampsLL(lockupLinear, dai, params);
         string memory gasUsed = vm.toString(initialGas - gasleft());
 
         contentToAppend = string.concat(
-            "| `createWithTimestampsLL` | Lockup Linear |  |", vm.toString(batchSize), " | ", gasUsed, " |"
+            "| `createWithTimestampsLL` | Lockup Linear | N/A |", vm.toString(batchSize), " | ", gasUsed, " |"
         );
 
         // Append the data to the file
@@ -146,7 +146,7 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
 
     function gasCreateWithDurationsLT(uint256 batchSize, uint256 tranchesCount) internal {
         BatchLockup.CreateWithDurationsLT[] memory params = BatchLockupBuilder.fillBatch({
-            batchSingle: defaults.createWithDurationsLT({
+            params: defaults.createWithDurationsLT({
                 asset_: dai,
                 totalAmount_: uint128(AMOUNT_PER_ITEM * tranchesCount),
                 tranches_: _generateTranchesWithDuration(tranchesCount)
@@ -174,7 +174,7 @@ contract BatchLockup_Gas_Test is Benchmark_Test {
 
     function gasCreateWithTimestampsLT(uint256 batchSize, uint256 tranchesCount) internal {
         BatchLockup.CreateWithTimestampsLT[] memory params = BatchLockupBuilder.fillBatch({
-            batchSingle: defaults.createWithTimestampsLT({
+            params: defaults.createWithTimestampsLT({
                 asset_: dai,
                 totalAmount_: uint128(AMOUNT_PER_ITEM * tranchesCount),
                 tranches_: _generateTranches(tranchesCount)
