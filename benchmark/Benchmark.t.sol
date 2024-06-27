@@ -15,6 +15,7 @@ abstract contract Benchmark_Test is Integration_Test {
     /// @dev The path to the file where the benchmark results are stored.
     string internal benchmarkResultsFile;
 
+    /// @dev A variable used to store the content to append to the results file.
     string internal contentToAppend;
 
     /*//////////////////////////////////////////////////////////////////////////
