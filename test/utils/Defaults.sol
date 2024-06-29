@@ -181,42 +181,58 @@ contract Defaults is Merkle {
     //////////////////////////////////////////////////////////////////////////*/
 
     function createWithDurationsLD() public view returns (LockupDynamic.CreateWithDurations memory) {
-        return createWithDurationsLD(asset);
+        return createWithDurationsLD(asset, PER_STREAM_AMOUNT, segmentsWithDurations());
     }
 
-    function createWithDurationsLD(IERC20 asset_) public view returns (LockupDynamic.CreateWithDurations memory) {
+    function createWithDurationsLD(
+        IERC20 asset_,
+        uint128 totalAmount_,
+        LockupDynamic.SegmentWithDuration[] memory segments_
+    )
+        public
+        view
+        returns (LockupDynamic.CreateWithDurations memory)
+    {
         return LockupDynamic.CreateWithDurations({
             sender: users.alice,
             recipient: users.recipient0,
-            totalAmount: PER_STREAM_AMOUNT,
+            totalAmount: totalAmount_,
             asset: asset_,
             cancelable: true,
             transferable: true,
-            segments: segmentsWithDurations(),
+            segments: segments_,
             broker: broker()
         });
     }
 
     function createWithTimestampsLD() public view returns (LockupDynamic.CreateWithTimestamps memory) {
-        return createWithTimestampsLD(asset);
+        return createWithTimestampsLD(asset, PER_STREAM_AMOUNT, segments());
     }
 
-    function createWithTimestampsLD(IERC20 asset_) public view returns (LockupDynamic.CreateWithTimestamps memory) {
+    function createWithTimestampsLD(
+        IERC20 asset_,
+        uint128 totalAmount_,
+        LockupDynamic.Segment[] memory segments_
+    )
+        public
+        view
+        returns (LockupDynamic.CreateWithTimestamps memory)
+    {
         return LockupDynamic.CreateWithTimestamps({
             sender: users.alice,
             recipient: users.recipient0,
-            totalAmount: PER_STREAM_AMOUNT,
+            totalAmount: totalAmount_,
             asset: asset_,
             cancelable: true,
             transferable: true,
             startTime: START_TIME,
-            segments: segments(),
+            segments: segments_,
             broker: broker()
         });
     }
 
     /// @dev Returns a batch of {LockupDynamic.Segment} parameters.
-    function segments() private view returns (LockupDynamic.Segment[] memory segments_) {
+    function segments() public view returns (LockupDynamic.Segment[] memory segments_) {
         segments_ = new LockupDynamic.Segment[](2);
         segments_[0] = LockupDynamic.Segment({
             amount: 2500e18,
@@ -302,36 +318,52 @@ contract Defaults is Merkle {
     //////////////////////////////////////////////////////////////////////////*/
 
     function createWithDurationsLT() public view returns (LockupTranched.CreateWithDurations memory) {
-        return createWithDurationsLT(asset);
+        return createWithDurationsLT(asset, PER_STREAM_AMOUNT, tranchesWithDurations());
     }
 
-    function createWithDurationsLT(IERC20 asset_) public view returns (LockupTranched.CreateWithDurations memory) {
+    function createWithDurationsLT(
+        IERC20 asset_,
+        uint128 totalAmount_,
+        LockupTranched.TrancheWithDuration[] memory tranches_
+    )
+        public
+        view
+        returns (LockupTranched.CreateWithDurations memory)
+    {
         return LockupTranched.CreateWithDurations({
             sender: users.alice,
             recipient: users.recipient0,
-            totalAmount: PER_STREAM_AMOUNT,
+            totalAmount: totalAmount_,
             asset: asset_,
             cancelable: true,
             transferable: true,
-            tranches: tranchesWithDurations(),
+            tranches: tranches_,
             broker: broker()
         });
     }
 
     function createWithTimestampsLT() public view returns (LockupTranched.CreateWithTimestamps memory) {
-        return createWithTimestampsLT(asset);
+        return createWithTimestampsLT(asset, PER_STREAM_AMOUNT, tranches());
     }
 
-    function createWithTimestampsLT(IERC20 asset_) public view returns (LockupTranched.CreateWithTimestamps memory) {
+    function createWithTimestampsLT(
+        IERC20 asset_,
+        uint128 totalAmount_,
+        LockupTranched.Tranche[] memory tranches_
+    )
+        public
+        view
+        returns (LockupTranched.CreateWithTimestamps memory)
+    {
         return LockupTranched.CreateWithTimestamps({
             sender: users.alice,
             recipient: users.recipient0,
-            totalAmount: PER_STREAM_AMOUNT,
+            totalAmount: totalAmount_,
             asset: asset_,
             cancelable: true,
             transferable: true,
             startTime: START_TIME,
-            tranches: tranches(),
+            tranches: tranches_,
             broker: broker()
         });
     }
