@@ -9,6 +9,7 @@
     { access = "read-write", path = "./benchmark/results"},
     { access = "read-write", path = "./cache" }
   ]
+  gas_limit = 9223372036854775807
   gas_reports = [
     "SablierV2BatchLockup",
     "SablierV2MerkleLL",
