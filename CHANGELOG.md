@@ -12,7 +12,7 @@ The format is based on [Common Changelog](https://common-changelog.org).
 [1.0.1]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/sablier-labs/v2-periphery/releases/tag/v1.0.0
 
-## [1.2.0] - 2024-06-16
+## [1.2.0] - 2024-07-01
 
 ### Changed
 
@@ -22,8 +22,8 @@ The format is based on [Common Changelog](https://common-changelog.org).
   [#300](https://github.com/sablier-labs/v2-periphery/pull/300))
 - Refactor `Range` to `Timestamps` ([#335](https://github.com/sablier-labs/v2-periphery/pull/335))
 - Bump `sablier/v2-core` to v1.2.0
-- Bump OpenZeppelin to v5 ([#283](https://github.com/sablier-labs/v2-periphery/pull/283))
-- Bump build dependencies ([#351](https://github.com/sablier-labs/v2-periphery/pull/351))
+- Bump build dependencies ([#351](https://github.com/sablier-labs/v2-periphery/pull/351),
+  [#283](https://github.com/sablier-labs/v2-periphery/pull/283))
 - Switch to Bun ([#249](https://github.com/sablier-labs/v2-periphery/pull/249))
 
 ### Added
