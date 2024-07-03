@@ -16,13 +16,13 @@ The format is based on [Common Changelog](https://common-changelog.org).
 
 ### Changed
 
-- Bump build dependencies ([#351](https://github.com/sablier-labs/v2-periphery/pull/351),
-- Bump `sablier/v2-core` to v1.2.0
+- Bump dependencies ([#283](https://github.com/sablier-labs/v2-periphery/pull/283),
+  [#351](https://github.com/sablier-labs/v2-periphery/pull/351))
 - Rename `Batch` to `BatchLockup` ([#322](https://github.com/sablier-labs/v2-periphery/pull/322))
 - Rename `MerkleStreamer` to `MerkleLockup` ([#268](https://github.com/sablier-labs/v2-periphery/pull/268))
 - Refactor `Range` to `Timestamps` ([#335](https://github.com/sablier-labs/v2-periphery/pull/335))
-  [#283](https://github.com/sablier-labs/v2-periphery/pull/283))
 - Switch to Bun ([#249](https://github.com/sablier-labs/v2-periphery/pull/249))
+- Use Solidity v0.8.26 ([#351](https://github.com/sablier-labs/v2-periphery/pull/351))
 
 ### Added
 
