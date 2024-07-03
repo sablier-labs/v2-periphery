@@ -17,7 +17,8 @@ The format is based on [Common Changelog](https://common-changelog.org).
 ### Changed
 
 - Bump dependencies ([#283](https://github.com/sablier-labs/v2-periphery/pull/283),
-  [#351](https://github.com/sablier-labs/v2-periphery/pull/351))
+  [#351](https://github.com/sablier-labs/v2-periphery/pull/351),
+  [#363](https://github.com/sablier-labs/v2-periphery/pull/363))
 - Rename `Batch` to `BatchLockup` ([#322](https://github.com/sablier-labs/v2-periphery/pull/322))
 - Rename `MerkleStreamer` to `MerkleLockup` ([#268](https://github.com/sablier-labs/v2-periphery/pull/268))
 - Refactor `Range` to `Timestamps` ([#335](https://github.com/sablier-labs/v2-periphery/pull/335))
