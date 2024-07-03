@@ -12,25 +12,24 @@ The format is based on [Common Changelog](https://common-changelog.org).
 [1.0.1]: https://github.com/sablier-labs/v2-periphery/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/sablier-labs/v2-periphery/releases/tag/v1.0.0
 
-## [1.2.0] - 2024-07-01
+## [1.2.0] - 2024-07-02
 
 ### Changed
 
-- Rename `MerkleStreamer` to `MerkleLockup` ([#268](https://github.com/sablier-labs/v2-periphery/pull/268))
-- Rename `Batch` to `BatchLockup` ([#322](https://github.com/sablier-labs/v2-periphery/pull/322),
-  [#297](https://github.com/sablier-labs/v2-periphery/pull/297),
-  [#300](https://github.com/sablier-labs/v2-periphery/pull/300))
-- Refactor `Range` to `Timestamps` ([#335](https://github.com/sablier-labs/v2-periphery/pull/335))
-- Bump `sablier/v2-core` to v1.2.0
 - Bump build dependencies ([#351](https://github.com/sablier-labs/v2-periphery/pull/351),
+- Bump `sablier/v2-core` to v1.2.0
+- Rename `Batch` to `BatchLockup` ([#322](https://github.com/sablier-labs/v2-periphery/pull/322))
+- Rename `MerkleStreamer` to `MerkleLockup` ([#268](https://github.com/sablier-labs/v2-periphery/pull/268))
+- Refactor `Range` to `Timestamps` ([#335](https://github.com/sablier-labs/v2-periphery/pull/335))
   [#283](https://github.com/sablier-labs/v2-periphery/pull/283))
 - Switch to Bun ([#249](https://github.com/sablier-labs/v2-periphery/pull/249))
 
 ### Added
 
-- Add `MerkleLockup` support for `LockupTranched` ([#297](https://github.com/sablier-labs/v2-periphery/pull/297))
 - And `BatchLockup` support for `LockupTranched` ([#300](https://github.com/sablier-labs/v2-periphery/pull/300))
 - Add grace period mechanism for `clawback` function ([#340](https://github.com/sablier-labs/v2-periphery/pull/340))
+- Add `MerkleLockup` support for `LockupTranched` ([#297](https://github.com/sablier-labs/v2-periphery/pull/297),
+  [#357](https://github.com/sablier-labs/v2-periphery/pull/357))
 - Add `precompiles` in the NPM release ([#302](https://github.com/sablier-labs/v2-periphery/pull/302))
 
 ### Removed
