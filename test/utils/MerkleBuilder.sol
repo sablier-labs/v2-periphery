@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // solhint-disable reason-string
-pragma solidity >=0.8.19;
+pragma solidity >=0.8.22;
 
 import { LibSort } from "solady/src/utils/LibSort.sol";
 

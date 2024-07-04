@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity >=0.8.19;
+pragma solidity >=0.8.22;
 
-import { PRBTest } from "@prb/test/src/PRBTest.sol";
+import { StdAssertions } from "forge-std/src/StdAssertions.sol";
 import { StdUtils } from "forge-std/src/StdUtils.sol";
 
 import { MerkleBuilder } from "./MerkleBuilder.sol";
 
-contract MerkleBuilder_Test is PRBTest, StdUtils {
-    function testFuzz_ComputeLeaf(uint256 index, address recipient, uint128 amount) external {
+contract MerkleBuilder_Test is StdAssertions, StdUtils {
+    function testFuzz_ComputeLeaf(uint256 index, address recipient, uint128 amount) external pure {
         uint256 actualLeaf = MerkleBuilder.computeLeaf(index, recipient, amount);
         uint256 expectedLeaf = uint256(keccak256(bytes.concat(keccak256(abi.encode(index, recipient, amount)))));
         assertEq(actualLeaf, expectedLeaf, "computeLeaf");
@@ -20,7 +20,7 @@ contract MerkleBuilder_Test is PRBTest, StdUtils {
         uint128 amounts;
     }
 
-    function testFuzz_ComputeLeaves(LeavesParams[] memory params) external {
+    function testFuzz_ComputeLeaves(LeavesParams[] memory params) external pure {
         uint256 count = params.length;
 
         uint256[] memory indexes = new uint256[](count);

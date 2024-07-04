@@ -1,25 +1,29 @@
 // SPDX-License-Identifier: UNLICENSED
 // solhint-disable max-states-count
-pragma solidity >=0.8.19 <0.9.0;
+pragma solidity >=0.8.22 <0.9.0;
 
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import { ISablierV2Comptroller } from "@sablier/v2-core/src/interfaces/ISablierV2Comptroller.sol";
 import { ISablierV2LockupDynamic } from "@sablier/v2-core/src/interfaces/ISablierV2LockupDynamic.sol";
 import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablierV2LockupLinear.sol";
-import { LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
+import { LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 import { Assertions as V2CoreAssertions } from "@sablier/v2-core/test/utils/Assertions.sol";
+import { Constants as V2CoreConstants } from "@sablier/v2-core/test/utils/Constants.sol";
 import { Utils as V2CoreUtils } from "@sablier/v2-core/test/utils/Utils.sol";
 
-import { ISablierV2Batch } from "src/interfaces/ISablierV2Batch.sol";
-import { ISablierV2MerkleStreamerFactory } from "src/interfaces/ISablierV2MerkleStreamerFactory.sol";
-import { ISablierV2MerkleStreamerLL } from "src/interfaces/ISablierV2MerkleStreamerLL.sol";
-import { SablierV2Batch } from "src/SablierV2Batch.sol";
-import { SablierV2MerkleStreamerFactory } from "src/SablierV2MerkleStreamerFactory.sol";
-import { SablierV2MerkleStreamerLL } from "src/SablierV2MerkleStreamerLL.sol";
+import { ISablierV2BatchLockup } from "src/interfaces/ISablierV2BatchLockup.sol";
+import { ISablierV2MerkleLL } from "src/interfaces/ISablierV2MerkleLL.sol";
+import { ISablierV2MerkleLockupFactory } from "src/interfaces/ISablierV2MerkleLockupFactory.sol";
+import { ISablierV2MerkleLT } from "src/interfaces/ISablierV2MerkleLT.sol";
+import { SablierV2BatchLockup } from "src/SablierV2BatchLockup.sol";
+import { SablierV2MerkleLL } from "src/SablierV2MerkleLL.sol";
+import { SablierV2MerkleLockupFactory } from "src/SablierV2MerkleLockupFactory.sol";
+import { SablierV2MerkleLT } from "src/SablierV2MerkleLT.sol";
 
+import { ERC20Mock } from "./mocks/erc20/ERC20Mock.sol";
+import { Assertions } from "./utils/Assertions.sol";
 import { Defaults } from "./utils/Defaults.sol";
 import { DeployOptimized } from "./utils/DeployOptimized.sol";
 import { Events } from "./utils/Events.sol";
@@ -27,7 +31,15 @@ import { Merkle } from "./utils/Murky.sol";
 import { Users } from "./utils/Types.sol";
 
 /// @notice Base test contract with common logic needed by all tests.
-abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions, V2CoreUtils {
+abstract contract Base_Test is
+    Assertions,
+    DeployOptimized,
+    Events,
+    Merkle,
+    V2CoreConstants,
+    V2CoreAssertions,
+    V2CoreUtils
+{
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
     //////////////////////////////////////////////////////////////////////////*/
@@ -38,14 +50,15 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                                    TEST CONTRACTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    IERC20 internal asset;
-    ISablierV2Batch internal batch;
-    ISablierV2Comptroller internal comptroller;
+    ISablierV2BatchLockup internal batchLockup;
+    IERC20 internal dai;
     Defaults internal defaults;
     ISablierV2LockupDynamic internal lockupDynamic;
     ISablierV2LockupLinear internal lockupLinear;
-    ISablierV2MerkleStreamerFactory internal merkleStreamerFactory;
-    ISablierV2MerkleStreamerLL internal merkleStreamerLL;
+    ISablierV2LockupTranched internal lockupTranched;
+    ISablierV2MerkleLockupFactory internal merkleLockupFactory;
+    ISablierV2MerkleLL internal merkleLL;
+    ISablierV2MerkleLT internal merkleLT;
 
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION
@@ -53,7 +66,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     function setUp() public virtual {
         // Deploy the default test asset.
-        asset = new ERC20("DAI Stablecoin", "DAI");
+        dai = new ERC20Mock("DAI Stablecoin", "DAI");
 
         // Create users for testing.
         users.alice = createUser("Alice");
@@ -71,81 +84,50 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
                                      HELPERS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Approves relevant contracts to spend assets from some users.
-    function approveContracts() internal {
-        // Approve Batch to spend assets from Alice.
-        changePrank({ msgSender: users.alice });
-        asset.approve({ spender: address(batch), amount: MAX_UINT256 });
+    /// @dev Approve `spender` to spend assets from `from`.
+    function approveContract(IERC20 asset_, address from, address spender) internal {
+        resetPrank({ msgSender: from });
+        (bool success,) = address(asset_).call(abi.encodeCall(IERC20.approve, (spender, MAX_UINT256)));
+        success;
     }
 
     /// @dev Generates a user, labels its address, and funds it with ETH.
     function createUser(string memory name) internal returns (address payable) {
         address user = makeAddr(name);
         vm.deal({ account: user, newBalance: 100_000 ether });
-        deal({ token: address(asset), to: user, give: 1_000_000e18 });
+        deal({ token: address(dai), to: user, give: 1_000_000e18 });
         return payable(user);
     }
 
     /// @dev Conditionally deploy V2 Periphery normally or from an optimized source compiled with `--via-ir`.
     function deployPeripheryConditionally() internal {
         if (!isTestOptimizedProfile()) {
-            batch = new SablierV2Batch();
-            merkleStreamerFactory = new SablierV2MerkleStreamerFactory();
+            batchLockup = new SablierV2BatchLockup();
+            merkleLockupFactory = new SablierV2MerkleLockupFactory();
         } else {
-            (batch, merkleStreamerFactory) = deployOptimizedPeriphery();
+            (batchLockup, merkleLockupFactory) = deployOptimizedPeriphery();
         }
     }
 
     /// @dev Labels the most relevant contracts.
-    function labelContracts() internal {
-        vm.label({ account: address(asset), newLabel: IERC20Metadata(address(asset)).symbol() });
-        vm.label({ account: address(merkleStreamerFactory), newLabel: "MerkleStreamerFactory" });
-        vm.label({ account: address(merkleStreamerLL), newLabel: "MerkleStreamerLL" });
+    function labelContracts(IERC20 asset_) internal {
+        vm.label({ account: address(asset_), newLabel: IERC20Metadata(address(asset_)).symbol() });
         vm.label({ account: address(defaults), newLabel: "Defaults" });
-        vm.label({ account: address(comptroller), newLabel: "Comptroller" });
         vm.label({ account: address(lockupDynamic), newLabel: "LockupDynamic" });
         vm.label({ account: address(lockupLinear), newLabel: "LockupLinear" });
+        vm.label({ account: address(lockupTranched), newLabel: "LockupTranched" });
+        vm.label({ account: address(merkleLL), newLabel: "MerkleLL" });
+        vm.label({ account: address(merkleLockupFactory), newLabel: "MerkleLockupFactory" });
+        vm.label({ account: address(merkleLT), newLabel: "MerkleLT" });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CALL EXPECTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Expects a call to {ISablierV2LockupDynamic.createWithDeltas}.
-    function expectCallToCreateWithDeltas(LockupDynamic.CreateWithDeltas memory params) internal {
-        vm.expectCall({
-            callee: address(lockupDynamic),
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupLinear.createWithDurations}.
-    function expectCallToCreateWithDurations(LockupLinear.CreateWithDurations memory params) internal {
-        vm.expectCall({
-            callee: address(lockupLinear),
-            data: abi.encodeCall(ISablierV2LockupLinear.createWithDurations, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupDynamic.createWithMilestones}.
-    function expectCallToCreateWithMilestones(LockupDynamic.CreateWithMilestones memory params) internal {
-        vm.expectCall({
-            callee: address(lockupDynamic),
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
-        });
-    }
-
-    /// @dev Expects a call to {ISablierV2LockupLinear.createWithRange}.
-    function expectCallToCreateWithRange(LockupLinear.CreateWithRange memory params) internal {
-        vm.expectCall({
-            callee: address(lockupLinear),
-            data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
-        });
-    }
-
     /// @dev Expects a call to {IERC20.transfer}.
     function expectCallToTransfer(address to, uint256 amount) internal {
-        expectCallToTransfer(address(asset), to, amount);
+        expectCallToTransfer(address(dai), to, amount);
     }
 
     /// @dev Expects a call to {IERC20.transfer}.
@@ -155,7 +137,7 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
 
     /// @dev Expects a call to {IERC20.transferFrom}.
     function expectCallToTransferFrom(address from, address to, uint256 amount) internal {
-        expectCallToTransferFrom(address(asset), from, to, amount);
+        expectCallToTransferFrom(address(dai), from, to, amount);
     }
 
     /// @dev Expects a call to {IERC20.transferFrom}.
@@ -163,24 +145,24 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         vm.expectCall({ callee: asset_, data: abi.encodeCall(IERC20.transferFrom, (from, to, amount)) });
     }
 
-    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithDeltas}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithDurations}, each with the specified
     /// `params`.
-    function expectMultipleCallsToCreateWithDeltas(
+    function expectMultipleCallsToCreateWithDurationsLD(
         uint64 count,
-        LockupDynamic.CreateWithDeltas memory params
+        LockupDynamic.CreateWithDurations memory params
     )
         internal
     {
         vm.expectCall({
             callee: address(lockupDynamic),
             count: count,
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDeltas, (params))
+            data: abi.encodeCall(ISablierV2LockupDynamic.createWithDurations, (params))
         });
     }
 
-    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithDurations}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithDurations}, each with the specified
     /// `params`.
-    function expectMultipleCallsToCreateWithDurations(
+    function expectMultipleCallsToCreateWithDurationsLL(
         uint64 count,
         LockupLinear.CreateWithDurations memory params
     )
@@ -193,39 +175,74 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
         });
     }
 
-    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithMilestones}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupTranched.createWithDurations}, each with the specified
     /// `params`.
-    function expectMultipleCallsToCreateWithMilestones(
+    function expectMultipleCallsToCreateWithDurationsLT(
         uint64 count,
-        LockupDynamic.CreateWithMilestones memory params
+        LockupTranched.CreateWithDurations memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(lockupTranched),
+            count: count,
+            data: abi.encodeCall(ISablierV2LockupTranched.createWithDurations, (params))
+        });
+    }
+
+    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithTimestamps}, each with the specified
+    /// `params`.
+    function expectMultipleCallsToCreateWithTimestampsLD(
+        uint64 count,
+        LockupDynamic.CreateWithTimestamps memory params
     )
         internal
     {
         vm.expectCall({
             callee: address(lockupDynamic),
             count: count,
-            data: abi.encodeCall(ISablierV2LockupDynamic.createWithMilestones, (params))
+            data: abi.encodeCall(ISablierV2LockupDynamic.createWithTimestamps, (params))
         });
     }
 
-    /// @dev Expects multiple calls to {ISablierV2LockupDynamic.createWithRange}, each with the specified
+    /// @dev Expects multiple calls to {ISablierV2LockupLinear.createWithTimestamps}, each with the specified
     /// `params`.
-    function expectMultipleCallsToCreateWithRange(uint64 count, LockupLinear.CreateWithRange memory params) internal {
+    function expectMultipleCallsToCreateWithTimestampsLL(
+        uint64 count,
+        LockupLinear.CreateWithTimestamps memory params
+    )
+        internal
+    {
         vm.expectCall({
             callee: address(lockupLinear),
             count: count,
-            data: abi.encodeCall(ISablierV2LockupLinear.createWithRange, (params))
+            data: abi.encodeCall(ISablierV2LockupLinear.createWithTimestamps, (params))
+        });
+    }
+
+    /// @dev Expects multiple calls to {ISablierV2LockupTranched.createWithTimestamps}, each with the specified
+    /// `params`.
+    function expectMultipleCallsToCreateWithTimestampsLT(
+        uint64 count,
+        LockupTranched.CreateWithTimestamps memory params
+    )
+        internal
+    {
+        vm.expectCall({
+            callee: address(lockupTranched),
+            count: count,
+            data: abi.encodeCall(ISablierV2LockupTranched.createWithTimestamps, (params))
         });
     }
 
     /// @dev Expects multiple calls to {IERC20.transfer}.
     function expectMultipleCallsToTransfer(uint64 count, address to, uint256 amount) internal {
-        vm.expectCall({ callee: address(asset), count: count, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
+        vm.expectCall({ callee: address(dai), count: count, data: abi.encodeCall(IERC20.transfer, (to, amount)) });
     }
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
     function expectMultipleCallsToTransferFrom(uint64 count, address from, address to, uint256 amount) internal {
-        expectMultipleCallsToTransferFrom(address(asset), count, from, to, amount);
+        expectMultipleCallsToTransferFrom(address(dai), count, from, to, amount);
     }
 
     /// @dev Expects multiple calls to {IERC20.transferFrom}.
@@ -242,62 +259,139 @@ abstract contract Base_Test is DeployOptimized, Events, Merkle, V2CoreAssertions
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                  MERKLE-STREAMER
+                                  MERKLE-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    function computeMerkleStreamerLLAddress(
+    function computeMerkleLLAddress(
         address admin,
         bytes32 merkleRoot,
         uint40 expiration
     )
         internal
+        view
+        returns (address)
+    {
+        return computeMerkleLLAddress(admin, dai, merkleRoot, expiration);
+    }
+
+    function computeMerkleLLAddress(
+        address admin,
+        IERC20 asset_,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        view
         returns (address)
     {
         bytes32 salt = keccak256(
             abi.encodePacked(
-                admin,
-                lockupLinear,
-                asset,
-                merkleRoot,
-                expiration,
-                abi.encode(defaults.durations()),
+                users.alice,
+                address(asset_),
                 defaults.CANCELABLE(),
-                defaults.TRANSFERABLE()
+                expiration,
+                admin,
+                abi.encode(defaults.IPFS_CID()),
+                merkleRoot,
+                defaults.NAME_BYTES32(),
+                defaults.TRANSFERABLE(),
+                lockupLinear,
+                abi.encode(defaults.durations())
             )
         );
-        bytes32 creationBytecodeHash = keccak256(getMerkleStreamerLLBytecode(admin, merkleRoot, expiration));
-        return computeCreate2Address({
+        bytes32 creationBytecodeHash = keccak256(getMerkleLLBytecode(admin, asset_, merkleRoot, expiration));
+        return vm.computeCreate2Address({
             salt: salt,
-            initcodeHash: creationBytecodeHash,
-            deployer: address(merkleStreamerFactory)
+            initCodeHash: creationBytecodeHash,
+            deployer: address(merkleLockupFactory)
         });
     }
 
-    function getMerkleStreamerLLBytecode(
+    function computeMerkleLTAddress(
         address admin,
         bytes32 merkleRoot,
         uint40 expiration
     )
         internal
+        view
+        returns (address)
+    {
+        return computeMerkleLTAddress(admin, dai, merkleRoot, expiration);
+    }
+
+    function computeMerkleLTAddress(
+        address admin,
+        IERC20 asset_,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        view
+        returns (address)
+    {
+        bytes32 salt = keccak256(
+            abi.encodePacked(
+                users.alice,
+                address(asset_),
+                defaults.CANCELABLE(),
+                expiration,
+                admin,
+                abi.encode(defaults.IPFS_CID()),
+                merkleRoot,
+                defaults.NAME_BYTES32(),
+                defaults.TRANSFERABLE(),
+                lockupTranched,
+                abi.encode(defaults.tranchesWithPercentages())
+            )
+        );
+        bytes32 creationBytecodeHash = keccak256(getMerkleLTBytecode(admin, asset_, merkleRoot, expiration));
+        return vm.computeCreate2Address({
+            salt: salt,
+            initCodeHash: creationBytecodeHash,
+            deployer: address(merkleLockupFactory)
+        });
+    }
+
+    function getMerkleLLBytecode(
+        address admin,
+        IERC20 asset_,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        view
+        returns (bytes memory)
+    {
+        bytes memory constructorArgs =
+            abi.encode(defaults.baseParams(admin, asset_, expiration, merkleRoot), lockupLinear, defaults.durations());
+        if (!isTestOptimizedProfile()) {
+            return bytes.concat(type(SablierV2MerkleLL).creationCode, constructorArgs);
+        } else {
+            return
+                bytes.concat(vm.getCode("out-optimized/SablierV2MerkleLL.sol/SablierV2MerkleLL.json"), constructorArgs);
+        }
+    }
+
+    function getMerkleLTBytecode(
+        address admin,
+        IERC20 asset_,
+        bytes32 merkleRoot,
+        uint40 expiration
+    )
+        internal
+        view
         returns (bytes memory)
     {
         bytes memory constructorArgs = abi.encode(
-            admin,
-            lockupLinear,
-            asset,
-            merkleRoot,
-            expiration,
-            defaults.durations(),
-            defaults.CANCELABLE(),
-            defaults.TRANSFERABLE()
+            defaults.baseParams(admin, asset_, expiration, merkleRoot),
+            lockupTranched,
+            defaults.tranchesWithPercentages()
         );
         if (!isTestOptimizedProfile()) {
-            return bytes.concat(type(SablierV2MerkleStreamerLL).creationCode, constructorArgs);
+            return bytes.concat(type(SablierV2MerkleLT).creationCode, constructorArgs);
         } else {
-            return bytes.concat(
-                vm.getCode("out-optimized/SablierV2MerkleStreamerLL.sol/SablierV2MerkleStreamerLL.json"),
-                constructorArgs
-            );
+            return
+                bytes.concat(vm.getCode("out-optimized/SablierV2MerkleLT.sol/SablierV2MerkleLT.json"), constructorArgs);
         }
     }
 }

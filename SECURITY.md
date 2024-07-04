@@ -31,8 +31,8 @@ The Program does NOT cover the following:
 
 Vulnerabilities contingent upon the occurrence of any of the following also are outside the scope of this Program:
 
-- Front-end bugs
-- DDOS attacks
+- Front-end bugs (clickjacking etc.)
+- DDoS attacks
 - Spamming
 - Phishing
 - Social engineering attacks
@@ -47,6 +47,8 @@ vulnerability, it must adhere to these assumptions as well:
 
 - [All assumptions](https://github.com/sablier-labs/v2-core/blob/main/SECURITY.md) in Sablier V2 Core apply to Sablier
   V2 Periphery as well.
+- In `SablierV2MerkleLT`, the tranche unlock percentages and the durations will be same for all airdrop claimers.
+- In `SablierV2MerkleLockupFactory`, there should be no need to create two Merkle campaigns with identical parameters.
 
 ### Rewards
 

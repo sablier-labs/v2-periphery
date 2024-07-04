@@ -1,7 +1,7 @@
 {
   "name": "@sablier/v2-periphery",
   "description": "Peripheral smart contracts for interacting with Sablier V2",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "author": {
     "name": "Sablier Labs Ltd",
     "url": "https://sablier.com"
@@ -10,25 +10,27 @@
     "url": "https://github.com/sablier-labs/v2-periphery/issues"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "4.9.2",
-    "@prb/math": "4.0.2",
-    "@sablier/v2-core": "1.1.2"
+    "@openzeppelin/contracts": "5.0.2",
+    "@prb/math": "4.0.3",
+    "@sablier/v2-core": "1.2.0"
   },
   "devDependencies": {
-    "@prb/test": "0.6.4",
-    "forge-std": "github:foundry-rs/forge-std#v1.5.6",
-    "prettier": "^2.8.8",
-    "solady": "0.0.129",
-    "solhint": "^4.0.0"
+    "forge-std": "github:foundry-rs/forge-std#v1.8.2",
+    "prettier": "^3.3.2",
+    "solady": "0.0.208",
+    "solhint": "^5.0.1"
   },
   "files": [
     "artifacts",
+    "precompiles",
     "src",
     "test/utils",
     "CHANGELOG.md"
   ],
   "homepage": "https://github.com/sablier-labs/v2-periphery#readme",
   "keywords": [
+    "airdrops",
+    "airstreams",
     "asset-distribution",
     "asset-streaming",
     "blockchain",
@@ -49,21 +51,19 @@
     "web3"
   ],
   "peerDependencies": {
-    "@sablier/v2-core": "1.1.2"
+    "@sablier/v2-core": "1.2.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "repository": "github:sablier-labs/v2-periphery",
   "scripts": {
+    "benchmark": "bun run build:optimized && FOUNDRY_PROFILE=benchmark forge test --mt testGas && bun run prettier:write",
     "build": "forge build",
     "build:optimized": "FOUNDRY_PROFILE=optimized forge build",
     "clean": "rm -rf artifacts broadcast cache docs out-optimized out",
-    "gas:report": "forge test --gas-report --no-match-test \"test(Fuzz)?_RevertWhen_\\w{1,}?\"",
-    "gas:snapshot": "forge snapshot --no-match-test \"test(Fuzz)?_RevertWhen_\\w{1,}?\"",
-    "gas:snapshot:optimized": "bun run build:optimized && FOUNDRY_PROFILE=test-optimized forge snapshot --no-match-test \"test(Fork)?(Fuzz)?_RevertWhen_\\w{1,}?\"",
     "lint": "bun run lint:sol && bun run prettier:check",
-    "lint:sol": "forge fmt --check && bun solhint \"{script,src,test}/**/*.sol\"",
+    "lint:sol": "forge fmt --check && bun solhint \"{precompiles,script,src,test}/**/*.sol\"",
     "prepack": "bun install && bash ./shell/prepare-artifacts.sh",
     "prettier:check": "prettier --check \"**/*.{json,md,yml}\"",
     "prettier:write": "prettier --write \"**/*.{json,md,yml}\"",

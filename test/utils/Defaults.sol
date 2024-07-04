@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity >=0.8.19 <0.9.0;
+pragma solidity >=0.8.22 <0.9.0;
 
 import { Arrays } from "@openzeppelin/contracts/utils/Arrays.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { ud2x18 } from "@prb/math/src/UD2x18.sol";
-import { UD60x18 } from "@prb/math/src/UD60x18.sol";
-import { Broker, LockupDynamic, LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
+import { ud2x18, uUNIT } from "@prb/math/src/UD2x18.sol";
+import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
+import { Broker, LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
-import { Batch } from "src/types/DataTypes.sol";
+import { BatchLockup, MerkleLockup, MerkleLT } from "src/types/DataTypes.sol";
 
 import { ArrayBuilder } from "./ArrayBuilder.sol";
-import { BatchBuilder } from "./BatchBuilder.sol";
+import { BatchLockupBuilder } from "./BatchLockupBuilder.sol";
 import { Merkle } from "./Murky.sol";
 import { MerkleBuilder } from "./MerkleBuilder.sol";
 import { Users } from "./Types.sol";
@@ -29,9 +29,7 @@ contract Defaults is Merkle {
     uint40 public immutable CLIFF_TIME;
     uint40 public immutable END_TIME;
     uint256 public constant ETHER_AMOUNT = 10_000 ether;
-    uint256 public constant MAX_SEGMENT_COUNT = 1000;
     uint128 public constant PER_STREAM_AMOUNT = 10_000e18;
-    UD60x18 public constant PROTOCOL_FEE = UD60x18.wrap(0);
     uint128 public constant REFUND_AMOUNT = 7500e18; // deposit - cliff amount
     uint40 public immutable START_TIME;
     uint40 public constant TOTAL_DURATION = 10_000 seconds;
@@ -39,22 +37,26 @@ contract Defaults is Merkle {
     uint128 public constant WITHDRAW_AMOUNT = 2500e18;
 
     /*//////////////////////////////////////////////////////////////////////////
-                                  MERKLE-STREAMER
+                                  MERKLE-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    uint256 public constant AGGREGATE_AMOUNT = CLAIM_AMOUNT * RECIPIENTS_COUNT;
+    uint256 public constant AGGREGATE_AMOUNT = CLAIM_AMOUNT * RECIPIENT_COUNT;
     bool public constant CANCELABLE = false;
     uint128 public constant CLAIM_AMOUNT = 10_000e18;
     uint40 public immutable EXPIRATION;
+    uint40 public immutable FIRST_CLAIM_TIME;
     uint256 public constant INDEX1 = 1;
     uint256 public constant INDEX2 = 2;
     uint256 public constant INDEX3 = 3;
     uint256 public constant INDEX4 = 4;
     string public constant IPFS_CID = "QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR";
-    uint256 public constant RECIPIENTS_COUNT = 4;
-    bool public constant TRANSFERABLE = false;
-    uint256[] public LEAVES = new uint256[](RECIPIENTS_COUNT);
+    uint256[] public LEAVES = new uint256[](RECIPIENT_COUNT);
+    uint256 public constant RECIPIENT_COUNT = 4;
     bytes32 public immutable MERKLE_ROOT;
+    string public constant NAME = "Airdrop Campaign";
+    bytes32 public constant NAME_BYTES32 = bytes32(abi.encodePacked("Airdrop Campaign"));
+    uint64 public constant TOTAL_PERCENTAGE = uUNIT;
+    bool public constant TRANSFERABLE = false;
 
     /*//////////////////////////////////////////////////////////////////////////
                                      VARIABLES
@@ -76,6 +78,7 @@ contract Defaults is Merkle {
         CLIFF_TIME = START_TIME + CLIFF_DURATION;
         END_TIME = START_TIME + TOTAL_DURATION;
         EXPIRATION = uint40(block.timestamp) + 12 weeks;
+        FIRST_CLAIM_TIME = uint40(block.timestamp);
 
         // Initialize the Merkle tree.
         LEAVES[0] = MerkleBuilder.computeLeaf(INDEX1, users.recipient1, CLAIM_AMOUNT);
@@ -86,8 +89,12 @@ contract Defaults is Merkle {
         MERKLE_ROOT = getRoot(LEAVES.toBytes32());
     }
 
+    function getLeaves() public view returns (uint256[] memory) {
+        return LEAVES;
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
-                                  MERKLE-STREAMER
+                                  MERKLE-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
     function index1Proof() public view returns (bytes32[] memory) {
@@ -114,6 +121,44 @@ contract Defaults is Merkle {
         return getProof(LEAVES.toBytes32(), pos);
     }
 
+    function baseParams() public view returns (MerkleLockup.ConstructorParams memory) {
+        return baseParams(users.admin, asset, EXPIRATION, MERKLE_ROOT);
+    }
+
+    function baseParams(
+        address admin,
+        IERC20 asset_,
+        uint40 expiration,
+        bytes32 merkleRoot
+    )
+        public
+        pure
+        returns (MerkleLockup.ConstructorParams memory)
+    {
+        return MerkleLockup.ConstructorParams({
+            asset: asset_,
+            cancelable: CANCELABLE,
+            expiration: expiration,
+            initialAdmin: admin,
+            ipfsCID: IPFS_CID,
+            merkleRoot: merkleRoot,
+            name: NAME,
+            transferable: TRANSFERABLE
+        });
+    }
+
+    function tranchesWithPercentages()
+        public
+        pure
+        returns (MerkleLT.TrancheWithPercentage[] memory tranchesWithPercentages_)
+    {
+        tranchesWithPercentages_ = new MerkleLT.TrancheWithPercentage[](2);
+        tranchesWithPercentages_[0] =
+            MerkleLT.TrancheWithPercentage({ unlockPercentage: ud2x18(0.25e18), duration: 2500 seconds });
+        tranchesWithPercentages_[1] =
+            MerkleLT.TrancheWithPercentage({ unlockPercentage: ud2x18(0.75e18), duration: 7500 seconds });
+    }
+
     /*//////////////////////////////////////////////////////////////////////////
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
@@ -135,116 +180,128 @@ contract Defaults is Merkle {
                              SABLIER-V2-LOCKUP-DYNAMIC
     //////////////////////////////////////////////////////////////////////////*/
 
-    function createWithDeltas() public view returns (LockupDynamic.CreateWithDeltas memory) {
-        return createWithDeltas(asset);
+    function createWithDurationsLD() public view returns (LockupDynamic.CreateWithDurations memory) {
+        return createWithDurationsLD(asset, PER_STREAM_AMOUNT, segmentsWithDurations());
     }
 
-    function createWithDeltas(IERC20 asset_) public view returns (LockupDynamic.CreateWithDeltas memory) {
-        return LockupDynamic.CreateWithDeltas({
-            asset: asset_,
-            broker: broker(),
-            cancelable: true,
-            recipient: users.recipient0,
-            segments: segmentsWithDeltas(),
+    function createWithDurationsLD(
+        IERC20 asset_,
+        uint128 totalAmount_,
+        LockupDynamic.SegmentWithDuration[] memory segments_
+    )
+        public
+        view
+        returns (LockupDynamic.CreateWithDurations memory)
+    {
+        return LockupDynamic.CreateWithDurations({
             sender: users.alice,
-            totalAmount: PER_STREAM_AMOUNT,
-            transferable: true
+            recipient: users.recipient0,
+            totalAmount: totalAmount_,
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            segments: segments_,
+            broker: broker()
         });
     }
 
-    function createWithMilestones() public view returns (LockupDynamic.CreateWithMilestones memory) {
-        return createWithMilestones(asset);
+    function createWithTimestampsLD() public view returns (LockupDynamic.CreateWithTimestamps memory) {
+        return createWithTimestampsLD(asset, PER_STREAM_AMOUNT, segments());
     }
 
-    function createWithMilestones(IERC20 asset_) public view returns (LockupDynamic.CreateWithMilestones memory) {
-        return LockupDynamic.CreateWithMilestones({
-            asset: asset_,
-            broker: broker(),
-            cancelable: true,
-            recipient: users.recipient0,
-            segments: segments(),
+    function createWithTimestampsLD(
+        IERC20 asset_,
+        uint128 totalAmount_,
+        LockupDynamic.Segment[] memory segments_
+    )
+        public
+        view
+        returns (LockupDynamic.CreateWithTimestamps memory)
+    {
+        return LockupDynamic.CreateWithTimestamps({
             sender: users.alice,
+            recipient: users.recipient0,
+            totalAmount: totalAmount_,
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
             startTime: START_TIME,
-            totalAmount: PER_STREAM_AMOUNT,
-            transferable: true
+            segments: segments_,
+            broker: broker()
         });
     }
 
-    function dynamicRange() public view returns (LockupDynamic.Range memory) {
-        return LockupDynamic.Range({ start: START_TIME, end: END_TIME });
-    }
-
-    /// @dev Returns a batch of `LockupDynamic.Segment` parameters.
-    function segments() private view returns (LockupDynamic.Segment[] memory segments_) {
+    /// @dev Returns a batch of {LockupDynamic.Segment} parameters.
+    function segments() public view returns (LockupDynamic.Segment[] memory segments_) {
         segments_ = new LockupDynamic.Segment[](2);
         segments_[0] = LockupDynamic.Segment({
             amount: 2500e18,
             exponent: ud2x18(3.14e18),
-            milestone: START_TIME + CLIFF_DURATION
+            timestamp: START_TIME + CLIFF_DURATION
         });
         segments_[1] = LockupDynamic.Segment({
             amount: 7500e18,
             exponent: ud2x18(3.14e18),
-            milestone: START_TIME + TOTAL_DURATION
+            timestamp: START_TIME + TOTAL_DURATION
         });
     }
 
-    /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
-    function segmentsWithDeltas() public pure returns (LockupDynamic.SegmentWithDelta[] memory) {
-        return segmentsWithDeltas({ amount0: 2500e18, amount1: 7500e18 });
+    /// @dev Returns a batch of {LockupDynamic.SegmentWithDuration} parameters.
+    function segmentsWithDurations() public pure returns (LockupDynamic.SegmentWithDuration[] memory) {
+        return segmentsWithDurations({ amount0: 2500e18, amount1: 7500e18 });
     }
 
-    /// @dev Returns a batch of `LockupDynamic.SegmentWithDelta` parameters.
-    function segmentsWithDeltas(
+    /// @dev Returns a batch of {LockupDynamic.SegmentWithDuration} parameters.
+    function segmentsWithDurations(
         uint128 amount0,
         uint128 amount1
     )
         public
         pure
-        returns (LockupDynamic.SegmentWithDelta[] memory segments_)
+        returns (LockupDynamic.SegmentWithDuration[] memory segments_)
     {
-        segments_ = new LockupDynamic.SegmentWithDelta[](2);
+        segments_ = new LockupDynamic.SegmentWithDuration[](2);
         segments_[0] =
-            LockupDynamic.SegmentWithDelta({ amount: amount0, exponent: ud2x18(3.14e18), delta: 2500 seconds });
+            LockupDynamic.SegmentWithDuration({ amount: amount0, exponent: ud2x18(3.14e18), duration: 2500 seconds });
         segments_[1] =
-            LockupDynamic.SegmentWithDelta({ amount: amount1, exponent: ud2x18(3.14e18), delta: 7500 seconds });
+            LockupDynamic.SegmentWithDuration({ amount: amount1, exponent: ud2x18(3.14e18), duration: 7500 seconds });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
                              SABLIER-V2-LOCKUP-LINEAR
     //////////////////////////////////////////////////////////////////////////*/
 
-    function createWithDurations() public view returns (LockupLinear.CreateWithDurations memory) {
-        return createWithDurations(asset);
+    function createWithDurationsLL() public view returns (LockupLinear.CreateWithDurations memory) {
+        return createWithDurationsLL(asset);
     }
 
-    function createWithDurations(IERC20 asset_) public view returns (LockupLinear.CreateWithDurations memory) {
+    function createWithDurationsLL(IERC20 asset_) public view returns (LockupLinear.CreateWithDurations memory) {
         return LockupLinear.CreateWithDurations({
-            asset: asset_,
-            broker: broker(),
-            cancelable: true,
-            durations: durations(),
-            recipient: users.recipient0,
             sender: users.alice,
+            recipient: users.recipient0,
             totalAmount: PER_STREAM_AMOUNT,
-            transferable: true
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            durations: durations(),
+            broker: broker()
         });
     }
 
-    function createWithRange() public view returns (LockupLinear.CreateWithRange memory) {
-        return createWithRange(asset);
+    function createWithTimestampsLL() public view returns (LockupLinear.CreateWithTimestamps memory) {
+        return createWithTimestampsLL(asset);
     }
 
-    function createWithRange(IERC20 asset_) public view returns (LockupLinear.CreateWithRange memory) {
-        return LockupLinear.CreateWithRange({
-            asset: asset_,
-            broker: broker(),
-            cancelable: true,
-            range: linearRange(),
-            recipient: users.recipient0,
+    function createWithTimestampsLL(IERC20 asset_) public view returns (LockupLinear.CreateWithTimestamps memory) {
+        return LockupLinear.CreateWithTimestamps({
             sender: users.alice,
+            recipient: users.recipient0,
             totalAmount: PER_STREAM_AMOUNT,
-            transferable: true
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            timestamps: linearTimestamps(),
+            broker: broker()
         });
     }
 
@@ -252,45 +309,165 @@ contract Defaults is Merkle {
         return LockupLinear.Durations({ cliff: CLIFF_DURATION, total: TOTAL_DURATION });
     }
 
-    function linearRange() private view returns (LockupLinear.Range memory) {
-        return LockupLinear.Range({ start: START_TIME, cliff: CLIFF_TIME, end: END_TIME });
+    function linearTimestamps() private view returns (LockupLinear.Timestamps memory) {
+        return LockupLinear.Timestamps({ start: START_TIME, cliff: CLIFF_TIME, end: END_TIME });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
-                                        BATCH
+                             SABLIER-V2-LOCKUP-TRANCHED
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithDeltas` parameters.
-    function batchCreateWithDeltas() public view returns (Batch.CreateWithDeltas[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithDeltas(), BATCH_SIZE);
+    function createWithDurationsLT() public view returns (LockupTranched.CreateWithDurations memory) {
+        return createWithDurationsLT(asset, PER_STREAM_AMOUNT, tranchesWithDurations());
     }
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithDurations` parameters.
-    function batchCreateWithDurations() public view returns (Batch.CreateWithDurations[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithDurations(), BATCH_SIZE);
-    }
-
-    /// @dev Returns a default-size batch of `Batch.CreateWithMilestones` parameters.
-    function batchCreateWithMilestones() public view returns (Batch.CreateWithMilestones[] memory batch) {
-        batch = batchCreateWithMilestones(BATCH_SIZE);
-    }
-
-    /// @dev Returns a batch of `Batch.CreateWithMilestones` parameters.
-    function batchCreateWithMilestones(uint256 batchSize)
+    function createWithDurationsLT(
+        IERC20 asset_,
+        uint128 totalAmount_,
+        LockupTranched.TrancheWithDuration[] memory tranches_
+    )
         public
         view
-        returns (Batch.CreateWithMilestones[] memory batch)
+        returns (LockupTranched.CreateWithDurations memory)
     {
-        batch = BatchBuilder.fillBatch(createWithMilestones(), batchSize);
+        return LockupTranched.CreateWithDurations({
+            sender: users.alice,
+            recipient: users.recipient0,
+            totalAmount: totalAmount_,
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            tranches: tranches_,
+            broker: broker()
+        });
     }
 
-    /// @dev Returns a default-size batch of `Batch.CreateWithRange` parameters.
-    function batchCreateWithRange() public view returns (Batch.CreateWithRange[] memory batch) {
-        batch = batchCreateWithRange(BATCH_SIZE);
+    function createWithTimestampsLT() public view returns (LockupTranched.CreateWithTimestamps memory) {
+        return createWithTimestampsLT(asset, PER_STREAM_AMOUNT, tranches());
     }
 
-    /// @dev Returns a batch of `Batch.CreateWithRange` parameters.
-    function batchCreateWithRange(uint256 batchSize) public view returns (Batch.CreateWithRange[] memory batch) {
-        batch = BatchBuilder.fillBatch(createWithRange(), batchSize);
+    function createWithTimestampsLT(
+        IERC20 asset_,
+        uint128 totalAmount_,
+        LockupTranched.Tranche[] memory tranches_
+    )
+        public
+        view
+        returns (LockupTranched.CreateWithTimestamps memory)
+    {
+        return LockupTranched.CreateWithTimestamps({
+            sender: users.alice,
+            recipient: users.recipient0,
+            totalAmount: totalAmount_,
+            asset: asset_,
+            cancelable: true,
+            transferable: true,
+            startTime: START_TIME,
+            tranches: tranches_,
+            broker: broker()
+        });
+    }
+
+    function tranches() public view returns (LockupTranched.Tranche[] memory tranches_) {
+        tranches_ = new LockupTranched.Tranche[](2);
+        tranches_[0] = LockupTranched.Tranche({ amount: 2500e18, timestamp: uint40(block.timestamp) + CLIFF_DURATION });
+        tranches_[1] = LockupTranched.Tranche({ amount: 7500e18, timestamp: uint40(block.timestamp) + TOTAL_DURATION });
+    }
+
+    /// @dev Mirros the logic from {SablierV2MerkleLT._calculateTranches}.
+    function tranches(uint128 totalAmount) public view returns (LockupTranched.Tranche[] memory tranches_) {
+        tranches_ = tranches();
+
+        uint128 amount0 = ud(totalAmount).mul(tranchesWithPercentages()[0].unlockPercentage.intoUD60x18()).intoUint128();
+        uint128 amount1 = ud(totalAmount).mul(tranchesWithPercentages()[1].unlockPercentage.intoUD60x18()).intoUint128();
+
+        tranches_[0].amount = amount0;
+        tranches_[1].amount = amount1;
+
+        uint128 amountsSum = amount0 + amount1;
+
+        if (amountsSum != totalAmount) {
+            tranches_[1].amount += totalAmount - amountsSum;
+        }
+    }
+
+    /// @dev Returns a batch of {LockupTranched.TrancheWithDuration} parameters.
+    function tranchesWithDurations() public pure returns (LockupTranched.TrancheWithDuration[] memory) {
+        return tranchesWithDurations({ amount0: 2500e18, amount1: 7500e18 });
+    }
+
+    /// @dev Returns a batch of {LockupTranched.TrancheWithDuration} parameters.
+    function tranchesWithDurations(
+        uint128 amount0,
+        uint128 amount1
+    )
+        public
+        pure
+        returns (LockupTranched.TrancheWithDuration[] memory segments_)
+    {
+        segments_ = new LockupTranched.TrancheWithDuration[](2);
+        segments_[0] = LockupTranched.TrancheWithDuration({ amount: amount0, duration: 2500 seconds });
+        segments_[1] = LockupTranched.TrancheWithDuration({ amount: amount1, duration: 7500 seconds });
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////
+                                    BATCH-LOCKUP
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithDurationsLD} parameters.
+    function batchCreateWithDurationsLD() public view returns (BatchLockup.CreateWithDurationsLD[] memory batch) {
+        batch = BatchLockupBuilder.fillBatch(createWithDurationsLD(), BATCH_SIZE);
+    }
+
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithDurationsLL} parameters.
+    function batchCreateWithDurationsLL() public view returns (BatchLockup.CreateWithDurationsLL[] memory batch) {
+        batch = BatchLockupBuilder.fillBatch(createWithDurationsLL(), BATCH_SIZE);
+    }
+
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithDurationsLT} parameters.
+    function batchCreateWithDurationsLT() public view returns (BatchLockup.CreateWithDurationsLT[] memory batch) {
+        batch = BatchLockupBuilder.fillBatch(createWithDurationsLT(), BATCH_SIZE);
+    }
+
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithTimestampsLD} parameters.
+    function batchCreateWithTimestampsLD() public view returns (BatchLockup.CreateWithTimestampsLD[] memory batch) {
+        batch = batchCreateWithTimestampsLD(BATCH_SIZE);
+    }
+
+    /// @dev Returns a batch of {BatchLockup.CreateWithTimestampsLD} parameters.
+    function batchCreateWithTimestampsLD(uint256 batchSize)
+        public
+        view
+        returns (BatchLockup.CreateWithTimestampsLD[] memory batch)
+    {
+        batch = BatchLockupBuilder.fillBatch(createWithTimestampsLD(), batchSize);
+    }
+
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithTimestampsLL} parameters.
+    function batchCreateWithTimestampsLL() public view returns (BatchLockup.CreateWithTimestampsLL[] memory batch) {
+        batch = batchCreateWithTimestampsLL(BATCH_SIZE);
+    }
+
+    /// @dev Returns a batch of {BatchLockup.CreateWithTimestampsLL} parameters.
+    function batchCreateWithTimestampsLL(uint256 batchSize)
+        public
+        view
+        returns (BatchLockup.CreateWithTimestampsLL[] memory batch)
+    {
+        batch = BatchLockupBuilder.fillBatch(createWithTimestampsLL(), batchSize);
+    }
+
+    /// @dev Returns a default-size batch of {BatchLockup.CreateWithTimestampsLT} parameters.
+    function batchCreateWithTimestampsLT() public view returns (BatchLockup.CreateWithTimestampsLT[] memory batch) {
+        batch = batchCreateWithTimestampsLT(BATCH_SIZE);
+    }
+
+    /// @dev Returns a batch of {BatchLockup.CreateWithTimestampsLL} parameters.
+    function batchCreateWithTimestampsLT(uint256 batchSize)
+        public
+        view
+        returns (BatchLockup.CreateWithTimestampsLT[] memory batch)
+    {
+        batch = BatchLockupBuilder.fillBatch(createWithTimestampsLT(), batchSize);
     }
 }

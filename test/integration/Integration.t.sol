@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity >=0.8.19 <0.9.0;
+pragma solidity >=0.8.22 <0.9.0;
 
-import { Precompiles as V2CorePrecompiles } from "@sablier/v2-core/test/utils/Precompiles.sol";
+import { Precompiles as V2CorePrecompiles } from "@sablier/v2-core/precompiles/Precompiles.sol";
 
 import { Defaults } from "../utils/Defaults.sol";
 import { Base_Test } from "../Base.t.sol";
@@ -20,16 +20,16 @@ abstract contract Integration_Test is Base_Test {
         deployDependencies();
 
         // Deploy the defaults contract.
-        defaults = new Defaults(users, asset);
+        defaults = new Defaults({ users_: users, asset_: dai });
 
         // Deploy V2 Periphery.
         deployPeripheryConditionally();
 
         // Label the contracts.
-        labelContracts();
+        labelContracts(dai);
 
-        // Approve the relevant contracts.
-        approveContracts();
+        // Approve the BatchLockup contract.
+        approveContract({ asset_: dai, from: users.alice, spender: address(batchLockup) });
     }
 
     /*//////////////////////////////////////////////////////////////////////////
@@ -37,6 +37,6 @@ abstract contract Integration_Test is Base_Test {
     //////////////////////////////////////////////////////////////////////////*/
 
     function deployDependencies() private {
-        (comptroller, lockupDynamic, lockupLinear,) = new V2CorePrecompiles().deployCore(users.admin);
+        (lockupDynamic, lockupLinear, lockupTranched,) = new V2CorePrecompiles().deployCore(users.admin);
     }
 }
