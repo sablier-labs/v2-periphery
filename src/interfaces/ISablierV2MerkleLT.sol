@@ -4,7 +4,7 @@ pragma solidity >=0.8.22;
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 
 import { ISablierV2MerkleLockup } from "./ISablierV2MerkleLockup.sol";
-import { MerkleLT } from "./../types/DataTypes.sol";
+import { MerkleLT } from "../types/DataTypes.sol";
 
 /// @title ISablierV2MerkleLT
 /// @notice MerkleLockup campaign that creates LockupTranched streams.
