@@ -34,15 +34,13 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     function setUp() public virtual override {
         // Fork Ethereum Mainnet at a specific block number.
-        vm.createSelectFork({ blockNumber: 18_821_300, urlOrAlias: "mainnet" });
+        vm.createSelectFork({ blockNumber: 20_339_512, urlOrAlias: "mainnet" });
 
         // Set up the base test contract.
         Base_Test.setUp();
 
         // Load the external dependencies.
-        // loadDependencies();
-        // TODO: Remove this line once the V2 Core contracts are deployed on Mainnet.
-        deployDependencies();
+        loadDependencies();
 
         // Deploy the defaults contract and allow it to access cheatcodes.
         defaults = new Defaults({ users_: users, asset_: FORK_ASSET });
@@ -80,14 +78,8 @@ abstract contract Fork_Test is Base_Test, V2CoreFuzzers {
 
     /// @dev Loads all dependencies pre-deployed on Mainnet.
     function loadDependencies() private {
-        lockupDynamic = ISablierV2LockupDynamic(0x7CC7e125d83A581ff438608490Cc0f7bDff79127);
-        lockupLinear = ISablierV2LockupLinear(0xAFb979d9afAd1aD27C5eFf4E27226E3AB9e5dCC9);
-        lockupTranched = ISablierV2LockupTranched(0xAFb979d9afAd1aD27C5eFf4E27226E3AB9e5dCC9);
-    }
-
-    /// @dev Deploys the V2 Core dependencies.
-    // TODO: Remove this function once the V2 Core contracts are deployed on Mainnet.
-    function deployDependencies() private {
-        (lockupDynamic, lockupLinear, lockupTranched,) = new V2CorePrecompiles().deployCore(users.admin);
+        lockupDynamic = ISablierV2LockupDynamic(0x9DeaBf7815b42Bf4E9a03EEc35a486fF74ee7459);
+        lockupLinear = ISablierV2LockupLinear(0x3962f6585946823440d274aD7C719B02b49DE51E);
+        lockupTranched = ISablierV2LockupTranched(0xf86B359035208e4529686A1825F2D5BeE38c28A8);
     }
 }
