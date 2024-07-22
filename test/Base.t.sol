@@ -78,6 +78,8 @@ abstract contract Base_Test is
         users.recipient2 = createUser("Recipient2");
         users.recipient3 = createUser("Recipient3");
         users.recipient4 = createUser("Recipient4");
+
+        defaults = new Defaults({ users_: users, asset_: dai });
     }
 
     /*//////////////////////////////////////////////////////////////////////////

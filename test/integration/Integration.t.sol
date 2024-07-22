@@ -3,7 +3,6 @@ pragma solidity >=0.8.22 <0.9.0;
 
 import { Precompiles as V2CorePrecompiles } from "@sablier/v2-core/precompiles/Precompiles.sol";
 
-import { Defaults } from "../utils/Defaults.sol";
 import { Base_Test } from "../Base.t.sol";
 
 /// @notice Common logic needed by all integration tests.
@@ -18,9 +17,6 @@ abstract contract Integration_Test is Base_Test {
 
         // Deploy the external dependencies.
         deployDependencies();
-
-        // Deploy the defaults contract.
-        defaults = new Defaults({ users_: users, asset_: dai });
 
         // Deploy V2 Periphery.
         deployPeripheryConditionally();

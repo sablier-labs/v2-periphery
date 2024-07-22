@@ -163,11 +163,6 @@ contract Defaults is Merkle {
                                  SABLIER-V2-LOCKUP
     //////////////////////////////////////////////////////////////////////////*/
 
-    function assets() public view returns (IERC20[] memory assets_) {
-        assets_ = new IERC20[](1);
-        assets_[0] = asset;
-    }
-
     function broker() public view returns (Broker memory) {
         return Broker({ account: users.broker, fee: BROKER_FEE });
     }
