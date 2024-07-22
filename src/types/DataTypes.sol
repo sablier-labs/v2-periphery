@@ -7,12 +7,6 @@ import { ISablierV2Lockup } from "@sablier/v2-core/src/interfaces/ISablierV2Lock
 import { Broker, LockupDynamic, LockupLinear, LockupTranched } from "@sablier/v2-core/src/types/DataTypes.sol";
 
 library BatchLockup {
-    /// @notice A struct encapsulating the lockup contract's address and the stream ids to cancel.
-    struct CancelMultiple {
-        ISablierV2Lockup lockup;
-        uint256[] streamIds;
-    }
-
     /// @notice A struct encapsulating all parameters of {SablierV2LockupDynamic.createWithDurations} except for the
     /// asset.
     struct CreateWithDurationsLD {
