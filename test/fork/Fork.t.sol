@@ -8,7 +8,6 @@ import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISabli
 
 import { Fuzzers as V2CoreFuzzers } from "@sablier/v2-core/test/utils/Fuzzers.sol";
 
-import { Defaults } from "../utils/Defaults.sol";
 import { Base_Test } from "../Base.t.sol";
 
 /// @notice Common logic needed by all fork tests.
