@@ -10,8 +10,19 @@ import { MerkleLT } from "../types/DataTypes.sol";
 /// @notice MerkleLockup campaign that creates LockupTranched streams.
 interface ISablierV2MerkleLT is ISablierV2MerkleLockup {
     /*//////////////////////////////////////////////////////////////////////////
+                                       EVENTS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Emitted when a recipient claims a stream.
+    event Claim(uint256 index, address indexed recipient, uint128 amount, uint256 indexed streamId);
+
+    /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice A flag indicating whether the streams can be canceled.
+    /// @dev This is an immutable state variable.
+    function CANCELABLE() external returns (bool);
 
     /// @notice Retrieves the tranches with their respective unlock percentages and durations.
     function getTranchesWithPercentages() external view returns (MerkleLT.TrancheWithPercentage[] memory);
@@ -21,6 +32,10 @@ interface ISablierV2MerkleLT is ISablierV2MerkleLockup {
 
     /// @notice The total percentage of the tranches.
     function TOTAL_PERCENTAGE() external view returns (uint64);
+
+    /// @notice A flag indicating whether the stream NFTs are transferable.
+    /// @dev This is an immutable state variable.
+    function TRANSFERABLE() external returns (bool);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS

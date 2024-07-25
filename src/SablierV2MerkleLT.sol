@@ -28,10 +28,16 @@ contract SablierV2MerkleLT is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleLT
+    bool public immutable override CANCELABLE;
+
+    /// @inheritdoc ISablierV2MerkleLT
     ISablierV2LockupTranched public immutable override LOCKUP_TRANCHED;
 
     /// @inheritdoc ISablierV2MerkleLT
     uint64 public immutable override TOTAL_PERCENTAGE;
+
+    /// @inheritdoc ISablierV2MerkleLT
+    bool public immutable override TRANSFERABLE;
 
     /// @dev The tranches with their respective unlock percentages and durations.
     MerkleLT.TrancheWithPercentage[] internal _tranchesWithPercentages;
@@ -49,6 +55,7 @@ contract SablierV2MerkleLT is
     )
         SablierV2MerkleLockup(baseParams)
     {
+        CANCELABLE = baseParams.cancelable;
         LOCKUP_TRANCHED = lockupTranched;
 
         uint256 count = tranchesWithPercentages.length;
@@ -61,6 +68,8 @@ contract SablierV2MerkleLT is
             _tranchesWithPercentages.push(tranchesWithPercentages[i]);
         }
         TOTAL_PERCENTAGE = totalPercentage;
+
+        TRANSFERABLE = baseParams.transferable;
 
         // Max approve the Sablier contract to spend funds from the MerkleLockup contract.
         ASSET.forceApprove(address(LOCKUP_TRANCHED), type(uint256).max);

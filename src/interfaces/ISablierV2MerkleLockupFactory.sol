@@ -5,6 +5,7 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
+import { ISablierMerkleInstant } from "./ISablierMerkleInstant.sol";
 import { ISablierV2MerkleLL } from "./ISablierV2MerkleLL.sol";
 import { ISablierV2MerkleLT } from "./ISablierV2MerkleLT.sol";
 import { MerkleLockup, MerkleLT } from "../types/DataTypes.sol";
@@ -15,6 +16,14 @@ interface ISablierV2MerkleLockupFactory {
     /*//////////////////////////////////////////////////////////////////////////
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Emitted when a {SablierV2MerkleInstant} campaign is created.
+    event CreateMerkleInstant(
+        ISablierMerkleInstant indexed merkleInstant,
+        MerkleLockup.ConstructorParams baseParams,
+        uint256 aggregateAmount,
+        uint256 recipientCount
+    );
 
     /// @notice Emitted when a {SablierV2MerkleLL} campaign is created.
     event CreateMerkleLL(
@@ -53,6 +62,20 @@ interface ISablierV2MerkleLockupFactory {
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Creates a new MerkleLockup campaign for instant distribution of assets.
+    /// @dev Emits a {CreateMerkleInstant} event.
+    /// @param baseParams Struct encapsulating the {SablierV2MerkleLockup} parameters, which are documented in
+    /// {DataTypes}.
+    /// @param aggregateAmount The total amount of ERC-20 assets to be distributed to all recipients.
+    /// @param recipientCount The total number of recipients who are eligible to claim.
+    function createMerkleInstant(
+        MerkleLockup.ConstructorParams memory baseParams,
+        uint256 aggregateAmount,
+        uint256 recipientCount
+    )
+        external
+        returns (ISablierMerkleInstant merkleLL);
 
     /// @notice Creates a new MerkleLockup campaign with a LockupLinear distribution.
     /// @dev Emits a {CreateMerkleLL} event.

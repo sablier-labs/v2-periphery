@@ -14,9 +14,6 @@ interface ISablierV2MerkleLockup is IAdminable {
                                        EVENTS
     //////////////////////////////////////////////////////////////////////////*/
 
-    /// @notice Emitted when a recipient claims a stream.
-    event Claim(uint256 index, address indexed recipient, uint128 amount, uint256 indexed streamId);
-
     /// @notice Emitted when the admin claws back the unclaimed tokens.
     event Clawback(address indexed admin, address indexed to, uint128 amount);
 
@@ -27,10 +24,6 @@ interface ISablierV2MerkleLockup is IAdminable {
     /// @notice The ERC-20 asset to distribute.
     /// @dev This is an immutable state variable.
     function ASSET() external returns (IERC20);
-
-    /// @notice A flag indicating whether the streams can be canceled.
-    /// @dev This is an immutable state variable.
-    function CANCELABLE() external returns (bool);
 
     /// @notice The cut-off point for the campaign, as a Unix timestamp. A value of zero means there is no expiration.
     /// @dev This is an immutable state variable.
@@ -56,10 +49,6 @@ interface ISablierV2MerkleLockup is IAdminable {
 
     /// @notice Retrieves the name of the campaign.
     function name() external returns (string memory);
-
-    /// @notice A flag indicating whether the stream NFTs are transferable.
-    /// @dev This is an immutable state variable.
-    function TRANSFERABLE() external returns (bool);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS

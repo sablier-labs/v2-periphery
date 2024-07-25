@@ -28,9 +28,6 @@ abstract contract SablierV2MerkleLockup is
     IERC20 public immutable override ASSET;
 
     /// @inheritdoc ISablierV2MerkleLockup
-    bool public immutable override CANCELABLE;
-
-    /// @inheritdoc ISablierV2MerkleLockup
     uint40 public immutable override EXPIRATION;
 
     /// @inheritdoc ISablierV2MerkleLockup
@@ -38,9 +35,6 @@ abstract contract SablierV2MerkleLockup is
 
     /// @dev The name of the campaign stored as bytes32.
     bytes32 internal immutable NAME;
-
-    /// @inheritdoc ISablierV2MerkleLockup
-    bool public immutable override TRANSFERABLE;
 
     /// @inheritdoc ISablierV2MerkleLockup
     string public ipfsCID;
@@ -67,12 +61,10 @@ abstract contract SablierV2MerkleLockup is
 
         admin = params.initialAdmin;
         ASSET = params.asset;
-        CANCELABLE = params.cancelable;
         EXPIRATION = params.expiration;
         ipfsCID = params.ipfsCID;
         MERKLE_ROOT = params.merkleRoot;
         NAME = bytes32(abi.encodePacked(params.name));
-        TRANSFERABLE = params.transferable;
     }
 
     /*//////////////////////////////////////////////////////////////////////////

@@ -6,9 +6,11 @@ import { ISablierV2LockupLinear } from "@sablier/v2-core/src/interfaces/ISablier
 import { ISablierV2LockupTranched } from "@sablier/v2-core/src/interfaces/ISablierV2LockupTranched.sol";
 import { LockupLinear } from "@sablier/v2-core/src/types/DataTypes.sol";
 
+import { ISablierMerkleInstant } from "./interfaces/ISablierMerkleInstant.sol";
 import { ISablierV2MerkleLL } from "./interfaces/ISablierV2MerkleLL.sol";
 import { ISablierV2MerkleLockupFactory } from "./interfaces/ISablierV2MerkleLockupFactory.sol";
 import { ISablierV2MerkleLT } from "./interfaces/ISablierV2MerkleLT.sol";
+import { SablierMerkleInstant } from "./SablierMerkleInstant.sol";
 import { SablierV2MerkleLL } from "./SablierV2MerkleLL.sol";
 import { SablierV2MerkleLT } from "./SablierV2MerkleLT.sol";
 import { MerkleLockup, MerkleLT } from "./types/DataTypes.sol";
@@ -37,6 +39,35 @@ contract SablierV2MerkleLockupFactory is ISablierV2MerkleLockupFactory {
     /*//////////////////////////////////////////////////////////////////////////
                          USER-FACING NON-CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice inheritdoc ISablierV2MerkleLockupFactory
+    function createMerkleInstant(
+        MerkleLockup.ConstructorParams memory baseParams,
+        uint256 aggregateAmount,
+        uint256 recipientCount
+    )
+        external
+        returns (ISablierMerkleInstant merkleInstant)
+    {
+        // Hash the parameters to generate a salt.
+        bytes32 salt = keccak256(
+            abi.encodePacked(
+                msg.sender,
+                baseParams.asset,
+                baseParams.expiration,
+                baseParams.initialAdmin,
+                abi.encode(baseParams.ipfsCID),
+                baseParams.merkleRoot,
+                bytes32(abi.encodePacked(baseParams.name))
+            )
+        );
+
+        // Deploy the MerkleLockup contract with CREATE2.
+        merkleInstant = new SablierMerkleInstant{ salt: salt }(baseParams);
+
+        // Log the creation of the MerkleLockup contract, including some metadata that is not stored on-chain.
+        emit CreateMerkleInstant(merkleInstant, baseParams, aggregateAmount, recipientCount);
+    }
 
     /// @notice inheritdoc ISablierV2MerkleLockupFactory
     function createMerkleLL(

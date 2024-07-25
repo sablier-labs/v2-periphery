@@ -26,10 +26,16 @@ contract SablierV2MerkleLL is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @inheritdoc ISablierV2MerkleLL
+    bool public immutable override CANCELABLE;
+
+    /// @inheritdoc ISablierV2MerkleLL
     ISablierV2LockupLinear public immutable override LOCKUP_LINEAR;
 
     /// @inheritdoc ISablierV2MerkleLL
     LockupLinear.Durations public override streamDurations;
+
+    /// @inheritdoc ISablierV2MerkleLL
+    bool public immutable override TRANSFERABLE;
 
     /*//////////////////////////////////////////////////////////////////////////
                                     CONSTRUCTOR
@@ -44,8 +50,10 @@ contract SablierV2MerkleLL is
     )
         SablierV2MerkleLockup(baseParams)
     {
+        CANCELABLE = baseParams.cancelable;
         LOCKUP_LINEAR = lockupLinear;
         streamDurations = streamDurations_;
+        TRANSFERABLE = baseParams.transferable;
 
         // Max approve the Sablier contract to spend funds from the MerkleLockup contract.
         ASSET.forceApprove(address(LOCKUP_LINEAR), type(uint256).max);

@@ -9,14 +9,29 @@ import { ISablierV2MerkleLockup } from "./ISablierV2MerkleLockup.sol";
 /// @notice MerkleLockup campaign that creates LockupLinear streams.
 interface ISablierV2MerkleLL is ISablierV2MerkleLockup {
     /*//////////////////////////////////////////////////////////////////////////
+                                       EVENTS
+    //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Emitted when a recipient claims a stream.
+    event Claim(uint256 index, address indexed recipient, uint128 amount, uint256 indexed streamId);
+
+    /*//////////////////////////////////////////////////////////////////////////
                                  CONSTANT FUNCTIONS
     //////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice A flag indicating whether the streams can be canceled.
+    /// @dev This is an immutable state variable.
+    function CANCELABLE() external returns (bool);
 
     /// @notice The address of the {SablierV2LockupLinear} contract.
     function LOCKUP_LINEAR() external view returns (ISablierV2LockupLinear);
 
     /// @notice The total streaming duration of each stream.
     function streamDurations() external view returns (uint40 cliff, uint40 duration);
+
+    /// @notice A flag indicating whether the stream NFTs are transferable.
+    /// @dev This is an immutable state variable.
+    function TRANSFERABLE() external returns (bool);
 
     /*//////////////////////////////////////////////////////////////////////////
                                NON-CONSTANT FUNCTIONS
