@@ -142,6 +142,8 @@ abstract contract MerkleLL_Fork_Test is Fork_Test {
         vars.leafPos = Arrays.findUpperBound(leaves, vars.leafToClaim);
 
         vars.expectedStreamId = lockupLinear.nextStreamId();
+
+        vm.expectEmit({ emitter: address(vars.merkleLL) });
         emit Claim(
             vars.indexes[params.posBeforeSort],
             vars.recipients[params.posBeforeSort],
