@@ -1,10 +1,15 @@
 # directories
 artifacts
+artifacts-zk/
 broadcast
 cache
+cache_hardhat/
+cache_hardhat-zk/
 coverage
+deployments-zk/
 docs
 node_modules
+typechain-types/
 out-optimized
 out
 
