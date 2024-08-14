@@ -430,7 +430,9 @@ contract Defaults is Merkle {
     }
 
     /// @dev Returns a batch of {BatchLockup.CreateWithTimestampsLD} parameters.
-    function batchCreateWithTimestampsLD(uint256 batchSize)
+    function batchCreateWithTimestampsLD(
+        uint256 batchSize
+    )
         public
         view
         returns (BatchLockup.CreateWithTimestampsLD[] memory batch)
@@ -444,7 +446,9 @@ contract Defaults is Merkle {
     }
 
     /// @dev Returns a batch of {BatchLockup.CreateWithTimestampsLL} parameters.
-    function batchCreateWithTimestampsLL(uint256 batchSize)
+    function batchCreateWithTimestampsLL(
+        uint256 batchSize
+    )
         public
         view
         returns (BatchLockup.CreateWithTimestampsLL[] memory batch)
@@ -458,7 +462,9 @@ contract Defaults is Merkle {
     }
 
     /// @dev Returns a batch of {BatchLockup.CreateWithTimestampsLL} parameters.
-    function batchCreateWithTimestampsLT(uint256 batchSize)
+    function batchCreateWithTimestampsLT(
+        uint256 batchSize
+    )
         public
         view
         returns (BatchLockup.CreateWithTimestampsLT[] memory batch)
