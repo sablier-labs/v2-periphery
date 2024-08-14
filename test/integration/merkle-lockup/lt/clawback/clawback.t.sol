@@ -63,7 +63,9 @@ contract Clawback_Integration_Test is MerkleLockup_Integration_Test {
         test_Clawback(users.admin);
     }
 
-    function testFuzz_Clawback(address to)
+    function testFuzz_Clawback(
+        address to
+    )
         external
         whenCallerAdmin
         afterFirstClaim

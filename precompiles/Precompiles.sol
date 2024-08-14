@@ -67,7 +67,9 @@ contract Precompiles {
     /// 4. {SablierV2LockupTranched}
     /// 5. {SablierV2BatchLockup}
     /// 6. {SablierV2MerkleLockupFactory}
-    function deployProtocol(address initialAdmin)
+    function deployProtocol(
+        address initialAdmin
+    )
         public
         returns (
             ISablierV2LockupDynamic lockupDynamic,

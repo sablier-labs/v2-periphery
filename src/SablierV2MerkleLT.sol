@@ -131,7 +131,9 @@ contract SablierV2MerkleLT is
     //////////////////////////////////////////////////////////////////////////*/
 
     /// @dev Calculates the tranches based on the claim amount and the unlock percentages for each tranche.
-    function _calculateTranches(uint128 claimAmount)
+    function _calculateTranches(
+        uint128 claimAmount
+    )
         internal
         view
         returns (LockupTranched.TrancheWithDuration[] memory tranches)
