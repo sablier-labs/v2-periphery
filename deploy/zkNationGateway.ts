@@ -31,9 +31,9 @@ export default async function () {
 
   const zkNationSablierGateway = await deployer.deploy(artifactZkNationSablierGateway, [
     process.env.ADMIN,
-    "0x1D68417ff71855Eb0237Ff03a8FfF02Ef67e4AFb",
-    "0x69e5DC39E2bCb1C17053d2A4ee7CAEAAc5D36f96",
-    "0x6fEB7Ca79CFD7e1CF761c7Aa8659F24e392fbc7D",
+    process.env.BATCH_LOCKUP,
+    process.env.ZK_TOKEN,
+    process.env.ZK_TOKEN_GOVERNOR_TIMELOCK,
   ]);
 
   const zkNationSablierGatewayAddress = zkNationSablierGateway.target.toString();
@@ -47,25 +47,25 @@ export default async function () {
   });
 
   const zkCappedMinter = await deployer.deploy(artifactZkCappedMinter, [
-    "0x69e5DC39E2bCb1C17053d2A4ee7CAEAAc5D36f96",
+    process.env.ZK_TOKEN,
     zkNationSablierGatewayAddress,
-    "100000000000000000000000000",
+    process.env.MINTER_CAP,
   ]);
 
   const zkCappedMinterAddress = zkCappedMinter.target.toString();
   console.log("ZkCappedMinter deployed to:", zkCappedMinterAddress);
 
   await verifyContract(zkNationSablierGatewayAddress, [
-    process.env.ADMIN,
-    "0x1D68417ff71855Eb0237Ff03a8FfF02Ef67e4AFb",
-    "0x69e5DC39E2bCb1C17053d2A4ee7CAEAAc5D36f96",
-    "0x6fEB7Ca79CFD7e1CF761c7Aa8659F24e392fbc7D",
+    process.env.ADMIN!,
+    process.env.BATCH_LOCKUP!,
+    process.env.ZK_TOKEN!,
+    process.env.ZK_TOKEN_GOVERNOR_TIMELOCK!,
   ]);
 
   await verifyContract(zkCappedMinterAddress, [
-    "0x69e5DC39E2bCb1C17053d2A4ee7CAEAAc5D36f96",
+    process.env.ZK_TOKEN!,
     zkNationSablierGatewayAddress,
-    "100000000000000000000000000",
+    process.env.MINTER_CAP!,
   ]);
 
   await zkNationSablierGateway.setZkTokenMinter(zkCappedMinterAddress);
