@@ -10,14 +10,27 @@
     "url": "https://github.com/sablier-labs/v2-periphery/issues"
   },
   "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@openzeppelin/contracts": "5.0.2",
     "@prb/math": "4.0.3",
-    "@sablier/v2-core": "1.2.0"
+    "@sablier/v2-core": "github:sablier-labs/v2-core#0d1736577d67e64a5e8cc9517fafd497ff158959",
+    "@types/node": "^22.5.0",
+    "dotenv": "^16.4.5",
+    "ethers": "5.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.7",
+    "@nomicfoundation/hardhat-ignition": "^0.15.5",
+    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.5",
+    "@nomicfoundation/hardhat-verify": "^2.0.9",
+    "@nomiclabs/hardhat-etherscan": "^3.1.8",
     "forge-std": "github:foundry-rs/forge-std#v1.8.2",
+    "hardhat": "^2.22.9",
     "prettier": "^3.3.2",
     "solady": "0.0.208",
+    "solarray": "github:evmcheb/solarray#a547630",
     "solhint": "^5.0.1"
   },
   "files": [
@@ -51,7 +64,7 @@
     "web3"
   ],
   "peerDependencies": {
-    "@sablier/v2-core": "1.2.0"
+    "@sablier/v2-core": "github:sablier-labs/v2-core#0d1736577d67e64a5e8cc9517fafd497ff158959"
   },
   "publishConfig": {
     "access": "public"
