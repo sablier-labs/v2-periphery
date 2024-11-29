@@ -9,7 +9,7 @@ export default async function () {
   const chainId = Number(network.chainId);
 
   const provider = new Provider(hre.network.config.url);
-  const deployerAddressPV = new Wallet(process.env.PV_KEY as string).connect(provider);
+  const deployerAddressPV = new Wallet(process.env.PRIVATE_KEY as string).connect(provider);
   const deployerAddress = deployerAddressPV.address;
 
   if (!deployerAddress) {
