@@ -2,7 +2,7 @@ name: "CI Deep"
 
 on:
   schedule:
-    - cron: "0 3 * * 0" # at 3:00am UTC every Sunday
+    - cron: "0 1 * * 6" # at 1:00am UTC every Saturday
   workflow_dispatch:
     inputs:
       integrationFuzzRuns:
