@@ -9,9 +9,9 @@
 [foundry]: https://getfoundry.sh/
 [foundry-badge]: https://img.shields.io/badge/Built%20with-Foundry-FFDB1C.svg
 
-## ⚠️ Repository Archived
+## ⚠️ Archived
 
-This repository is archived and will no longer be maintained. For the latest contracts and updates, please visit:
+This repository has been archived and is no longer maintained. For up to date, please visit the following repos:
 
 1. [Lockup Repo](https://github.com/sablier-labs/lockup/)
 2. [Airdrop Repo](https://github.com/sablier-labs/airdrops/)
