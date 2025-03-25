@@ -11,11 +11,13 @@
 
 ## ⚠️ Archived
 
-This repository has been archived and is no longer maintained. For the latest contracts and updates, please visit the
-following repos:
+This repository has been archived and is no longer being maintained. For the latest contracts and updates, please visit
+the following repos:
 
-1. [Lockup Repo](https://github.com/sablier-labs/lockup/)
-2. [Airdrop Repo](https://github.com/sablier-labs/airdrops/)
+1. [Sablier Lockup](https://github.com/sablier-labs/lockup/)
+2. [Sablier Airdrops](https://github.com/sablier-labs/airdrops/)
+
+## Background
 
 This repository contains the peripheral smart contracts of the Sablier V2 Protocol. For lower-level logic, see the
 [sablier-labs/v2-core](https://github.com/sablier-labs/v2-core) repository.
