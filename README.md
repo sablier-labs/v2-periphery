@@ -11,8 +11,8 @@
 
 ## ⚠️ Archived
 
-This repository has been archived and is no longer being maintained. For the latest contracts and updates, please visit
-the following repos:
+This repository was archived in January 2024, and is no longer maintained. For the latest contracts and updates, please
+visit:
 
 1. [Sablier Lockup](https://github.com/sablier-labs/lockup/)
 2. [Sablier Airdrops](https://github.com/sablier-labs/airdrops/)
